@@ -39,6 +39,29 @@ example font:
      :color [0 234 123]}
 
 
+#### Anchor
+
+An anchor can be a reference or a destination of a reference, it consists of the keyword :anchor followed by optional metadata and the content. The content consists of the following fields:
+
+* :style font
+* :leading number
+
+    {:style {:size 15 :style :bold} :leading 20}
+    
+iText idiosynchorsies:
+
+* when both font style and leading number are specified the content must be a string
+* when leading number is specified content can be a chunk or a string 
+* when only font style is specified content must be a string
+* if no font style or leading is specified then content can be a chunk, a phrase, or a string
+
+    [:anchor {:style {:size 15} :leading 20} "some anchor"]
+    
+    [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
+    
+    [:anchor {} "plain anchor"]
+
+
 #### Chunk 
 
 Chunk is the smallest component, it consists of the keyword :chunk a font and the content string 
@@ -57,11 +80,18 @@ A phrase consists of the keyword :phrase followed by the contents, the first ite
 
 #### Paragraph
 
-A paragraph consists of the keyword :paragraph followed by the content which can consists of either a string or a phrase
+A paragraph consists of the keyword :paragraph followed by the metadata (can be empty) and the content which can consists of either a string or a phrase.
 
-    [:paragraph "a fine paragraph"]
+The metadata consists of the following fields
 
-    [:paragraph [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
+* :indent number
+* :keep-together boolean
+
+    [:paragraph {} "a fine paragraph"]
+    
+    [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+
+    [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
 
 #### Chapter
 
@@ -70,7 +100,7 @@ A chapter consists of the keyword :chapter and  title which can be either a stri
 
     [:chapter "First Chapter"]
 
-    [:chapter [:paragraph "Second Chapter]]
+    [:chapter [:paragraph {} "Second Chapter"]]
 
 #### List
 

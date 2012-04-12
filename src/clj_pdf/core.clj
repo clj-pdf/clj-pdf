@@ -1,5 +1,7 @@
 (ns clj-pdf.core
- (:import [com.lowagie.text           
+ (:import [com.lowagie.text
+           Anchor
+           Annotation
            ChapterAutoNumber
            Chunk
            Document
@@ -20,41 +22,45 @@
              size    :size
              [r g b] :color
              family  :family}]
- (new Font
-      (condp = family
-        :courier   (Font/COURIER)
-        :helvetica (Font/HELVETICA)
-        :times-roman (Font/TIMES_ROMAN)
-        :symbol      (Font/SYMBOL)
-        :zapfdingbats (Font/ZAPFDINGBATS)
-        (Font/HELVETICA))
-      (float (if size size 11))
-      (condp = style
-        :bold (Font/BOLD)
-        :italic (Font/ITALIC)
-        :bold-italic (Font/BOLDITALIC)
-        :normal (Font/NORMAL)
-        :strikethru (Font/STRIKETHRU)
-        :underline (Font/UNDERLINE)
-        (Font/NORMAL))
-      (if (and r g b)
-        (new Color r g b)
-        (new Color 0 0 0))))
+  (new Font
+       (condp = family
+         :courier   (Font/COURIER)
+         :helvetica (Font/HELVETICA)
+         :times-roman (Font/TIMES_ROMAN)
+         :symbol      (Font/SYMBOL)
+         :zapfdingbats (Font/ZAPFDINGBATS)
+         (Font/HELVETICA))
+       (float (if size size 11))
+       (condp = style
+         :bold (Font/BOLD)
+         :italic (Font/ITALIC)
+         :bold-italic (Font/BOLDITALIC)
+         :normal (Font/NORMAL)
+         :strikethru (Font/STRIKETHRU)
+         :underline (Font/UNDERLINE)
+         (Font/NORMAL))
+       (if (and r g b)
+         (new Color r g b)
+         (new Color 0 0 0))))
 
 (defn- chapter [title] (new ChapterAutoNumber (make-section title)))
 
-(defn- paragraph [content]
- (new Paragraph (make-section content)))
+(defn- paragraph [{indent        :indent
+                   keep-together :keep-together} content]
+  (let [paragraph (new Paragraph (make-section content))]
+    (if keep-together (.setKeepTogether paragraph true))
+    (if indent (.setFirstLineIndent paragraph (float indent)))
+    paragraph))
 
 (defn- li [{numbered :numbered
-           lettered :lettered
-           roman    :roman}
-          & items]
- (let [list (if roman (new RomanList)
-              (new List (or numbered false) (or lettered false)))]
-   (doseq [item items]
-     (.add list (new ListItem (make-section item))))
-   list))
+            lettered :lettered
+            roman    :roman}
+           & items]
+  (let [list (if roman (new RomanList)
+               (new List (or numbered false) (or lettered false)))]
+    (doseq [item items]
+      (.add list (new ListItem (make-section item))))
+    list))
 
 (defn- phrase
   [font-style & content]
@@ -63,20 +69,32 @@
     (.addAll (map make-section content))))
 
 (defn- text-chunk [font-style content]
- (new Chunk (make-section content) (font font-style)))
+  (new Chunk (make-section content) (font font-style)))
+
+(defn- annotation [title text] (new Annotation title text))
+
+(defn- anchor [{style   :style
+                leading :leading} 
+               content]
+  (cond (and style leading) (new Anchor (float leading) content (font style))
+        leading             (new Anchor (float leading) (make-section content))
+        style               (new Anchor content (font style))
+        :else               (new Anchor (make-section content))))
 
 (defn- make-section [element]
- (if (string? element)
-   element
-   (let [[tag & content] element]
-     (apply
-       (condp = tag
-         :chapter   chapter
-         :chunk     text-chunk
-         :list      li
-         :paragraph paragraph
-         :phrase    phrase)
-       content))))
+  (if (string? element)
+    element
+    (let [[tag & content] element]
+      (apply
+        (condp = tag
+          :anchor     anchor
+          :annotation annotation
+          :chapter    chapter
+          :chunk      text-chunk
+          :list       li
+          :paragraph  paragraph
+          :phrase     phrase)
+        content))))
 
 
 (defn write-doc 
