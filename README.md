@@ -87,6 +87,59 @@ the rest of the contents can be either strings, phrases, or chunks
    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 
 
+### A complete example
+
+    (write-doc
+     [{:page-size :a4
+       :title  "Test doc"
+       :left-margin   10
+       :right-margin  10
+       :top-margin    20
+       :bottom-margin 25
+       :subject "Some subject"
+       :author "John Doe"
+       :creator "Jane Doe"
+       :header ["inspired by" "William Shakespeare"]}
+       
+      [:chapter 1 "First Chapter"]
+      [:paragraph "Hello Clojure!"]
+      [:paragraph [:phrase 
+                   [:chunk {:style  :bold
+                            :size   10
+                            :family :times-roman
+                            :color  [123 0 23]}
+                    "Hello Clojure!"]
+               
+                   [:chunk {:style  :bold
+                            :size   18
+                            :family :helvetica
+                            :color  [0 255 0]}
+                    "This is another chunk"]
+                   "some other text here"]]
+      [:chapter 2]
+      [:paragraph [:phrase {} "Some more stuff happened"]]
+      [:list {:numbered true} "foo" "bar" "baz"]
+
+      [:list {} "foo" "bar" "baz"]
+
+      [:list {:roman true} "foo" "bar" [:chunk {} "A chunk!"] "baz"]
+
+      [:list {:lettered true} "foo" "bar" "baz"]
+
+      [:chapter 3 [:paragraph "Third Chapter"]]
+      
+      [:list {:numbered true :lettered true} 
+       "foo"
+       "bar"
+       "baz"
+       [:phrase {:style  :bold
+                 :size   18
+                 :family :helvetica
+                 :color  [0 255 0]}
+        "Bold text"]]]
+     "test1.pdf")
+
+
 # TODO:
 
 * support for images
