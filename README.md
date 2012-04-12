@@ -117,54 +117,42 @@ the rest of the contents can be either strings, phrases, or chunks
 
 ### A complete example
 
-    (write-doc
-     [{:title  "Test doc"
-       :left-margin   10
-       :right-margin  10
-       :top-margin    20
-       :bottom-margin 25
-       :subject "Some subject"
-       :author "John Doe"
-       :creator "Jane Doe"
-       :header ["inspired by" "William Shakespeare"]}
-       
-      [:chapter "First Chapter"]
-      [:paragraph "Hello Clojure!"]
-      [:paragraph [:phrase 
-                   [:chunk {:style  :bold
-                            :size   10
-                            :family :times-roman
-                            :color  [123 0 23]}
-                    "Hello Clojure!"]
-               
-                   [:chunk {:style  :bold
-                            :size   18
-                            :family :helvetica
-                            :color  [0 255 0]}
-                    "This is another chunk"]
-                   "some other text here"]]
-      [:chapter "Second Chapter"]
-      [:paragraph [:phrase {} "Some more stuff happened"]]
-      [:list {:numbered true} "foo" "bar" "baz"]
-
-      [:list {} "foo" "bar" "baz"]
-
-      [:list {:roman true} "foo" "bar" [:chunk {} "A chunk!"] "baz"]
-
-      [:list {:lettered true} "foo" "bar" "baz"]
-
-      [:chapter [:paragraph "Third Chapter"]]
-      
-      [:list {:numbered true :lettered true} 
-       "foo"
-       "bar"
-       "baz"
-       [:phrase {:style  :bold
-                 :size   18
-                 :family :helvetica
-                 :color  [0 255 0]}
-        "Bold text"]]]
-     "test1.pdf")
+    (write-doc [{:title  "Test doc"
+                 :left-margin   10
+                 :right-margin  10
+                 :top-margin    20
+                 :bottom-margin 25
+                 :subject "Some subject"
+                 :author "John Doe"
+                 :creator "Jane Doe"
+                 :header ["inspired by" "William Shakespeare"]}
+            
+                [:anchor {:style {:size 15} :leading 20} "some anchor"]
+            
+                [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
+            
+                [:anchor {} "plain anchor"]        
+                
+                [:chunk {:style :bold} "small chunk of text"]
+            
+                [:phrase {} "some text here"]
+            
+                [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
+            
+                [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+            
+                [:paragraph {} "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
+            
+                [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+            
+                [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
+            
+                [:chapter "First Chapter"]
+            
+                [:chapter [:paragraph {} "Second Chapter"]]
+            
+                [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
+               "test.pdf")
 
 
 # TODO:
