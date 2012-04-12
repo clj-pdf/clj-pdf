@@ -90,11 +90,13 @@ The metadata consists of the following fields
 * :indent number
 * :keep-together boolean
 
+```
     [:paragraph {} "a fine paragraph"]
     
     [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
     [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
+```
 
 #### Chapter
 
@@ -115,8 +117,9 @@ A list consists of the keyword :list followed by the metadata and the contents, 
 
 the rest of the contents can be either strings, phrases, or chunks
 
+```
    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
-
+```
 
 ### A complete example
 
