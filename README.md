@@ -90,8 +90,7 @@ the rest of the contents can be either strings, phrases, or chunks
 ### A complete example
 
     (write-doc
-     [{:page-size :a4
-       :title  "Test doc"
+     [{:title  "Test doc"
        :left-margin   10
        :right-margin  10
        :top-margin    20
