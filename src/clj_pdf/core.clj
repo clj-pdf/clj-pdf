@@ -1,6 +1,6 @@
 (ns clj-pdf.core
-(:import [com.lowagie.text
-           Chapter
+ (:import [com.lowagie.text           
+           ChapterAutoNumber
            Chunk
            Document
            Font
@@ -16,7 +16,7 @@
 
 (declare make-section)
 
-(defn font [{style      :style
+(defn font [{style   :style
              size    :size
              [r g b] :color
              family  :family}]
@@ -41,10 +41,7 @@
         (new Color r g b)
         (new Color 0 0 0))))
 
-(defn- chapter [number & [title]]
- (if title
-   (new Chapter (make-section title) number)
-   (new Chapter number)))
+(defn- chapter [title] (new ChapterAutoNumber (make-section title)))
 
 (defn- paragraph [content]
  (new Paragraph (make-section content)))
@@ -80,6 +77,7 @@
          :paragraph paragraph
          :phrase    phrase)
        content))))
+
 
 (defn write-doc 
   "(write-doc document out) 

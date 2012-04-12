@@ -65,14 +65,12 @@ A paragraph consists of the keyword :paragraph followed by the content which can
 
 #### Chapter
 
-A chapter has the following form, it starts with the keyword :chapter followed by the number of the chapter, and optionally by a title. The title can be either a string or a paragraph:
+A chapter consists of the keyword :chapter and  title which can be either a string or a paragraph:
 
 
-    [:chapter 1]
+    [:chapter "First Chapter"]
 
-    [:chapter 2 "Second Chapter"]
-
-    [:chapter 3 [:paragraph "Third Chapter]]
+    [:chapter [:paragraph "Second Chapter]]
 
 #### List
 
@@ -100,7 +98,7 @@ the rest of the contents can be either strings, phrases, or chunks
        :creator "Jane Doe"
        :header ["inspired by" "William Shakespeare"]}
        
-      [:chapter 1 "First Chapter"]
+      [:chapter "First Chapter"]
       [:paragraph "Hello Clojure!"]
       [:paragraph [:phrase 
                    [:chunk {:style  :bold
@@ -115,7 +113,7 @@ the rest of the contents can be either strings, phrases, or chunks
                             :color  [0 255 0]}
                     "This is another chunk"]
                    "some other text here"]]
-      [:chapter 2]
+      [:chapter "Second Chapter"]
       [:paragraph [:phrase {} "Some more stuff happened"]]
       [:list {:numbered true} "foo" "bar" "baz"]
 
@@ -125,7 +123,7 @@ the rest of the contents can be either strings, phrases, or chunks
 
       [:list {:lettered true} "foo" "bar" "baz"]
 
-      [:chapter 3 [:paragraph "Third Chapter"]]
+      [:chapter [:paragraph "Third Chapter"]]
       
       [:list {:numbered true :lettered true} 
        "foo"
