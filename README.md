@@ -1,6 +1,6 @@
 # A Library for easily generating PDFs from Clojure 
 
-NOTE: [iText](http://itextpdf.com/) is dual licensed under under GNU Affero General Public License version 3 and commercial licenses, making this lib AGPL3
+NOTE: [iText](http://itextpdf.com/) is dual licensed under under GNU Affero General Public License version 3 and commercial licenses, subsequently this library carries an AGPL3 license
 
 ## Usage
 
