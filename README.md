@@ -55,11 +55,12 @@ iText idiosynchorsies:
 * when only font style is specified content must be a string
 * if no font style or leading is specified then content can be a chunk, a phrase, or a string
 
-    [:anchor {:style {:size 15} :leading 20} "some anchor"]
+
+     [:anchor {:style {:size 15} :leading 20} "some anchor"]
     
-    [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
+     [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
     
-    [:anchor {} "plain anchor"]
+     [:anchor {} "plain anchor"]
 
 
 #### Chunk 
