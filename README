@@ -87,6 +87,14 @@ the rest of the contents can be either strings, phrases, or chunks
    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 
 
+# TODO:
+
+* support for images
+* page sizes
+* suggestions welcome :)
+
+
+
 
 
 
