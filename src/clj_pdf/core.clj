@@ -83,7 +83,8 @@
 
 (defn write-doc 
   "(write-doc document out) 
-   document consists of a vector containing a map which defines the document metadata and the contents of the documents
+   document consists of a vector containing a map which defines the document metadata and the contents of the document
+   
    out can either be a string which will be treated as a filename or an output stream"
   [[{left-margin   :left-margin
      right-margin  :right-margin
