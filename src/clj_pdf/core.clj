@@ -1,82 +1,110 @@
 (ns clj-pdf.core
-  (:import [com.lowagie.text Chapter Document Font Header List ListItem Paragraph Phrase]
-           java.awt.Color
-           com.lowagie.text.pdf.PdfWriter
-           java.io.FileOutputStream))
+(:import [com.lowagie.text
+           Chapter
+           Chunk
+           Document
+           Font
+           List
+           ListItem
+           PageSize
+           Paragraph
+           Phrase
+           RomanList]
+          java.awt.Color
+          com.lowagie.text.pdf.PdfWriter
+          java.io.FileOutputStream))
 
 (declare make-section)
 
-(defn font [family size style color]
-  (new Font
-       (condp = family
-         :courier   (Font/COURIER)
-         :helvetica (Font/HELVETICA)
-         :times-roman (Font/TIMES_ROMAN)
-         :symbol      (Font/SYMBOL)
-         :zapfdingbats (Font/ZAPFDINGBATS))
-       (float size)
-       (condp = style
-         :bold (Font/BOLD)
-         :bold-italic (Font/BOLDITALIC)
-         :normal (Font/NORMAL)
-         :strikethru (Font/STRIKETHRU)
-         :underline (Font/UNDERLINE))
-       (condp = color
-         :black (new Color 0 0 0))))
+(defn font [{style      :style
+               size    :size
+               [r g b] :color
+               family  :family}]
+ (new Font
+      (condp = family
+        :courier   (Font/COURIER)
+        :helvetica (Font/HELVETICA)
+        :times-roman (Font/TIMES_ROMAN)
+        :symbol      (Font/SYMBOL)
+        :zapfdingbats (Font/ZAPFDINGBATS)
+        (Font/HELVETICA))
+      (float (if size size 11))
+      (condp = style
+        :bold (Font/BOLD)
+        :bold-italic (Font/BOLDITALIC)
+        :normal (Font/NORMAL)
+        :strikethru (Font/STRIKETHRU)
+        :underline (Font/UNDERLINE)
+        (Font/NORMAL))
+      (if (and r g b)
+        (new Color r g b)
+        (new Color 0 0 0))))
 
-(defn- header [[name text]]
-  (new Header name text))
+(defn- chapter [number & [title]]
+ (if title
+   (new Chapter (make-section title) number)
+   (new Chapter number)))
 
-(defn- chapter [[number & [title]]]  
-  (if title 
-    (new Chapter (if (string? title) title  (make-section title)) number)
-    (new Chapter number)))
+(defn- paragraph [content]
+ (new Paragraph (make-section content)))
 
-(defn- paragraph [text]
-  (new Paragraph text))
+(defn- li [{numbered :numbered
+           lettered :lettered
+           roman    :roman}
+          & items]
+ (let [list (if roman (new RomanList)
+              (new List (or numbered false) (or lettered false)))]
+   (doseq [item items]
+     (.add list (new ListItem (make-section item))))
+   list))
 
-(defn- li [[{numbered :numbered 
-               lettered :lettered} 
-              & items]]
-  (let [list (new List (or numbered false) (or lettered false))]
-    (doseq [item items]
-      (.add list (new ListItem (if (string? item) item (make-section item)))))
-    list))
+(defn- phrase [font-style text]
+ (new Phrase text (font font-style)))
 
-(defn- phrase [[{style  :style
-                 size   :size
-                 color  :color
-                 family :family} text]]  
-  (new Phrase text (font family size style color)))
+(defn- text-chunk [font-style content]
+ (new Chunk (make-section content) (font font-style)))
 
-(defn- make-section [[k v]]
-  (condp = k
-      :chapter   (chapter v)      
-      :header    (header v)
-      :list      (li v)
-      :paragraph (paragraph v)
-      :phrase    (phrase v)))
+(defn- make-section [element]
+ (if (string? element)
+   element
+   (let [[tag & content] element]
+     (apply
+       (condp = tag
+         :chapter   chapter
+         :chunk     text-chunk
+         :list      li
+         :paragraph paragraph
+         :phrase    phrase)
+       content))))
 
-(defn write-doc [content out]
-  (let [doc (new Document)] 
-    (PdfWriter/getInstance 
-      doc 
-      (if (string? out) (new FileOutputStream out) out))
-    (.open doc)
-    (doseq [item (partition 2 content)] 
-      (.add doc (make-section item)))
-    (.close doc)))
 
-(write-doc [:header ["inspired by" "William Shakespeare"]
-            :chapter [1 "First Chapter"]
-            :paragraph "Hello Clojure!"
-            :chapter [2]
-            :paragraph "Some more stuff happened"
-            :chapter [3 [:paragraph "Third Chapter"]]
-            :list [{:numbered true :lettered true} "foo" "bar" "baz" [:phrase [{:style  :bold
-                                                                                :size   18
-                                                                                :family :helvetica
-                                                                                :color  :black} "Bold text"]]]
-            
-            ] 
-           "test1.pdf")
+(defn write-doc [[{left-margin   :left-margin
+                  right-margin  :right-margin
+                  top-margin    :top-margin
+                  bottom-margin :bottom-margin
+                  title         :title
+                  subject       :subject
+                  header        :header
+                  author        :author
+                  creator       :creator}
+                 & content] out]
+ (let [doc (new Document)]
+   (PdfWriter/getInstance
+     doc
+     (if (string? out) (new FileOutputStream out) out))
+   (.open doc)
+   (if (and left-margin right-margin top-margin bottom-margin)
+     (.setMargins doc
+       (float left-margin)
+       (float right-margin)
+       (float top-margin)
+       (float bottom-margin)))
+
+   (if title (.addTitle doc title))
+   (if subject (.addSubject doc subject))
+   (if header (.addHeader doc (first header) (second header)))
+   (if author (.addAuthor doc author))
+   (if creator (.addCreator doc creator))
+   (doseq [item content]
+     (.add doc (make-section item)))
+   (.close doc)))
