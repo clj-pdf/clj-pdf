@@ -1,5 +1,7 @@
 # A Library for easily generating PDFs from Clojure 
 
+NOTE: [iText](http://itextpdf.com/) is dual licensed under under GNU Affero General Public License version 3 and commercial licenses, making this lib AGPL3
+
 ## Usage
 
 write-doc will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
