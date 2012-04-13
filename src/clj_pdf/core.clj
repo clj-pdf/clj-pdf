@@ -24,20 +24,20 @@
              family  :family}]
   (new Font
        (condp = family
-         :courier   (Font/COURIER)
-         :helvetica (Font/HELVETICA)
-         :times-roman (Font/TIMES_ROMAN)
-         :symbol      (Font/SYMBOL)
-         :zapfdingbats (Font/ZAPFDINGBATS)
+         "courier"      (Font/COURIER)
+         "helvetica"    (Font/HELVETICA)
+         "times-roman"  (Font/TIMES_ROMAN)
+         "symbol"       (Font/SYMBOL)
+         "zapfdingbats" (Font/ZAPFDINGBATS)
          (Font/HELVETICA))
        (float (if size size 11))
        (condp = style
-         :bold (Font/BOLD)
-         :italic (Font/ITALIC)
-         :bold-italic (Font/BOLDITALIC)
-         :normal (Font/NORMAL)
-         :strikethru (Font/STRIKETHRU)
-         :underline (Font/UNDERLINE)
+         "bold"        (Font/BOLD)
+         "italic"      (Font/ITALIC)
+         "bold-italic" (Font/BOLDITALIC)
+         "normal"      (Font/NORMAL)
+         "strikethru"  (Font/STRIKETHRU)
+         "underline"   (Font/UNDERLINE)
          (Font/NORMAL))
        (if (and r g b)
          (new Color r g b)
@@ -126,7 +126,7 @@
         (float right-margin)
         (float top-margin)
         (float bottom-margin)))
-
+    
     (if title (.addTitle doc title))
     (if subject (.addSubject doc subject))
     (if header (.addHeader doc (first header) (second header)))
@@ -135,4 +135,5 @@
     (doseq [item content]
       (.add doc (make-section item)))
     (.close doc)))
+
 
