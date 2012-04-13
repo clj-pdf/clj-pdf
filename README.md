@@ -51,8 +51,6 @@ optional metadata:
 * :style font
 * :leading number
 
-    {:style {:size 15 :style :bold} :leading 20}
-
 content:
     
 iText idiosynchorsies:
