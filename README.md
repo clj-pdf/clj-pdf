@@ -93,12 +93,13 @@ content:
 * strings and chunks
 
 
-    [:phrase "some text here"]
+```
+     [:phrase "some text here"]
 
-    [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
+     [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
   
-    [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
-
+     [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+```
 
 #### Paragraph
 
@@ -135,9 +136,11 @@ content:
 * string
 * paragraph
 
+```
     [:chapter "First Chapter"]
 
     [:chapter [:paragraph "Second Chapter"]]
+```
 
 #### List
 
@@ -153,8 +156,9 @@ content:
 
 * strings, phrases, or chunks
 
+
 ```
-   [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
+    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 ```
 
 ### A complete example
