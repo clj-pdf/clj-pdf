@@ -20,9 +20,6 @@ All fields in the metadata section are optional:
      :creator "Jane Doe"
      :header ["inspired by" "William Shakespeare"]}
 
-### Document sections
-
-Each document section is represented by a vector starting with a keyword identifying the section followed by the contents of the section.
 
 #### Font
 
@@ -40,15 +37,23 @@ example font:
      :family :helvetica
      :color [0 234 123]}
 
+### Document sections
+
+Each document section is represented by a vector starting with a keyword identifying the section followed by an optional map of metadata and the contents of the section.
+
 
 #### Anchor
 
-An anchor can be a reference or a destination of a reference, it consists of the keyword :anchor followed by optional metadata and the content. The content consists of the following fields:
+tag :anchor
+
+optional metadata: 
 
 * :style font
 * :leading number
 
     {:style {:size 15 :style :bold} :leading 20}
+
+content:
     
 iText idiosynchorsies:
 
@@ -60,14 +65,18 @@ iText idiosynchorsies:
 ```
     [:anchor {:style {:size 15} :leading 20} "some anchor"]
     
-    [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
+    [:anchor [:phrase {:style :bold} "some anchor phrase"]]
     
-    [:anchor {} "plain anchor"]
+    [:anchor "plain anchor"]
 ```
 
 #### Chunk 
 
-Chunk is the smallest component, it consists of the keyword :chunk a font and the content string 
+tag :chunk
+
+optional metadata: 
+
+* :style font
 
 ```
    [:chunk {:style :bold} "small chunk of text"]
@@ -75,25 +84,40 @@ Chunk is the smallest component, it consists of the keyword :chunk a font and th
 
 #### Phrase
 
-A phrase consists of the keyword :phrase followed by the contents, the first item of contents is the font metadata (can be empty), followed by the rest of the contents, which can conist of chunks or strings:
+tag :phrase
 
-    [:phrase {} "some text here"]
+optional metadata: 
+
+* :style font
+
+content:
+
+* strings and chunks
+
+
+    [:phrase "some text here"]
 
     [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
   
     [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 
+
 #### Paragraph
 
-A paragraph consists of the keyword :paragraph followed by the metadata (can be empty) and the content which can consists of either a string or a phrase.
+tag :paragraph
 
-The metadata consists of the following fields
+optional metadata: 
 
 * :indent number
 * :keep-together boolean
 
+content:
+
+* string
+* phrase
+
 ```
-    [:paragraph {} "a fine paragraph"]
+    [:paragraph "a fine paragraph"]
     
     [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
@@ -102,22 +126,34 @@ The metadata consists of the following fields
 
 #### Chapter
 
-A chapter consists of the keyword :chapter and  title which can be either a string or a paragraph:
+tag :chapter
 
+optional metadata:
+
+* none
+
+content:
+
+* string
+* paragraph
 
     [:chapter "First Chapter"]
 
-    [:chapter [:paragraph {} "Second Chapter"]]
+    [:chapter [:paragraph "Second Chapter"]]
 
 #### List
 
-A list consists of the keyword :list followed by the metadata and the contents, the metadata can consist of the following, all omitable:
+tag :list
+
+optional metadata:
 
 * :numbered boolean
 * :lettered boolean
 * :roman    boolean
 
-the rest of the contents can be either strings, phrases, or chunks
+content:
+
+* strings, phrases, or chunks
 
 ```
    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
@@ -127,40 +163,40 @@ the rest of the contents can be either strings, phrases, or chunks
 
     (write-doc [{:title  "Test doc"
                  :left-margin   10
-                 :right-margin  10
+                 :right-margin  50
                  :top-margin    20
                  :bottom-margin 25
                  :subject "Some subject"
                  :author "John Doe"
                  :creator "Jane Doe"
                  :header ["inspired by" "William Shakespeare"]}
+                        
+            [:chapter "First Chapter"]
             
-                [:anchor {:style {:size 15} :leading 20} "some anchor"]
+            [:anchor {:style {:size 15} :leading 20} "some anchor"]
             
-                [:anchor {}  [:phrase {:style :bold} "some anchor phrase"]]
+            [:anchor [:phrase {:style :bold} "some anchor phrase"]]
             
-                [:anchor {} "plain anchor"]        
-                
-                [:chunk {:style :bold} "small chunk of text"]
+            [:anchor "plain anchor"]        
             
-                [:phrase {} "some text here"]
+            [:chunk {:style :bold} "small chunk of text"]
             
-                [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
+            [:phrase "some text here"]
             
-                [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+            [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
             
-                [:paragraph {} "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
+            [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
             
-                [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+            [:paragraph "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
             
-                [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
+            [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
             
-                [:chapter "First Chapter"]
+            [:chapter [:paragraph "Second Chapter"]]
             
-                [:chapter [:paragraph {} "Second Chapter"]]
-            
-                [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
-               "test.pdf")
+            [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+
+            [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
+           "test.pdf")
 
 
 # TODO:

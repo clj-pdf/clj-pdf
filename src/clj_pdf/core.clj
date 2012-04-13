@@ -43,7 +43,7 @@
          (new Color r g b)
          (new Color 0 0 0))))
 
-(defn- chapter [title] (new ChapterAutoNumber (make-section title)))
+(defn- chapter [_ title] (new ChapterAutoNumber (make-section title)))
 
 (defn- paragraph [{indent        :indent
                    keep-together :keep-together} content]
@@ -84,7 +84,11 @@
 (defn- make-section [element]
   (if (string? element)
     element
-    (let [[tag & content] element]
+    (let [[tag & content] element
+          params? (map? (first content))
+          params (if  params? (first content) {})
+          elements (if params? (rest content) content)]
+      
       (apply
         (condp = tag
           :anchor     anchor
@@ -94,8 +98,7 @@
           :list       li
           :paragraph  paragraph
           :phrase     phrase)
-        content))))
-
+        (cons params elements)))))
 
 (defn write-doc 
   "(write-doc document out) 
