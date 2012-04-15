@@ -98,7 +98,7 @@
     "tabloid"                   (PageSize/TABLOID)
     (PageSize/A4)))
 
-(defn page-orientation [page-size orientation]
+(defn- page-orientation [page-size orientation]
   (if page-size
     (condp = orientation
       "landscape"    (.rotate page-size)
