@@ -135,5 +135,3 @@
     (doseq [item content]
       (.add doc (make-section item)))
     (.close doc)))
-
-
