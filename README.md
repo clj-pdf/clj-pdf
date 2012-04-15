@@ -16,10 +16,69 @@ All fields in the metadata section are optional:
      :top-margin    20
      :bottom-margin 25
      :subject "Some subject"
+     :size          "a4"
+     :orientation   "landscape"
      :author "John Doe"
      :creator "Jane Doe"
      :header ["inspired by" "William Shakespeare"]}
 
+available page sizes:
+
+    "a0"                  
+    "a1"               
+    "a2"               
+    "a3"               
+    "a4"               
+    "a5"               
+    "a6"               
+    "a7"               
+    "a8"               
+    "a9"               
+    "a10"              
+    "arch-a"           
+    "arch-b"           
+    "arch-c"           
+    "arch-d"           
+    "arch-e"           
+    "b0"               
+    "b1"               
+    "b2"               
+    "b3"               
+    "b4"               
+    "b5"                   
+    "b6"                   
+    "b7"                   
+    "b8"                   
+    "b9"                   
+    "b10"                  
+    "crown-octavo"         
+    "crown-quarto"         
+    "demy-octavo"          
+    "demy-quarto"          
+    "executive"            
+    "flsa"                 
+    "flse"                 
+    "halfletter"           
+    "id-1"                 
+    "id-2"                 
+    "id-3"                 
+    "large-crown-octavo"   
+    "large-crown-quarto"   
+    "ledger"                  
+    "legal"                   
+    "letter"                  
+    "note"                    
+    "penguin-large-paperback" 
+    "penguin-small-paperback" 
+    "postcard"                
+    "royal-octavo"            
+    "royal-quarto"            
+    "small-paperback"         
+    "tabloid"
+    
+defaults to A4 page size if none provided
+
+orientation defaults to portrait, unless "landscape" is specified
 
 #### Font
 
