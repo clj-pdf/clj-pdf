@@ -204,7 +204,6 @@ content:
 # TODO:
 
 * support for images
-* page sizes
 * suggestions welcome :)
 
 
