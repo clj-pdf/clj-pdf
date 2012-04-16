@@ -237,6 +237,25 @@ metadata:
     [:table {:header "A header" :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
 ```
 
+#### Cell
+
+Cells can be optionally used inside tables to provide specific style for table elements
+
+tag :cell
+
+metadata:
+
+* :color `[r g b]` (int values)   
+
+content:
+
+Cell can contain any elements such as anchor, annotation, chunk, paragraph, or a phrase, which can each have their own style
+
+```
+    [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]]
+    [:cell {:color [100 10 200]} "bar1"]
+```
+
 ### A complete example
 
     (write-doc [{:title  "Test doc"
@@ -276,6 +295,15 @@ metadata:
             [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
             [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]]
+            
+            
+            [:table {:header "FOO" :cellSpacing 20 :header-color [100 100 100]} 
+             ["foo" 
+              [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+              "baz"] 
+             ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+             ["foo2" "bar2" "baz2"]]
+            
            "test.pdf")
 
 

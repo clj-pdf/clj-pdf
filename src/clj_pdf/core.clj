@@ -155,6 +155,20 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
+
+(defn- cell [element]  
+  (if (string? element) element
+    (let [meta? (map? (second element))
+          content (last element)
+          c (if (string? content) (new Cell content) (new Cell))]
+      
+      (if meta?
+        (let [[r g b] (:color (second element))]           
+          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))))
+      
+      (if (string? content) c (doto c (.addElement (make-section content)))))))
+
+
 (defn- table [{[r g b]    :color 
                [hr hg hb] :header-color
                spacing    :spacing 
@@ -180,7 +194,7 @@
       
       (doseq [row rows]        
         (doseq [column row]
-          (.addCell tbl column)))
+          (.addCell tbl (cell column))))
       tbl)))
 
 
@@ -198,6 +212,7 @@
           (condp = tag
             :anchor     anchor
             :annotation annotation
+            :cell       cell
             :chapter    chapter
             :chunk      text-chunk
             :list       li
