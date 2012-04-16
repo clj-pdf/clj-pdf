@@ -1,6 +1,6 @@
 # A Library for easily generating PDFs from Clojure 
 
-NOTE: [iText](http://itextpdf.com/) is dual licensed under under GNU Affero General Public License version 3 and commercial licenses, subsequently this library carries an AGPL3 license
+NOTE: [iText](http://itextpdf.com/) version 2.1.7 (the one used by this library) is licensed under LGPL, and thus clj-pdf is also licensed as such.
 
 ## Usage
 
