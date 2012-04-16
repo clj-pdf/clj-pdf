@@ -203,7 +203,8 @@
   ([meta element]
     (if (string? element)
       element
-      (let [[tag & content] element
+      (let [[element-name & content] element
+            tag (if (string? element-name) (keyword element-name) element-name)
             params? (map? (first content))
             params (if  params? (merge meta (first content)) meta)
             elements (if params? (rest content) content)]
