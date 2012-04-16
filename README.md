@@ -20,7 +20,9 @@ All fields in the metadata section are optional:
      :orientation   "landscape"
      :author "John Doe"
      :creator "Jane Doe"
-     :header ["inspired by" "William Shakespeare"]}
+     :doc-header ["inspired by" "William Shakespeare"]
+     :header "Page header text appears on each page"
+     :footer "Page footer text appears on each page (includes page number)"}
 
 available page sizes:
 
@@ -99,7 +101,6 @@ example font:
 ### Document sections
 
 Each document section is represented by a vector starting with a keyword identifying the section followed by an optional map of metadata and the contents of the section.
-
 
 #### Anchor
 
@@ -220,6 +221,22 @@ content:
     [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
 ```
 
+#### Table
+
+tag :table
+
+metadata:
+
+* :color  [r g b] (int values)   
+* :header-color [r g b] (int values)
+* :spacing number
+* :padding number
+* :header text
+
+```
+    [:table {:header "A header" :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+```
+
 ### A complete example
 
     (write-doc [{:title  "Test doc"
@@ -230,7 +247,9 @@ content:
         		     :subject "Some subject"
             		 :author "John Doe"
 		             :creator "Jane Doe"
-    		         :header ["inspired by" "William Shakespeare"]}
+    		         :doc-header ["inspired by" "William Shakespeare"]
+    		         :header "page header"
+                 :footer "page"}
             
             [:chapter "First Chapter"]
             

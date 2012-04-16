@@ -2,21 +2,25 @@
  (:import [com.lowagie.text
            Anchor
            Annotation
+           Cell
            ChapterAutoNumber
            Chunk
            Document
            Font
+           HeaderFooter
            List
            ListItem
            PageSize
            Paragraph
            Phrase
-           RomanList]
-          java.awt.Color
+           RomanList
+           Table]
           com.lowagie.text.pdf.PdfWriter
+          java.awt.Color          
           java.io.FileOutputStream))
 
 (declare make-section)
+
 
 (defn font [{style   :style
              size    :size
@@ -42,6 +46,7 @@
        (if (and r g b)
          (new Color r g b)
          (new Color 0 0 0))))
+
 
 (defn- page-size [size]
   (condp = size
@@ -98,13 +103,16 @@
     "tabloid"                   (PageSize/TABLOID)
     (PageSize/A4)))
 
+
 (defn- page-orientation [page-size orientation]
   (if page-size
     (condp = orientation
       "landscape"    (.rotate page-size)
       page-size)))
 
+
 (defn- chapter [_ title] (new ChapterAutoNumber (make-section title)))
+
 
 (defn- paragraph [{indent        :indent
                    keep-together :keep-together} content]
@@ -112,6 +120,7 @@
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     paragraph))
+
 
 (defn- li [{numbered :numbered
             lettered :lettered
@@ -123,16 +132,20 @@
       (.add list (new ListItem (make-section item))))
     list))
 
+
 (defn- phrase
   [font-style & content]
   (doto (new Phrase) 
     (.setFont (font font-style))
     (.addAll (map make-section content))))
 
+
 (defn- text-chunk [font-style content]
   (new Chunk (make-section content) (font font-style)))
 
+
 (defn- annotation [title text] (new Annotation title text))
+
 
 (defn- anchor [{style   :style
                 leading :leading} 
@@ -142,24 +155,57 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
-(defn- make-section [element]
-  (if (string? element)
-    element
-    (let [[tag & content] element
-          params? (map? (first content))
-          params (if  params? (first content) {})
-          elements (if params? (rest content) content)]
+(defn- table [{[r g b]    :color 
+               [hr hg hb] :header-color
+               spacing    :spacing 
+               padding    :padding
+               header     :header} & rows]
+  
+  (when rows
+    (let [cols  (count (first rows))
+          tbl   (new Table cols (count rows))]
       
-      (apply
-        (condp = tag
-          :anchor     anchor
-          :annotation annotation
-          :chapter    chapter
-          :chunk      text-chunk
-          :list       li
-          :paragraph  paragraph
-          :phrase     phrase)
-        (cons params elements)))))
+      (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
+      (.setPadding tbl (if padding (float padding) (float 3)))
+      (if spacing (.setSpacing tbl (float spacing)))
+      (if header 
+        (let [header-cell (doto (new Cell header)
+                            (.setHorizontalAlignment 1)
+                            (.setHeader true)
+                            (.setColspan cols))]
+          (when (and hr hg hb) 
+            (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
+          (.addCell tbl header-cell))
+        (.endHeaders tbl))
+      
+      (doseq [row rows]        
+        (doseq [column row]
+          (.addCell tbl column)))
+      tbl)))
+
+
+(defn- make-section
+  ([element] (make-section {} element))
+  ([meta element]
+    (if (string? element)
+      element
+      (let [[tag & content] element
+            params? (map? (first content))
+            params (if  params? (merge meta (first content)) meta)
+            elements (if params? (rest content) content)]
+        
+        (apply
+          (condp = tag
+            :anchor     anchor
+            :annotation annotation
+            :chapter    chapter
+            :chunk      text-chunk
+            :list       li
+            :paragraph  paragraph            
+            :phrase     phrase
+            :table      table)
+          (cons params elements))))))
+
 
 (defn write-doc 
   "(write-doc document out) 
@@ -171,8 +217,11 @@
      top-margin    :top-margin
      bottom-margin :bottom-margin
      title         :title
+     style         :style
      subject       :subject
+     [nom head]    :doc-header
      header        :header
+     footer        :footer
      author        :author
      creator       :creator
      size          :size
@@ -192,9 +241,13 @@
     
     (if title (.addTitle doc title))
     (if subject (.addSubject doc subject))
-    (if header (.addHeader doc (first header) (second header)))
+    (if (and nom head) (.addHeader doc nom head))
     (if author (.addAuthor doc author))
     (if creator (.addCreator doc creator))
+    (if header (.setHeader doc (new HeaderFooter (new Phrase header) false)))
+    (if footer (.setFooter doc 
+                 (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true) (.setAlignment 2))))  
     (doseq [item content]
-      (.add doc (make-section item)))
+      (if-let [section (make-section {:style style} item)] 
+        (.add doc section)))
     (.close doc)))
