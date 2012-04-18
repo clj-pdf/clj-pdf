@@ -1,23 +1,25 @@
 (ns clj-pdf.core
- (:import [com.lowagie.text
-           Anchor
-           Annotation
-           Cell
-           ChapterAutoNumber
-           Chunk
-           Document
-           Font
-           HeaderFooter
-           List
-           ListItem
-           PageSize
-           Paragraph
-           Phrase
-           RomanList
-           Table]
-          com.lowagie.text.pdf.PdfWriter
-          java.awt.Color          
-          java.io.FileOutputStream))
+  (:require [clj_pdf.charting :as charting])
+  (:import [com.lowagie.text
+            Anchor
+            Annotation
+            Cell
+            ChapterAutoNumber
+            Chunk
+            Document
+            Font
+            HeaderFooter
+            Image
+            List
+            ListItem
+            PageSize
+            Paragraph
+            Phrase
+            RomanList
+            Table]
+           com.lowagie.text.pdf.PdfWriter
+           java.awt.Color          
+           java.io.FileOutputStream))
 
 (declare make-section)
 
@@ -197,6 +199,8 @@
           (.addCell tbl (cell column))))
       tbl)))
 
+(defn- chart [& params]
+  (Image/getInstance (apply charting/chart params) nil))
 
 (defn- make-section
   ([element] (make-section {} element))
@@ -215,6 +219,7 @@
             :annotation annotation
             :cell       cell
             :chapter    chapter
+            :chart      chart
             :chunk      text-chunk
             :list       li
             :paragraph  paragraph            
@@ -243,7 +248,9 @@
      size          :size
      orientation   :orientation}
     & content] out]
-    (let [doc (new Document (page-orientation (page-size size) orientation))]
+    (let [doc (new Document (page-orientation (page-size size) orientation))
+          width  (.. doc getPageSize getWidth)
+          height (.. doc getPageSize getHeight)]
     (PdfWriter/getInstance
       doc
       (if (string? out) (new FileOutputStream out) out))
@@ -267,6 +274,6 @@
                    (.setBorder 0)
                    (.setAlignment 2))))  
     (doseq [item content]
-      (if-let [section (make-section {:style style} item)] 
+      (if-let [section (make-section {:style style :width width :height height} item)] 
         (.add doc section)))
     (.close doc)))
