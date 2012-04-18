@@ -260,9 +260,12 @@
     (if (and nom head) (.addHeader doc nom head))
     (if author (.addAuthor doc author))
     (if creator (.addCreator doc creator))
-    (if header (.setHeader doc (new HeaderFooter (new Phrase header) false)))
+    (if header (.setHeader doc (doto (new HeaderFooter (new Phrase header) false)
+                                 (.setBorderWidthTop 0))))
     (if footer (.setFooter doc 
-                 (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true) (.setAlignment 2))))  
+                 (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+                   (.setBorder 0)
+                   (.setAlignment 2))))  
     (doseq [item content]
       (if-let [section (make-section {:style style} item)] 
         (.add doc section)))
