@@ -42,4 +42,4 @@
       "bar-chart"  (apply bar-chart params items)
       "pie-chart"  (apply pie-chart params items)
       "line-chart" (apply line-chart params items))
-    (int (* (:width params) 0.9)) (int (* (:height params) 0.9))))
+    1000 1000))

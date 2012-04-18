@@ -199,8 +199,12 @@
           (.addCell tbl (cell column))))
       tbl)))
 
-(defn- chart [& params]
-  (Image/getInstance (apply charting/chart params) nil))
+(defn- chart [& params]  
+  (let [width (:width (first params))
+        height (:height (first params))] 
+    (doto (Image/getInstance (apply charting/chart params) nil)
+      (.scaleToFit  (float (* width 0.9)) (float (* height 0.9)))    
+      (.setDpi 300 300))))
 
 (defn- make-section
   ([element] (make-section {} element))
