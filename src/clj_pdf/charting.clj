@@ -15,7 +15,7 @@
   (let [dataset (new DefaultCategoryDataset)]
     (doseq [[val name] data]
       (.setValue dataset (double val) y-label name))
-    (let [chart (ChartFactory/createBarChart title x-label y-label dataset PlotOrientation/VERTICAL false true false)]       
+    (let [chart (ChartFactory/createBarChart title x-label y-label dataset PlotOrientation/VERTICAL true true false)]       
       (.. chart getCategoryPlot getRenderer (setBarPainter (new StandardBarPainter)))
       chart)))
 
