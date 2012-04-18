@@ -256,20 +256,77 @@ Cell can contain any elements such as anchor, annotation, chunk, paragraph, or a
     [:cell {:color [100 10 200]} "bar1"]
 ```
 
+### Charting
+
+tag :chart
+
+metadata:
+
+* :type        - bar-chart, line-chart, pie-chart
+* :x-label     - only used for line and bar charts
+* :y-label     - only used for line and bar charts
+* :time-series - only used in line chart
+* :title  
+
+#### bar chart
+```
+    [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
+```
+
+#### pie chart
+```
+    [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
+```
+
+#### line chart
+
+if :time-series is set to true then items on x axis must be dates in the following format: "yyyy-MM-dd-HH:mm:ss"
+
+```
+    [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+      ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
+      ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
+```
+
+```
+    ["chart",
+     {:x-label "time"
+      :y-label "progress"
+      :time-series true
+      :title   "Time Chart"
+      :type    "line-chart"}
+      ["Incidents"
+        ["2011-01-03-11:20:11" 200] 
+        ["2011-02-11-22:25:01" 400] 
+        ["2011-04-02-09:35:10" 350] 
+        ["2011-07-06-12:20:07" 600]]]
+``` 
+
+
+
 ### A complete example
 
     (write-doc [{:title  "Test doc"
-                 :left-margin   10
-                 :right-margin  50
-		             :top-margin    20
-    		         :bottom-margin 25
-        		     :subject "Some subject"
-            		 :author "John Doe"
-		             :creator "Jane Doe"
-    		         :doc-header ["inspired by" "William Shakespeare"]
-    		         :header "page header"
-                 :footer "page"}
+             :left-margin   10
+             :right-margin  50
+             :top-margin    20
+             :bottom-margin 25
+             :size          "a4"
+             ;:orientation   "landscape"
+             :subject "Some subject"
+             :author "John Doe"
+             :creator "Jane Doe"
+             :doc-header ["inspired by" "William Shakespeare"]
+             :header "page header"
+             :footer "page"
+             }
             
+            [:table {:header "FOO" :cellSpacing 20 :header-color [100 100 100]} 
+             ["foo" 
+              [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+              "baz"] 
+             ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+             ["foo2" "bar2" "baz2"]]            
             [:chapter "First Chapter"]
             
             [:anchor {:style {:size 15} :leading 20} "some anchor"]
@@ -294,15 +351,24 @@ Cell can contain any elements such as anchor, annotation, chunk, paragraph, or a
             
             [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
-            [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]]
+            [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
             
+            [:chapter "Charts"]            
+            [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
             
-            [:table {:header "FOO" :cellSpacing 20 :header-color [100 100 100]} 
-             ["foo" 
-              [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
-              "baz"] 
-             ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-             ["foo2" "bar2" "baz2"]]
+            [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+             ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
+             ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]            
+            
+            [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
+            
+            [:chart {:type "line-chart" :time-series true :title "Time Chart" :x-label "time" :y-label "progress"}
+             ["Incidents"
+              ["2011-01-03-11:20:11" 200] 
+              ["2011-01-03-11:25:11" 400] 
+              ["2011-01-03-11:35:11" 350] 
+              ["2011-01-03-12:20:11" 600]]]
+            ]
             
            "test.pdf")
 

@@ -1,10 +1,11 @@
-(ns clj_pdf.charting
+(ns clj_pdf.charting  
   (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart]
             [org.jfree.chart.plot CategoryPlot PlotOrientation]
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
             org.jfree.data.category.DefaultCategoryDataset
             org.jfree.data.general.DefaultPieDataset
-            org.jfree.chart.renderer.category.StandardBarPainter
+            org.jfree.chart.renderer.category.StandardBarPainter            
+            java.text.SimpleDateFormat
             java.awt.Image
             [javax.swing JLabel JFrame ]))
 
@@ -25,16 +26,24 @@
       (.setValue dataset name (double value)))
     (ChartFactory/createPieChart title dataset true true false)))
 
-(defn- line-chart [{title :title
+(defn- line-chart [{title   :title
+                    time?   :time-series
                     x-label :x-label
                     y-label :y-label} & data]
-  (let [dataset (new XYSeriesCollection)]
+  (let [dataset   (new XYSeriesCollection)
+        formatter (if time? (new SimpleDateFormat "yyyy-MM-dd-HH:mm:ss"))]
     (doseq [[series-title & points] data]
       (let [series (new XYSeries series-title)]
         (doseq [[x y] points]
-          (.add series (double x) (double y)))
+          (.add series 
+            (if time? (.. formatter (parse x) getTime) (double x)) 
+            (double y)))
         (.addSeries dataset series)))
-    (ChartFactory/createXYLineChart title x-label y-label dataset PlotOrientation/VERTICAL true true false)))
+    (if time?
+      (let [chart (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)]
+        (.. chart getPlot getDomainAxis (setDateFormatOverride formatter))
+        chart)
+      (ChartFactory/createXYLineChart title x-label y-label dataset PlotOrientation/VERTICAL true true false))))
 
 (defn chart [params & items]
   (.createBufferedImage
@@ -42,4 +51,4 @@
       "bar-chart"  (apply bar-chart params items)
       "pie-chart"  (apply pie-chart params items)
       "line-chart" (apply line-chart params items))
-    1000 1000))
+    (* 1.5 (:width params)) (* 1.5 (:height params))))
