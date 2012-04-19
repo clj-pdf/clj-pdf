@@ -267,6 +267,7 @@ metadata:
 * :y-label     - only used for line and bar charts
 * :time-series - only used in line chart
 * :time-format - can optionally be used with time-series to provide custom date formatting
+* :horizontal  - can be used with bar charts and line charts, not supported by time series
 * :title  
 
 #### bar chart
