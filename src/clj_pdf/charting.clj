@@ -28,10 +28,12 @@
 
 (defn- line-chart [{title   :title
                     time?   :time-series
+                    format  :time-format 
                     x-label :x-label
                     y-label :y-label} & data]
   (let [dataset   (new XYSeriesCollection)
-        formatter (if time? (new SimpleDateFormat "yyyy-MM-dd-HH:mm:ss"))]
+        formatter (if time? (new SimpleDateFormat 
+                                 (or format "yyyy-MM-dd-HH:mm:ss")))]
     (doseq [[series-title & points] data]
       (let [series (new XYSeries series-title)]
         (doseq [[x y] points]

@@ -266,6 +266,7 @@ metadata:
 * :x-label     - only used for line and bar charts
 * :y-label     - only used for line and bar charts
 * :time-series - only used in line chart
+* :time-format - can optionally be used with time-series to provide custom date formatting
 * :title  
 
 #### bar chart
@@ -280,7 +281,7 @@ metadata:
 
 #### line chart
 
-if :time-series is set to true then items on x axis must be dates in the following format: "yyyy-MM-dd-HH:mm:ss"
+if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss"
 
 ```
     [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
@@ -302,7 +303,15 @@ if :time-series is set to true then items on x axis must be dates in the followi
         ["2011-07-06-12:20:07" 600]]]
 ``` 
 
-
+```
+    [:chart {:type "line-chart" 
+             :time-series true 
+             :time-format "MM/yy"
+             :title "Time Chart" 
+             :x-label "time" 
+             :y-label "progress"}
+      ["Occurances" ["01/11" 200] ["02/12" 400] ["05/12" 350] ["11/13" 600]]]
+```
 
 ### A complete example
 
