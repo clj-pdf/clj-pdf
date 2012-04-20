@@ -258,6 +258,16 @@
     (PdfWriter/getInstance
       doc
       (if (string? out) (new FileOutputStream out) out))
+    
+    ;header and footer must be set before the doc is opened, or itext will not put them on the first page!
+    (if header (.setHeader doc (doto (new HeaderFooter (new Phrase header) false)
+                                 (.setBorderWidthTop 0))))
+    
+    (if footer (.setFooter doc 
+                 (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+                   (.setBorder 0)
+                   (.setAlignment 2))))
+    
     (.open doc)
     (if (and left-margin right-margin top-margin bottom-margin)
       (.setMargins doc
@@ -271,13 +281,10 @@
     (if (and nom head) (.addHeader doc nom head))
     (if author (.addAuthor doc author))
     (if creator (.addCreator doc creator))
-    (if header (.setHeader doc (doto (new HeaderFooter (new Phrase header) false)
-                                 (.setBorderWidthTop 0))))
-    (if footer (.setFooter doc 
-                 (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
-                   (.setBorder 0)
-                   (.setAlignment 2))))  
+    
+      
     (doseq [item content]
       (if-let [section (make-section {:style style :width width :height height} item)] 
         (.add doc section)))
     (.close doc)))
+    
