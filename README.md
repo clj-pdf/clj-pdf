@@ -20,6 +20,7 @@ All fields in the metadata section are optional:
      :orientation   "landscape"
      :author "John Doe"
      :creator "Jane Doe"
+     :font  {:size 11} ;specifies default font that will be used by top level elements
      :doc-header ["inspired by" "William Shakespeare"]
      :header "Page header text appears on each page"
      :footer "Page footer text appears on each page (includes page number)"}
@@ -200,6 +201,20 @@ content:
     [:chapter "First Chapter"]
 
     [:chapter [:paragraph "Second Chapter"]]
+```
+
+#### Heading
+
+tag :heading
+
+optional metadata:
+
+* :heading-style specifies the font for the heading
+
+```
+    [:heading "Lorem Ipsum"]
+    
+    [:heading {:heading-style {:size 15}} "Lorem Ipsum"]
 ```
 
 #### List

@@ -1,4 +1,5 @@
 (ns clj-pdf.core
+  (:use [clojure.set :only (rename-keys)]) 
   (:require [clj_pdf.charting :as charting])
   (:import [com.lowagie.text
             Anchor
@@ -24,7 +25,8 @@
 (declare make-section)
 
 
-(defn font [{style   :style
+(defn font   
+  [{style   :style
              size    :size
              [r g b] :color
              family  :family}]
@@ -115,10 +117,18 @@
 
 (defn- chapter [_ title] (new ChapterAutoNumber (make-section title)))
 
+(defn- heading [meta & content]
+  (let [style (if (contains? meta :heading-style) 
+                (rename-keys meta {:heading-style :style})
+                {:style {:size 18 :style "bold"}})]     
+    (make-section (into [:paragraph style] content))))
 
 (defn- paragraph [{indent        :indent
+                   style         :style
                    keep-together :keep-together} content]
-  (let [paragraph (new Paragraph (make-section content))]
+  (let [paragraph (if style
+                    (new Paragraph (make-section content) (font style))
+                    (new Paragraph (make-section content)))]
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     paragraph))
@@ -157,7 +167,6 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
-
 (defn- cell [element]  
   (if (string? element) element
     (let [meta? (map? (second element))
@@ -169,8 +178,7 @@
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))))
       
       (if (string? content) c (doto c (.addElement (make-section content)))))))
-
-
+      
 (defn- table [{[r g b]    :color 
                [hr hg hb] :header-color
                spacing    :spacing 
@@ -204,7 +212,7 @@
         height (:height (first params))] 
     (doto (Image/getInstance (apply charting/chart params) nil)
       (.scaleToFit  (float (* width 0.9)) (float (* height 0.9)))    
-      (.setDpi 300 300))))
+      (.setDpi 150 150))))
 
 (defn- make-section
   ([element] (make-section {} element))
@@ -225,6 +233,7 @@
             :chapter    chapter
             :chart      chart
             :chunk      text-chunk
+            :heading    heading
             :list       li
             :paragraph  paragraph            
             :phrase     phrase
@@ -250,6 +259,7 @@
      author        :author
      creator       :creator
      size          :size
+     font-style    :font
      orientation   :orientation}
     & content] out]
     (let [doc (new Document (page-orientation (page-size size) orientation))
@@ -284,7 +294,7 @@
     
       
     (doseq [item content]
-      (if-let [section (make-section {:style style :width width :height height} item)] 
+      (if-let [section (make-section {:style font-style :width width :height height} item)] 
         (.add doc section)))
     (.close doc)))
-    
+
