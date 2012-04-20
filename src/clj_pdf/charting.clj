@@ -60,4 +60,4 @@
       "bar-chart"  (apply bar-chart params items)
       "pie-chart"  (apply pie-chart params items)
       "line-chart" (apply line-chart params items))
-    (* 1.5 (:width params)) (* 1.5 (:height params))))
+    (* 1.3 (:width params)) (* 1.3 (:height params))))
