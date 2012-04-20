@@ -40,6 +40,12 @@
 (deftest table 
   (eq? 
     [{} 
+     [:table {:header ["Row 1" "Row 2" "Row 3"] :header-color [100 100 100]} 
+      ["foo" 
+       [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+       "baz"] 
+      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+      ["foo2" "bar2" "baz2"]]
      [:table {:header "FOO" :cellSpacing 20 :header-color [100 100 100]} 
       ["foo" 
        [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
@@ -108,3 +114,6 @@
   (eq? [{} [:heading "Lorem Ipsum"]    
        [:heading {:heading-style {:size 15}} "Lorem Ipsum"]]
       "heading.pdf"))
+
+
+

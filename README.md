@@ -246,10 +246,12 @@ metadata:
 * :header-color `[r g b]` (int values)
 * :spacing number
 * :padding number
-* :header text
+* :header can be either a string which will have colspan of 3 or a vector of strings, which specify the headers for each column
 
 ```
     [:table {:header "A header" :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+    
+    [:table {:header ["Row 1" "Row 2" "Row 3"] :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
 ```
 
 #### Cell

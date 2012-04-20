@@ -192,14 +192,23 @@
       (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
       (.setPadding tbl (if padding (float padding) (float 3)))
       (if spacing (.setSpacing tbl (float spacing)))
-      (if header 
-        (let [header-cell (doto (new Cell header)
-                            (.setHorizontalAlignment 1)
-                            (.setHeader true)
-                            (.setColspan cols))]
-          (when (and hr hg hb) 
-            (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
-          (.addCell tbl header-cell))
+      (if header
+        (cond
+          (string? header) 
+          (let [header-cell (doto (new Cell header)
+                              (.setHorizontalAlignment 1)
+                              (.setHeader true)
+                              (.setColspan cols))]
+            (when (and hr hg hb) 
+              (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
+            (.addCell tbl header-cell))
+          
+          (vector? header)
+          (doseq [h header]
+            (let [header-cell (doto (new Cell h) (.setHeader true))]
+              (when (and hr hg hb)
+                (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
+              (.addCell tbl header-cell))))
         (.endHeaders tbl))
       
       (doseq [row rows]        
@@ -297,4 +306,3 @@
       (if-let [section (make-section {:style font-style :width width :height height} item)] 
         (.add doc section)))
     (.close doc)))
-
