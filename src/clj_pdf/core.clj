@@ -174,13 +174,40 @@
           c (if (string? content) (new Cell content) (new Cell))]
       
       (if meta?
-        (let [[r g b] (:color (second element))]           
-          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))))
+        (let [{[r g b] :color
+               colspan :colspan
+               rowspan :rowspan} (second element)]           
+          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+          (if rowspan (.setRowspan c))
+          (if colspan (.setColspan c))))
       
       (if (string? content) c (doto c (.addElement (make-section content)))))))
-      
-(defn- table [{[r g b]    :color 
-               [hr hg hb] :header-color
+
+(defn- table-header [tbl header cols]
+  (when header
+    (let [meta? (map? (first header))
+          [r g b] (if meta? (:color (first header)))
+          header-data (if meta? (rest header) header)] 
+      (if (= 1 (count header-data))         
+        (let [header-cell (doto (new Cell (first header-data))
+                            (.setHorizontalAlignment 1)
+                            (.setHeader true)
+                            (.setColspan cols))]
+          (when (and r g b) 
+            (.setBackgroundColor header-cell (new Color (int r) (int g) (int b))))
+          (.addCell tbl header-cell))
+                
+        (doseq [h header-data]
+          (let [header-cell (doto (new Cell h) (.setHeader true))]
+            (when (and r g b)
+              (.setBackgroundColor header-cell (new Color (int r) (int g) (int b))))
+            (.addCell tbl header-cell)))))
+    (.endHeaders tbl)))
+
+(let [[r g b] nil]
+  (println r g b))
+
+(defn- table [{[r g b]    :color       
                spacing    :spacing 
                padding    :padding
                header     :header} & rows]
@@ -192,24 +219,7 @@
       (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
       (.setPadding tbl (if padding (float padding) (float 3)))
       (if spacing (.setSpacing tbl (float spacing)))
-      (if header
-        (cond
-          (string? header) 
-          (let [header-cell (doto (new Cell header)
-                              (.setHorizontalAlignment 1)
-                              (.setHeader true)
-                              (.setColspan cols))]
-            (when (and hr hg hb) 
-              (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
-            (.addCell tbl header-cell))
-          
-          (vector? header)
-          (doseq [h header]
-            (let [header-cell (doto (new Cell h) (.setHeader true))]
-              (when (and hr hg hb)
-                (.setBackgroundColor header-cell (new Color (int hr) (int hg) (int hb))))
-              (.addCell tbl header-cell))))
-        (.endHeaders tbl))
+      (table-header tbl header cols)
       
       (doseq [row rows]        
         (doseq [column row]
