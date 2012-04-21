@@ -14,8 +14,7 @@
   (re/replace #"\[(.*?)\]" "")))
 
 (defn eq? [doc1 doc2]
-  (spit doc2 (fix-pdf (doc-to-str doc1)))
-  #_ (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
+  (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
 
 
 (deftest doc-meta
