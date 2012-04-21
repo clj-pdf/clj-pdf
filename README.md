@@ -246,12 +246,19 @@ metadata:
 * :header-color `[r g b]` (int values)
 * :spacing number
 * :padding number
-* :header can be either a string which will have colspan of 3 or a vector of strings, which specify the headers for each column
+* :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
 ```
-    [:table {:header "A header" :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
-    
-    [:table {:header ["Row 1" "Row 2" "Row 3"] :header-color [100 100 100]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+    [:table {:header ["Row 1" "Row 2" "Row 3"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+            
+     [:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+     
+     [:table {:header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
+      ["foo" 
+       [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+       "baz"] 
+      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+      ["foo2" "bar2" "baz2"]]
 ```
 
 #### Cell

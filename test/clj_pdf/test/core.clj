@@ -41,14 +41,14 @@
     [{} 
      [:table {:header ["Row 1" "Row 2" "Row 3"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
             
-            [:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
-
-            [:table {:header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
-             ["foo" 
-              [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
-              "baz"] 
-             ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-             ["foo2" "bar2" "baz2"]]]
+     [:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+     
+     [:table {:header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
+      ["foo" 
+       [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+       "baz"] 
+      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+      ["foo2" "bar2" "baz2"]]]
     "table.pdf"))
 
 (deftest chapter
