@@ -249,7 +249,7 @@ metadata:
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
 ```
-    [:table {:header ["Row 1" "Row 2" "Row 3"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+    [:table {:header ["Row 1" "Row 2" "Row 3"]} [[:cell {:colspan 2} "Foo"] "Bar"] ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
             
      [:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
      
@@ -270,12 +270,16 @@ tag :cell
 metadata:
 
 * :color `[r g b]` (int values)   
+* :colspan number
+* :rowspan number
 
 content:
 
 Cell can contain any elements such as anchor, annotation, chunk, paragraph, or a phrase, which can each have their own style
 
 ```
+    [:cell {:colspan 2} "Foo"]
+    [:cell {:colspan 3 :rowspan 2} "Foo"]
     [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]]
     [:cell {:color [100 10 200]} "bar1"]
 ```

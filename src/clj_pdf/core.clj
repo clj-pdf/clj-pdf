@@ -176,11 +176,11 @@
       (if meta?
         (let [{[r g b] :color
                colspan :colspan
-               rowspan :rowspan} (second element)]           
+               rowspan :rowspan} (second element)]
+          
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
-          (if rowspan (.setRowspan c))
-          (if colspan (.setColspan c))))
-      
+          (if rowspan (.setRowspan c (int rowspan)))
+          (if colspan (.setColspan c (int colspan)))))      
       (if (string? content) c (doto c (.addElement (make-section content)))))))
 
 (defn- table-header [tbl header cols]
@@ -204,16 +204,13 @@
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
 
-(let [[r g b] nil]
-  (println r g b))
-
 (defn- table [{[r g b]    :color       
                spacing    :spacing 
                padding    :padding
                header     :header} & rows]
   
   (when rows
-    (let [cols  (count (first rows))
+    (let [cols  (apply max (map count rows))
           tbl   (new Table cols (count rows))]
       
       (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
