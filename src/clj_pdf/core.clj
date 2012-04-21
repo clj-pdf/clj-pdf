@@ -187,8 +187,7 @@
 
 (defn- table-header [tbl header cols]
   (when header
-    (let [meta? (map? (first header))
-          
+    (let [meta? (map? (first header))          
           header-data (if meta? (rest header) header)          
           set-bg #(if-let [[r g b] (if meta? (:color (first header)))] 
                     (doto % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)] 
