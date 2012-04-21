@@ -9,6 +9,7 @@
             Chunk
             Document
             Font
+	    GreekList
             HeaderFooter
             Image
             List
@@ -17,7 +18,9 @@
             Paragraph
             Phrase
             RomanList
-            Table]
+            Table
+	    ZapfDingbatsList
+	    ZapfDingbatsNumberList]
            com.lowagie.text.pdf.PdfWriter
            java.awt.Color          
            java.io.FileOutputStream))
@@ -134,12 +137,21 @@
     paragraph))
 
 
-(defn- li [{numbered :numbered
-            lettered :lettered
-            roman    :roman}
+(defn- li [{numbered                :numbered
+            lettered                :lettered
+            roman                   :roman
+            greek                   :greek
+            dingbats                :dingbats
+            dingbats-char-num       :dingbats-char-num
+            dingbatsnumber          :dingbatsnumber
+            dingbatsnumber-type     :dingbatsnumber-type}
            & items]
-  (let [list (if roman (new RomanList)
-               (new List (or numbered false) (or lettered false)))]
+  (let [list (cond
+                roman           (new RomanList)
+                greek           (new GreekList)
+                dingbats        (new ZapfDingbatsList dingbats-char-num)
+                dingbatsnumber  (new ZapfDingbatsNumberList dingbatsnumber-type)
+                :else (new List (or numbered false) (or lettered false)))]
     (doseq [item items]
       (.add list (new ListItem (make-section item))))
     list))
