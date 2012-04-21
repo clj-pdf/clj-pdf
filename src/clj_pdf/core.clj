@@ -183,24 +183,28 @@
           (if colspan (.setColspan c (int colspan)))))      
       (if (string? content) c (doto c (.addElement (make-section content)))))))
 
+
+
 (defn- table-header [tbl header cols]
   (when header
     (let [meta? (map? (first header))
-          [r g b] (if meta? (:color (first header)))
-          header-data (if meta? (rest header) header)] 
+          
+          header-data (if meta? (rest header) header)          
+          set-bg #(if-let [[r g b] (if meta? (:color (first header)))] 
+                    (doto % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)] 
       (if (= 1 (count header-data))         
-        (let [header-cell (doto (new Cell (first header-data))
+        (let [header-text (make-section [:chunk {:style "bold"} (first header-data)])
+              header-cell (doto (new Cell header-text)
                             (.setHorizontalAlignment 1)
                             (.setHeader true)
                             (.setColspan cols))]
-          (when (and r g b) 
-            (.setBackgroundColor header-cell (new Color (int r) (int g) (int b))))
+          (set-bg header-cell)          
           (.addCell tbl header-cell))
                 
         (doseq [h header-data]
-          (let [header-cell (doto (new Cell h) (.setHeader true))]
-            (when (and r g b)
-              (.setBackgroundColor header-cell (new Color (int r) (int g) (int b))))
+          (let [header-text (make-section [:chunk {:style "bold"} h])
+                header-cell (doto (new Cell header-text) (.setHeader true))]
+            (set-bg header-cell)
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
 
