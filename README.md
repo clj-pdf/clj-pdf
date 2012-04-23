@@ -246,6 +246,7 @@ metadata:
 * :header [{:color [r g b]} "column name" ...] if only a single column name is provided it will span all rows
 * :spacing number
 * :padding number
+* :border boolean
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
 ```

@@ -16,6 +16,7 @@
             PageSize
             Paragraph
             Phrase
+            Rectangle
             RomanList
             Table]
            com.lowagie.text.pdf.PdfWriter
@@ -208,24 +209,30 @@
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
 
+
 (defn- table [{[r g b]    :color       
                spacing    :spacing 
                padding    :padding
-               header     :header} & rows]
-  
-  (when rows
-    (let [cols  (apply max (map count rows))
-          tbl   (new Table cols (count rows))]
+               header     :header
+               border     :border} & rows]
+  (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
+  (let [cols  (apply max (map count rows))
+        tbl   (new Table cols (count rows))]
+        
+    (when (= false border)       
+      (.setBorder tbl Rectangle/NO_BORDER)
+      (.setDefaultCell tbl (doto (new Cell) (.setBorder Rectangle/NO_BORDER))))
+    
+    (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
+    (.setPadding tbl (if padding (float padding) (float 3)))
+    (if spacing (.setSpacing tbl (float spacing)))
+    (table-header tbl header cols)
       
-      (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
-      (.setPadding tbl (if padding (float padding) (float 3)))
-      (if spacing (.setSpacing tbl (float spacing)))
-      (table-header tbl header cols)
+    (doseq [row rows]        
+      (doseq [column row]
+        (.addCell tbl (cell column))))
+    tbl))
       
-      (doseq [row rows]        
-        (doseq [column row]
-          (.addCell tbl (cell column))))
-      tbl)))
 
 (defn- chart [& params]  
   (let [width (:width (first params))
