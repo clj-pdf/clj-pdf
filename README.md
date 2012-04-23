@@ -277,11 +277,14 @@ content:
 
 Cell can contain any elements such as anchor, annotation, chunk, paragraph, or a phrase, which can each have their own style
 
+note: Cells can contain other elements including tables
+
 ```
     [:cell {:colspan 2} "Foo"]
     [:cell {:colspan 3 :rowspan 2} "Foo"]
     [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]]
     [:cell {:color [100 10 200]} "bar1"]
+    [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]
 ```
 
 ### Charting
@@ -365,7 +368,8 @@ if :time-series is set to true then items on x axis must be dates, the default f
           [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
           "baz"] 
          ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-         ["foo2" "bar2" "baz2"]]            
+         ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]]    
+                 
         [:chapter "First Chapter"]
 
         [:anchor {:style {:size 15} :leading 20} "some anchor"]

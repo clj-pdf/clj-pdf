@@ -167,8 +167,10 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
+
 (defn- cell [element]  
-  (if (string? element) element
+  (if (string? element) 
+    element
     (let [meta? (map? (second element))
           content (last element)
           c (if (string? content) (new Cell content) (new Cell))]
@@ -182,7 +184,6 @@
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))))      
       (if (string? content) c (doto c (.addElement (make-section content)))))))
-
 
 
 (defn- table-header [tbl header cols]
