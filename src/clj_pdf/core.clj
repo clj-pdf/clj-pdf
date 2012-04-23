@@ -182,8 +182,11 @@
 
 
 (defn- cell [element]  
-  (if (string? element) 
+  (cond 
+    (string? element) 
     element
+    
+    (= :cell (first element))
     (let [meta? (map? (second element))
           content (last element)
           c (if (string? content) (new Cell content) (new Cell))]
@@ -196,7 +199,10 @@
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))))      
-      (if (string? content) c (doto c (.addElement (make-section content)))))))
+      (if (string? content) c (doto c (.addElement (make-section content)))))
+    
+    :else
+    (doto (new Cell) (.addElement (make-section element)))))
 
 
 (defn- table-header [tbl header cols]
