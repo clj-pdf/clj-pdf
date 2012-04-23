@@ -247,6 +247,7 @@ metadata:
 * :spacing number
 * :padding number
 * :border boolean
+* :width number signifying the percentage of the page width that the table will take up
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
 ```
@@ -254,7 +255,7 @@ metadata:
             
     [:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
     
-    [:table {:border false} ["Foo" "Bar" "Baz"]]
+    [:table {:border false :width 50} ["Foo" "Bar" "Baz"]]
      
     [:table {:header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
       ["foo" 

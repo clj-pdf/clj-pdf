@@ -39,7 +39,7 @@
 (deftest table 
   (eq? 
     [{} 
-     [:table {:header ["Row 1" "Row 2" "Row 3"]}
+     [:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false}
              [[:cell {:colspan 2} "Foo"] "Bar"]             
              ["foo1" "bar1" "baz1"] 
              ["foo2" "bar2" "baz2"]]
@@ -55,6 +55,10 @@
       ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
       ["foo2" "bar2" "baz2"]]]
     "table.pdf"))
+
+(deftest chapter
+  (eq? [{} [:chapter "Chapter title"]]
+       "chapter.pdf"))
 
 (deftest chapter
   (eq? [{} [:chapter "Chapter title"]]

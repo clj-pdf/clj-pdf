@@ -226,10 +226,11 @@
                spacing    :spacing 
                padding    :padding
                header     :header
-               border     :border} & rows]
+               border     :border
+               width      :width} & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
   (let [cols  (apply max (map count rows))
-        tbl   (new Table cols (count rows))]
+        tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
         
     (when (= false border)       
       (.setBorder tbl Rectangle/NO_BORDER)
