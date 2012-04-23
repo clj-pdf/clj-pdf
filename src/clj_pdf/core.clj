@@ -194,9 +194,12 @@
       (if meta?
         (let [{[r g b] :color
                colspan :colspan
-               rowspan :rowspan} (second element)]
+               rowspan :rowspan
+               border  :border} (second element)]
           
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+          (when (not (nil? border)) 
+            (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))))      
       (if (string? content) c (doto c (.addElement (make-section content)))))

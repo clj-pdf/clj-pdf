@@ -276,6 +276,7 @@ metadata:
 * :color `[r g b]` (int values)   
 * :colspan number
 * :rowspan number
+* :border boolean
 
 content:
 
