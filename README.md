@@ -23,7 +23,9 @@ All fields in the metadata section are optional:
      :font  {:size 11} ;specifies default font that will be used by top level elements
      :doc-header ["inspired by" "William Shakespeare"]
      :header "Page header text appears on each page"
-     :footer "Page footer text appears on each page (includes page number)"}
+     :footer "Page footer text appears on each page (includes page number)"
+     :pages true ;specifies if total pages should be printed in the footer of each page (this requires a second pass through the document!)
+     }
 
 available page sizes:
 
@@ -140,6 +142,12 @@ optional metadata:
 ```
    [:chunk {:style "bold"} "small chunk of text"]
 ```
+
+#### Line
+
+tag :line
+
+creates a horizontal line
 
 #### Phrase
 

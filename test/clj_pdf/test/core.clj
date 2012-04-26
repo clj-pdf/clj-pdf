@@ -13,7 +13,7 @@
   (re/replace #"CreationDate\((.*?)\)" "")
   (re/replace #"\[(.*?)\]" "")))
 
-(defn eq? [doc1 doc2]
+(defn eq? [doc1 doc2]    
   (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
 
 
@@ -56,9 +56,9 @@
       ["foo2" "bar2" "baz2"]]]
     "table.pdf"))
 
-(deftest chapter
-  (eq? [{} [:chapter "Chapter title"]]
-       "chapter.pdf"))
+(deftest line
+  (eq? [{} [:line]]
+       "line.pdf"))
 
 (deftest chapter
   (eq? [{} [:chapter "Chapter title"]]
