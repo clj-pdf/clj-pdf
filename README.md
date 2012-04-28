@@ -17,11 +17,11 @@ Leiningen
 Maven
 
 ```
-&lt;dependency&gt;
-  &lt;groupId&gt;clj-pdf&lt;/groupId&gt;
-  &lt;artifactId&gt;clj-pdf&lt;/artifactId&gt;
-  &lt;version&gt;0.6.0&lt;/version&gt;
-&lt;/dependency&gt;
+<dependency>
+  <groupId>clj-pdf</groupId>
+  <artifactId>clj-pdf</artifactId>
+  <version>0.6.0</version>
+</dependency>
 ```
 
 
