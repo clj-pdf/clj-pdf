@@ -338,7 +338,7 @@ metadata:
 * :x-label     - only used for line and bar charts
 * :y-label     - only used for line and bar charts
 * :time-series - only used in line chart
-* :time-format - can optionally be used with time-series to provide custom date formatting
+* :time-format - can optionally be used with time-series to provide custom date formatting, defaults to "yyyy-MM-dd-HH:mm:ss"
 * :horizontal  - can be used with bar charts and line charts, not supported by time series
 * :title  
 
