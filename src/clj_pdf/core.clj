@@ -295,28 +295,64 @@
           (cons params elements))))))
 
 
-(defn setup-doc [doc total-pages? header footer output-stream temp-stream]
+(defn- setup-doc [{left-margin   :left-margin
+                  right-margin  :right-margin
+                  top-margin    :top-margin
+                  bottom-margin :bottom-margin
+                  title         :title
+                  style         :style
+                  subject       :subject
+                  [nom head]    :doc-header
+                  header        :header
+                  footer        :footer
+                  total-pages?  :pages
+                  author        :author
+                  creator       :creator
+                  size          :size
+                  font-style    :font
+                  orientation   :orientation}
+                  out]
   
-  ;;if we have to print total pages, then the document has to be post processed
-  (if total-pages?
-    (PdfWriter/getInstance doc temp-stream)
-    (do
-      (PdfWriter/getInstance doc output-stream)
-      
-      (if footer
-        (.setFooter doc
-          (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
-            (.setBorder 0)
-            (.setAlignment 2))))))
-  
-  ;header and footer must be set before the doc is opened, or itext will not put them on the first page!
-  (if header 
-    (.setHeader doc 
-      (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0))))
-  
-  (.open doc))
+  (let [doc    (new Document (page-orientation (page-size size) orientation))
+        width  (.. doc getPageSize getWidth)
+        height (.. doc getPageSize getHeight)
+        output-stream (if (string? out) (new FileOutputStream out) out)
+        temp-stream   (if total-pages? (new ByteArrayOutputStream))]
 
-(defn write-total-pages [doc width footer temp-stream output-stream]
+    ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
+    ;;if we have to print total pages, then the document has to be post processed
+    (if total-pages?
+      (PdfWriter/getInstance doc temp-stream)
+      (do
+        (PdfWriter/getInstance doc output-stream)        
+        (if footer
+          (.setFooter doc
+            (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+              (.setBorder 0)
+              (.setAlignment 2))))))
+        
+    (if header 
+      (.setHeader doc 
+        (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0))))
+    
+    (.open doc)
+    
+    (if (and left-margin right-margin top-margin bottom-margin)
+    (.setMargins doc
+      (float left-margin)
+      (float right-margin)
+      (float top-margin)
+      (float bottom-margin)))
+    
+    (if title (.addTitle doc title))
+    (if subject (.addSubject doc subject))
+    (if (and nom head) (.addHeader doc nom head))
+    (if author (.addAuthor doc author))
+    (if creator (.addCreator doc creator))
+    
+    [doc width height temp-stream output-stream]))
+
+(defn- write-total-pages [doc width footer temp-stream output-stream]
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)]
@@ -325,56 +361,42 @@
       (doto (.getOverContent stamper (inc i))
         (.beginText)
         (.setFontAndSize (BaseFont/createFont) 10)
-        (.setTextMatrix (float (/ width 2)) (float 20))
+        (.setTextMatrix (float (* width 0.8)) (float 20))
         (.showText (str footer " " (inc i) " of " num-pages))))
     (.close stamper)))
 
+
+(defn- append-to-doc [font-style width height item doc]
+  (if-let [section (make-section {:style font-style :width width :height height} item)]
+    (.add doc section)))
 
 (defn write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
-  [[{left-margin   :left-margin
-     right-margin  :right-margin
-     top-margin    :top-margin
-     bottom-margin :bottom-margin
-     title         :title
-     style         :style
-     subject       :subject
-     [nom head]    :doc-header
-     header        :header
-     footer        :footer
-     total-pages?  :pages
-     author        :author
-     creator       :creator
-     size          :size
-     font-style    :font
-     orientation   :orientation}
-    & content] out]
-  
-  (let [doc (new Document (page-orientation (page-size size) orientation))
-        width  (.. doc getPageSize getWidth)
-        height (.. doc getPageSize getHeight)
-        output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if total-pages? (new ByteArrayOutputStream))]
+  [[doc-meta & content] out]
     
-    (setup-doc doc total-pages? header footer output-stream temp-stream)
-    (if (and left-margin right-margin top-margin bottom-margin)
-      (.setMargins doc
-        (float left-margin)
-        (float right-margin)
-        (float top-margin)
-        (float bottom-margin)))
-    
-    (if title (.addTitle doc title))
-    (if subject (.addSubject doc subject))
-    (if (and nom head) (.addHeader doc nom head))
-    (if author (.addAuthor doc author))
-    (if creator (.addCreator doc creator))
-    
+  (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)] 
     (doseq [item content]
-      (if-let [section (make-section {:style font-style :width width :height height} item)]
-        (.add doc section)))
+      (append-to-doc (:font doc-meta) width height item doc))
     (.close doc)
-    
-    (when total-pages? (write-total-pages doc width footer temp-stream output-stream))))
+    (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream))))
+
+
+(defn stream-doc
+  "reads the document from an input stream one form at a time and writes it out to the output stream
+   NOTE: setting the :pages to true in doc meta will require the entire document to remain in memory for 
+         post processing!"
+  [in out]
+  (with-open [r (new java.io.PushbackReader (new java.io.InputStreamReader in))]
+    (binding [*read-eval* false]
+      (let [doc-meta (read r nil nil)
+            [doc width height temp-stream output-stream] (setup-doc doc-meta out)]
+        (loop []
+          (if-let [item (read r nil nil)]            
+            (do 
+              (append-to-doc (:font doc-meta) width height item doc)
+              (recur))
+            (do
+              (.close doc)
+              (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
