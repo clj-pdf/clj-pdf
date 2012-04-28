@@ -1,12 +1,35 @@
-# A Library for easily generating PDFs from Clojure 
+# clj-pdf
+
+A Library for easily generating PDFs from Clojure 
 
 NOTE: [iText](http://itextpdf.com/) version 2.1.7 (the one used by this library) is licensed under LGPL, and thus clj-pdf is also licensed as such.
 
+## Installation
+
+`clj-pdf` is available as a Maven artifact from [Clojars](http://clojars.org):
+
+Leiningen
+
+```
+[clj-pdf "0.6.0"]
+```
+
+Maven
+
+```
+&lt;dependency&gt;
+  &lt;groupId&gt;clj-pdf&lt;/groupId&gt;
+  &lt;artifactId&gt;clj-pdf&lt;/artifactId&gt;
+  &lt;version&gt;0.6.0&lt;/version&gt;
+&lt;/dependency&gt;
+```
+
+
 ## Usage
 
-_write-doc_ will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
+`write-doc` will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
 
-_stream-doc_ takes input and output streams, then sequentially reads and appends the forms from the input stream to the output stream. 
+`stream-doc` takes input and output streams, then sequentially reads and appends the forms from the input stream to the output stream. 
 NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
 
 ### Metadata
