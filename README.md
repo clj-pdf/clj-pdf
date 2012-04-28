@@ -27,10 +27,12 @@ Maven
 
 ## Usage
 
-`write-doc` will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
+`write-doc` will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream.
 
 `stream-doc` takes input and output streams, then sequentially reads and appends the forms from the input stream to the output stream. 
 NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
+
+## Document Format
 
 ### Metadata
 
