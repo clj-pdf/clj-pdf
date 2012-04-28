@@ -4,7 +4,10 @@ NOTE: [iText](http://itextpdf.com/) version 2.1.7 (the one used by this library)
 
 ## Usage
 
-write-doc will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
+_write-doc_ will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream. The document format is as follows:
+
+_stream-doc_ takes input and output streams, then sequentially reads and appends the forms from the input stream to the output stream. 
+NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
 
 ### Metadata
 
@@ -24,7 +27,7 @@ All fields in the metadata section are optional:
      :doc-header ["inspired by" "William Shakespeare"]
      :header "Page header text appears on each page"
      :footer "Page footer text appears on each page (includes page number)"
-     :pages true ;specifies if total pages should be printed in the footer of each page (this requires a second pass through the document!)
+     :pages true ;specifies if total pages should be printed in the footer of each page
      }
 
 available page sizes:
