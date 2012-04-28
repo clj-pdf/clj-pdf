@@ -2,6 +2,8 @@
  (:use [clojure.set :only (rename-keys)])
  (:require [clj_pdf.charting :as charting])
  (:import
+   java.awt.Color
+   com.lowagie.text.pdf.draw.LineSeparator   
    [com.lowagie.text
     Anchor
     Annotation
@@ -24,10 +26,7 @@
    ZapfDingbatsList
    ZapfDingbatsNumberList]
    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter]
-   com.lowagie.text.pdf.draw.LineSeparator
-   java.awt.Color
-   java.io.FileOutputStream
-   java.io.ByteArrayOutputStream))
+   [java.io PushbackReader InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
 (declare make-section)
 
@@ -388,7 +387,7 @@
    NOTE: setting the :pages to true in doc meta will require the entire document to remain in memory for 
          post processing!"
   [in out]
-  (with-open [r (new java.io.PushbackReader (new java.io.InputStreamReader in))]
+  (with-open [r (new PushbackReader (new InputStreamReader in))]
     (binding [*read-eval* false]
       (let [doc-meta (read r nil nil)
             [doc width height temp-stream output-stream] (setup-doc doc-meta out)]
