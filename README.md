@@ -16,14 +16,13 @@ Leiningen
 
 Maven
 
-```
+```xml
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
   <version>0.6.0</version>
 </dependency>
 ```
-
 
 ## Usage
 
