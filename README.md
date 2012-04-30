@@ -401,73 +401,72 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ### A complete example
 
 ```clojure
-    (write-doc 
-       [{:title  "Test doc"
-         :left-margin   10
-         :right-margin  50
-         :top-margin    20
-         :bottom-margin 25
-         :size          "a4"
-         ;:orientation   "landscape"
-         :subject "Some subject"
-         :author "John Doe"
-         :creator "Jane Doe"
-         :doc-header ["inspired by" "William Shakespeare"]
-         :header "page header"
-         :footer "page"
-         }
+(write-doc 
+   [{:title  "Test doc"
+     :left-margin   10
+     :right-margin  50
+     :top-margin    20
+     :bottom-margin 25
+     :size          "a4"
+     :orientation   "landscape"
+     :subject "Some subject"
+     :author "John Doe"
+     :creator "Jane Doe"
+     :doc-header ["inspired by" "William Shakespeare"]
+     :header "page header"
+     :footer "page"
+     }
 
-        [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20} 
-         ["foo" 
-          [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
-          "baz"] 
-         ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-         ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]]    
+    [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20} 
+     ["foo" 
+      [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+       "baz"] 
+     ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+     ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]]    
                  
-        [:chapter "First Chapter"]
+    [:chapter "First Chapter"]
 
-        [:anchor {:style {:size 15} :leading 20} "some anchor"]
+    [:anchor {:style {:size 15} :leading 20} "some anchor"]
 
-        [:anchor [:phrase {:style "bold"} "some anchor phrase"]]
+    [:anchor [:phrase {:style "bold"} "some anchor phrase"]]
 
-        [:anchor "plain anchor"]        
+    [:anchor "plain anchor"]        
 
-        [:chunk {:style "bold"} "small chunk of text"]
+    [:chunk {:style "bold"} "small chunk of text"]
 
-        [:phrase "some text here"]
+    [:phrase "some text here"]
 
-        [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+    [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
 
-        [:phrase [:chunk {:style "strikethru"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+    [:phrase [:chunk {:style "strikethru"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 
-        [:paragraph "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
+    [:paragraph "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
 
-        [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
+    [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
 
-        [:chapter [:paragraph "Second Chapter"]]
+    [:chapter [:paragraph "Second Chapter"]]
 
-        [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+    [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
-        [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
+    [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
 
-        [:chapter "Charts"]            
-        [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
+    [:chapter "Charts"]            
+    [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 
-        [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
-         ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
-         ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]            
+    [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+     ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
+     ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]            
+     [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
 
-        [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
-
-        [:chart {:type "line-chart" :time-series true :title "Time Chart" :x-label "time" :y-label "progress"}
-         ["Incidents"
-          ["2011-01-03-11:20:11" 200] 
-          ["2011-01-03-11:25:11" 400] 
-          ["2011-01-03-11:35:11" 350] 
-          ["2011-01-03-12:20:11" 600]]]
-        ]
+    [:chart {:type "line-chart" :time-series true :title "Time Chart" :x-label "time" :y-label "progress"}
+     ["Incidents"
+      ["2011-01-03-11:20:11" 200] 
+      ["2011-01-03-11:25:11" 400] 
+      ["2011-01-03-11:35:11" 350] 
+      ["2011-01-03-12:20:11" 600]]]
+    ]
             
-           "test.pdf")
+    "test.pdf")
 ```
 
 # TODO:
