@@ -11,7 +11,7 @@ NOTE: [iText](http://itextpdf.com/) version 2.1.7 (the one used by this library)
 Leiningen
 
 ```clojure
-[clj-pdf "0.6.0"]
+[clj-pdf "0.7.0"]
 ```
 
 Maven
