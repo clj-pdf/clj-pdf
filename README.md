@@ -294,18 +294,27 @@ metadata:
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
 ```clojure
-[:table {:header ["Row 1" "Row 2" "Row 3"]} [[:cell {:colspan 2} "Foo"] "Bar"] ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
-            
-[:table {:header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
-    
-[:table {:border false :width 50} ["Foo" "Bar" "Baz"]]
+[:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
+  [[:cell {:colspan 2} "Foo"] "Bar"]             
+  ["foo1" "bar1" "baz1"] 
+  ["foo2" "bar2" "baz2"]]
      
-[:table {:header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
+[:table {:border-width 10 :header ["Row 1" "Row 2" "Row 3"]} 
+  ["foo" "bar" "baz"] 
+  ["foo1" "bar1" "baz1"] 
+  ["foo2" "bar2" "baz2"]]
+     
+[:table {:border false :header [{:color [100 100 100]} "Singe Header"]} 
+  ["foo" "bar" "baz"] 
+  ["foo1" "bar1" "baz1"] 
+  ["foo2" "bar2" "baz2"]]
+     
+[:table {:cell-border false :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
   ["foo" 
-   [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+    [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
     "baz"] 
-   ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-   ["foo2" "bar2" "baz2"]]
+  ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+  ["foo2" "bar2" "baz2"]]
 ```
 
 #### Cell
