@@ -7,6 +7,8 @@
             org.jfree.chart.renderer.category.StandardBarPainter            
             java.text.SimpleDateFormat
             java.awt.Image
+            java.awt.image.BufferedImage
+            java.awt.Rectangle
             [javax.swing JLabel JFrame ]))
 
 
@@ -55,9 +57,14 @@
                                         PlotOrientation/VERTICAL) true true false))))
 
 (defn chart [params & items]
-  (.createBufferedImage
-    (condp = (:type params)
-      "bar-chart"  (apply bar-chart params items)
-      "pie-chart"  (apply pie-chart params items)
-      "line-chart" (apply line-chart params items))
-    (* 1.3 (:width params)) (* 1.3 (:height params))))
+  (let [{type   :type
+         width  :page-width
+         height :page-height} params
+        image (new BufferedImage width height BufferedImage/TYPE_INT_RGB)]
+    (.draw (condp = type
+             "bar-chart"  (apply bar-chart params items)
+             "pie-chart"  (apply pie-chart params items)
+             "line-chart" (apply line-chart params items)
+             (throw (new Exception (str "Unsupported chart type " type))))
+      (.createGraphics image) (new Rectangle (int width) (int height)))
+    image))

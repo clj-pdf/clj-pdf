@@ -288,6 +288,8 @@ metadata:
 * :spacing number
 * :padding number
 * :border boolean
+* :border-width number
+* :cell-border boolean
 * :width number signifying the percentage of the page width that the table will take up
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 
