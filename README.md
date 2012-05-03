@@ -277,6 +277,16 @@ content:
 [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
 ```
 
+#### Spacer
+
+tag :spacer
+
+creates a number of new lines equal to the number passed in
+
+```
+[:spacer 5] ;creates 5 new lines
+``` 
+
 #### Table
 
 tag :table

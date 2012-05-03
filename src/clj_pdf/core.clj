@@ -276,6 +276,11 @@
 (defn- line [& args]
   (doto (new LineSeparator) (.setOffset -5)))
  
+
+(defn- spacer [_ height]
+  (make-section [:paragraph (apply str (take height (repeat "\n")))]))
+
+
 (defn- make-section
   ([element] (make-section {} element))
   ([meta element]
@@ -300,6 +305,7 @@
             :list       li
             :paragraph  paragraph
             :phrase     phrase
+            :spacer     spacer
             :table      table)
           (cons params elements))))))
  
@@ -409,4 +415,3 @@
             (do
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
-

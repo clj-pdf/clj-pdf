@@ -124,4 +124,11 @@
       "heading.pdf"))
 
 
+(deftest spacer
+  (eq? [{}
+        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
+        [:spacer 5]
+        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]]
+       "spacer.pdf"))
+
 
