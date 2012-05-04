@@ -2,8 +2,6 @@
 
 A Library for easily generating PDFs from Clojure 
 
-NOTE: [iText](http://itextpdf.com/) version 2.1.7 (the one used by this library) is licensed under LGPL, and thus clj-pdf is also licensed as such.
-
 ## Installation
 
 `clj-pdf` is available as a Maven artifact from [Clojars](http://clojars.org):
@@ -493,6 +491,11 @@ if :time-series is set to true then items on x axis must be dates, the default f
 # TODO:
 
 * suggestions welcome :)
+
+# License
+***
+Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 2.1.7, and [JFreeChart](www.jfree.org/jfreechart/) on which this library depends on.
+
 
 
 
