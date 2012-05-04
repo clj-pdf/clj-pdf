@@ -122,21 +122,25 @@
  
 (defn- chapter [_ title] (new ChapterAutoNumber (make-section title)))
 
+
 (defn- heading [meta & content]
   (let [style (if (contains? meta :heading-style)
                 (rename-keys meta {:heading-style :style})
                 {:style {:size 18 :style "bold"}})]
     (make-section (into [:paragraph style] content))))
 
+
 (defn- paragraph [{indent        :indent
                    style         :style
-                   keep-together :keep-together} content]
+                   keep-together :keep-together
+                   leading       :leading} content]
   (let [paragraph (if style
                     (new Paragraph (make-section content) (font style))
                     (new Paragraph (make-section content)))]
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
-    paragraph))
+    (if leading (.setLeading paragraph (float leading)))
+    paragraph ))
 
 
 (defn- li [{numbered                :numbered
@@ -160,10 +164,12 @@
 
 
 (defn- phrase
-  [font-style & content]
-  (doto (new Phrase)
-    (.setFont (font font-style))
-    (.addAll (map make-section content))))
+  [meta & content]
+  (let [leading (:leading meta)
+        p (doto (new Phrase)   
+            (.setFont (font meta))
+            (.addAll (map make-section content)))] 
+    (if leading (.setLeading p (float leading))) p))
  
 
 (defn- text-chunk [font-style content]
@@ -236,16 +242,19 @@
 (defn- table [{[r g b]      :color
                spacing      :spacing
                padding      :padding
+               offset       :offset
                header       :header
                border       :border
                border-width :border-width
                cell-border  :cell-border
                width        :width
-               align        :align} & rows]
+               align        :align
+               num-cols     :num-cols} & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
-  (let [cols  (apply max (map count rows))
+  
+  (let [cols (or num-cols (apply max (map count rows)))
         tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
-   
+
     (if (= false border)
       (.setBorder tbl Rectangle/NO_BORDER)
       (when border-width (.setBorderWidth tbl (float border-width))))
@@ -256,6 +265,7 @@
     (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
     (.setPadding tbl (if padding (float padding) (float 3)))
     (if spacing (.setSpacing tbl (float spacing)))
+    (if offset (.setOffset tbl (float offset)))
     (table-header tbl header cols)
  
     (.setAlignment tbl (condp = align "left" 0, "center" 1, "right" 2, 0))
@@ -309,23 +319,32 @@
             :table      table)
           (cons params elements))))))
  
+ (defn- append-to-doc [font-style width height item doc]
+  (if-let [section (make-section {:style font-style :page-width width :page-height height} item)]
+    (.add doc section)))
  
-(defn- setup-doc [{left-margin   :left-margin
-                  right-margin  :right-margin
-                  top-margin    :top-margin
-                  bottom-margin :bottom-margin
-                  title         :title
-                  style         :style
-                  subject       :subject
-                  [nom head]    :doc-header
-                  header        :header
-                  footer        :footer
-                  total-pages?  :pages
-                  author        :author
-                  creator       :creator
-                  size          :size
-                  font-style    :font
-                  orientation   :orientation}
+ (defn- add-header [header doc]
+   (if header
+          (.setHeader doc
+            (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
+ 
+(defn- setup-doc [{left-margin          :left-margin
+                  right-margin          :right-margin
+                  top-margin            :top-margin
+                  bottom-margin         :bottom-margin
+                  title                 :title
+                  style                 :style
+                  subject               :subject
+                  [nom head]            :doc-header
+                  header                :header
+                  letterhead            :letterhead
+                  footer                :footer
+                  total-pages?          :pages
+                  author                :author
+                  creator               :creator
+                  size                  :size
+                  font-style            :font
+                  orientation           :orientation}
                   out]
  
   (let [doc    (new Document (page-orientation (page-size size) orientation))
@@ -346,11 +365,14 @@
               (.setBorder 0)
               (.setAlignment 2))))))
        
-    (if header
-      (.setHeader doc
-        (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0))))
-   
-    (.open doc)
+    (if  letterhead 
+      (do
+        (.open doc)
+        (append-to-doc font-style width height letterhead doc)
+        (add-header header doc))
+      (do
+        (add-header header doc)
+        (.open doc)))
    
     (if (and left-margin right-margin top-margin bottom-margin)
     (.setMargins doc
@@ -381,9 +403,6 @@
     (.close stamper)))
  
  
-(defn- append-to-doc [font-style width height item doc]
-  (if-let [section (make-section {:style font-style :page-width width :page-height height} item)]
-    (.add doc section)))
  
 (defn write-doc
   "(write-doc document out)

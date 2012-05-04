@@ -9,7 +9,7 @@ A Library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "0.7.0"]
+[clj-pdf "0.7.1"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.1</version>
 </dependency>
 ```
 
@@ -49,6 +49,7 @@ All fields in the metadata section are optional:
  :font  {:size 11} ;specifies default font that will be used by top level elements
  :doc-header ["inspired by" "William Shakespeare"]
  :header "Page header text appears on each page"
+ :letterhead Can be any element. If set, the first page shows letterhead instead of header
  :footer "Page footer text appears on each page (includes page number)"
  :pages true ;specifies if total pages should be printed in the footer of each page
 }
@@ -187,6 +188,7 @@ tag :phrase
 optional metadata: 
 
 * :style font
+* :leading number
 
 content:
 
@@ -209,6 +211,7 @@ optional metadata:
 
 * :indent number
 * :keep-together boolean
+* :leading number
 
 content:
 
@@ -301,6 +304,8 @@ metadata:
 * :cell-border boolean
 * :width number signifying the percentage of the page width that the table will take up
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
+* :offset number
+* :num-cols number
 
 ```clojure
 [:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
