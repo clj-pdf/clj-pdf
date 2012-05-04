@@ -494,7 +494,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
 # License
 ***
-Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 2.1.7, and [JFreeChart](www.jfree.org/jfreechart/) on which this library depends on.
+Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 2.1.7 and [JFreeChart](www.jfree.org/jfreechart/) on which this library depends on.
 
 
 
