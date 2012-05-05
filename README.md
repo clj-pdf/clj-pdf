@@ -163,6 +163,25 @@ iText idiosynchorsies:
 [:anchor "plain anchor"]
 ```
 
+#### Chapter
+
+tag :chapter
+
+optional metadata:
+
+* none
+
+content:
+
+* string
+* paragraph
+
+```clojure
+[:chapter "First Chapter"]
+
+[:chapter [:paragraph "Second Chapter"]]
+```
+
 #### Chunk 
 
 tag :chunk
@@ -175,32 +194,72 @@ optional metadata:
 [:chunk {:style "bold"} "small chunk of text"]
 ```
 
+#### Heading
+
+tag :heading
+
+optional metadata:
+
+* :heading-style specifies the font for the heading
+
+```clojure
+[:heading "Lorem Ipsum"]
+    
+[:heading {:heading-style {:size 15}} "Lorem Ipsum"]
+```
+
+#### Image
+
+tag :image
+
+image data can be one of java.net.URL, java.awt.Image, or a filename string
+ 
+optional metadata:
+
+* :xscale number - percentage relative to page size
+* :yscale num - percentage relative to page size
+* :align "left|center|right"
+* :annotation ["title" "text"]
+* :pad-left number
+* :pad-right number
+
+```clojure
+
+[{}      
+     [:image 
+      {:xscale     0.5
+       :yscale     0.8       
+       :align      "center"
+       :annotation ["FOO" "BAR"]
+       :pad-left   100
+       :pad-right  50}
+      (javax.imageio.ImageIO/read "mandelbrot.jpg"))]]
+```
+
 #### Line
 
 tag :line
 
 creates a horizontal line
 
-#### Phrase
 
-tag :phrase
+#### List
 
-optional metadata: 
+tag :list
 
-* :style font
-* :leading number
+optional metadata:
+
+* :numbered boolean
+* :lettered boolean
+* :roman    boolean
 
 content:
 
-* strings and chunks
+* strings, phrases, or chunks
 
 
 ```clojure
-[:phrase "some text here"]
-
-[:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
-
-[:phrase [:chunk {:style "italic"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+[:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
 ```
 
 #### Paragraph
@@ -226,56 +285,26 @@ content:
 [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
 ```
 
-#### Chapter
+#### Phrase
 
-tag :chapter
+tag :phrase
 
-optional metadata:
+optional metadata: 
 
-* none
-
-content:
-
-* string
-* paragraph
-
-```clojure
-[:chapter "First Chapter"]
-
-[:chapter [:paragraph "Second Chapter"]]
-```
-
-#### Heading
-
-tag :heading
-
-optional metadata:
-
-* :heading-style specifies the font for the heading
-
-```clojure
-[:heading "Lorem Ipsum"]
-    
-[:heading {:heading-style {:size 15}} "Lorem Ipsum"]
-```
-
-#### List
-
-tag :list
-
-optional metadata:
-
-* :numbered boolean
-* :lettered boolean
-* :roman    boolean
+* :style font
+* :leading number
 
 content:
 
-* strings, phrases, or chunks
+* strings and chunks
 
 
 ```clojure
-[:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
+[:phrase "some text here"]
+
+[:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+
+[:phrase [:chunk {:style "italic"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 ```
 
 #### Spacer
@@ -331,7 +360,7 @@ metadata:
   ["foo2" "bar2" "baz2"]]
 ```
 
-#### Cell
+#### Table Cell
 
 Cells can be optionally used inside tables to provide specific style for table elements
 
@@ -382,12 +411,6 @@ metadata:
 [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 ```
 
-#### pie chart
-
-```clojure
-[:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
-```
-
 #### line chart
 
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss"
@@ -420,6 +443,12 @@ if :time-series is set to true then items on x axis must be dates, the default f
          :x-label "time" 
          :y-label "progress"}
   ["Occurances" ["01/11" 200] ["02/12" 400] ["05/12" 350] ["11/13" 600]]]
+```
+
+#### pie chart
+
+```clojure
+[:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
 ```
 
 ### A complete example

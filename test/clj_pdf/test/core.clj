@@ -19,6 +19,19 @@
   (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
 
 
+(deftest image
+  (eq? 
+    [{}      
+     [:image 
+      {:xscale     0.5
+       :yscale     0.8       
+       :align      "center"
+       :annotation ["FOO" "BAR"]
+       :pad-left   100
+       :pad-right  50}
+      (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
+    "image.pdf"))
+
 (deftest doc-meta
   (eq?
     [{:title  "Test doc"

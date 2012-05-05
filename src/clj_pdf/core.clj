@@ -30,6 +30,9 @@
 
 (declare make-section)
 
+(defn get-alignment [align]
+  (condp = align "left" 0, "center" 1, "right" 2, 0))
+
 (defn font
   [{style   :style
     size    :size
@@ -176,7 +179,9 @@
   (new Chunk (make-section content) (font font-style)))
 
 
-(defn- annotation [title text] (new Annotation title text))
+(defn- annotation
+  ([_ title text] (annotation title text))
+  ([title text] (new Annotation title text)))
 
 
 (defn- anchor [{style   :style
@@ -209,7 +214,7 @@
             (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))
-          (.setHorizontalAlignment c (condp = align "left" 0, "center" 1, "right" 2, 0))))
+          (.setHorizontalAlignment c (get-alignment align))))
       (if (string? content) c (doto c (.addElement (make-section content)))))
  
     :else
@@ -268,14 +273,58 @@
     (if offset (.setOffset tbl (float offset)))
     (table-header tbl header cols)
  
-    (.setAlignment tbl (condp = align "left" 0, "center" 1, "right" 2, 0))
+    (.setAlignment tbl (get-alignment align))
    
     (doseq [row rows]
       (doseq [column row]
         (.addCell tbl (cell column))))
     tbl))
- 
- 
+
+
+(defn- image [{xscale        :xscale
+               yscale        :yscale
+               align         :align
+               [title text]  :annotation
+               pad-left      :pad-left
+               pad-right     :pad-right                                            
+               left-margin   :left-margin
+               right-margin  :right-margin
+               top-margin    :top-margin
+               bottom-margin :bottom-margin
+               page-width    :page-width
+               page-height   :page-height} 
+              img-data]
+  (let [img (cond 
+              (instance? java.awt.Image img-data)
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)              
+              (or (string? img-data) (instance? java.net.URL img-data)) 
+              (Image/getInstance img-data)              
+              :else 
+              (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
+        width (.getWidth img)
+        height (.getHeight img)
+        available-width (- page-width (+ left-margin right-margin))
+        available-height (- page-height (+ top-margin bottom-margin))
+        page-scale (* 100 (if (> width height) 
+                            (/ available-width width) 
+                            (/ available-height height)))] 
+    
+    (when align (.setAlignment img (get-alignment align)))
+    (when annotation (.setAnnotation img (make-section [:annotation title text])))
+    (when pad-left (.setIndentationLeft img (float pad-left)))
+    (when pad-right (.setIndentationRight img (float pad-right)))    
+            
+    ;;scale relative to page size
+    (cond
+      (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
+      xscale (.scalePercent img (float (* page-scale xscale)))
+      yscale (.scalePercent img (float (* page-scale yscale)))
+      :else (when (or (>  width available-width) (>  height available-height))
+              (.scalePercent img (float page-scale))))
+    
+    img))
+
+
 (defn- chart [& params]  
   (let [width (:page-width (first params))
         height (:page-height (first params))]
@@ -311,6 +360,7 @@
             :chart      chart
             :chunk      text-chunk
             :heading    heading
+            :image      image
             :line       line
             :list       li
             :paragraph  paragraph
@@ -320,7 +370,13 @@
           (cons params elements))))))
  
  (defn- append-to-doc [font-style width height item doc]
-  (if-let [section (make-section {:style font-style :page-width width :page-height height} item)]
+  (if-let [section (make-section {:style font-style 
+                                  :left-margin (.leftMargin doc)
+                                  :right-margin (.rightMargin doc)
+                                  :top-margin (.topMargin doc)
+                                  :bottom-margin (.bottomMargin doc)
+                                  :page-width width 
+                                  :page-height height} item)]
     (.add doc section)))
  
  (defn- add-header [header doc]
@@ -435,3 +491,4 @@
             (do
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
+
