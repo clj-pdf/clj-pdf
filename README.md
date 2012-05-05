@@ -212,7 +212,8 @@ optional metadata:
 
 tag :image
 
-image data can be one of java.net.URL, java.awt.Image, or a filename string
+image data can be one of java.net.URL, java.awt.Image, or a filename string, 
+images larger than the page margins will automatically be scaled to fit.
  
 optional metadata:
 
