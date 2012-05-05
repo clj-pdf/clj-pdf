@@ -491,5 +491,3 @@
             (do
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
-
-(write-doc [{} [:image  (new java.net.URL "http://static.springsource.org/spring/docs/2.0.x/reference/images/xdev-spring_logo.jpg")]] "img.pdf")
