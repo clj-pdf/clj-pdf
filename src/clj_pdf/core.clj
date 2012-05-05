@@ -308,17 +308,17 @@
         page-scale (* 100 (if (> width height) 
                             (/ available-width width) 
                             (/ available-height height)))] 
-    
+        
     (when align (.setAlignment img (get-alignment align)))
-    (when annotation (.setAnnotation img (make-section [:annotation title text])))
+    (when (and title text) (.setAnnotation img (make-section [:annotation title text])))
     (when pad-left (.setIndentationLeft img (float pad-left)))
     (when pad-right (.setIndentationRight img (float pad-right)))    
             
     ;;scale relative to page size
     (cond
       (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
-      xscale (.scalePercent img (float (* page-scale xscale)))
-      yscale (.scalePercent img (float (* page-scale yscale)))
+      xscale (.scalePercent img (float (* page-scale xscale)) (float 100))
+      yscale (.scalePercent img (float 100) (float (* page-scale yscale)))
       :else (when (or (>  width available-width) (>  height available-height))
               (.scalePercent img (float page-scale))))
     
@@ -492,3 +492,4 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
+(write-doc [{} [:image  (new java.net.URL "http://static.springsource.org/spring/docs/2.0.x/reference/images/xdev-spring_logo.jpg")]] "img.pdf")
