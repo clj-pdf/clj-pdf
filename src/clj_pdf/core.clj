@@ -332,8 +332,7 @@
                   right-margin          :right-margin
                   top-margin            :top-margin
                   bottom-margin         :bottom-margin
-                  title                 :title
-                  style                 :style
+                  title                 :title                  
                   subject               :subject
                   [nom head]            :doc-header
                   header                :header
@@ -368,7 +367,7 @@
     (if  letterhead 
       (do
         (.open doc)
-        (append-to-doc font-style width height letterhead doc)
+        (append-to-doc (or font-style {}) width height letterhead doc)
         (add-header header doc))
       (do
         (add-header header doc)

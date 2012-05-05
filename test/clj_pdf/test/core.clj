@@ -35,6 +35,7 @@
       :doc-header ["inspired by" "William Shakespeare"]
       :header "page header"
       :footer "page"}
+     [:paragraph "I should have font size 11"]
      [:chunk "meta test"]]
     "header.pdf"))
 
