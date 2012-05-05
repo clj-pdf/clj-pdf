@@ -364,6 +364,8 @@
               (.setBorder 0)
               (.setAlignment 2))))))
        
+    ;;if we have a letterhead then we want to put it on the first page instead of the header, 
+    ;;so we will open doc beofore adding the header
     (if  letterhead 
       (do
         (.open doc)
