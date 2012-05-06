@@ -436,7 +436,7 @@
       (float left-margin)
       (float right-margin)
       (float top-margin)
-      (float bottom-margin)))
+      (float (if total-pages? (+ 20 bottom-margin) bottom-margin))))
    
     (if title (.addTitle doc title))
     (if subject (.addSubject doc subject))
@@ -449,18 +449,18 @@
 (defn- write-total-pages [doc width footer temp-stream output-stream]
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
-        num-pages (.getNumberOfPages reader)]
-   
+        num-pages (.getNumberOfPages reader)
+        base-font (BaseFont/createFont)]
+       
     (dotimes [i num-pages]
       (doto (.getOverContent stamper (inc i))
         (.beginText)
-        (.setFontAndSize (BaseFont/createFont) 10)
-        (.setTextMatrix (float (* width 0.8)) (float 20))
+        (.setFontAndSize base-font 10)        
+        (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font footer (float 10))))) (float 20))        
         (.showText (str footer " " (inc i) " of " num-pages))))
     (.close stamper)))
  
- 
- 
+
 (defn write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
