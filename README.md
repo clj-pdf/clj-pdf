@@ -200,15 +200,15 @@ tag :heading
 
 optional metadata:
 
-* :heading-style specifies the font for the heading
+* :style specifies the font for the heading
 * :align specifies alignement of heading possible valuse "left|center|right"
 
 ```clojure
 [:heading "Lorem Ipsum"]
     
-[:heading {:heading-style {:size 15}} "Lorem Ipsum"]
+[:heading {:style {:size 15}} "Lorem Ipsum"]
 
-[:heading {:heading-style {:size 10 :color [100 40 150]} :align "right"}"Foo"]
+[:heading {:style {:size 10 :color [100 40 150]} :align "right"}"Foo"]
 ```
 
 #### Image

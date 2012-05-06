@@ -135,7 +135,7 @@
 
 (deftest heading
   (eq? [{} [:heading "Lorem Ipsum"]    
-       [:heading {:heading-style {:size 15}} "Lorem Ipsum"]
+       [:heading {:style {:size 15}} "Lorem Ipsum"]
        [:heading {:align "center"} "Centered"]]
       "heading.pdf"))
 

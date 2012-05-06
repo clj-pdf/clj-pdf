@@ -129,9 +129,8 @@
 (defn- heading [meta & content]
   (make-section
     (into [:paragraph 
-           (if (:heading-style meta) 
-             (rename-keys meta {:heading-style :style})
-             (assoc meta :style {:size 18 :style "bold"}))] content)))
+           (if (:style meta) meta (assoc meta :style {:size 18 :style "bold"}))] 
+          content)))
 
 
 (defn- paragraph [{indent        :indent
