@@ -194,6 +194,9 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
+(defn- get-border [coll]
+  (let [const {:TOP 1 :BOTTOM 2 :LEFT 4 :RIGHT 8}]
+    (reduce + (vals (select-keys const coll)))))
 
 (defn- cell [element]
   (cond
@@ -209,13 +212,25 @@
                colspan :colspan
                rowspan :rowspan
                border  :border
-               align   :align} (second element)]
+               align   :align
+               set-border :set-border
+               border-width :border-width
+               border-width-bottom :border-width-bottom
+               border-width-left :border-width-left
+               border-width-right :border-width-right
+               border-width-top :border-width-top} (second element)]
           
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
           (when (not (nil? border))
             (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))
+          (if set-border (.setBorder c (int (get-border set-border))))
+          (if border-width (.setBorderWidth c (float border-width)))
+          (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
+          (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
+          (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
+          (if border-width-top (.setBorderWidthTop c (float border-width-top)))
           (.setHorizontalAlignment c (get-alignment align))))
       (if (string? content) c (doto c (.addElement (make-section content)))))
  
