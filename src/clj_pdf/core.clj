@@ -129,20 +129,26 @@
 (defn- heading [meta & content]
   (let [style (if (contains? meta :heading-style)
                 (rename-keys meta {:heading-style :style})
-                {:style {:size 18 :style "bold"}})]
-    (make-section (into [:paragraph style] content))))
+                {:style {:size 18 :style "bold"}})
+        align (if (contains? meta :align)
+                [:align (:align meta)]
+                [:align "left"])
+        attrs (conj style align)]
+    (make-section (into [:paragraph attrs] content))))
 
 
 (defn- paragraph [{indent        :indent
                    style         :style
                    keep-together :keep-together
-                   leading       :leading} content]
+                   leading       :leading
+                   align         :align} content]
   (let [paragraph (if style
                     (new Paragraph (make-section content) (font style))
                     (new Paragraph (make-section content)))]
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     (if leading (.setLeading paragraph (float leading)))
+    (if align (.setAlignment paragraph (get-alignment align)))
     paragraph ))
 
 

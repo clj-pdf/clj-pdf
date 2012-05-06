@@ -201,6 +201,7 @@ tag :heading
 optional metadata:
 
 * :heading-style specifies the font for the heading
+* :align specifies alignement of heading possible valuse "left|center|right"
 
 ```clojure
 [:heading "Lorem Ipsum"]
@@ -277,6 +278,7 @@ optional metadata:
 * :indent number
 * :keep-together boolean
 * :leading number
+* :align "left|center|right"
 
 content:
 
