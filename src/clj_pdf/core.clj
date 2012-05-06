@@ -127,14 +127,11 @@
 
 
 (defn- heading [meta & content]
-  (let [style (if (contains? meta :heading-style)
-                (rename-keys meta {:heading-style :style})
-                {:style {:size 18 :style "bold"}})
-        align (if (contains? meta :align)
-                [:align (:align meta)]
-                [:align "left"])
-        attrs (conj style align)]
-    (make-section (into [:paragraph attrs] content))))
+  (make-section
+    (into [:paragraph 
+           (if (:heading-style meta) 
+             (rename-keys meta {:heading-style :style})
+             (assoc meta :style {:size 18 :style "bold"}))] content)))
 
 
 (defn- paragraph [{indent        :indent

@@ -207,6 +207,8 @@ optional metadata:
 [:heading "Lorem Ipsum"]
     
 [:heading {:heading-style {:size 15}} "Lorem Ipsum"]
+
+[:heading {:heading-style {:size 10 :color [100 40 150]} :align "right"}"Foo"]
 ```
 
 #### Image
