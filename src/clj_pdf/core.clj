@@ -341,7 +341,7 @@
 
 
 (defn- make-section
-  ([element] (make-section {} element))
+  ([element] (if element (make-section {} element) ""))
   ([meta element]
     (if (string? element)
       element
