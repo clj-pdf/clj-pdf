@@ -250,9 +250,14 @@ tag :list
 
 optional metadata:
 
-* :numbered boolean
-* :lettered boolean
-* :roman    boolean
+* :numbered            boolean
+* :lettered            boolean
+* :roman               boolean
+* :greek               boolean
+* :dingbats            boolean
+* :dingbats-char-num   boolean
+* :dingbatsnumber      boolean
+* :dingbatsnumber-type boolean
 
 content:
 
