@@ -306,6 +306,8 @@
 (defn- image [{xscale        :xscale
                yscale        :yscale
                align         :align
+               width         :width
+               height        :height
                [title text]  :annotation
                pad-left      :pad-left
                pad-right     :pad-right                                            
@@ -323,27 +325,29 @@
               (Image/getInstance img-data)              
               :else 
               (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
-        width (.getWidth img)
-        height (.getHeight img)
-        available-width (- page-width (+ left-margin right-margin))
-        available-height (- page-height (+ top-margin bottom-margin))
-        page-scale (* 100 (if (> width height) 
-                            (/ available-width width) 
-                            (/ available-height height)))] 
-        
+        img-width (.getWidth img)
+        img-height (.getHeight img)] 
+    
     (when align (.setAlignment img (get-alignment align)))
     (when (and title text) (.setAnnotation img (make-section [:annotation title text])))
     (when pad-left (.setIndentationLeft img (float pad-left)))
     (when pad-right (.setIndentationRight img (float pad-right)))    
             
     ;;scale relative to page size
-    (cond
-      (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
-      xscale (.scalePercent img (float (* page-scale xscale)) (float 100))
-      yscale (.scalePercent img (float 100) (float (* page-scale yscale)))
-      :else (when (or (>  width available-width) (>  height available-height))
-              (.scalePercent img (float page-scale))))
+    (when (and page-width page-height left-margin right-margin top-margin bottom-margin) 
+      (let [available-width (- page-width (+ left-margin right-margin))
+            available-height (- page-height (+ top-margin bottom-margin))
+            page-scale (* 100 (if (> img-width img-height) 
+                                (/ available-width img-width) 
+                                (/ available-height img-height)))] 
+        (cond
+          (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
+          xscale (.scalePercent img (float (* page-scale xscale)) (float 100))
+          yscale (.scalePercent img (float 100) (float (* page-scale yscale)))
+          :else (when (or (>  img-width available-width) (>  img-height available-height))
+                  (.scalePercent img (float page-scale))))))    
     
+    (when (and width height) (.scaleToFit img (float width) (float height)))
     img))
 
 
@@ -368,8 +372,10 @@
   (doto (new LineSeparator) (.setOffset -5)))
  
 
-(defn- spacer [_ height]
-  (make-section [:paragraph (apply str (take height (repeat "\n")))]))
+(defn- spacer
+  ([_] (make-section [:paragraph {:leading 12} "\n"]))
+  ([_ height]
+    (make-section [:paragraph {:leading 12} (apply str (take height (repeat "\n")))])))
 
 
 (defn- make-section
@@ -457,8 +463,9 @@
     ;;so we will open doc beofore adding the header
     (if  letterhead 
       (do
-        (.open doc)
-        (append-to-doc (or font-style {}) width height letterhead doc)
+        (.open doc)       
+        (doseq [item letterhead]
+          (append-to-doc  (or font-style {})  width height item doc))
         (add-header header doc))
       (do
         (add-header header doc)

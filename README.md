@@ -49,7 +49,7 @@ All fields in the metadata section are optional:
  :font  {:size 11} ;specifies default font that will be used by top level elements
  :doc-header ["inspired by" "William Shakespeare"]
  :header "Page header text appears on each page"
- :letterhead Can be any element. If set, the first page shows letterhead instead of header
+ :letterhead Sequence of any elements. If set, the first page shows letterhead instead of header
  :footer "Page footer text appears on each page (includes page number)"
  :pages true ;specifies if total pages should be printed in the footer of each page
 }
@@ -222,6 +222,8 @@ optional metadata:
 
 * :xscale number - percentage relative to page size
 * :yscale num - percentage relative to page size
+* :width num - set width for image: overrides scaling
+* :height num - set height for image: overrides scaling
 * :align "left|center|right"
 * :annotation ["title" "text"]
 * :pad-left number
@@ -229,15 +231,14 @@ optional metadata:
 
 ```clojure
 
-[{}      
-     [:image 
-      {:xscale     0.5
-       :yscale     0.8       
-       :align      "center"
-       :annotation ["FOO" "BAR"]
-       :pad-left   100
-       :pad-right  50}
-      (javax.imageio.ImageIO/read "mandelbrot.jpg"))]]
+[:image 
+   {:xscale     0.5
+    :yscale     0.8       
+    :align      "center"
+    :annotation ["FOO" "BAR"]
+    :pad-left   100
+    :pad-right  50}
+   (javax.imageio.ImageIO/read "mandelbrot.jpg")]
 ```
 
 #### Line
@@ -319,7 +320,7 @@ content:
 
 #### Section
 
-Sections can only be parented under chapters and other sections, a section must contain a title followed by the content
+Chapter has to be the root element for any sections. Subsequently sections can only be parented under chapters and other sections, a section must contain a title followed by the content
 
 optional metadata:
 
@@ -339,9 +340,10 @@ optional metadata:
 
 tag :spacer
 
-creates a number of new lines equal to the number passed in
+creates a number of new lines equal to the number passed in (1 space is default)
 
 ```clojure
+[:spacer ] ;creates 1 new lines 
 [:spacer 5] ;creates 5 new lines
 ``` 
 
