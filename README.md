@@ -317,6 +317,24 @@ content:
 [:phrase [:chunk {:style "italic"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 ```
 
+#### Section
+
+Sections can only be parented under chapters and other sections, a section must contain a title followed by the content
+
+optional metadata:
+
+* :indent number
+
+```clojure
+[:chapter "Chapter"
+  [:section "Section Title"
+    [:paragraph "Some content"]
+    [:paragraph "Some more content"]
+    [:section [:paragraph "Nested Section Title"]               
+              [:paragraph "nested section content"]]]]  
+
+```
+
 #### Spacer
 
 tag :spacer

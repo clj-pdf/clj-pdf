@@ -22,6 +22,7 @@
      Phrase
      Rectangle
      RomanList
+     Section
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
@@ -123,7 +124,11 @@
       page-size)))
 
  
-(defn- chapter [_ title] (new ChapterAutoNumber (make-section title)))
+(defn- chapter [meta & [title & sections]] 
+  (let [ch (new ChapterAutoNumber (make-section meta title))]    
+    (doseq [section sections]
+      (make-section (assoc meta :parent ch) section))
+    ch))
 
 
 (defn- heading [meta & content]
@@ -327,6 +332,16 @@
     img))
 
 
+(defn- section [meta & [title & content]]  
+  (let [sec (.addSection (:parent meta) (make-section meta title))
+        indent (:indent meta)]
+    (if indent (.setIndentation sec (float indent)))
+    (doseq [item content]
+      (if (= :section (first item)) 
+        (make-section (assoc meta :parent sec) item)
+        (.add sec (make-section meta item))))))
+
+
 (defn- chart [& params]  
   (let [width (:page-width (first params))
         height (:page-height (first params))]
@@ -367,6 +382,7 @@
             :list       li
             :paragraph  paragraph
             :phrase     phrase
+            :section    section
             :spacer     spacer
             :table      table)
           (cons params elements))))))
@@ -493,3 +509,4 @@
             (do
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
+
