@@ -147,4 +147,13 @@
         [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]]
        "spacer.pdf"))
 
+(deftest section
+  (eq? [{}
+       [:chapter "Chapter"
+        [:section "Section Title"
+         [:paragraph "Some content"]
+         [:paragraph "Some more content"]
+         [:section [:paragraph "Nested Section Title"]               
+          [:paragraph "nested section content"]]]]]
+      "section.pdf"))
 
