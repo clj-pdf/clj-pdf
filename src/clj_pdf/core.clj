@@ -538,7 +538,3 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
-
-(write-doc [{}
-            [:table {:border false} [[:cell {:set-border [:bottom  :right]} "cell"]]]]
-           "doc.pdf")
