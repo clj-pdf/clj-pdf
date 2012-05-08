@@ -402,7 +402,7 @@ metadata:
 * :colspan number
 * :rowspan number
 * :border boolean
-* :set-border `[:TOP :BOTTOM :LEFT :RIGHT]` list of enabled borders, pass empty vector to disable all borders
+* :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
 * :border-width number
 * :border-width-bottom number
 * :border-width-left number

@@ -199,9 +199,14 @@
         style               (new Anchor content (font style))
         :else               (new Anchor (make-section content))))
 
-(defn- get-border [coll]
-  (let [const {:TOP 1 :BOTTOM 2 :LEFT 4 :RIGHT 8}]
-    (reduce + (vals (select-keys const coll)))))
+
+(defn- get-border [borders]
+  (reduce + 
+    (vals 
+      (select-keys 
+        {:top Cell/TOP :bottom Cell/BOTTOM :left Cell/LEFT :right Cell/RIGHT}
+        borders))))
+
 
 (defn- cell [element]
   (cond
@@ -229,14 +234,15 @@
           (when (not (nil? border))
             (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
           (if rowspan (.setRowspan c (int rowspan)))
-          (if colspan (.setColspan c (int colspan)))
-          (if set-border (.setBorder c (int (get-border set-border))))
+          (if colspan (.setColspan c (int colspan)))          
+          (if set-border (.setBorder c (int (get-border set-border))))          
           (if border-width (.setBorderWidth c (float border-width)))
           (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
           (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
           (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
           (if border-width-top (.setBorderWidthTop c (float border-width-top)))
           (.setHorizontalAlignment c (get-alignment align))))
+      
       (if (string? content) c (doto c (.addElement (make-section content)))))
  
     :else
@@ -532,3 +538,7 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
+
+(write-doc [{}
+            [:table {:border false} [[:cell {:set-border [:bottom  :right]} "cell"]]]]
+           "doc.pdf")
