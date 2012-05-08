@@ -208,11 +208,12 @@
         borders))))
 
 
-(defn- cell [element]
+
+(defn- cell [element]  
   (cond
     (string? element)
     element
-    (= :cell (first element))
+    (= "cell" (name (first element)))
     (let [meta? (map? (second element))
           content (last element)
           c (if (string? content) (new Cell content) (new Cell))]
@@ -233,6 +234,7 @@
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
           (when (not (nil? border))
             (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
+            
           (if rowspan (.setRowspan c (int rowspan)))
           (if colspan (.setColspan c (int colspan)))          
           (if set-border (.setBorder c (int (get-border set-border))))          
@@ -362,7 +364,7 @@
         indent (:indent meta)]
     (if indent (.setIndentation sec (float indent)))
     (doseq [item content]
-      (if (= :section (first item)) 
+      (if (= "section" (name (first item))) 
         (make-section (assoc meta :parent sec) item)
         (.add sec (make-section meta item))))))
 
