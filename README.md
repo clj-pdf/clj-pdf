@@ -320,6 +320,8 @@ content:
 
 #### Section
 
+tag :section
+
 Chapter has to be the root element for any sections. Subsequently sections can only be parented under chapters and other sections, a section must contain a title followed by the content
 
 optional metadata:
