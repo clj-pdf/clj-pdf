@@ -194,7 +194,9 @@ optional metadata:
 
 ```clojure
 [:chunk {:style "bold"} "small chunk of text"]
+
 [:chunk {:super true} "5"] 
+
 [:chunk {:sub true} "2"]
 ```
 
