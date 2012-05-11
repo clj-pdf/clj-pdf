@@ -189,9 +189,12 @@ tag :chunk
 optional metadata: 
 
 * :style font
-
+* :sub boolean sets chunk to subscript
+* :super boolean sets chunk to superscript
 ```clojure
 [:chunk {:style "bold"} "small chunk of text"]
+[:chunk {:super true} "5"] 
+[:chunk {:sub true} "2"]
 ```
 
 #### Heading
@@ -285,8 +288,7 @@ optional metadata:
 
 content:
 
-* string
-* phrase
+* one or more elements (string, chunk, phrase, paragraph)
 
 ```clojure
 [:paragraph "a fine paragraph"]
@@ -294,6 +296,8 @@ content:
 [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
 [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
+
+[:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
 ```
 
 #### Phrase

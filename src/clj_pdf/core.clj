@@ -34,7 +34,7 @@
 (defn get-alignment [align]
   (condp = align "left" 0, "center" 1, "right" 2, 0))
 
-(defn font
+(defn- font
   [{style   :style
     size    :size
     [r g b] :color
@@ -142,14 +142,18 @@
                    style         :style
                    keep-together :keep-together
                    leading       :leading
-                   align         :align} content]
-  (let [paragraph (if style
-                    (new Paragraph (make-section content) (font style))
-                    (new Paragraph (make-section content)))]
+                   align         :align} 
+                  & content]
+  (let [paragraph (new Paragraph)]
+    (if style (.setFont paragraph (font style)))
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     (if leading (.setLeading paragraph (float leading)))
     (if align (.setAlignment paragraph (get-alignment align)))
+    
+    (doseq [item content]
+      (.add paragraph (make-section item)))
+    
     paragraph ))
 
 
@@ -182,8 +186,12 @@
     (if leading (.setLeading p (float leading))) p))
  
 
-(defn- text-chunk [font-style content]
-  (new Chunk (make-section content) (font font-style)))
+(defn- text-chunk [style content]
+  (let [ch (new Chunk (make-section content) (font style))]     
+    (cond 
+      (:super style) (.setTextRise ch (float 5))
+      (:sub style) (.setTextRise ch (float -4))
+      :else ch)))
 
 
 (defn- annotation
