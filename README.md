@@ -356,6 +356,38 @@ creates a number of new lines equal to the number passed in (1 space is default)
 [:spacer 5] ;creates 5 new lines
 ``` 
 
+#### Subscript
+
+tag :subscript
+
+optional metadata:
+
+* style font
+ 
+creates a text chunk in subscript
+
+```clojure
+[:subscript "some subscript text"]
+
+[:subscript {:style "bold} "some bold subscript text"]
+```
+
+#### Superscript
+
+tag :superscript
+
+optional metadata:
+
+* style font
+ 
+creates a text chunk in subscript
+
+```clojure
+[:superscript "some superscript text"]
+
+[:superscript {:style "bold} "some bold superscript text"]
+```
+
 #### Table
 
 tag :table

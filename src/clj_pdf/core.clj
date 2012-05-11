@@ -377,6 +377,14 @@
         (.add sec (make-section meta item))))))
 
 
+(defn- subscript [meta text]
+  (text-chunk (assoc meta :sub true) text))
+
+
+(defn- superscript [meta text]
+  (text-chunk (assoc meta :super true) text))
+
+
 (defn- chart [& params]  
   (let [width (:page-width (first params))
         height (:page-height (first params))]
@@ -407,21 +415,23 @@
        
         (apply
           (condp = tag
-            :anchor     anchor
-            :annotation annotation
-            :cell       cell
-            :chapter    chapter
-            :chart      chart
-            :chunk      text-chunk
-            :heading    heading
-            :image      image
-            :line       line
-            :list       li
-            :paragraph  paragraph
-            :phrase     phrase
-            :section    section
-            :spacer     spacer
-            :table      table)
+            :anchor      anchor
+            :annotation  annotation
+            :cell        cell
+            :chapter     chapter
+            :chart       chart
+            :chunk       text-chunk
+            :heading     heading
+            :image       image
+            :line        line
+            :list        li
+            :paragraph   paragraph
+            :phrase      phrase
+            :section     section
+            :spacer      spacer
+            :superscript superscript
+            :subscript   subscript
+            :table       table)
           (cons params elements))))))
  
  (defn- append-to-doc [font-style width height item doc]

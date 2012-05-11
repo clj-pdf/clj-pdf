@@ -142,6 +142,14 @@
       "heading.pdf"))
 
 
+(deftest sub-super
+  (eq? [{}
+        [:subscript "some subscript text"]
+        [:subscript {:style "bold"} "some bold subscript text"]
+        [:superscript "some superscript text"]
+        [:superscript {:style "bold"} "some bold superscript text"]]
+       "subsuper.pdf"))
+
 (deftest spacer
   (eq? [{}
         [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
