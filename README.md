@@ -532,7 +532,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
 ```clojure
 (write-doc 
-   [{:title  "Test doc"
+  [{:title  "Test doc"
      :left-margin   10
      :right-margin  50
      :top-margin    20
@@ -552,8 +552,8 @@ if :time-series is set to true then items on x axis must be dates, the default f
       [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
        "baz"] 
      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
-     ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]]    
-                 
+     ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]     
+
     [:chapter "First Chapter"]
 
     [:anchor {:style {:size 15} :leading 20} "some anchor"]
@@ -593,8 +593,8 @@ if :time-series is set to true then items on x axis must be dates, the default f
       ["2011-01-03-11:20:11" 200] 
       ["2011-01-03-11:25:11" 400] 
       ["2011-01-03-11:35:11" 350] 
-      ["2011-01-03-12:20:11" 600]]]
-    ]
+      ["2011-01-03-12:20:11" 600]]]]
+   
             
     "test.pdf")
 ```
