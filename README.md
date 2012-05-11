@@ -191,6 +191,7 @@ optional metadata:
 * :style font
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
+
 ```clojure
 [:chunk {:style "bold"} "small chunk of text"]
 [:chunk {:super true} "5"] 
