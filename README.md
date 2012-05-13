@@ -362,7 +362,7 @@ tag :subscript
 
 optional metadata:
 
-* style font
+* :style font
  
 creates a text chunk in subscript
 
@@ -378,7 +378,7 @@ tag :superscript
 
 optional metadata:
 
-* style font
+* :style font
  
 creates a text chunk in subscript
 
