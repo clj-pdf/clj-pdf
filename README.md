@@ -49,7 +49,7 @@ All fields in the metadata section are optional:
  :font  {:size 11} ;specifies default font that will be used by top level elements
  :doc-header ["inspired by" "William Shakespeare"]
  :header "Page header text appears on each page"
- :letterhead Sequence of any elements. If set, the first page shows letterhead instead of header
+ :letterhead ;Sequence of any elements. If set, the first page shows letterhead instead of header
  :footer "Page footer text appears on each page (includes page number)"
  :pages true ;specifies if total pages should be printed in the footer of each page
 }
