@@ -356,6 +356,14 @@ creates a number of new lines equal to the number passed in (1 space is default)
 [:spacer 5] ;creates 5 new lines
 ``` 
 
+#### String
+
+A string will be automatically converted to a paragraph
+
+```
+"this text will be treated as a paragraph"
+```
+
 #### Subscript
 
 tag :subscript

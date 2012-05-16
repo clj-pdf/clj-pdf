@@ -491,7 +491,7 @@
       (do
         (.open doc)       
         (doseq [item letterhead]
-          (append-to-doc  (or font-style {})  width height item doc))
+          (append-to-doc  (or font-style {})  width height (if (string? item) [:paragraph item] item) doc))
         (add-header header doc))
       (do
         (add-header header doc)
@@ -535,7 +535,7 @@
    
   (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
     (doseq [item content]
-      (append-to-doc (:font doc-meta) width height item doc))
+      (append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc))
     (.close doc)
     (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream))))
  
