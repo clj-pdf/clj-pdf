@@ -4,7 +4,7 @@ A Library for easily generating PDFs from Clojure
 
 ## Installation
 
-`clj-pdf` is available as a Maven artifact from [Clojars](http://clojars.org):
+`clj-pdf` is available as a Maven artifact from [Clojars](http://clojars.org/search?q=clj-pdf):
 
 Leiningen
 
