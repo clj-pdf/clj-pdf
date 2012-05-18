@@ -499,7 +499,7 @@ metadata:
 
 #### line chart
 
-if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss"
+if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure
 [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
