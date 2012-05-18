@@ -221,7 +221,7 @@ optional metadata:
 
 tag :image
 
-image data can be one of java.net.URL, java.awt.Image, or a filename string, 
+image data can be one of java.net.URL, java.awt.Image, byte array, base64 string, or a filename string, 
 images larger than the page margins will automatically be scaled to fit.
  
 optional metadata:
@@ -234,6 +234,7 @@ optional metadata:
 * :annotation ["title" "text"]
 * :pad-left number
 * :pad-right number
+* :base64 boolean - if set the image is expected to be a Base64 string
 
 ```clojure
 

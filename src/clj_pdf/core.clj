@@ -4,6 +4,7 @@
   (:import
     java.awt.Color
     com.lowagie.text.pdf.draw.LineSeparator  
+    sun.misc.BASE64Decoder
     [com.lowagie.text
      Anchor
      Annotation
@@ -324,45 +325,53 @@
                align         :align
                width         :width
                height        :height
+               base64?       :base64
                [title text]  :annotation
                pad-left      :pad-left
-               pad-right     :pad-right                                            
+               pad-right     :pad-right
                left-margin   :left-margin
                right-margin  :right-margin
                top-margin    :top-margin
                bottom-margin :bottom-margin
                page-width    :page-width
-               page-height   :page-height} 
+               page-height   :page-height}
               img-data]
-  (let [img (cond 
+  (let [img (cond
               (instance? java.awt.Image img-data)
-              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)              
-              (or (string? img-data) (instance? java.net.URL img-data)) 
-              (Image/getInstance img-data)              
-              :else 
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)
+              
+              base64?
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
+                            
+              (= Byte/TYPE (.getComponentType (class img-data)))
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) img-data) nil)
+              
+              (or (string? img-data) (instance? java.net.URL img-data))
+              (Image/getInstance img-data)
+              :else
               (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
         img-width (.getWidth img)
-        img-height (.getHeight img)] 
+        img-height (.getHeight img)]
     
     (when align (.setAlignment img (get-alignment align)))
     (when (and title text) (.setAnnotation img (make-section [:annotation title text])))
     (when pad-left (.setIndentationLeft img (float pad-left)))
-    (when pad-right (.setIndentationRight img (float pad-right)))    
-            
+    (when pad-right (.setIndentationRight img (float pad-right)))
+    
     ;;scale relative to page size
-    (when (and page-width page-height left-margin right-margin top-margin bottom-margin) 
+    (when (and page-width page-height left-margin right-margin top-margin bottom-margin)
       (let [available-width (- page-width (+ left-margin right-margin))
             available-height (- page-height (+ top-margin bottom-margin))
-            page-scale (* 100 (if (> img-width img-height) 
-                                (/ available-width img-width) 
-                                (/ available-height img-height)))] 
+            page-scale (* 100 (if (> img-width img-height)
+                                (/ available-width img-width)
+                                (/ available-height img-height)))]
         (cond
           (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
           xscale (.scalePercent img (float (* page-scale xscale)) (float 100))
           yscale (.scalePercent img (float 100) (float (* page-scale yscale)))
           :else (when (or (>  img-width available-width) (>  img-height available-height))
-                  (.scalePercent img (float page-scale))))))    
-    
+                  (.scalePercent img (float page-scale))))))
+        
     (when (and width height) (.scaleToFit img (float width) (float height)))
     img))
 
