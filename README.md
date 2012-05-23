@@ -412,6 +412,7 @@ metadata:
 * :border-width number
 * :cell-border boolean
 * :width number signifying the percentage of the page width that the table will take up
+* :widths vector list of column widths in percentage
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
 * :offset number
 * :num-cols number
