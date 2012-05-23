@@ -292,12 +292,16 @@
                border-width :border-width
                cell-border  :cell-border
                width        :width
+               widths       :widths
                align        :align
                num-cols     :num-cols} & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
   
   (let [cols (or num-cols (apply max (map count rows)))
         tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
+
+    (if widths
+      (.setWidths tbl (int-array widths)))
 
     (if (= false border)
       (.setBorder tbl Rectangle/NO_BORDER)
