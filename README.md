@@ -428,7 +428,9 @@ metadata:
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
      
-[:table {:border false :header [{:color [100 100 100]} "Singe Header"]} 
+[:table {:border false
+	     :widths [2 1 1] ; the widths will be: a width of 50% for the first column, 25% for the second and third column.
+         :header [{:color [100 100 100]} "Singe Header"]} 
   ["foo" "bar" "baz"] 
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]

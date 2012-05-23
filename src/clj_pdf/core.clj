@@ -299,9 +299,11 @@
   
   (let [cols (or num-cols (apply max (map count rows)))
         tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
-
-    (if widths
-      (.setWidths tbl (int-array widths)))
+    
+    (when widths
+      (if (= (count widths) cols) 
+        (.setWidths tbl (int-array widths))
+        (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " cols)))))
 
     (if (= false border)
       (.setBorder tbl Rectangle/NO_BORDER)
