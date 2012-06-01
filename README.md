@@ -303,6 +303,10 @@ content:
 [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
+
+[:paragraph
+  {:style {:style "bold" :size 10 :family "halvetica" :color [0 255 221]}}
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
 ```
 
 #### Phrase
