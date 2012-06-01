@@ -9,7 +9,7 @@ A Library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "0.7.7"]
+[clj-pdf "0.7.8"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>0.7.7</version>
+  <version>0.7.8</version>
 </dependency>
 ```
 
@@ -46,7 +46,7 @@ All fields in the metadata section are optional:
  :orientation   "landscape"
  :author "John Doe"
  :creator "Jane Doe"
- :font  {:size 11} ;specifies default font that will be used by top level elements
+ :font  {:size 11} ;specifies default font
  :doc-header ["inspired by" "William Shakespeare"]
  :header "Page header text appears on each page"
  :letterhead ;Sequence of any elements. If set, the first page shows letterhead instead of header
@@ -289,6 +289,7 @@ optional metadata:
 * :keep-together boolean
 * :leading number
 * :align "left|center|right"
+* :style - the default font to be used by the paragraph and its children
 
 content:
 

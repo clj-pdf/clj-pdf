@@ -139,21 +139,26 @@
           content)))
 
 
-(defn- paragraph [{indent        :indent
-                   style         :style
-                   keep-together :keep-together
-                   leading       :leading
-                   align         :align} 
-                  & content]
-  (let [paragraph (new Paragraph)]
+(defn- paragraph [meta & content]
+  (let [paragraph (new Paragraph)
+        {indent        :indent
+         style         :style
+         keep-together :keep-together
+         leading       :leading
+         align         :align}
+        meta]
+    
     (if style (.setFont paragraph (font style)))
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     (if leading (.setLeading paragraph (float leading)))
     (if align (.setAlignment paragraph (get-alignment align)))
-    
+        
     (doseq [item content]
-      (.add paragraph (make-section item)))
+      (.add paragraph 
+        (make-section 
+          style 
+          (if (string? item) [:chunk item] item))))
     
     paragraph ))
 
@@ -183,7 +188,7 @@
   (let [leading (:leading meta)
         p (doto (new Phrase)   
             (.setFont (font meta))
-            (.addAll (map make-section content)))] 
+            (.addAll (map (partial make-section meta) content)))] 
     (if leading (.setLeading p (float leading))) p))
  
 
