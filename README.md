@@ -191,7 +191,7 @@ optional metadata:
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
 
-;font metadata (refer to Font section for details)
+font metadata (refer to Font section for details)
 
 * :family 
 * :size 
@@ -296,7 +296,7 @@ optional metadata:
 * :leading number
 * :align "left|center|right"
 
-;font metadata (refer to Font section for details)
+font metadata (refer to Font section for details)
 
 * :family 
 * :size 
@@ -316,7 +316,7 @@ content:
   {:style "bold" :size 10 :family "halvetica" :color [0 255 221]}
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
 
-;font set in the paragraph can be modified by its children
+font set in the paragraph can be modified by its children
 [:paragraph {:indent 50 :color [0 255 221]} [:phrase {:style "bold" :size 18 :family "halvetica"} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
@@ -331,7 +331,7 @@ optional metadata:
 
 * :leading number
 
-;font metadata (refer to Font section for details)
+font metadata (refer to Font section for details)
 
 * :family 
 * :size 
