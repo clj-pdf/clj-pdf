@@ -102,7 +102,7 @@
 (deftest paragraph
   (eq? [{}
        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
-       [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
+       [:paragraph {:indent 50 :size 18} [:phrase {:style "bold" :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
        [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
        [:paragraph {:align "center"} "centered paragraph"]
        [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]]
