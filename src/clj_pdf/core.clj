@@ -48,7 +48,7 @@
          "symbol"       (Font/SYMBOL)
          "zapfdingbats" (Font/ZAPFDINGBATS)
          (Font/HELVETICA))
-       (float (if size size 11))
+       (float (or size 10))
        (condp = style
          "bold"        (Font/BOLD)
          "italic"      (Font/ITALIC)
@@ -148,7 +148,8 @@
          align         :align}
         meta]
     
-    (if style (.setFont paragraph (font style)))
+    ;(if style (.setFont paragraph (font style)))
+    (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
     (if leading (.setLeading paragraph (float leading)))
@@ -157,7 +158,7 @@
     (doseq [item content]
       (.add paragraph 
         (make-section 
-          style 
+          meta 
           (if (string? item) [:chunk item] item))))
     
     paragraph ))
@@ -455,13 +456,15 @@
           (cons params elements))))))
  
  (defn- append-to-doc [font-style width height item doc]
-  (if-let [section (make-section {:style font-style 
-                                  :left-margin (.leftMargin doc)
-                                  :right-margin (.rightMargin doc)
-                                  :top-margin (.topMargin doc)
-                                  :bottom-margin (.bottomMargin doc)
-                                  :page-width width 
-                                  :page-height height} item)]
+  (if-let [section (make-section
+                     (assoc font-style
+                            :left-margin (.leftMargin doc)
+                            :right-margin (.rightMargin doc)
+                            :top-margin (.topMargin doc)
+                            :bottom-margin (.bottomMargin doc)
+                            :page-width width 
+                            :page-height height)
+                      item)]
     (.add doc section)))
  
  (defn- add-header [header doc]

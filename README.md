@@ -188,9 +188,15 @@ tag :chunk
 
 optional metadata: 
 
-* :style font
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
+
+;font metadata (refer to Font section for details)
+
+* :family 
+* :size 
+* :style 
+* :color 
 
 ```clojure
 [:chunk {:style "bold"} "small chunk of text"]
@@ -289,7 +295,13 @@ optional metadata:
 * :keep-together boolean
 * :leading number
 * :align "left|center|right"
-* :style - the default font to be used by the paragraph and its children
+
+;font metadata (refer to Font section for details)
+
+* :family 
+* :size 
+* :style 
+* :color 
 
 content:
 
@@ -300,13 +312,15 @@ content:
     
 [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
-[:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
+[:paragraph
+  {:style "bold" :size 10 :family "halvetica" :color [0 255 221]}
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
+
+;font set in the paragraph can be modified by its children
+[:paragraph {:indent 50 :color [0 255 221]} [:phrase {:style "bold" :size 18 :family "halvetica"} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
 
-[:paragraph
-  {:style {:style "bold" :size 10 :family "halvetica" :color [0 255 221]}}
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
 ```
 
 #### Phrase
@@ -315,8 +329,14 @@ tag :phrase
 
 optional metadata: 
 
-* :style font
 * :leading number
+
+;font metadata (refer to Font section for details)
+
+* :family 
+* :size 
+* :style 
+* :color 
 
 content:
 
