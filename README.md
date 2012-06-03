@@ -132,6 +132,8 @@ example font:
  :family "helvetica"
  :color [0 234 123]}
 ```
+note: Font styles are additive, for example setting style "italic" on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
+
 
 ### Document sections
 
