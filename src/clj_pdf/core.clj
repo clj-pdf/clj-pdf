@@ -28,7 +28,7 @@
      ZapfDingbatsList
      ZapfDingbatsNumberList]
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter]
-    [java.io PushbackReader InputStreamReader FileOutputStream ByteArrayOutputStream]))
+    [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
 (declare make-section)
 
@@ -585,3 +585,7 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
+(defn pdf [in out]
+  (if (instance? InputStream in)
+    (stream-doc in out)
+    (write-doc in out)))

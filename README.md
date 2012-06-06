@@ -24,9 +24,12 @@ Maven
 
 ## Usage
 
-`write-doc` will produce a PDF given a vector which defines the document and write it to out which can be either a string, in which case it's treated as a file name, or an output stream.
+`(pdf in out)`
 
-`stream-doc` takes input and output streams, then sequentially reads and appends the forms from the input stream to the output stream. 
+`in` can be either a vector containing the document or an input stream. If `in` is an input stream then the forms will be read sequentially from it. 
+ 
+`out` can be either a string, in which case it's treated as a file name, or an output stream.
+ 
 NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
 
 ## Document Format
@@ -570,7 +573,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ### A complete example
 
 ```clojure
-(write-doc 
+(pdf 
   [{:title  "Test doc"
      :left-margin   10
      :right-margin  50
