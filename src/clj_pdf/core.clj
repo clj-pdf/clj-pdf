@@ -126,7 +126,8 @@
 
  
 (defn- chapter [meta & [title & sections]] 
-  (let [ch (new ChapterAutoNumber (make-section meta title))]    
+  (let [ch (new ChapterAutoNumber 
+                (make-section meta (if (string? title) [:paragraph title] title)))]    
     (doseq [section sections]
       (make-section (assoc meta :parent ch) section))
     ch))
@@ -389,7 +390,8 @@
 
 
 (defn- section [meta & [title & content]]  
-  (let [sec (.addSection (:parent meta) (make-section meta title))
+  (let [sec (.addSection (:parent meta) 
+              (make-section meta (if (string? title) [:paragraph title] title)))
         indent (:indent meta)]
     (if indent (.setIndentation sec (float indent)))
     (doseq [item content]
