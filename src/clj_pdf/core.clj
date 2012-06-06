@@ -581,7 +581,12 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
-(defn pdf [in out]
+(defn pdf
+  "usage:
+   in can be either a vector containing the document or an input stream. If in is an input stream then the forms will be read sequentially from it.
+   out can be either a string, in which case it's treated as a file name, or an output stream.
+   NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed."
+  [in out]
   (if (instance? InputStream in)
     (stream-doc in out)
     (write-doc in out)))
