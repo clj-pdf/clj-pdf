@@ -426,8 +426,11 @@
 (defn- make-section
   ([element] (if element (make-section {} element) ""))
   ([meta element]
-    (if (string? element)
-      element
+    (cond 
+      (string? element) element
+      (nil? element) ""
+      (number? element) (str element)
+      :else
       (let [[element-name & content] element
             tag (if (string? element-name) (keyword element-name) element-name)
             params? (map? (first content))
@@ -452,7 +455,8 @@
             :spacer      spacer
             :superscript superscript
             :subscript   subscript
-            :table       table)
+            :table       table
+            (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
  
  (defn- append-to-doc [font-style width height item doc]
