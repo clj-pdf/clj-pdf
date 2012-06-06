@@ -367,13 +367,13 @@ optional metadata:
 * :indent number
 
 ```clojure
-[:chapter "Chapter"
-  [:section "Section Title"
+[:chapter [:paragraph {:color [250 0 0]} "Chapter"]
+   [:section "Section Title" "Some content"]
+   [:section [:paragraph {:size 10} "Section Title"]
     [:paragraph "Some content"]
     [:paragraph "Some more content"]
-    [:section [:paragraph "Nested Section Title"]               
-              [:paragraph "nested section content"]]]]  
-
+    [:section {:color [100 200 50]} [:paragraph "Nested Section Title"]               
+              [:paragraph "nested section content"]]]]
 ```
 
 #### Spacer

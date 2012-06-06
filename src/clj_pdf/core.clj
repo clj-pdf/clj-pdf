@@ -395,9 +395,9 @@
         indent (:indent meta)]
     (if indent (.setIndentation sec (float indent)))
     (doseq [item content]
-      (if (= "section" (name (first item))) 
+      (if (and (coll? item) (= "section" (name (first item)))) 
         (make-section (assoc meta :parent sec) item)
-        (.add sec (make-section meta item))))))
+        (.add sec (make-section meta (if (string? item) [:chunk item] item)))))))
 
 
 (defn- subscript [meta text]
