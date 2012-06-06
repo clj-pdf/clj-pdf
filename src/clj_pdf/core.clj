@@ -407,11 +407,7 @@
 
 
 (defn- chart [& params]  
-  (let [width (:page-width (first params))
-        height (:page-height (first params))]
-    (doto (Image/getInstance (apply charting/chart params) nil)
-      (.scaleToFit  (float (* width 0.8)) (float (* height 0.8)))
-      (.setDpi 300 300))))
+  (image (first params) (apply charting/chart params)))
  
 (defn- line [& args]
   (doto (new LineSeparator) (.setOffset -5)))

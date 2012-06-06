@@ -1,5 +1,5 @@
 (ns clj_pdf.charting  
-  (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart]
+  (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart ChartUtilities]
             [org.jfree.chart.plot CategoryPlot PlotOrientation]
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
             org.jfree.data.category.DefaultCategoryDataset
@@ -7,7 +7,7 @@
             org.jfree.chart.renderer.category.StandardBarPainter            
             java.text.SimpleDateFormat
             java.awt.Image
-            java.awt.image.BufferedImage
+            java.awt.image.BufferedImage            
             java.awt.Rectangle
             [javax.swing JLabel JFrame ]))
 
@@ -56,15 +56,19 @@
                                         PlotOrientation/HORIZONTAL
                                         PlotOrientation/VERTICAL) true true false))))
 
+
 (defn chart [params & items]
   (let [{type   :type
          width  :page-width
-         height :page-height} params
-        image (new BufferedImage width height BufferedImage/TYPE_INT_RGB)]
-    (.draw (condp = type
-             "bar-chart"  (apply bar-chart params items)
-             "pie-chart"  (apply pie-chart params items)
-             "line-chart" (apply line-chart params items)
-             (throw (new Exception (str "Unsupported chart type " type))))
-      (.createGraphics image) (new Rectangle (int width) (int height)))
-    image))
+         height :page-height} params         
+        out (new java.io.ByteArrayOutputStream)]
+    
+    (org.jfree.chart.ChartUtilities/writeScaledChartAsPNG 
+      out
+      (condp = type
+        "bar-chart"  (apply bar-chart params items)
+        "pie-chart"  (apply pie-chart params items)
+        "line-chart" (apply line-chart params items)
+        (throw (new Exception (str "Unsupported chart type " type))))
+      (int width) (int height) 2 2)
+    (.toByteArray out)))

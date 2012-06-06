@@ -9,7 +9,7 @@ A Library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "0.7.9"]
+[clj-pdf "0.8.0"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>0.7.9</version>
+  <version>0.8.0</version>
 </dependency>
 ```
 
@@ -523,6 +523,17 @@ metadata:
 * :time-format - can optionally be used with time-series to provide custom date formatting, defaults to "yyyy-MM-dd-HH:mm:ss"
 * :horizontal  - can be used with bar charts and line charts, not supported by time series
 * :title  
+
+additional image metadata
+
+* :xscale number - percentage relative to page size
+* :yscale num - percentage relative to page size
+* :width num - set width for image: overrides scaling
+* :height num - set height for image: overrides scaling
+* :align "left|center|right"
+* :annotation ["title" "text"]
+* :pad-left number
+* :pad-right number
 
 #### bar chart
 
