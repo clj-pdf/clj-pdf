@@ -5,10 +5,7 @@
             org.jfree.data.category.DefaultCategoryDataset
             org.jfree.data.general.DefaultPieDataset
             org.jfree.chart.renderer.category.StandardBarPainter            
-            java.text.SimpleDateFormat
-            java.awt.Image
-            java.awt.image.BufferedImage            
-            java.awt.Rectangle
+            java.text.SimpleDateFormat            
             [javax.swing JLabel JFrame ]))
 
 
