@@ -3,7 +3,7 @@
   (:require [clj_pdf.charting :as charting])
   (:import
     java.awt.Color
-    com.lowagie.text.pdf.draw.LineSeparator  
+    [com.lowagie.text.pdf.draw DottedLineSeparator LineSeparator]  
     sun.misc.BASE64Decoder
     [com.lowagie.text
      Anchor
@@ -413,8 +413,13 @@
 (defn- chart [& params]  
   (image (first params) (apply charting/chart params)))
  
-(defn- line [& args]
-  (doto (new LineSeparator) (.setOffset -5)))
+(defn- line [{dotted? :dotted, gap :gap} & args]
+  (doto (if dotted?
+          (if gap 
+            (doto (new DottedLineSeparator) (.setGap (float gap)))
+            (new DottedLineSeparator))
+          (new LineSeparator)) 
+    (.setOffset -5)))
  
 
 (defn- spacer
