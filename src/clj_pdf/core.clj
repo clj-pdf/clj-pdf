@@ -148,8 +148,7 @@
          leading       :leading
          align         :align}
         meta]
-    
-    ;(if style (.setFont paragraph (font style)))
+        
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
     (if indent (.setFirstLineIndent paragraph (float indent)))
@@ -330,7 +329,10 @@
     (doseq [row rows]
       (doseq [column row]
         (.addCell tbl (cell column))))
-    tbl))
+    
+    ;;iText page breaks on tables are broken,
+    ;;this ensures that table will not spill over other content    
+    (doto (new Paragraph) (.add tbl))))
 
 
 (defn- image [{xscale        :xscale
