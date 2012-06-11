@@ -9,7 +9,7 @@ A Library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "0.9.0"]
+[clj-pdf "0.9.1"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -45,8 +45,8 @@ All fields in the metadata section are optional:
  :top-margin    20
  :bottom-margin 25
  :subject "Some subject"
- :size          "a4"
- :orientation   "landscape"
+ :size          :a4
+ :orientation   :landscape
  :author "John Doe"
  :creator "Jane Doe"
  :font  {:size 11} ;specifies default font
@@ -61,58 +61,58 @@ All fields in the metadata section are optional:
 available page sizes:
 
 ```clojure
-"a0"                  
-"a1"               
-"a2"               
-"a3"               
-"a4"               
-"a5"               
-"a6"               
-"a7"               
-"a8"               
-"a9"               
-"a10"              
-"arch-a"           
-"arch-b"           
-"arch-c"           
-"arch-d"           
-"arch-e"           
-"b0"               
-"b1"               
-"b2"               
-"b3"               
-"b4"               
-"b5"                   
-"b6"                   
-"b7"                   
-"b8"                   
-"b9"                   
-"b10"                  
-"crown-octavo"         
-"crown-quarto"         
-"demy-octavo"          
-"demy-quarto"          
-"executive"            
-"flsa"                 
-"flse"                 
-"halfletter"           
-"id-1"                 
-"id-2"                 
-"id-3"                 
-"large-crown-octavo"   
-"large-crown-quarto"   
-"ledger"                  
-"legal"                   
-"letter"                  
-"note"                    
-"penguin-large-paperback" 
-"penguin-small-paperback" 
-"postcard"                
-"royal-octavo"            
-"royal-quarto"            
-"small-paperback"         
-"tabloid"
-```
+ :a0
+ :a1
+ :a10
+ :a2
+ :a3
+ :a4
+ :a5
+ :a6
+ :a7
+ :a8
+ :a9
+ :arch-a
+ :arch-b
+ :arch-c
+ :arch-d
+ :arch-e
+ :b0
+ :b1
+ :b10
+ :b2
+ :b3
+ :b4
+ :b5
+ :b6
+ :b7
+ :b8
+ :b9
+ :crown-octavo
+ :crown-quarto
+ :demy-octavo
+ :demy-quarto
+ :executive
+ :flsa
+ :flse
+ :halfletter
+ :id-1
+ :id-2
+ :id-3
+ :large-crown-octavo
+ :large-crown-quarto
+ :ledger
+ :legal
+ :letter
+ :note
+ :penguin-large-paperback
+ :penguin-small-paperback
+ :postcard
+ :royal-octavo
+ :royal-quarto
+ :small-paperback
+ :tabloid
+ ```
     
 defaults to A4 page size if none provided
 
@@ -122,20 +122,20 @@ orientation defaults to portrait, unless "landscape" is specified
 
 A font is defined by a map consisting of the following parameters, all parameters are optional
 
-* :family has following options: "courier", "helvetica", "times-roman", "symbol", "zapfdingbats" defaults to "helvetica"
+* :family has following options: :courier, :helvetica, :times-roman, :symbol, :zapfdingbats defaults to :helvetica
 * :size is a number default is 11
-* :style has following options: "bold", "italic", "bold-italic", "normal", "strikethru", "underline" defaults to "normal"
+* :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
 * :color is a vector of [r g b] defaults to black
 
 example font:
 
 ```clojure
-{:style "bold"
+{:style :bold
  :size 18
- :family "helvetica"
+ :family :helvetica
  :color [0 234 123]}
 ```
-note: Font styles are additive, for example setting style "italic" on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
+note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
 
 
 ### Document sections
@@ -163,7 +163,7 @@ iText idiosynchorsies:
 ```clojure
 [:anchor {:style {:size 15} :leading 20} "some anchor"]
    
-[:anchor [:phrase {:style "bold"} "some anchor phrase"]]
+[:anchor [:phrase {:style :bold} "some anchor phrase"]]
  
 [:anchor "plain anchor"]
 ```
@@ -204,7 +204,7 @@ font metadata (refer to Font section for details)
 * :color 
 
 ```clojure
-[:chunk {:style "bold"} "small chunk of text"]
+[:chunk {:style :bold} "small chunk of text"]
 
 [:chunk {:super true} "5"] 
 
@@ -217,15 +217,18 @@ tag :heading
 
 optional metadata:
 
-* :style specifies the font for the heading
-* :align specifies alignement of heading possible valuse "left|center|right"
+* :family 
+* :size 
+* :style 
+* :color 
+* :align specifies alignement of heading possible valuse :left, :center, :right
 
 ```clojure
 [:heading "Lorem Ipsum"]
     
-[:heading {:style {:size 15}} "Lorem Ipsum"]
+[:heading {:size 15} "Lorem Ipsum"]
 
-[:heading {:style {:size 10 :color [100 40 150]} :align "right"}"Foo"]
+[:heading {:size 10 :color [100 40 150] :align :right} "Foo"]
 ```
 
 #### Image
@@ -241,7 +244,7 @@ optional metadata:
 * :yscale num - percentage relative to page size
 * :width num - set width for image: overrides scaling
 * :height num - set height for image: overrides scaling
-* :align "left|center|right"
+* :align :left, :center, :right
 * :annotation ["title" "text"]
 * :pad-left number
 * :pad-right number
@@ -252,7 +255,7 @@ optional metadata:
 [:image 
    {:xscale     0.5
     :yscale     0.8       
-    :align      "center"
+    :align      :center
     :annotation ["FOO" "BAR"]
     :pad-left   100
     :pad-right  50}
@@ -298,7 +301,7 @@ content:
 
 
 ```clojure
-[:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
+[:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 ```
 
 #### Paragraph
@@ -310,7 +313,7 @@ optional metadata:
 * :indent number
 * :keep-together boolean
 * :leading number
-* :align "left|center|right"
+* :align :left, :center, :right
 
 font metadata (refer to Font section for details)
 
@@ -329,11 +332,11 @@ content:
 [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
 [:paragraph
-  {:style "bold" :size 10 :family "halvetica" :color [0 255 221]}
+  {:style :bold :size 10 :family :halvetica :color [0 255 221]}
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
 
 font set in the paragraph can be modified by its children
-[:paragraph {:indent 50 :color [0 255 221]} [:phrase {:style "bold" :size 18 :family "halvetica"} "Hello Clojure!"]]
+[:paragraph {:indent 50 :color [0 255 221]} [:phrase {:style :bold :size 18 :family :halvetica} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
 
@@ -362,9 +365,9 @@ content:
 ```clojure
 [:phrase "some text here"]
 
-[:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+[:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
 
-[:phrase [:chunk {:style "italic"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+[:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 ```
 
 #### Section
@@ -419,7 +422,7 @@ creates a text chunk in subscript
 ```clojure
 [:subscript "some subscript text"]
 
-[:subscript {:style "bold"} "some bold subscript text"]
+[:subscript {:style :bold} "some bold subscript text"]
 ```
 
 #### Superscript
@@ -435,7 +438,7 @@ creates a text chunk in subscript
 ```clojure
 [:superscript "some superscript text"]
 
-[:superscript {:style "bold"} "some bold superscript text"]
+[:superscript {:style :bold} "some bold superscript text"]
 ```
 
 #### Table
@@ -444,7 +447,7 @@ tag :table
 
 metadata:
 
-* :align table alignment on the page can be: "left" "right" "center"
+* :align table alignment on the page can be: :left, :center, :right
 * :color  `[r g b]` (int values)   
 * :header [{:color [r g b]} "column name" ...] if only a single column name is provided it will span all rows
 * :spacing number
@@ -478,7 +481,7 @@ metadata:
      
 [:table {:cell-border false :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
   ["foo" 
-    [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+    [:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]] 
     "baz"] 
   ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
   ["foo2" "bar2" "baz2"]]
@@ -514,7 +517,7 @@ note: Cells can contain other elements including tables
 
 [:cell {:colspan 3 :rowspan 2} "Foo"]
 
-[:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]]
+[:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]]
 
 [:cell {:color [100 10 200]} "bar1"]
 
@@ -557,7 +560,7 @@ additional image metadata
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure
-[:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+[:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
   ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
   ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
 ```
@@ -568,7 +571,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
    :y-label "progress"
    :time-series true
    :title   "Time Chart"
-   :type    "line-chart"}
+   :type    :line-chart}
   ["Incidents"
    ["2011-01-03-11:20:11" 200] 
    ["2011-02-11-22:25:01" 400] 
@@ -577,7 +580,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ``` 
 
 ```clojure
-[:chart {:type "line-chart" 
+[:chart {:type :line-chart 
          :time-series true 
          :time-format "MM/yy"
          :title "Time Chart" 
@@ -589,7 +592,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 #### pie chart
 
 ```clojure
-[:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
+[:chart {:type :pie-chart :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
 ```
 
 ### A complete example
@@ -601,7 +604,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
      :right-margin  50
      :top-margin    20
      :bottom-margin 25
-     :size          "a4"
+     :size          :a4
      :orientation   "landscape"
      :subject "Some subject"
      :author "John Doe"
@@ -613,7 +616,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
     [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20} 
      ["foo" 
-      [:cell [:phrase {:style "italic" :size 18 :family "halvetica" :color [200 55 221]} "Hello Clojure!"]] 
+      [:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]] 
        "baz"] 
      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
      ["foo2" "bar2" [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]     
@@ -622,37 +625,37 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
     [:anchor {:style {:size 15} :leading 20} "some anchor"]
 
-    [:anchor [:phrase {:style "bold"} "some anchor phrase"]]
+    [:anchor [:phrase {:style :bold} "some anchor phrase"]]
 
     [:anchor "plain anchor"]        
 
-    [:chunk {:style "bold"} "small chunk of text"]
+    [:chunk {:style :bold} "small chunk of text"]
 
     [:phrase "some text here"]
 
-    [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+    [:phrase {:style :italic :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
 
-    [:phrase [:chunk {:style "strikethru"} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+    [:phrase [:chunk {:style :strikethru} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 
     [:paragraph "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
 
-    [:paragraph {:indent 50} [:phrase {:style "bold" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]]
+    [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
 
     [:chapter [:paragraph "Second Chapter"]]
 
     [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
-    [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
+    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 
     [:chapter "Charts"]            
-    [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
+    [:chart {:type :bar-chart :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 
-    [:chart {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+    [:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
      ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
      ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]            
-     [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
+     [:chart {:type :pie-chart :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
 
-    [:chart {:type "line-chart" :time-series true :title "Time Chart" :x-label "time" :y-label "progress"}
+    [:chart {:type :line-chart :time-series true :title "Time Chart" :x-label "time" :y-label "progress"}
      ["Incidents"
       ["2011-01-03-11:20:11" 200] 
       ["2011-01-03-11:25:11" 400] 

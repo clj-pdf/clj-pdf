@@ -62,7 +62,7 @@
     
     (org.jfree.chart.ChartUtilities/writeScaledChartAsPNG 
       out
-      (condp = type
+      (condp = (when type (name type))
         "bar-chart"  (apply bar-chart params items)
         "pie-chart"  (apply pie-chart params items)
         "line-chart" (apply line-chart params items)

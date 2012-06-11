@@ -33,7 +33,7 @@
 (declare make-section)
 
 (defn get-alignment [align]
-  (condp = align "left" 0, "center" 1, "right" 2, 0))
+  (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, 0))
 
 (defn- font
   [{style   :style
@@ -41,7 +41,7 @@
     [r g b] :color
     family  :family}]
   (new Font
-       (condp = family
+       (condp = (when family (name family))
          "courier"      (Font/COURIER)
          "helvetica"    (Font/HELVETICA)
          "times-roman"  (Font/TIMES_ROMAN)
@@ -49,7 +49,8 @@
          "zapfdingbats" (Font/ZAPFDINGBATS)
          (Font/HELVETICA))
        (float (or size 10))
-       (condp = style
+       
+       (condp = (when style (name style))
          "bold"        (Font/BOLD)
          "italic"      (Font/ITALIC)
          "bold-italic" (Font/BOLDITALIC)
@@ -63,7 +64,7 @@
 
 
 (defn- page-size [size]
-  (condp = size
+  (condp = (when size (name size))
     "a0"                        (PageSize/A0)
     "a1"                        (PageSize/A1)
     "a2"                        (PageSize/A2)
@@ -120,7 +121,7 @@
  
 (defn- page-orientation [page-size orientation]
   (if page-size
-    (condp = orientation
+    (condp = (if orientation (name orientation))
       "landscape"    (.rotate page-size)
       page-size)))
 
@@ -133,11 +134,9 @@
     ch))
 
 
-(defn- heading [meta & content]
+(defn- heading [meta & content]  
   (make-section
-    (into [:paragraph 
-           (if (:style meta) meta (assoc meta :style {:size 18 :style "bold"}))] 
-          content)))
+    (into [:paragraph (merge {:size 18 :style :bold} meta)] content)))
 
 
 (defn- paragraph [meta & content]
@@ -363,6 +362,7 @@
               
               (or (string? img-data) (instance? java.net.URL img-data))
               (Image/getInstance img-data)
+              
               :else
               (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
         img-width (.getWidth img)
@@ -481,22 +481,22 @@
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
  
-(defn- setup-doc [{left-margin          :left-margin
-                  right-margin          :right-margin
-                  top-margin            :top-margin
-                  bottom-margin         :bottom-margin
-                  title                 :title                  
-                  subject               :subject
-                  [nom head]            :doc-header
-                  header                :header
-                  letterhead            :letterhead
-                  footer                :footer
-                  total-pages?          :pages
-                  author                :author
-                  creator               :creator
-                  size                  :size
-                  font-style            :font
-                  orientation           :orientation}
+(defn- setup-doc [{left-margin  :left-margin
+                  right-margin  :right-margin
+                  top-margin    :top-margin
+                  bottom-margin :bottom-margin
+                  title         :title                  
+                  subject       :subject
+                  [nom head]    :doc-header
+                  header        :header
+                  letterhead    :letterhead
+                  footer        :footer
+                  total-pages?  :pages
+                  author        :author
+                  creator       :creator
+                  size          :size
+                  font-style    :font
+                  orientation   :orientation}
                   out]
  
   (let [doc    (new Document (page-orientation (page-size size) orientation))
@@ -590,6 +590,7 @@
               (.close doc)
               (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
 
+
 (defn pdf
   "usage:
    in can be either a vector containing the document or an input stream. If in is an input stream then the forms will be read sequentially from it.
@@ -599,3 +600,4 @@
   (if (instance? InputStream in)
     (stream-doc in out)
     (write-doc in out)))
+
