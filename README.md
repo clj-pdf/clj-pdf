@@ -235,7 +235,7 @@ optional metadata:
 
 tag :image
 
-image data can be one of java.net.URL, java.awt.Image, byte array, base64 string, or a filename string, 
+image data can be one of java.net.URL, java.awt.Image, byte array, base64 string, or a string representing URL or a file, 
 images larger than the page margins will automatically be scaled to fit.
  
 optional metadata:
@@ -259,7 +259,11 @@ optional metadata:
     :annotation ["FOO" "BAR"]
     :pad-left   100
     :pad-right  50}
-   (javax.imageio.ImageIO/read "mandelbrot.jpg")]
+   (javax.imageio.ImageIO/read "mandelbrot.jpg")]   
+[:image "test/mandelbrot.jpg"]
+[:image "http://clojure.org/space/showimage/clojure-icon.gif"]
+
+   
 ```
 
 #### Line
