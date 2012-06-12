@@ -570,7 +570,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ```
 
 ```clojure
-["chart",
+[:chart,
   {:x-label "time"
    :y-label "progress"
    :time-series true
