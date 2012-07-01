@@ -464,7 +464,7 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
  
- (defn- append-to-doc [font-style width height item doc]
+ (defn append-to-doc [font-style width height item doc]
   (if-let [section (make-section
                      (assoc font-style
                             :left-margin (.leftMargin doc)
@@ -481,7 +481,7 @@
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
  
-(defn- setup-doc [{left-margin  :left-margin
+(defn setup-doc [{left-margin  :left-margin
                   right-margin  :right-margin
                   top-margin    :top-margin
                   bottom-margin :bottom-margin
@@ -544,7 +544,7 @@
    
     [doc width height temp-stream output-stream]))
  
-(defn- write-total-pages [doc width footer temp-stream output-stream]
+(defn write-total-pages [doc width footer temp-stream output-stream]
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
