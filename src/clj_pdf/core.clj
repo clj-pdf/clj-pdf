@@ -585,7 +585,7 @@
         (loop []
           (if-let [item (read r nil nil)]           
             (do
-              (append-to-doc (:font doc-meta) width height item doc)
+              (append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc)
               (recur))
             (do
               (.close doc)
