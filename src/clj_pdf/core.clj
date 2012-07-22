@@ -411,7 +411,13 @@
 
 
 (defn- chart [& params]  
-  (image (first params) (apply charting/chart params)))
+  (let [meta (first params)
+        {:keys [page-width page-height]} meta] 
+    (image (assoc meta 
+                  :align :center
+                  :width (* 0.85 page-width) 
+                  :height (* 0.85 page-height)) 
+           (apply charting/chart params))))
  
 (defn- line [{dotted? :dotted, gap :gap} & args]
   (doto (if dotted?
