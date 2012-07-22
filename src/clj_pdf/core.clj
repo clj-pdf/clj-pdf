@@ -565,14 +565,25 @@
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
-   
+  
   (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
     (doseq [item content]
       (append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc))
     (.close doc)
     (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream))))
  
- 
+(defn to-pdf [input-reader r out]
+  (let [doc-meta (input-reader r)
+        [doc width height temp-stream output-stream] (clj-pdf.core/setup-doc doc-meta out)] 
+    (loop []
+      (if-let [item (input-reader r)] 
+        (do
+          (clj-pdf.core/append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc)
+          (recur))
+        (do 
+          (.close doc)
+          (when (:pages doc-meta) (clj-pdf.core/write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))
+
 (defn stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
    NOTE: setting the :pages to true in doc meta will require the entire document to remain in memory for
@@ -580,16 +591,7 @@
   [in out]
   (with-open [r (new PushbackReader (new InputStreamReader in))]
     (binding [*read-eval* false]
-      (let [doc-meta (read r nil nil)
-            [doc width height temp-stream output-stream] (setup-doc doc-meta out)]
-        (loop []
-          (if-let [item (read r nil nil)]           
-            (do
-              (append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc)
-              (recur))
-            (do
-              (.close doc)
-              (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))))
+      (to-pdf (fn [r] (read r nil nil)) out))))
 
 
 (defn pdf
@@ -601,4 +603,3 @@
   (if (instance? InputStream in)
     (stream-doc in out)
     (write-doc in out)))
-
