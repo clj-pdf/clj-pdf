@@ -1,5 +1,5 @@
 (defproject clj-pdf 
-  "0.9.6-SNAPSHOT"
+  "0.9.7-SNAPSHOT"
   :description "PDF generation library"
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [jfree/jfreechart "1.0.13"]

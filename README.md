@@ -9,7 +9,7 @@ A Library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "0.9.6"]
+[clj-pdf "0.9.7"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>0.9.6</version>
+  <version>0.9.7</version>
 </dependency>
 ```
 
@@ -459,7 +459,6 @@ metadata:
 * :border boolean
 * :border-width number
 * :cell-border boolean
-* :title the title that will appear above the table
 * :width number signifying the percentage of the page width that the table will take up
 * :widths vector list of column widths in percentage
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
@@ -467,7 +466,7 @@ metadata:
 * :num-cols number
 
 ```clojure
-[:table {:title "Table title" :header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
+[:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
   [[:cell {:colspan 2} "Foo"] "Bar"]             
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]

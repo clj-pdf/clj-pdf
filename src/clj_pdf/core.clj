@@ -307,9 +307,7 @@
       (doseq [column row]
         (.addCell tbl (cell column))))
     
-    ;;iText page breaks on tables are broken,
-    ;;this ensures that table will not spill over other content    
-    (doto (if title (new Paragraph (float 20) title) (new Paragraph (float 20))) (.add tbl))))
+    tbl))
 
 
 (defn- image [{:keys [xscale        
@@ -545,6 +543,18 @@
     (.close stamper)))
  
 
+(defn- preprocess-item [item]  
+  (cond
+    (string? item) 
+    [:paragraph item]
+    
+    (= :table (first item))
+    ;;iText page breaks on tables are broken,
+    ;;this ensures that table will not spill over other content
+    [:paragraph {:leading 20} item]
+    
+    :else item))
+
 (defn write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
@@ -553,7 +563,7 @@
   
   (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
     (doseq [item content]
-      (append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc))
+      (append-to-doc (:font doc-meta) width height (preprocess-item item) doc))
     (.close doc)
     (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream))))
  
@@ -563,7 +573,7 @@
     (loop []
       (if-let [item (input-reader r)] 
         (do
-          (clj-pdf.core/append-to-doc (:font doc-meta) width height (if (string? item) [:paragraph item] item) doc)
+          (clj-pdf.core/append-to-doc (:font doc-meta) width height (preprocess-item item) doc)
           (recur))
         (do 
           (.close doc)
