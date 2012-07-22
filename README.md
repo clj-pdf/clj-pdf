@@ -467,12 +467,12 @@ metadata:
 * :num-cols number
 
 ```clojure
-[:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
+[:table {:title "Table title" :header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
   [[:cell {:colspan 2} "Foo"] "Bar"]             
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
      
-[:table {:title "Foo bar baz table" :border-width 10 :header ["Row 1" "Row 2" "Row 3"]} 
+[:table {:border-width 10 :header ["Row 1" "Row 2" "Row 3"]} 
   ["foo" "bar" "baz"] 
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
