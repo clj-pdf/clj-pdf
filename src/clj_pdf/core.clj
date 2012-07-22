@@ -141,12 +141,7 @@
 
 (defn- paragraph [meta & content]
   (let [paragraph (new Paragraph)
-        {indent        :indent
-         style         :style
-         keep-together :keep-together
-         leading       :leading
-         align         :align}
-        meta]
+        {:keys [indent style keep-together leading align]} meta]
         
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
@@ -163,15 +158,7 @@
     paragraph ))
 
 
-(defn- li [{numbered                :numbered
-            lettered                :lettered
-            roman                   :roman
-            greek                   :greek
-            dingbats                :dingbats
-            dingbats-char-num       :dingbats-char-num
-            dingbatsnumber          :dingbatsnumber
-            dingbatsnumber-type     :dingbatsnumber-type}
-           & items]
+(defn- li [{:keys [numbered lettered roman greek dingbats dingbats-char-num dingbatsnumber dingbatsnumber-type]} & items]
   (let [list (cond
                roman           (new RomanList)
                greek           (new GreekList)
@@ -233,17 +220,18 @@
           c (if (string? content) (new Cell content) (new Cell))]
       
       (if meta?
-        (let [{[r g b] :color
-               colspan :colspan
-               rowspan :rowspan
-               border  :border
-               align   :align
-               set-border :set-border
-               border-width :border-width
-               border-width-bottom :border-width-bottom
-               border-width-left :border-width-left
-               border-width-right :border-width-right
-               border-width-top :border-width-top} (second element)]
+        (let [{:keys [color 
+                      colspan 
+                      rowspan 
+                      border 
+                      align 
+                      set-border 
+                      border-width 
+                      border-width-bottom 
+                      border-width-left 
+                      border-width-right 
+                      border-width-top]} (second element)
+              [r g b] color]
           
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
           (when (not (nil? border))
@@ -288,18 +276,8 @@
     (.endHeaders tbl)))
  
  
-(defn- table [{[r g b]      :color
-               spacing      :spacing
-               padding      :padding
-               offset       :offset
-               header       :header
-               border       :border
-               border-width :border-width
-               cell-border  :cell-border
-               width        :width
-               widths       :widths
-               align        :align
-               num-cols     :num-cols} & rows]
+(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align title num-cols]}
+              & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
   
   (let [cols (or num-cols (apply max (map count rows)))
@@ -317,7 +295,7 @@
     (when (= false cell-border)
       (.setDefaultCell tbl (doto (new Cell) (.setBorder Rectangle/NO_BORDER))))
    
-    (if (and r g b) (.setBackgroundColor tbl (new Color (int r) (int g) (int b))))
+    (if color (let [[r g b] color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (.setPadding tbl (if padding (float padding) (float 3)))
     (if spacing (.setSpacing tbl (float spacing)))
     (if offset (.setOffset tbl (float offset)))
@@ -331,24 +309,24 @@
     
     ;;iText page breaks on tables are broken,
     ;;this ensures that table will not spill over other content    
-    (doto (new Paragraph) (.add tbl))))
+    (doto (if title (new Paragraph (float 20) title) (new Paragraph (float 20))) (.add tbl))))
 
 
-(defn- image [{xscale        :xscale
-               yscale        :yscale
-               align         :align
-               width         :width
-               height        :height
-               base64?       :base64
-               [title text]  :annotation
-               pad-left      :pad-left
-               pad-right     :pad-right
-               left-margin   :left-margin
-               right-margin  :right-margin
-               top-margin    :top-margin
-               bottom-margin :bottom-margin
-               page-width    :page-width
-               page-height   :page-height}
+(defn- image [{:keys [xscale        
+                      yscale        
+                      align         
+                      width         
+                      height        
+                      base64?       
+                      annotation
+                      pad-left      
+                      pad-right     
+                      left-margin   
+                      right-margin  
+                      top-margin    
+                      bottom-margin 
+                      page-width    
+                      page-height]}              
               img-data]
   (let [img (cond
               (instance? java.awt.Image img-data)
@@ -369,7 +347,7 @@
         img-height (.getHeight img)]
     
     (when align (.setAlignment img (get-alignment align)))
-    (when (and title text) (.setAnnotation img (make-section [:annotation title text])))
+    (when annotation (let [[title text] annotation] (.setAnnotation img (make-section [:annotation title text]))))
     (when pad-left (.setIndentationLeft img (float pad-left)))
     (when pad-right (.setIndentationRight img (float pad-right)))
     
@@ -487,25 +465,26 @@
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
  
-(defn setup-doc [{left-margin  :left-margin
-                  right-margin  :right-margin
-                  top-margin    :top-margin
-                  bottom-margin :bottom-margin
-                  title         :title                  
-                  subject       :subject
-                  [nom head]    :doc-header
-                  header        :header
-                  letterhead    :letterhead
-                  footer        :footer
-                  total-pages?  :pages
-                  author        :author
-                  creator       :creator
-                  size          :size
-                  font-style    :font
-                  orientation   :orientation}
+(defn setup-doc [{:keys [left-margin  
+                         right-margin  
+                         top-margin    
+                         bottom-margin 
+                         title                           
+                         subject       
+                         doc-header    
+                         header        
+                         letterhead    
+                         footer        
+                         total-pages?  
+                         author        
+                         creator       
+                         size          
+                         font-style    
+                         orientation]}                 
                   out]
  
-  (let [doc    (new Document (page-orientation (page-size size) orientation))
+  (let [[nom head] doc-header
+        doc    (new Document (page-orientation (page-size size) orientation))
         width  (.. doc getPageSize getWidth)
         height (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
