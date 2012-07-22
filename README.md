@@ -34,7 +34,7 @@ NOTE: using the :pages option will cause the complete document to reside in memo
 
 ### Known issues
 
-When document margins are set, some tables may render incorrectly
+When document margins are set, some tables may render incorrectly.
 
 ## Document Format
 
@@ -608,10 +608,6 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ```clojure
 (pdf 
   [{:title  "Test doc"
-     :left-margin   10
-     :right-margin  50
-     :top-margin    20
-     :bottom-margin 25
      :size          :a4
      :orientation   "landscape"
      :subject "Some subject"
