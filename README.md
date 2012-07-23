@@ -32,6 +32,10 @@ Maven
  
 NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
 
+### Known issues
+
+When a `:bottom-margin` property is set on the document and the document has chapters, table borders will not render correctly. 
+
 ## Document Format
 
 ### Metadata
