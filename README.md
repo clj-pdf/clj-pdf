@@ -32,10 +32,6 @@ Maven
  
 NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
 
-### Known issues
-
-When document margins are set, some tables may render incorrectly.
-
 ## Document Format
 
 ### Metadata
