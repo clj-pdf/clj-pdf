@@ -573,7 +573,7 @@
     (loop []
       (if-let [item (input-reader r)] 
         (do
-          (clj-pdf.core/append-to-doc (:font doc-meta) width height (preprocess-item item) doc)
+          (append-to-doc (:font doc-meta) width height (preprocess-item item) doc)
           (recur))
         (do 
           (.close doc)
