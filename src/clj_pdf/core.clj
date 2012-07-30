@@ -538,7 +538,7 @@
         (.beginText)
         (.setFontAndSize base-font 10)        
         (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font footer (float 10))))) (float 20))        
-        (.showText (str footer " " (inc i) " of " num-pages))
+        (.showText (str footer " " (inc i) " / " num-pages))
         (.endText)))
     (.close stamper)))
  
