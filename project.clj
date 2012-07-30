@@ -1,5 +1,5 @@
 (defproject clj-pdf 
-  "0.9.8-SNAPSHOT"
+  "0.9.8"
   :description "PDF generation library"
   :license {:name "GNU Lesser General Public License - v 3"
             :url "http://www.gnu.org/licenses/lgpl.html"
