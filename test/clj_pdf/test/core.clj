@@ -18,6 +18,47 @@
   ;(spit (str "test" java.io.File/separator doc2) (fix-pdf (doc-to-str doc1)))  
   (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
 
+(deftest page-numbers
+  (eq?
+    [{:title  "Test doc"
+      :left-margin   10
+      :right-margin  50
+      :top-margin    20
+      :bottom-margin 25
+      :pages true
+      :font  {:size 11}  
+      :size          :a4
+      :orientation   "landscape"
+      :subject "Some subject"
+      :author "John Doe"
+      :creator "Jane Doe"
+      :doc-header ["inspired by" "William Shakespeare"]
+      :header "page header"
+      :footer "page"}
+     [:paragraph "I should have font size 11"]
+     [:chunk "meta test"]]
+    "pages1.pdf")
+  
+  (eq?
+    [{:title  "Test doc"
+      :left-margin   10
+      :right-margin  50
+      :top-margin    20
+      :bottom-margin 25
+      :pages true
+      :font  {:size 11}  
+      :size          :a4
+      :orientation   "landscape"
+      :subject "Some subject"
+      :author "John Doe"
+      :creator "Jane Doe"
+      :doc-header ["inspired by" "William Shakespeare"]
+      :header "page header"
+      :footer "page"
+      ::footer-separator " of "}
+     [:paragraph "I should have font size 11"]
+     [:chunk "meta test"]]
+    "pages2.pdf"))
 
 (deftest image
   (eq? 
