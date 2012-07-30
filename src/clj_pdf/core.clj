@@ -473,7 +473,7 @@
                          header        
                          letterhead    
                          footer        
-                         total-pages?  
+                         pages  
                          author        
                          creator       
                          size          
@@ -486,11 +486,11 @@
         width  (.. doc getPageSize getWidth)
         height (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if total-pages? (new ByteArrayOutputStream))]
+        temp-stream   (if pages (new ByteArrayOutputStream))]
  
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
-    (if total-pages?
+    (if pages
       (PdfWriter/getInstance doc temp-stream)
       (do
         (PdfWriter/getInstance doc output-stream)       
@@ -517,7 +517,7 @@
       (float left-margin)
       (float right-margin)
       (float top-margin)
-      (float (if total-pages? (+ 20 bottom-margin) bottom-margin))))
+      (float (if pages (+ 20 bottom-margin) bottom-margin))))
    
     (if title (.addTitle doc title))
     (if subject (.addSubject doc subject))
@@ -527,7 +527,7 @@
    
     [doc width height temp-stream output-stream]))
  
-(defn write-total-pages [doc width footer temp-stream output-stream]
+(defn write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]  
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
@@ -538,7 +538,7 @@
         (.beginText)
         (.setFontAndSize base-font 10)        
         (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font footer (float 10))))) (float 20))        
-        (.showText (str footer " " (inc i) " / " num-pages))
+        (.showText (str footer " " (inc i) (or footer-separator " / ") num-pages))
         (.endText)))
     (.close stamper)))
  
@@ -565,7 +565,7 @@
     (doseq [item content]
       (append-to-doc (:font doc-meta) width height (preprocess-item item) doc))
     (.close doc)
-    (when (:pages doc-meta) (write-total-pages doc width (:footer doc-meta) temp-stream output-stream))))
+    (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
  
 (defn to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
@@ -577,7 +577,7 @@
           (recur))
         (do 
           (.close doc)
-          (when (:pages doc-meta) (clj-pdf.core/write-total-pages doc width (:footer doc-meta) temp-stream output-stream)))))))
+          (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream)))))))
 
 (defn stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream

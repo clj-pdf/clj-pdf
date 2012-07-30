@@ -58,6 +58,7 @@ All fields in the metadata section are optional:
  :header "Page header text appears on each page"
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
  :footer "Page footer text appears on each page (includes page number)"
+ :footer-separator "text which will be displayed between current page number and total pages, defaults to /"
  :pages true ;specifies if total pages should be printed in the footer of each page
 }
 ```
