@@ -642,7 +642,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
     [:phrase [:chunk {:style :strikethru} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 
-    [:paragraph "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."]
+    [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consequat malesuada commodo. Donec ac interdum velit. Duis metus velit, accumsan sed elementum ac, pharetra ut libero. Nam eleifend cursus fermentum. Mauris condimentum dignissim pellentesque. Sed at quam eget eros cursus iaculis ac sit amet odio. Curabitur feugiat nunc ut nisi posuere lacinia. Praesent pellentesque quam vel ipsum aliquet suscipit. Nullam nec nisi nec libero facilisis egestas. Curabitur quis velit augue, eu fringilla sem. Aliquam vitae metus ut libero laoreet tincidunt et id risus. Fusce consectetur bibendum sem, sit amet rutrum tortor sagittis id. Morbi imperdiet cursus mauris, ac ultricies ipsum hendrerit sit amet. Nulla sit amet justo elit, id iaculis metus. In eleifend porta massa, vitae tristique elit venenatis sit amet."]
 
     [:paragraph {:indent 50} [:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
 
