@@ -315,7 +315,7 @@
                       align         
                       width         
                       height        
-                      base64?       
+                      base64       
                       annotation
                       pad-left      
                       pad-right     
@@ -330,7 +330,7 @@
               (instance? java.awt.Image img-data)
               (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)
               
-              base64?
+              base64
               (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
                             
               (= Byte/TYPE (.getComponentType (class img-data)))
