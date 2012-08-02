@@ -388,8 +388,19 @@
 
 (defn- chart [& params]  
   (let [meta (first params)
-        {:keys [page-width page-height]} meta] 
-    (image (assoc meta 
+        {:keys [align width height page-width page-height]} meta] 
+    (image 
+      (cond
+        (and align width height) meta
+        (and width height) (assoc meta :align :center)
+        align (assoc meta :width (* 0.85 page-width) :height (* 0.85 page-height))
+        :else
+        (assoc meta 
+                  :align :center
+                  :width (* 0.85 page-width) 
+                  :height (* 0.85 page-height)))
+      
+      #_ (assoc meta 
                   :align :center
                   :width (* 0.85 page-width) 
                   :height (* 0.85 page-height)) 
