@@ -1,6 +1,6 @@
 # clj-pdf
 
-A Library for easily generating PDFs from Clojure 
+A library for easily generating PDFs from Clojure 
 
 ## Installation
 
