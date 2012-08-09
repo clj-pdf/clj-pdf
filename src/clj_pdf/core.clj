@@ -437,6 +437,7 @@
        
         (apply
           (condp = tag
+            nil          ""
             :anchor      anchor
             :annotation  annotation
             :cell        cell
