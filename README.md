@@ -30,7 +30,7 @@ Maven
  
 `out` can be either a string, in which case it's treated as a file name, or an output stream.
  
-NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed.
+NOTE: using the `:pages` option will cause the complete document to reside in memory as it will be need to be post processed.
 
 ### Known issues
 
