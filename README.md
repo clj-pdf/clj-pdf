@@ -36,6 +36,27 @@ NOTE: using the :pages option will cause the complete document to reside in memo
 
 When a `:bottom-margin` property is set on the document and the document has chapters, borders in tables after the first occurrence of a chapter tag will not render correctly. 
 
+## Document Elements
+
+[Anchor](#anchor)
+[Chapter](#chapter)
+[Chart](#chart)
+[Chunk](#chunk)
+[Heading](#heading)
+[Image](#image)
+[Line](#line)
+[List](#list)
+[Pagebreak](#pagebreak)
+[Paragraph](#paragraph)
+[Phrase](#phrase)
+[Section](#section)
+[Spacer](#spacer)
+[String](#string)
+[Subscript](#subscript)
+[Superscript](#superscript)
+[Table](#table)
+[Table Cell](#table-cell)
+
 ## Document Format
 
 ### Metadata
