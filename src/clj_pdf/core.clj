@@ -436,8 +436,7 @@
             elements (if params? (rest content) content)]
        
         (apply
-          (condp = tag
-            nil          ""
+          (condp = tag               
             :anchor      anchor
             :annotation  annotation
             :cell        cell
@@ -467,7 +466,7 @@
                             :bottom-margin (.bottomMargin doc)
                             :page-width width 
                             :page-height height)
-                      item)]
+                      (or item [:paragraph item]))]
     (.add doc section)))
  
  (defn- add-header [header doc]
@@ -555,14 +554,14 @@
     (.close stamper)))
  
 
-(defn- preprocess-item [item]  
+(defn- preprocess-item [item]
   (cond
     (string? item) 
     [:paragraph item]
     
-    (= :table (first item))
     ;;iText page breaks on tables are broken,
     ;;this ensures that table will not spill over other content
+    (= :table (first item))        
     [:paragraph {:leading 20} item]
     
     :else item))
@@ -571,8 +570,7 @@
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
-  [[doc-meta & content] out]
-  
+  [[doc-meta & content] out]  
   (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
     (doseq [item content]
       (append-to-doc (:font doc-meta) width height (preprocess-item item) doc))

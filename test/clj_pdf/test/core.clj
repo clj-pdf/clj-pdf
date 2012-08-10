@@ -208,3 +208,7 @@
           [:paragraph "nested section content"]]]]]
       "section.pdf"))
 
+(deftest nil-element
+  (eq? [{}
+        nil]
+       "nil.pdf"))
