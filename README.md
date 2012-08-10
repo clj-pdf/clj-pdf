@@ -40,7 +40,7 @@ When a `:bottom-margin` property is set on the document and the document has cha
 
 [Anchor](#anchor)
 [Chapter](#chapter)
-[Charting](#chart)
+[Charting](#charting)
 [Chunk](#chunk)
 [Heading](#heading)
 [Image](#image)
