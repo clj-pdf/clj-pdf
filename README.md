@@ -38,23 +38,23 @@ When a `:bottom-margin` property is set on the document and the document has cha
 
 ## Document Elements
 
-[Anchor](#anchor)
-[Chapter](#chapter)
-[Charting](#charting)
-[Chunk](#chunk)
-[Heading](#heading)
-[Image](#image)
-[Line](#line)
-[List](#list)
-[Pagebreak](#pagebreak)
-[Paragraph](#paragraph)
-[Phrase](#phrase)
-[Section](#section)
-[Spacer](#spacer)
-[String](#string)
-[Subscript](#subscript)
-[Superscript](#superscript)
-[Table](#table)
+[Anchor](#anchor),
+[Chapter](#chapter),
+[Charting](#charting),
+[Chunk](#chunk),
+[Heading](#heading),
+[Image](#image),
+[Line](#line),
+[List](#list),
+[Pagebreak](#pagebreak),
+[Paragraph](#paragraph),
+[Phrase](#phrase),
+[Section](#section),
+[Spacer](#spacer),
+[String](#string),
+[Subscript](#subscript),
+[Superscript](#superscript),
+[Table](#table),
 [Table Cell](#table-cell)
 
 ## Document Format
