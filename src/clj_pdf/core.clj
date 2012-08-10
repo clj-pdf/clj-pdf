@@ -462,16 +462,17 @@
           (cons params elements))))))
  
  (defn append-to-doc [font-style width height item doc]
-  (if-let [section (make-section
-                     (assoc font-style
-                            :left-margin (.leftMargin doc)
-                            :right-margin (.rightMargin doc)
-                            :top-margin (.topMargin doc)
-                            :bottom-margin (.bottomMargin doc)
-                            :page-width width 
-                            :page-height height)
-                      (or item [:paragraph item]))]
-    (.add doc section)))
+   (if (= [:pagebreak] item)
+     (.newPage doc)
+     (.add doc (make-section
+                 (assoc font-style
+                        :left-margin (.leftMargin doc)
+                        :right-margin (.rightMargin doc)
+                        :top-margin (.topMargin doc)
+                        :bottom-margin (.bottomMargin doc)
+                        :page-width width 
+                        :page-height height)
+                 (or item [:paragraph item])))))
  
  (defn- add-header [header doc]
    (if header

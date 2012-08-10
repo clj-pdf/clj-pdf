@@ -314,6 +314,16 @@ content:
 [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 ```
 
+#### Pagebreak
+
+tag :pagebreak
+
+creates a new page in the document, subsequent content will start on that page
+
+```clojure
+[:pagebreak]
+```
+
 #### Paragraph
 
 tag :paragraph
