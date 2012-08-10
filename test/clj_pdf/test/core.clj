@@ -71,7 +71,26 @@
        :pad-left   100
        :pad-right  50}
       (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
-    "image.pdf"))
+    "image.pdf")
+  (eq? 
+    [{}      
+     [:image 
+      {:scale     12              
+       :align      :center
+       :annotation ["FOO" "BAR"]
+       :pad-left   100
+       :pad-right  50}
+      (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
+    "image1.pdf")
+  (eq? 
+    [{}      
+     [:image 
+      {:width     30
+       :height     50       
+       :align      :center
+       :annotation ["FOO" "BAR"]}
+      (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
+    "image2.pdf"))
 
 (deftest doc-meta
   (eq?

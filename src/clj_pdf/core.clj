@@ -310,11 +310,12 @@
     tbl))
 
 
-(defn- image [{:keys [xscale        
+(defn- image [{:keys [scale
+                      xscale        
                       yscale        
                       align         
                       width         
-                      height        
+                      height                       
                       base64       
                       annotation
                       pad-left      
@@ -324,7 +325,8 @@
                       top-margin    
                       bottom-margin 
                       page-width    
-                      page-height]}              
+                      page-height
+                      alt]}              
               img-data]
   (let [img (cond
               (instance? java.awt.Image img-data)
@@ -362,8 +364,10 @@
           yscale (.scalePercent img (float 100) (float (* page-scale yscale)))
           :else (when (or (>  img-width available-width) (>  img-height available-height))
                   (.scalePercent img (float page-scale))))))
-        
-    (when (and width height) (.scaleToFit img (float width) (float height)))
+      
+    (if width (.scaleAbsoluteWidth img (float width)))
+    (if height (.scaleAbsoluteHeight img (float height)))    
+    (if scale (.scalePercent img scale))
     img))
 
 
