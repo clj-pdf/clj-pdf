@@ -404,11 +404,7 @@
                   :align :center
                   :width (* 0.85 page-width) 
                   :height (* 0.85 page-height)))
-      
-      #_ (assoc meta 
-                  :align :center
-                  :width (* 0.85 page-width) 
-                  :height (* 0.85 page-height)) 
+             
            (apply charting/chart params))))
  
 (defn- line [{dotted? :dotted, gap :gap} & args]
