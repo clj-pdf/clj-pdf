@@ -212,8 +212,8 @@
 
 (defn- cell [element]  
   (cond
-    (string? element)
-    element
+    (string? element) element
+    
     (= "cell" (name (first element)))
     (let [meta? (map? (second element))
           content (last element)
