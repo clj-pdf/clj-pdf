@@ -391,9 +391,8 @@
   (text-chunk (assoc meta :super true) text))
 
 
-(defn- chart [& params]  
-  (let [meta (first params)
-        {:keys [align width height page-width page-height]} meta] 
+(defn- chart [& [meta & more :as params]]  
+  (let [{:keys [align width height page-width page-height]} meta] 
     (image 
       (cond
         (and align width height) meta
@@ -430,11 +429,9 @@
       (nil? element) ""
       (number? element) (str element)
       :else
-      (let [[element-name & content] element
-            tag (if (string? element-name) (keyword element-name) element-name)
-            params? (map? (first content))
-            params (if  params? (merge meta (first content)) meta)
-            elements (if params? (rest content) content)]
+      (let [[element-name & [h & t :as content]] element
+            tag (if (string? element-name) (keyword element-name) element-name)            
+            [params elements] (if (map? h) [(merge meta h) t] [meta content])]
        
         (apply
           (condp = tag               
