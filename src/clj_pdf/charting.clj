@@ -4,7 +4,7 @@
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
             org.jfree.data.category.DefaultCategoryDataset
             org.jfree.data.general.DefaultPieDataset
-            org.jfree.chart.renderer.category.StandardBarPainter            
+            org.jfree.chart.renderer.category.StandardBarPainter                        
             java.text.SimpleDateFormat            
             [javax.swing JLabel JFrame ]))
 
@@ -58,14 +58,12 @@
   (let [{type   :type
          width  :page-width
          height :page-height} params         
-        out (new java.io.ByteArrayOutputStream)]
+        out (new java.io.ByteArrayOutputStream)
+        chart (condp = (when type (name type))
+                "bar-chart"  (apply bar-chart params items)
+                "pie-chart"  (apply pie-chart params items)
+                "line-chart" (apply line-chart params items)
+                (throw (new Exception (str "Unsupported chart type " type))))]
     
-    (org.jfree.chart.ChartUtilities/writeScaledChartAsPNG 
-      out
-      (condp = (when type (name type))
-        "bar-chart"  (apply bar-chart params items)
-        "pie-chart"  (apply pie-chart params items)
-        "line-chart" (apply line-chart params items)
-        (throw (new Exception (str "Unsupported chart type " type))))
-      (int width) (int height) 2 2)
+    (ChartUtilities/writeScaledChartAsPNG out chart (int width) (int height) 2 2)
     (.toByteArray out)))

@@ -316,7 +316,8 @@
                       align         
                       width         
                       height                       
-                      base64       
+                      base64    
+                      rotation
                       annotation
                       pad-left      
                       pad-right     
@@ -345,14 +346,14 @@
               (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
         img-width (.getWidth img)
         img-height (.getHeight img)]
-    
-    (when align (.setAlignment img (get-alignment align)))
-    (when annotation (let [[title text] annotation] (.setAnnotation img (make-section [:annotation title text]))))
-    (when pad-left (.setIndentationLeft img (float pad-left)))
-    (when pad-right (.setIndentationRight img (float pad-right)))
+    (if rotation (.setRotation img (float rotation)))
+    (if align (.setAlignment img (get-alignment align)))
+    (if annotation (let [[title text] annotation] (.setAnnotation img (make-section [:annotation title text]))))
+    (if pad-left (.setIndentationLeft img (float pad-left)))
+    (if pad-right (.setIndentationRight img (float pad-right)))
     
     ;;scale relative to page size
-    (when (and page-width page-height left-margin right-margin top-margin bottom-margin)
+    (if (and page-width page-height left-margin right-margin top-margin bottom-margin)
       (let [available-width (- page-width (+ left-margin right-margin))
             available-height (- page-height (+ top-margin bottom-margin))
             page-scale (* 100 (if (> img-width img-height)
