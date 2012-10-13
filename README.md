@@ -172,8 +172,10 @@ Each document section is represented by a vector starting with a keyword identif
 
 tag :anchor
 
-optional metadata: 
-
+optional metadata:
+ 
+* :id name of the anchor
+* :target name of the anchor this anchor points to 
 * :style font
 * :leading number
 
@@ -187,7 +189,9 @@ iText idiosynchorsies:
 * if no font style or leading is specified then content can be a chunk, a phrase, or a string
 
 ```clojure
-[:anchor {:style {:size 15} :leading 20} "some anchor"]
+[:anchor {:style {:size 15} :leading 20 :id "targetAnchor"} "some anchor"]
+
+[:anchor {:target "targetAnchor} "this anchor points to some anchor"]
    
 [:anchor [:phrase {:style :bold} "some anchor phrase"]]
  
