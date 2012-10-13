@@ -175,7 +175,7 @@ tag :anchor
 optional metadata:
  
 * :id name of the anchor
-* :target an external link or a name of the anchor this anchor points to, if referencing an internal link then prefix target with # 
+* :target an external link or a name of the anchor this anchor points to, if referencing another anchor then prefix target with # 
 * :style font
 * :leading number
 
