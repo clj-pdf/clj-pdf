@@ -191,7 +191,7 @@ iText idiosynchorsies:
 ```clojure
 [:anchor {:style {:size 15} :leading 20 :id "targetAnchor"} "some anchor"]
 
-[:anchor {:target "targetAnchor} "this anchor points to some anchor"]
+[:anchor {:target "targetAnchor"} "this anchor points to some anchor"]
    
 [:anchor [:phrase {:style :bold} "some anchor phrase"]]
  
