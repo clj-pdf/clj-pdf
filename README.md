@@ -175,7 +175,8 @@ tag :anchor
 optional metadata:
  
 * :id name of the anchor
-* :target name of the anchor this anchor points to 
+* :target name of the anchor this anchor points to
+* :url if specified then creates a link to an external URL, :url is mutually exclusive with :target 
 * :style font
 * :leading number
 
@@ -189,6 +190,8 @@ iText idiosynchorsies:
 * if no font style or leading is specified then content can be a chunk, a phrase, or a string
 
 ```clojure
+[:anchor {:url "http://google.com"} "google"]
+
 [:anchor {:style {:size 15} :leading 20 :id "targetAnchor"} "some anchor"]
 
 [:anchor {:target "targetAnchor"} "this anchor points to some anchor"]

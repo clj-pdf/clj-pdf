@@ -192,12 +192,13 @@
   ([title text] (new Annotation title text)))
 
 
-(defn- anchor [{:keys [style leading id target]} content]
+(defn- anchor [{:keys [style leading url id target]} content]
   (let [a (cond (and style leading) (new Anchor (float leading) content (font style))
                 leading             (new Anchor (float leading) (make-section content))
                 style               (new Anchor content (font style))
                 :else               (new Anchor (make-section content)))] 
     (if id (.setName a id))
+    (if url (.setReference a url))
     (if target (.setReference a (str "#" target)))
     a))
 

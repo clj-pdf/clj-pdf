@@ -145,6 +145,7 @@
         [:anchor {:style {:size 15} :leading 20} "some anchor"]
         [:anchor [:phrase {:style :bold} "some anchor phrase"]]
         [:anchor "plain anchor"]
+        [:anchor {:url "http://google.com"} "google"]
         [:anchor {:id "target"} "some anchor"]
         [:anchor {:target "target"} "another anchor"]]
        "anchor.pdf"))
