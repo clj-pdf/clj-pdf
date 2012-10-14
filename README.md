@@ -142,7 +142,7 @@ available page sizes:
     
 defaults to A4 page size if none provided
 
-orientation defaults to portrait, unless "landscape" is specified
+orientation defaults to portrait, unless :landscape is specified
 
 #### Font
 
