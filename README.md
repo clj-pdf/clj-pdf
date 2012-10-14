@@ -309,7 +309,7 @@ tag :line
 optional metadata:
 
 * :dotted boolean 
-* :gap number ;space between dots if line is dotted
+* :gap number spaces between dots if line is dotted
 
 creates a horizontal line
 
