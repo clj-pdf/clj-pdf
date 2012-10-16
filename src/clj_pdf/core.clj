@@ -608,3 +608,21 @@
   (if (instance? InputStream in)
     (stream-doc in out)
     (write-doc in out)))
+
+;;;templating
+(defmacro template [t]
+ `(fn [~'items]
+    (for [~'item ~'items]
+       ~(clojure.walk/prewalk
+          (fn [x#]
+            (if (and (symbol? x#) (.startsWith (name x#) "$"))
+              `(~(keyword (.substring (name x#) 1)) ~'item)
+              x#))
+          t))))
+
+(defmacro build-report [meta & items]
+ `(-> [~meta]
+    ~@(for [item# items]
+      (if `(keyword? (first ~item#))
+        `(conj ~item#)
+        `(into ~item#)))))
