@@ -32,7 +32,7 @@ Maven
  
 NOTE: using the `:pages` option will cause the complete document to reside in memory for post processing.
 
-### Templating support
+### Templating
 
 The library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
 and applies the template to each item. The $ is used to indicate the anchors in the template. These will be swapped with the values from the map with
