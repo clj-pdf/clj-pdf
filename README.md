@@ -32,10 +32,6 @@ Maven
  
 NOTE: using the `:pages` option will cause the complete document to reside in memory for post processing.
 
-### Known issues
-
-When a `:bottom-margin` property is set on the document and the document has chapters, borders in tables after the first occurrence of a chapter tag will not render correctly. 
-
 ### Templating support
 
 The library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
@@ -754,6 +750,11 @@ if :time-series is set to true then items on x axis must be dates, the default f
             
     "test.pdf")
 ```
+
+## Known issues
+
+When a `:bottom-margin` property is set on the document and the document has chapters, borders in tables after the first occurrence of a chapter tag will not render correctly. 
+
 
 # Users
 
