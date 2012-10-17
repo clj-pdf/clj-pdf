@@ -620,9 +620,8 @@
               x#))
           t))))
 
-(defmacro build-report [meta & items]
- `(-> [~meta]
-    ~@(for [item# items]
-      (if `(keyword? (first ~item#))
-        `(conj ~item#)
-        `(into ~item#)))))
+(defn build-report [meta & items]
+  (reduce
+    (fn [doc item] 
+     ((if (keyword (first item)) conj into) doc item))
+    [meta] items))
