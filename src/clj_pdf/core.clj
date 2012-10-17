@@ -620,8 +620,10 @@
               x#))
           t))))
 
-(defn build-report [meta & items]
-  (reduce
-    (fn [doc item] 
-     ((if (keyword (first item)) conj into) doc item))
-    [meta] items))
+(defn build-report [& [x & xs :as items]]  
+  (let [meta (if (map? x) x {})
+        items (if (map? x) xs items)]
+    (reduce
+      (fn [doc item] 
+        ((if (keyword (first item)) conj into) doc item))
+      [meta] items)))
