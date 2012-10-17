@@ -36,6 +36,48 @@ NOTE: using the `:pages` option will cause the complete document to reside in me
 
 When a `:bottom-margin` property is set on the document and the document has chapters, borders in tables after the first occurrence of a chapter tag will not render correctly. 
 
+### Templating support
+
+The library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
+and applies the template to each item. The $ is used to indicate the anchors in the template. These will be swapped with the values from the map with
+the corresponding keys. For example, given a vector of maps, such as:
+
+```clojure
+(def employees
+  [{:country "Germany",
+    :place "Nuremberg",
+    :occupation "Engineer",
+    :name "Neil Chetty"}
+   {:country "Germany",
+    :place "Ulm",
+    :occupation "Engineer",
+    :name "Vera Ellison"}])
+``` 
+and a template
+```clojure
+(def employee-template
+  (template
+    [:paragraph
+     [:heading $name]
+     [:chunk {:style :bold} "occupation: "] $occupation "\n"
+     [:chunk {:style :bold} "place: "] $place "\n"
+     [:chunk {:style :bold} "country: "] $country
+     [:spacer]]))
+```
+the following output will be produced when the template is applied to the data:
+```clojure
+(employee-template employees)
+
+([:paragraph [:heading "Neil Chetty"] 
+  [:chunk {:style :bold} "occupation: "] "Engineer" "\n" 
+  [:chunk {:style :bold} "place: "] "Nuremberg" "\n" 
+  [:chunk {:style :bold} "country: "] "Germany" [:spacer]] 
+ [:paragraph [:heading "Vera Ellison"] 
+  [:chunk {:style :bold} "occupation: "] "Engineer" "\n" 
+  [:chunk {:style :bold} "place: "] "Ulm" "\n" 
+  [:chunk {:style :bold} "country: "] "Germany" [:spacer]])
+```
+
 ## Document Elements
 
 [Anchor](#anchor),
