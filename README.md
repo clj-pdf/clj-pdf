@@ -66,9 +66,9 @@ is equivalent to
 ```clojure
 (pdf
  [{}
- [:paragraph "item: 0"]
- [:paragraph "item: 1"]
- [:paragraph "item: 2"]]
+  [:paragraph "item: 0"]
+  [:paragraph "item: 1"]
+  [:paragraph "item: 2"]]
  "doc.pdf")
 ```
 
