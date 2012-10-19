@@ -13,7 +13,7 @@
   (re/replace #"CreationDate\((.*?)\)" "")
   (re/replace #"\[(.*?)\]" "")))
 
-(defn eq? [doc1 doc2]    
+(defn eq? [doc1 doc2]  
   ;uncomment to generate test data
   ;(spit (str "test" java.io.File/separator doc2) (fix-pdf (doc-to-str doc1)))  
   (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))

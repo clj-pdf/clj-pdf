@@ -1,11 +1,11 @@
 (defproject clj-pdf 
-  "0.9.9-SNAPSHOT"
+  "1.0.0-SNAPSHOT"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
   :license {:name "GNU Lesser General Public License - v 3"
             :url "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo
-            :comments "same as  iText version 2.1.7 and JFreeChart"}
+            :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [jfree/jfreechart "1.0.13"]
-                 [com.lowagie/itext "2.1.7"]])
+                 [jfree/jfreechart "1.0.13"]                 
+                 [itext-min "0.1-SNAPSHOT"]])
