@@ -566,6 +566,12 @@
     
     :else item))
 
+(defn add-item [item doc-meta width height doc]
+  (if (and (coll? item) (coll? (first item)))
+    (doseq [element item]
+      (append-to-doc (:font doc-meta) width height (preprocess-item element) doc))
+    (append-to-doc (:font doc-meta) width height (preprocess-item item) doc)))
+
 (defn write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
@@ -573,7 +579,7 @@
   [[doc-meta & content] out]  
   (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
     (doseq [item content]
-      (append-to-doc (:font doc-meta) width height (preprocess-item item) doc))
+      (add-item item doc-meta width height doc))
     (.close doc)
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
  
@@ -583,7 +589,7 @@
     (loop []
       (if-let [item (input-reader r)] 
         (do
-          (append-to-doc (:font doc-meta) width height (preprocess-item item) doc)
+          (add-item item doc-meta width height doc)          
           (recur))
         (do 
           (.close doc)

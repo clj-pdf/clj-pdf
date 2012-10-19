@@ -24,6 +24,9 @@ Maven
 
 ## Usage
 
+The main functionality is provided by the `clj-pdf.core` namespace. PDF documents are generated calling the `pdf` function with
+an input and output parameters.
+
 `(pdf in out)`
 
 `in` can be either a vector containing the document or an input stream. If `in` is an input stream then the forms will be read sequentially from it. 
@@ -31,6 +34,43 @@ Maven
 `out` can be either a string, in which case it's treated as a file name, or an output stream.
  
 NOTE: using the `:pages` option will cause the complete document to reside in memory for post processing.
+
+
+The documents contain a map with metadata followed by one or more elements. Each element must be a sequence starting with 
+a keyword specifying the element name or a string which will be treated as a paragraph.
+
+Here's a basic example of a document:
+```clojure
+(pdf 
+  [{}
+   [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]   
+   [:phrase "some text"]
+   [:phrase "some more text"]
+   [:paragraph "yet more text"]]
+  "doc.pdf")  
+```
+and the resulting PDF output
+<br/>
+<img src="https://raw.github.com/yogthos/clj-pdf/master/example.png" hspace="20" alt="example"/>
+
+Sequences containing elements will be expanded will be expanded into the document:
+
+```clojure
+(pdf
+ [{}
+   (for [i (range 3)]
+    [:paragraph (str "item: " i)])]
+ "doc.pdf")
+```
+is equivalent to
+```clojure
+(pdf
+ [{}
+ [:paragraph "item: 0"]
+ [:paragraph "item: 1"]
+ [:paragraph "item: 2"]]
+ "doc.pdf")
+```
 
 ### Templating
 
