@@ -25,7 +25,7 @@ Maven
 ## Usage
 
 The main functionality is provided by the `clj-pdf.core` namespace. PDF documents are generated calling the `pdf` function with
-an input and output parameters.
+input and output parameters.
 
 `(pdf in out)`
 
