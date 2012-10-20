@@ -114,6 +114,20 @@ the following output will be produced when the template is applied to the data:
   [:chunk {:style :bold} "country: "] "Germany" [:spacer]])
 ```
 
+It is also possible to apply post processing to the anchors in the template:
+```clojure
+(def employee-template-paragraph 
+  (template 
+    [:paragraph 
+     [:heading (if (and $name (.startsWith $name "Alfred")) 
+                 (.toUpperCase $name) $name)]
+     [:chunk {:style :bold} "occupation: "] $occupation "\n"
+     [:chunk {:style :bold} "place: "] $place "\n"
+     [:chunk {:style :bold} "country: "] $country
+     [:spacer]]))    
+```
+
+
 ## Document Elements
 
 [Anchor](#anchor),
