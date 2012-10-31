@@ -1,5 +1,5 @@
 (ns clj-pdf.core
-  (:use [clojure.walk clojure.set :only (rename-keys)])
+  (:use clojure.walk [clojure.set :only (rename-keys)])
   (:require [clj_pdf.charting :as charting])
   (:import
     java.awt.Color
