@@ -583,12 +583,12 @@
     (.close doc)
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
  
-(defn to-pdf [input-reader r out]
+(defn to-pdf [input-reader r out]  
   (let [doc-meta (input-reader r)
-        [doc width height temp-stream output-stream] (clj-pdf.core/setup-doc doc-meta out)] 
+        [doc width height temp-stream output-stream] (setup-doc doc-meta out)] 
     (loop []
       (if-let [item (input-reader r)] 
-        (do
+        (do          
           (add-item item doc-meta width height doc)          
           (recur))
         (do 
