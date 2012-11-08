@@ -602,7 +602,7 @@
   [in out]
   (with-open [r (new PushbackReader (new InputStreamReader in))]
     (binding [*read-eval* false]
-      (to-pdf (fn [r] (read r nil nil)) out))))
+      (to-pdf (fn [r] (read r nil nil)) r out))))
 
 
 (defn pdf
