@@ -9,7 +9,7 @@ A library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "1.0.1-SNAPSHOT"]
+[clj-pdf "1.0.2"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -345,17 +345,14 @@ optional metadata:
 
 font metadata (refer to Font section for details)
 
-* :family 
-* :size 
 * :style 
-* :color 
 
 ```clojure
 [:heading "Lorem Ipsum"]
     
-[:heading {:size 15} "Lorem Ipsum"]
+[:heading {:style {:size 15}} "Lorem Ipsum"]
 
-[:heading {:size 10 :color [100 40 150] :align :right} "Foo"]
+[:heading {:style {:size 10 :color [100 40 150] :align :right}} "Foo"]
 ```
 
 #### Image

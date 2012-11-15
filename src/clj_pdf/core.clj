@@ -32,6 +32,9 @@
 
 (declare make-section)
 
+(defn- styled-item [meta item]
+  (make-section meta (if (string? item) [:chunk item] item)))
+
 (defn get-alignment [align]
   (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, 0))
 
@@ -136,7 +139,7 @@
 
 (defn- heading [meta & content]  
   (make-section
-    (into [:paragraph (merge {:size 18 :style :bold} meta)] content)))
+    (into [:paragraph (merge meta (merge {:size 18 :style :bold} (:style meta)))] content)))
 
 
 (defn- paragraph [meta & content]
@@ -158,7 +161,8 @@
     paragraph ))
 
 
-(defn- li [{:keys [numbered lettered roman greek dingbats dingbats-char-num dingbatsnumber dingbatsnumber-type]} & items]
+(defn- li [{:keys [numbered lettered roman greek dingbats dingbats-char-num dingbatsnumber dingbatsnumber-type] :as meta} 
+           & items]
   (let [list (cond
                roman           (new RomanList)
                greek           (new GreekList)
@@ -166,7 +170,7 @@
                dingbatsnumber  (new ZapfDingbatsNumberList dingbatsnumber-type)
                :else (new List (or numbered false) (or lettered false)))]
     (doseq [item items]
-      (.add list (new ListItem (make-section item))))
+      (.add list (new ListItem (styled-item meta item))))
     list))
 
 
@@ -192,11 +196,11 @@
   ([title text] (new Annotation title text)))
 
 
-(defn- anchor [{:keys [style leading id target]} content]
+(defn- anchor [{:keys [style leading id target] :as meta} content]
   (let [a (cond (and style leading) (new Anchor (float leading) content (font style))
-                leading             (new Anchor (float leading) (make-section content))
+                leading             (new Anchor (float leading) (styled-item meta content))
                 style               (new Anchor content (font style))
-                :else               (new Anchor (make-section content)))] 
+                :else               (new Anchor (styled-item meta content)))] 
     (if id (.setName a id))    
     (if target (.setReference a target))
     a))
