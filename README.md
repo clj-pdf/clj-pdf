@@ -343,9 +343,7 @@ optional metadata:
 
 * :align specifies alignement of heading possible valuse :left, :center, :right
 
-font metadata (refer to Font section for details)
-
-* :style font
+* :style font (refer to Font section for details)
 
 ```clojure
 [:heading "Lorem Ipsum"]
