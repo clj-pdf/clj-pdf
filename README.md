@@ -345,7 +345,7 @@ optional metadata:
 
 font metadata (refer to Font section for details)
 
-* :style 
+* :style font
 
 ```clojure
 [:heading "Lorem Ipsum"]
