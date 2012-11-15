@@ -342,7 +342,6 @@ tag :heading
 optional metadata:
 
 * :align specifies alignement of heading possible valuse :left, :center, :right
-
 * :style font (refer to Font section for details)
 
 ```clojure
