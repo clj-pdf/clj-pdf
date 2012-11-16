@@ -420,6 +420,9 @@ optional metadata:
 * :dingbats-char-num   boolean
 * :dingbatsnumber      boolean
 * :dingbatsnumber-type boolean
+* :lowercase           boolean
+* :indent              number
+
 
 content:
 

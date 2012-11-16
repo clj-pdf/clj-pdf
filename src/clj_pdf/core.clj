@@ -161,7 +161,16 @@
     paragraph ))
 
 
-(defn- li [{:keys [numbered lettered roman greek dingbats dingbats-char-num dingbatsnumber dingbatsnumber-type] :as meta} 
+(defn- li [{:keys [numbered 
+                   lettered 
+                   roman 
+                   greek 
+                   dingbats 
+                   dingbats-char-num 
+                   dingbatsnumber 
+                   dingbatsnumber-type 
+                   lowercase                   
+                   indent] :as meta} 
            & items]
   (let [list (cond
                roman           (new RomanList)
@@ -169,6 +178,10 @@
                dingbats        (new ZapfDingbatsList dingbats-char-num)
                dingbatsnumber  (new ZapfDingbatsNumberList dingbatsnumber-type)
                :else (new List (or numbered false) (or lettered false)))]
+    
+    (if lowercase (.setLowercase list lowercase))
+    (if indent (.setIndentationLeft list (float indent)))
+    
     (doseq [item items]
       (.add list (new ListItem (styled-item meta item))))
     list))
