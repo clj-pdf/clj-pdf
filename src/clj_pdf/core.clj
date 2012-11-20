@@ -228,14 +228,14 @@
 
 
 
-(defn- cell [element]  
+(defn- cell [meta element]  
   (cond
-    (string? element) element
+    (string? element) (make-section [:cell [:chunk meta element]])
     
     (= "cell" (name (first element)))
     (let [meta? (map? (second element))
           content (last element)
-          c (if (string? content) (new Cell content) (new Cell))]
+          c (if (string? content) (new Cell (styled-item meta content)) (new Cell))]
       
       (if meta?
         (let [{:keys [color 
@@ -265,10 +265,10 @@
           (if border-width-top (.setBorderWidthTop c (float border-width-top)))
           (.setHorizontalAlignment c (get-alignment align))))
       
-      (if (string? content) c (doto c (.addElement (make-section content)))))
+      (if (string? content) c (doto c (.addElement (make-section meta content)))))
  
     :else
-    (doto (new Cell) (.addElement (make-section element)))))
+    (doto (new Cell) (.addElement (make-section meta element)))))
  
  
 (defn- table-header [tbl header cols]
@@ -294,7 +294,8 @@
     (.endHeaders tbl)))
  
  
-(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align title num-cols]}
+(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align title num-cols]
+               :as meta}
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
   
@@ -323,7 +324,7 @@
    
     (doseq [row rows]
       (doseq [column row]
-        (.addCell tbl (cell column))))
+        (.addCell tbl (cell meta column))))
     
     tbl))
 
