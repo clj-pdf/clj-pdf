@@ -422,6 +422,7 @@ optional metadata:
 * :dingbatsnumber-type boolean
 * :lowercase           boolean
 * :indent              number
+* :symbol              string (specifies the symbol to use for list items, defaults to "-")
 
 
 content:
@@ -431,6 +432,7 @@ content:
 
 ```clojure
 [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
+[:list {:symbol "*"} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
 ```
 
 #### Pagebreak
