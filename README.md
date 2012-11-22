@@ -452,7 +452,8 @@ tag :paragraph
 
 optional metadata: 
 
-* :indent number
+* :indent number (indentation for the paragraph)
+* :first-line-indent number (indentation for the first line of the paragraph)
 * :keep-together boolean
 * :leading number
 * :align :left, :center, :right
