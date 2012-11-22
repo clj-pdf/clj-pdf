@@ -170,7 +170,8 @@
                    dingbatsnumber 
                    dingbatsnumber-type 
                    lowercase                   
-                   indent] :as meta} 
+                   indent
+                   symbol] :as meta} 
            & items]
   (let [list (cond
                roman           (new RomanList)
@@ -181,6 +182,7 @@
     
     (if lowercase (.setLowercase list lowercase))
     (if indent (.setIndentationLeft list (float indent)))
+    (if symbol (.setListSymbol list symbol))
     
     (doseq [item items]
       (.add list (new ListItem (styled-item meta item))))
