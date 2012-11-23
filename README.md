@@ -9,7 +9,7 @@ A library for easily generating PDFs from Clojure
 Leiningen
 
 ```clojure
-[clj-pdf "1.0.4"]
+[clj-pdf "1.0.5"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
 </dependency>
 ```
 
