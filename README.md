@@ -53,7 +53,7 @@ and the resulting PDF output
 <br/>
 <img src="https://raw.github.com/yogthos/clj-pdf/master/example.png" hspace="20" alt="example"/>
 
-Sequences containing elements will be expanded will be expanded into the document:
+Sequences containing elements will be expanded into the document:
 
 ```clojure
 (pdf
