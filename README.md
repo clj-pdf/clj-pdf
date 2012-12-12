@@ -748,13 +748,12 @@ if :time-series is set to true then items on x axis must be dates, the default f
   [{:title  "Test doc"
      :size          :a4
      :orientation   "landscape"
-     :subject "Some subject"
-     :author "John Doe"
-     :creator "Jane Doe"
-     :doc-header ["inspired by" "William Shakespeare"]
-     :header "page header"
-     :footer "page"
-     }
+     :subject       "Some subject"
+     :author        "John Doe"
+     :creator       "Jane Doe"
+     :doc-header    ["inspired by" "William Shakespeare"]
+     :header        "page header"
+     :footer        "page"}
 
     [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20} 
      ["foo" 
@@ -803,8 +802,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
       ["2011-01-03-11:25:11" 400] 
       ["2011-01-03-11:35:11" 350] 
       ["2011-01-03-12:20:11" 600]]]]
-   
-            
+               
     "test.pdf")
 ```
 
