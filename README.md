@@ -75,7 +75,10 @@ is equivalent to
 ### Templating
 
 The library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
-and applies the template to each item. The $ is used to indicate the anchors in the template. These will be swapped with the values from the map with
+and applies the template to each item. This is primarily meant to complement working with [clojure.java.jdbc](https://github.com/clojure/java.jdbc/), 
+which returns sequences of maps representing the table rows.
+
+The $ is used to indicate the anchors in the template. These will be swapped with the values from the map with
 the corresponding keys. For example, given a vector of maps, such as:
 
 ```clojure
