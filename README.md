@@ -1,6 +1,6 @@
 # clj-pdf
 
-A library for easily generating PDFs from Clojure. An example PDF can be seen [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) and the source can be seen [below](#a-complete-example).
+A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
 
 ## Installation
 
