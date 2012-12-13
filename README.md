@@ -24,7 +24,7 @@ Maven
 
 ## Usage
 
-The main functionality is provided by the `clj-pdf.core` namespace. PDF documents are generated calling the `pdf` function with
+PDF documents are generated calling the `pdf` function, defined in the `clj-pdf.core` namespace, with
 input and output parameters.
 
 `(pdf in out)`
@@ -41,6 +41,9 @@ a keyword specifying the element name or a string which will be treated as a par
 
 Here's a basic example of a document:
 ```clojure
+(ns example 
+  (:use clj-pdf.core))
+
 (pdf 
   [{}
    [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]   
