@@ -347,7 +347,7 @@ tag :heading
 
 optional metadata:
 
-* :align specifies alignement of heading possible valuse :left, :center, :right
+* :align specifies alignement of heading possible valuse :left, :center, :right, :justified
 * :style font (refer to Font section for details)
 
 ```clojure
@@ -372,7 +372,7 @@ optional metadata:
 * :yscale num - percentage relative to page size
 * :width num - set width for image: overrides scaling
 * :height num - set height for image: overrides scaling
-* :align :left, :center, :right
+* :align :left, :center, :right, :justified
 * :annotation ["title" "text"]
 * :pad-left number
 * :pad-right number
@@ -462,7 +462,7 @@ optional metadata:
 * :first-line-indent number (indentation for the first line of the paragraph)
 * :keep-together boolean
 * :leading number
-* :align :left, :center, :right
+* :align :left, :center, :right, :justified
 
 font metadata (refer to Font section for details)
 
@@ -596,7 +596,7 @@ tag :table
 
 metadata:
 
-* :align table alignment on the page can be: :left, :center, :right
+* :align table alignment on the page can be: :left, :center, :right, :justified
 * :color  `[r g b]` (int values)   
 * :header [{:color [r g b]} "column name" ...] if only a single column name is provided it will span all rows
 * :spacing number
@@ -693,7 +693,7 @@ additional image metadata
 * :yscale num - percentage relative to page size
 * :width num - set width for image: overrides scaling
 * :height num - set height for image: overrides scaling
-* :align "left|center|right"
+* :align "left|center|right|justified"
 * :annotation ["title" "text"]
 * :pad-left number
 * :pad-right number
