@@ -36,7 +36,7 @@
   (make-section meta (if (string? item) [:chunk item] item)))
 
 (defn get-alignment [align]
-  (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, 0))
+  (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
 
 (defn- font
   [{style   :style
