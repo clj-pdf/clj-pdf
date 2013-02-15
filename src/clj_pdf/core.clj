@@ -378,9 +378,21 @@
     (if (and page-width page-height left-margin right-margin top-margin bottom-margin)
       (let [available-width (- page-width (+ left-margin right-margin))
             available-height (- page-height (+ top-margin bottom-margin))
-            page-scale (* 100 (if (> img-width img-height)
+            page-scale (* 100 
+                          (cond 
+                            (and (> img-width available-width)
+                                 (> img-height available-height))
+                            (if (> img-width img-height)
                                 (/ available-width img-width)
-                                (/ available-height img-height)))]
+                                (/ available-height img-height))
+                            
+                            (> img-width available-width)
+                            (/ available-width img-width)
+                            
+                            (> img-height available-height)
+                            (/ available-height img-height)
+                            
+                            :else 1))]
         (cond
           (and xscale yscale) (.scalePercent img (float (* page-scale xscale)) (float (* page-scale yscale)))
           xscale (.scalePercent img (float (* page-scale xscale)) (float 100))
