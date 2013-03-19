@@ -644,6 +644,7 @@ tag :cell
 
 metadata:
 
+* :align :left, :center, :right, :justified
 * :color `[r g b]` (int values)   
 * :colspan number
 * :rowspan number
