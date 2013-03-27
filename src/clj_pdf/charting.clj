@@ -29,6 +29,7 @@
     (ChartFactory/createPieChart title dataset true true false)))
 
 (defn- line-chart [{title       :title
+                    points?     :show-points
                     horizontal? :horizontal
                     time?       :time-series
                     format      :time-format 
@@ -44,14 +45,17 @@
             (if time? (.. formatter (parse x) getTime) (double x)) 
             (double y)))
         (.addSeries dataset series)))
-    (if time?
-      (let [chart (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)]
-        (.. chart getPlot getDomainAxis (setDateFormatOverride formatter))
-        chart)
-      (ChartFactory/createXYLineChart title x-label y-label dataset 
-                                      (if horizontal? 
-                                        PlotOrientation/HORIZONTAL
-                                        PlotOrientation/VERTICAL) true true false))))
+    
+    (let [chart (if time? (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)
+                          (ChartFactory/createXYLineChart title x-label y-label dataset 
+                                                          (if horizontal? 
+                                                            PlotOrientation/HORIZONTAL
+                                                            PlotOrientation/VERTICAL) true true false))
+          plot  (.getPlot chart)]
+      
+      (if points? (.. plot getRenderer (setBaseShapesVisible true)))
+      (if time? (.. plot getDomainAxis (setDateFormatOverride formatter)))
+      chart)))
 
 
 (defn chart [params & items]

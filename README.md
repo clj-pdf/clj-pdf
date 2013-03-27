@@ -707,6 +707,8 @@ additional image metadata
 
 #### line chart
 
+* :show-points - displays a box for each point in the data set
+
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure
