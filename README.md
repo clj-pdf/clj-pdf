@@ -707,7 +707,9 @@ additional image metadata
 
 #### line chart
 
-* :show-points - displays a box for each point in the data set
+* :point-labels - boolean (show a label with the x,y position for each point)
+* :show-points - boolean (display a box for each point in the data set)
+* :label-percision - int (max number of digits after the decimal point)
 
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 

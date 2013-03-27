@@ -4,10 +4,11 @@
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
             org.jfree.data.category.DefaultCategoryDataset
             org.jfree.data.general.DefaultPieDataset
-            org.jfree.chart.renderer.category.StandardBarPainter                        
-            java.text.SimpleDateFormat            
+            org.jfree.chart.renderer.category.StandardBarPainter
+            org.jfree.chart.labels.StandardXYItemLabelGenerator
+            java.text.SimpleDateFormat
+            java.text.NumberFormat
             [javax.swing JLabel JFrame ]))
-
 
 (defn- bar-chart [{title       :title
                    horizontal? :horizontal
@@ -28,13 +29,15 @@
       (.setValue dataset name (double value)))
     (ChartFactory/createPieChart title dataset true true false)))
 
-(defn- line-chart [{title       :title
-                    points?     :show-points
-                    horizontal? :horizontal
-                    time?       :time-series
-                    format      :time-format 
-                    x-label     :x-label
-                    y-label     :y-label} & data]
+(defn- line-chart [{title         :title
+                    points?       :show-points
+                    point-labels? :point-labels
+                    percision     :label-percision
+                    horizontal?   :horizontal
+                    time?         :time-series
+                    format        :time-format 
+                    x-label       :x-label
+                    y-label       :y-label} & data]
   (let [dataset   (new XYSeriesCollection)
         formatter (if time? (new SimpleDateFormat 
                                  (or format "yyyy-MM-dd-HH:mm:ss")))]
@@ -46,16 +49,25 @@
             (double y)))
         (.addSeries dataset series)))
     
-    (let [chart (if time? (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)
-                          (ChartFactory/createXYLineChart title x-label y-label dataset 
-                                                          (if horizontal? 
-                                                            PlotOrientation/HORIZONTAL
-                                                            PlotOrientation/VERTICAL) true true false))
-          plot  (.getPlot chart)]
-      
-      (if points? (.. plot getRenderer (setBaseShapesVisible true)))
+    (let [chart    (if time? 
+                     (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)
+                     (ChartFactory/createXYLineChart title x-label y-label dataset 
+                                                     (if horizontal? 
+                                                       PlotOrientation/HORIZONTAL
+                                                       PlotOrientation/VERTICAL) true true false))
+          plot     (.getPlot chart)
+          renderer (.getRenderer plot)]
+            
       (if time? (.. plot getDomainAxis (setDateFormatOverride formatter)))
+      (if points? (.setBaseShapesVisible renderer true))
+      (if point-labels?
+        (let [format (NumberFormat/getNumberInstance)]
+          (if percision (.setMaximumFractionDigits format (int percision)))
+          (.setBaseItemLabelGenerator renderer
+            (new StandardXYItemLabelGenerator "{1},{2}" format format))
+          (.setBaseItemLabelsVisible renderer true)))      
       chart)))
+
 
 
 (defn chart [params & items]
