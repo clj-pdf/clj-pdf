@@ -35,12 +35,13 @@
                     percision     :label-percision
                     horizontal?   :horizontal
                     time?         :time-series
-                    format        :time-format 
+                    time-format   :time-format 
+                    label-format  :label-format
                     x-label       :x-label
                     y-label       :y-label} & data]
   (let [dataset   (new XYSeriesCollection)
         formatter (if time? (new SimpleDateFormat 
-                                 (or format "yyyy-MM-dd-HH:mm:ss")))]
+                                 (or time-format "yyyy-MM-dd-HH:mm:ss")))]
     (doseq [[series-title & points] data]
       (let [series (new XYSeries series-title)]
         (doseq [[x y] points]
@@ -64,7 +65,7 @@
         (let [format (NumberFormat/getNumberInstance)]
           (if percision (.setMaximumFractionDigits format (int percision)))
           (.setBaseItemLabelGenerator renderer
-            (new StandardXYItemLabelGenerator "{1},{2}" format format))
+            (new StandardXYItemLabelGenerator (or label-format "{1},{2}") format format))
           (.setBaseItemLabelsVisible renderer true)))      
       chart)))
 

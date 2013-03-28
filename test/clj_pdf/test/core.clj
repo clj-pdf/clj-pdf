@@ -176,7 +176,7 @@
   (eq? [{} [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
        "list.pdf"))
 
-(deftest chart
+#_(deftest chart
   (eq? [{}
        [:chart {:type :bar-chart :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
        [:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
