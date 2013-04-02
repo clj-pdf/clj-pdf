@@ -702,7 +702,8 @@ additional image metadata
 #### bar chart
 
 ```clojure
-[:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} [2 "Foo"] [4 "Bar"] [10 "Baz"]]
+[:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} 
+  [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 ```
 
 #### line chart
