@@ -1,4 +1,4 @@
-(defproject clj-pdf 
+(defproject sc13-clj-pdf 
   "1.0.7"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
@@ -8,4 +8,5 @@
             :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [jfree/jfreechart "1.0.13"]                 
-                 [itext-min "0.2"]])
+                 [itext-min "0.2"]
+                 [org.clojure/tools.logging "0.2.6"]])

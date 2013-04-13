@@ -1,6 +1,7 @@
 (ns clj-pdf.core
   (:use clojure.walk [clojure.set :only (rename-keys)])
-  (:require [clj_pdf.charting :as charting])
+  (:require [clj_pdf.charting :as charting]
+            [clojure.tools.logging :refer [info error]])
   (:import
     java.awt.Color
     [com.lowagie.text.pdf.draw DottedLineSeparator LineSeparator]  
