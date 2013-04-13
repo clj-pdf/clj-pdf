@@ -523,7 +523,8 @@
                          creator       
                          size          
                          font-style    
-                         orientation]}                 
+                         orientation
+                         page-events]}                 
                   out]
  
   (let [[nom head] doc-header
@@ -531,19 +532,21 @@
         width  (.. doc getPageSize getWidth)
         height (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if pages (new ByteArrayOutputStream))]
+        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))]
  
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
-    (if pages
-      (PdfWriter/getInstance doc temp-stream)
-      (do
-        (PdfWriter/getInstance doc output-stream)       
-        (if footer
-          (.setFooter doc
-            (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
-              (.setBorder 0)
-              (.setAlignment 2))))))
+    (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)]
+      (if pages
+        (PdfWriter/getInstance doc output-stream-to-use)
+        (let [writer (PdfWriter/getInstance doc output-stream-to-use)]
+          (doseq [page-event page-events]
+            (.setPageEvent writer page-event))
+          (if footer
+            (.setFooter doc
+              (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+                (.setBorder 0)
+                (.setAlignment 2)))))))
        
     ;;if we have a letterhead then we want to put it on the first page instead of the header, 
     ;;so we will open doc beofore adding the header
@@ -571,6 +574,11 @@
     (if creator (.addCreator doc creator))
    
     [doc width height temp-stream output-stream]))
+
+(defn write-pages [doc temp-stream output-stream]
+  (.writeTo temp-stream output-stream)
+  (.flush output-stream)
+  (.close output-stream))
  
 (defn write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]  
   (let [reader    (new PdfReader (.toByteArray temp-stream))
@@ -615,6 +623,7 @@
     (doseq [item content]
       (add-item item doc-meta width height doc))
     (.close doc)
+    (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages doc temp-stream output-stream))
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
  
 (defn to-pdf [input-reader r out]  
