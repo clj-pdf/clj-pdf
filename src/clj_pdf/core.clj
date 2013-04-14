@@ -378,7 +378,7 @@
     
     tbl))
 
-(defn- pdf-table [{:keys [color spacing-before spacing-after header cell-border width horizontal-align title num-cols table-events]
+(defn- pdf-table [{:keys [color spacing-before spacing-after header cell-border width bounding-box horizontal-align title num-cols table-events]
                   :as meta}
                   widths
                   & rows]
@@ -387,7 +387,11 @@
     (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows))))))) 
 
   (let [cols (or num-cols (apply max (map count rows)))
-        tbl (new PdfPTable (float-array widths))]
+        tbl (new PdfPTable cols)]
+
+    (if bounding-box
+      (.setWidthPercentage tbl (float-array widths) (make-section bounding-box))
+      (.setWidths tbl (float-array widths)))
 
     (doseq [table-event table-events]
       (.setTableEvent tbl table-event))    
@@ -530,6 +534,10 @@
   ([_ height]
     (make-section [:paragraph {:leading 12} (apply str (take height (repeat "\n")))])))
 
+(defn- rectangle
+  [_ width height]
+  (new Rectangle width height))
+
 
 (defn- make-section
   ([element] (if element (make-section {} element) ""))
@@ -558,6 +566,7 @@
             :list        li
             :paragraph   paragraph
             :phrase      phrase
+            :rectangle   rectangle
             :section     section
             :spacer      spacer
             :superscript superscript
