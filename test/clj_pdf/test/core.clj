@@ -13,7 +13,7 @@
   (re/replace #"CreationDate\((.*?)\)" "")
   (re/replace #"\[(.*?)\]" "")))
 
-(defn eq? [doc1 doc2]  
+(defn eq? [doc1 doc2]
   ;uncomment to generate test data
   ;(spit (str "test" java.io.File/separator doc2) (fix-pdf (doc-to-str doc1)))  
   (is (= (fix-pdf (doc-to-str doc1)) (fix-pdf (slurp (str "test" java.io.File/separator doc2))))))
@@ -47,15 +47,14 @@
       :bottom-margin 25
       :pages true
       :font  {:size 11}  
-      :size          :a4
-      :orientation   "landscape"
+      :size          :a4      
       :subject "Some subject"
       :author "John Doe"
       :creator "Jane Doe"
       :doc-header ["inspired by" "William Shakespeare"]
       :header "page header"
       :footer "page"
-      ::footer-separator " of "}
+      :footer-separator " of "}
      [:paragraph "I should have font size 11"]
      [:chunk "meta test"]]
     "pages2.pdf"))
