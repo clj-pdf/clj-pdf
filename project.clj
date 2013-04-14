@@ -8,5 +8,4 @@
             :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [jfree/jfreechart "1.0.13"]                 
-                 [itext-min "0.2"]
-                 [org.clojure/tools.logging "0.2.6"]])
+                 [itext-min "0.2"]])
