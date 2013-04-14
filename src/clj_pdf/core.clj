@@ -27,13 +27,16 @@
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
-    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter]
+    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
     [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
 (declare make-section)
 
 (defn- styled-item [meta item]
   (make-section meta (if (string? item) [:chunk item] item)))
+
+(defn- pdf-styled-item [meta item]
+  (make-section meta (if (string? item) [:phrase item] item)))
 
 (defn get-alignment [align]
   (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
@@ -272,6 +275,49 @@
  
     :else
     (doto (new Cell) (.addElement (make-section meta element)))))
+
+
+(defn- pdf-cell [meta element]  
+  (cond
+    (string? element) (make-section [:pdf-cell [:chunk meta element]])
+    (= "pdf-cell" (name (first element)))
+    (let [meta? (map? (second element))
+          content (last element)
+          c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))]
+      
+      (if meta?
+        (let [{:keys [color 
+                      colspan 
+                      rowspan 
+                      border 
+                      align 
+                      set-border 
+                      border-width 
+                      border-width-bottom 
+                      border-width-left 
+                      border-width-right 
+                      border-width-top]} (second element)
+              [r g b] color]
+          
+          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+          (when (not (nil? border))
+            (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
+            
+          (if rowspan (.setRowspan c (int rowspan)))
+          (if colspan (.setColspan c (int colspan)))          
+          (if set-border (.setBorder c (int (get-border set-border))))          
+          (if border-width (.setBorderWidth c (float border-width)))
+          (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
+          (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
+          (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
+          (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+          (.setHorizontalAlignment c (get-alignment align))))
+      
+      (if (string? content) c (doto c (.addElement (make-section meta content)))))
+ 
+    :else
+    (doto (new PdfPCell) (.addElement (make-section meta element)))))
+ 
  
  
 (defn- table-header [tbl header cols]
@@ -303,8 +349,8 @@
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
   
   (let [cols (or num-cols (apply max (map count rows)))
-        tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
-    
+        tbl   (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]   
+
     (when widths
       (if (= (count widths) cols) 
         (.setWidths tbl (int-array widths))
@@ -331,6 +377,39 @@
     
     tbl))
 
+(defn- pdf-table [{:keys [color spacing-before spacing-after header cell-border width bounding-box horizontal-align title num-cols table-events]
+                  :as meta}
+                  widths
+                  & rows]
+  (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
+  (when (not= (count widths) (or num-cols (apply max (map count rows))))
+    (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows))))))) 
+
+  (let [cols (or num-cols (apply max (map count rows)))
+        tbl (new PdfPTable cols)]
+
+    (if bounding-box
+      (.setWidthPercentage tbl (float-array widths) (make-section bounding-box))
+      (.setWidths tbl (float-array widths)))
+
+    (doseq [table-event table-events]
+      (.setTableEvent tbl table-event))    
+      
+    (when (= false cell-border)
+      (doto (.getDefaultCell tbl) (.setBorder Rectangle/NO_BORDER)))
+   
+    (if color (let [[r g b] color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
+    (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
+    (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
+    (table-header tbl header cols)
+ 
+    (.setHorizontalAlignment tbl (get-alignment horizontal-align))
+   
+    (doseq [row rows]
+      (doseq [column row]
+        (.addCell tbl (pdf-cell meta column))))
+    
+    tbl))
 
 (defn- image [{:keys [scale
                       xscale        
@@ -454,6 +533,10 @@
   ([_ height]
     (make-section [:paragraph {:leading 12} (apply str (take height (repeat "\n")))])))
 
+(defn- rectangle
+  [_ width height]
+  (new Rectangle width height))
+
 
 (defn- make-section
   ([element] (if element (make-section {} element) ""))
@@ -472,6 +555,7 @@
             :anchor      anchor
             :annotation  annotation
             :cell        cell
+            :pdf-cell    pdf-cell
             :chapter     chapter
             :chart       chart
             :chunk       text-chunk
@@ -481,11 +565,13 @@
             :list        li
             :paragraph   paragraph
             :phrase      phrase
+            :rectangle   rectangle
             :section     section
             :spacer      spacer
             :superscript superscript
             :subscript   subscript
             :table       table
+            :pdf-table   pdf-table
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
  
@@ -522,7 +608,8 @@
                          creator       
                          size          
                          font-style    
-                         orientation]}                 
+                         orientation
+                         page-events]}                 
                   out]
  
   (let [[nom head] doc-header
@@ -530,20 +617,31 @@
         width  (.. doc getPageSize getWidth)
         height (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if pages (new ByteArrayOutputStream))]
+        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))]
  
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
-    (if pages
-      (PdfWriter/getInstance doc temp-stream)
-      (do
-        (PdfWriter/getInstance doc output-stream)       
-        (if footer
-          (.setFooter doc
-            (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
-              (.setBorder 0)
-              (.setAlignment 2))))))
-       
+    (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)]
+      (if pages
+        (PdfWriter/getInstance doc output-stream-to-use)
+        (let [writer (PdfWriter/getInstance doc output-stream-to-use)]
+          (doseq [page-event page-events]
+            (.setPageEvent writer page-event))
+          (if footer
+            (.setFooter doc
+              (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+                (.setBorder 0)
+                (.setAlignment 2)))))))
+
+    ;;must set margins before opening the doc    
+    (if (and left-margin right-margin top-margin bottom-margin)
+      (.setMargins doc
+        (float left-margin)
+        (float right-margin)
+        (float top-margin)
+        (float (if pages (+ 20 bottom-margin) bottom-margin))))
+
+   
     ;;if we have a letterhead then we want to put it on the first page instead of the header, 
     ;;so we will open doc beofore adding the header
     (if  letterhead 
@@ -556,13 +654,7 @@
         (add-header header doc)
         (.open doc)))
    
-    (if (and left-margin right-margin top-margin bottom-margin)
-    (.setMargins doc
-      (float left-margin)
-      (float right-margin)
-      (float top-margin)
-      (float (if pages (+ 20 bottom-margin) bottom-margin))))
-   
+       
     (if title (.addTitle doc title))
     (if subject (.addSubject doc subject))
     (if (and nom head) (.addHeader doc nom head))
@@ -570,6 +662,11 @@
     (if creator (.addCreator doc creator))
    
     [doc width height temp-stream output-stream]))
+
+(defn write-pages [doc temp-stream output-stream]
+  (.writeTo temp-stream output-stream)
+  (.flush output-stream)
+  (.close output-stream))
  
 (defn write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]  
   (let [reader    (new PdfReader (.toByteArray temp-stream))
@@ -614,6 +711,7 @@
     (doseq [item content]
       (add-item item doc-meta width height doc))
     (.close doc)
+    (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages doc temp-stream output-stream))
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
  
 (defn to-pdf [input-reader r out]  
