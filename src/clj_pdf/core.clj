@@ -672,13 +672,12 @@
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
-        base-font (BaseFont/createFont)]
-       
+        base-font (BaseFont/createFont)]    
     (dotimes [i num-pages]
       (doto (.getOverContent stamper (inc i))
         (.beginText)
         (.setFontAndSize base-font 10)        
-        (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font footer (float 10))))) (float 20))        
+        (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font (or footer "") (float 10))))) (float 20))        
         (.showText (str footer " " (inc i) (or footer-separator " / ") num-pages))
         (.endText)))
     (.close stamper)))
