@@ -9,7 +9,7 @@ A library for easily generating PDFs from Clojure. An example PDF is available [
 Leiningen
 
 ```clojure
-[clj-pdf "1.0.8"]
+[clj-pdf "1.0.9"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.0.8</version>
+  <version>1.0.9</version>
 </dependency>
 ```
 
@@ -842,11 +842,6 @@ if :time-series is set to true then items on x axis must be dates, the default f
      
   "example.pdf")
 ```
-
-## Known issues
-
-When a `:bottom-margin` property is set on the document and the document has chapters, borders in tables after the first occurrence of a chapter tag will not render correctly. 
-
 
 # Users
 
