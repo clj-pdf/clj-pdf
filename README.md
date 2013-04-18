@@ -147,7 +147,6 @@ It is also possible to apply post processing to the anchors in the template:
 [Pagebreak](#pagebreak),
 [Paragraph](#paragraph),
 [Phrase](#phrase),
-[Rectangle](#rectangle),
 [Section](#section),
 [Spacer](#spacer),
 [String](#string),
