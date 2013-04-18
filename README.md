@@ -520,19 +520,6 @@ content:
 [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 ```
 
-#### Rectangle
-
-tag :rectangle
-
-metadata:
-
-* :width number
-* :height number
-
-```clojure
-[:rectangle 300 300]
-```
-
 #### Section
 
 tag :section
