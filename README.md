@@ -714,6 +714,8 @@ note: Cells can contain other elements including tables
 
 #### PDF Table Cell
 
+PDF Table cells must be used inside PDF Tables
+
 tag :pdf-cell
 
 optional metadata:
@@ -729,6 +731,10 @@ color
 * :border-width-left number
 * :border-width-right number
 * :border-width-top number
+
+```clojure
+[:cell {:colspan 2 :align left} "Foo"]
+```
 
 ### Charting
 
