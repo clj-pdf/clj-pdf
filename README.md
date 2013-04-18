@@ -147,6 +147,7 @@ It is also possible to apply post processing to the anchors in the template:
 [Pagebreak](#pagebreak),
 [Paragraph](#paragraph),
 [Phrase](#phrase),
+[Rectangle](#rectangle),
 [Section](#section),
 [Spacer](#spacer),
 [String](#string),
@@ -519,6 +520,19 @@ content:
 [:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
 ```
 
+#### Rectangle
+
+tag :rectangle
+
+metadata:
+
+* :width number
+* :height number
+
+```clojure
+[:rectangle 300 300]
+```
+
 #### Section
 
 tag :section
@@ -598,7 +612,7 @@ metadata:
 
 * :align table alignment on the page can be: :left, :center, :right, :justified
 * :color  `[r g b]` (int values)   
-* :header [{:color [r g b]} "column name" ...] if only a single column name is provided it will span all rows
+* :header `[{:color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows
 * :spacing number
 * :padding number
 * :border boolean
@@ -633,6 +647,30 @@ metadata:
     [:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]] 
     "baz"] 
   ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
+  ["foo2" "bar2" "baz2"]]
+```
+
+#### PDF Table
+
+tag :pdf-table
+
+metadata:
+
+* :color `[r g b]`
+* :spacing-before number
+* :spacing-after number 
+* :header `[{:color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows
+* :cell-border boolean
+* :width number
+* :bounding-box boolean
+* :horizontal-align boolean  
+* :title string
+* :num-cols int
+
+```clojure
+[:pdf-table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :bounding-box false}
+  [[:cell {:colspan 2} "Foo"] "Bar"]             
+  ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
 ```
 
@@ -673,6 +711,24 @@ note: Cells can contain other elements including tables
 
 [:cell [:table ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]
 ```
+
+#### PDF Table Cell
+
+tag :pdf-cell
+
+optional metadata:
+
+color 
+* :align :left, :center, :right, :justified
+* :colspan number
+* :rowspan number
+* :border boolean
+* :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
+* :border-width number
+* :border-width-bottom number
+* :border-width-left number
+* :border-width-right number
+* :border-width-top number
 
 ### Charting
 
@@ -852,7 +908,7 @@ Let me know if you find this library useful or if you have any suggestions.
 
 # License
 ***
-Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 2.1.7 and [JFreeChart](http://www.jfree.org/jfreechart/) on which this library depends on.
+Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 0.4.2 and [JFreeChart](http://www.jfree.org/jfreechart/) on which this library depends on.
 
 
 
