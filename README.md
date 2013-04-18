@@ -1,4 +1,4 @@
-# clj-pdf
+# `clj-pdf`
 
 A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
 
@@ -640,24 +640,28 @@ metadata:
 
 tag :pdf-table
 
+pdf-table accepts metadata, followed by a vector specifying the width for each column, followed by columns
+that can either be strings, images, chunks, paragraphs, phrases, pdf-cells, or other pdf-tables
+
 metadata:
 
 * :color `[r g b]`
 * :spacing-before number
 * :spacing-after number 
-* :header `[{:color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows
 * :cell-border boolean
-* :width number
-* :bounding-box boolean
-* :horizontal-align boolean  
+* :bounding-box [:rectangle width height]
+* :horizontal-align :left, :rigth, :center, :justified  
 * :title string
-* :num-cols int
 
 ```clojure
-[:pdf-table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :bounding-box false}
-  [[:cell {:colspan 2} "Foo"] "Bar"]             
-  ["foo1" "bar1" "baz1"] 
-  ["foo2" "bar2" "baz2"]]
+[:pdf-table
+  {:bounding-box [:rectangle 50 100]
+   :horizontal-align :right
+   :spacing-before 100}
+  [10 20 15]
+  ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]] 
+  [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
+  [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]
 ```
 
 #### Table Cell
@@ -719,7 +723,7 @@ color
 * :border-width-top number
 
 ```clojure
-[:cell {:colspan 2 :align left} "Foo"]
+[:pdf-cell {:colspan 2 :align left} "Foo"]
 ```
 
 ### Charting
