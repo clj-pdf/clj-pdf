@@ -649,13 +649,13 @@ metadata:
 * :spacing-before number
 * :spacing-after number 
 * :cell-border boolean
-* :bounding-box [:rectangle width height]
+* :bounding-box `[width height]`
 * :horizontal-align :left, :rigth, :center, :justified  
 * :title string
 
 ```clojure
 [:pdf-table
-  {:bounding-box [:rectangle 50 100]
+  {:bounding-box [50 100]
    :horizontal-align :right
    :spacing-before 100}
   [10 20 15]
@@ -709,7 +709,7 @@ tag :pdf-cell
 
 optional metadata:
 
-color 
+* :color `[r g b]` 
 * :align :left, :center, :right, :justified
 * :colspan number
 * :rowspan number

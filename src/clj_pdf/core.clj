@@ -377,11 +377,11 @@
     
     tbl))
 
-(defn- pdf-table [{:keys [color spacing-before spacing-after header cell-border width bounding-box horizontal-align title num-cols table-events]
+(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align title table-events]
                   :as meta}
                   widths
                   & rows]
-  (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
+  (when (empty? rows) (throw (new Exception "Table must contain at least one row")))
   (when (not= (count widths) (or num-cols (apply max (map count rows))))
     (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows))))))) 
 
@@ -389,7 +389,8 @@
         tbl (new PdfPTable cols)]
 
     (if bounding-box
-      (.setWidthPercentage tbl (float-array widths) (make-section bounding-box))
+      (let [[x y] bounding-box] 
+        (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y])))
       (.setWidths tbl (float-array widths)))
 
     (doseq [table-event table-events]
@@ -401,7 +402,6 @@
     (if color (let [[r g b] color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
-    (table-header tbl header cols)
  
     (.setHorizontalAlignment tbl (get-alignment horizontal-align))
    
