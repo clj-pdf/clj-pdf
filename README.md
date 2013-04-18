@@ -675,7 +675,6 @@ metadata:
 * :align :left, :center, :right, :justified
 * :color `[r g b]` (int values)   
 * :colspan number
-* :rowspan number
 * :border boolean
 * :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
 * :border-width number
