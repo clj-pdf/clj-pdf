@@ -38,7 +38,7 @@
 (defn- pdf-styled-item [meta item]
   (make-section meta (if (string? item) [:phrase item] item)))
 
-(defn get-alignment [align]
+(defn- get-alignment [align]
   (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
 
 (defn- font
@@ -613,11 +613,14 @@
                   out]
  
   (let [[nom head] doc-header
-        doc    (new Document (page-orientation (page-size size) orientation))
-        width  (.. doc getPageSize getWidth)
-        height (.. doc getPageSize getHeight)
+        doc           (new Document (page-orientation (page-size size) orientation))
+        width         (.. doc getPageSize getWidth)
+        height        (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))]
+        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
+        footer        (if (string? footer)
+                        {:text footer :align :right :start-page 1}          
+                        (merge {:align :right :start-page 1} footer))]
  
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
@@ -629,9 +632,9 @@
             (.setPageEvent writer page-event))
           (if footer
             (.setFooter doc
-              (doto (new HeaderFooter (new Phrase (str footer " ") (font {:size 10})), true)
+              (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})), true)
                 (.setBorder 0)
-                (.setAlignment 2)))))))
+                (.setAlignment (get-alignment (:align footer)))))))))
 
     ;;must set margins before opening the doc    
     (if (and left-margin right-margin top-margin bottom-margin)
@@ -668,18 +671,32 @@
   (.flush output-stream)
   (.close output-stream))
  
+(defn- align-footer [page-width base-font {:keys [text align]}]
+  (let [font-width (.getWidthPointKerned base-font (or text "") (float 10))]    
+    (float
+      (condp = align
+        :right  (- page-width (+ 50 font-width))
+        :left   (+ 50 font-width)
+        :center (- (/ page-width 2) (/ font-width 2))))))
+
 (defn write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]  
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
-        base-font (BaseFont/createFont)]    
+        base-font (BaseFont/createFont)
+        footer    (if (string? footer)
+                    {:text footer :align :right :start-page 1}
+                    (merge {:align :right :start-page 1} footer))]    
     (dotimes [i num-pages]
-      (doto (.getOverContent stamper (inc i))
-        (.beginText)
-        (.setFontAndSize base-font 10)        
-        (.setTextMatrix (float (- width (+ 50 (.getWidthPointKerned base-font (or footer "") (float 10))))) (float 20))        
-        (.showText (str footer " " (inc i) (or footer-separator " / ") num-pages))
-        (.endText)))
+      (if (>= i (dec (or (:start-page footer) 1)))
+        (doto (.getOverContent stamper (inc i))
+          (.beginText)
+          (.setFontAndSize base-font 10)        
+          (.setTextMatrix
+            (align-footer width base-font footer) (float 20))        
+          
+          (.showText (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages))
+          (.endText))))
     (.close stamper)))
  
 
