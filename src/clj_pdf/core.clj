@@ -633,7 +633,7 @@
           (if footer
             (.setFooter doc
               (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})), true)
-                (.setBorder 0)                
+                (.setBorder 0)
                 (.setAlignment (get-alignment (:align footer)))))))))
 
     ;;must set margins before opening the doc    
