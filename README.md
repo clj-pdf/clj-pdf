@@ -46,7 +46,10 @@ Here's a basic example of a document:
 
 (pdf 
   [{}
-   [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]   
+   [:list {:roman true} 
+          [:chunk {:style :bold} "a bold item"] 
+          "another item"
+          "yet another item"]   
    [:phrase "some text"]
    [:phrase "some more text"]
    [:paragraph "yet more text"]]
@@ -441,8 +444,14 @@ content:
 
 
 ```clojure
-[:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
-[:list {:symbol "*"} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]
+[:list {:roman true} 
+       [:chunk {:style :bold} "a bold item"] 
+       "another item" 
+       "yet another item"]
+[:list {:symbol "*"} 
+       [:chunk {:style :bold} "a bold item"] 
+       "another item" 
+       "yet another item"]
 ```
 
 #### Pagebreak
@@ -518,9 +527,12 @@ content:
 ```clojure
 [:phrase "some text here"]
 
-[:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
+[:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]} 
+         "Hello Clojure!"]
 
-[:phrase [:chunk {:style :italic} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]
+[:phrase [:chunk {:style :italic} "chunk one"]
+         [:chunk {:size 20} "Big text"]
+         "some other text"]
 ```
 
 #### Section
@@ -624,17 +636,23 @@ metadata:
   ["foo" "bar" "baz"] 
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
-     
+
+; the widths will be: a width of 50% for the first column, 25% for the second and third column.     
 [:table {:border false
-	     :widths [2 1 1] ; the widths will be: a width of 50% for the first column, 25% for the second and third column.
+	     :widths [2 1 1] 
          :header [{:color [100 100 100]} "Singe Header"]} 
   ["foo" "bar" "baz"] 
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
      
-[:table {:cell-border false :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]} 
+[:table {:cell-border false
+         :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"]
+         :cellSpacing 20
+         :header-color [100 100 100]} 
   ["foo" 
-    [:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]] 
+    [:cell 
+      [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]}
+        "Hello Clojure!"]] 
     "baz"] 
   ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"] 
   ["foo2" "bar2" "baz2"]]
