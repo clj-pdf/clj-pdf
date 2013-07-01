@@ -498,7 +498,8 @@ content:
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
 
 font set in the paragraph can be modified by its children
-[:paragraph {:indent 50 :color [0 255 221]} [:phrase {:style :bold :size 18 :family :halvetica} "Hello Clojure!"]]
+[:paragraph {:indent 50 :color [0 255 221]} 
+  [:phrase {:style :bold :size 18 :family :halvetica} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
 
