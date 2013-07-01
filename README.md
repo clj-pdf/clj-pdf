@@ -767,13 +767,24 @@ additional image metadata
 * :show-points - boolean (display a box for each point in the data set)
 * :label-percision - int (max number of digits after the decimal point)
 * :label-format - string in format of "{0}:{1}:{2}" where {0} is the name of the series, {1} is the x value, and {2} is the y value
-
+* :tick-interval - the range between ticks on `x` axis
+* :range - a vector representing the start and end of the `x` axis range for the chart
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure
 [:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
   ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
   ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
+```
+
+```clojure
+[:chart
+  {:type :line-chart        
+   :x-label "foo"
+   :y-label "bar"
+   :tick-interval 1.5
+   :range [10 30]}
+  ["sample data set" [10 10] [20 11] [25 12] [30 15] [55 30]]]
 ```
 
 ```clojure
@@ -871,20 +882,20 @@ if :time-series is set to true then items on x axis must be dates, the default f
    [:chapter "Charts"]
    
    [:chart
-    {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"}
+    {:type :bar-chart :title "Bar Chart" :x-label "Items" :y-label "Quality"}
     [2 "Foo"]
     [4 "Bar"]
     [10 "Baz"]]
    
    [:chart
-    {:type "line-chart" :title "Line Chart" :x-label "checkpoints" :y-label "units"}
+    {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"}
     ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
     ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
    
-   [:chart {:type "pie-chart" :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
+   [:chart {:type :pie-chart :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
    
    [:chart
-    {:type "line-chart"
+    {:type :line-chart
      :time-series true
      :title "Time Chart"
      :x-label "time"
