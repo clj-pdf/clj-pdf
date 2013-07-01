@@ -637,7 +637,8 @@ metadata:
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
 
-; the widths will be: a width of 50% for the first column, 25% for the second and third column.     
+;; the widths will be: a width of 50% for the first column,
+;; 25% for the second and third column.     
 [:table {:border false
 	     :widths [2 1 1] 
          :header [{:color [100 100 100]} "Singe Header"]} 
