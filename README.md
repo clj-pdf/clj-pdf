@@ -767,8 +767,11 @@ additional image metadata
 * :show-points - boolean (display a box for each point in the data set)
 * :label-percision - int (max number of digits after the decimal point)
 * :label-format - string in format of "{0}:{1}:{2}" where {0} is the name of the series, {1} is the x value, and {2} is the y value
-* :tick-interval - the range between ticks on `x` axis
-* :range - a vector representing the start and end of the `x` axis range for the chart
+* :tick-interval - the range between ticks on each axis
+* :tick-interval-x - the range between ticks on the x axis
+* :tick-interval-y - the range between ticks on the y axis
+* :range-x - a vector representing the start and end of the x axis range for the chart
+* :range-y - a vector representing the start and end of the y axis range for the chart
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure

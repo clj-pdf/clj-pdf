@@ -30,23 +30,24 @@
       (.setValue dataset name (double value)))
     (ChartFactory/createPieChart title dataset true true false)))
 
-(defn- set-range [axis range-start range-end tick-interval]
-  (.setRange axis range-start range-end)
-  (.setTickUnit axis (new NumberTickUnit (or tick-interval 0.1))))
 
-(defn- line-chart [{title         :title
-                    points?       :show-points
-                    point-labels? :point-labels
-                    percision     :label-percision
-                    horizontal?   :horizontal
-                    time?         :time-series
-                    time-format   :time-format 
-                    label-format  :label-format
-                    x-label       :x-label
-                    y-label       :y-label
-                    tick-interval :tick-interval
-                    [range-start
-                     range-end]   :range} & data]
+(defn- line-chart [{title           :title
+                    points?         :show-points
+                    point-labels?   :point-labels
+                    percision       :label-percision
+                    horizontal?     :horizontal
+                    time?           :time-series
+                    time-format     :time-format 
+                    label-format    :label-format
+                    x-label         :x-label
+                    y-label         :y-label
+                    tick-interval   :tick-interval
+                    tick-interval-x :tick-interval-x
+                    tick-interval-y :tick-interval-y                    
+                    [xrange-start
+                     xrange-end]    :x-range
+                    [yrange-start
+                     yrange-end]    :y-range} & data]
   (let [dataset   (new XYSeriesCollection)
         formatter (if time? (new SimpleDateFormat 
                                  (or time-format "yyyy-MM-dd-HH:mm:ss")))]
@@ -66,12 +67,17 @@
                                                        PlotOrientation/VERTICAL) true true false))
           plot     (.getPlot chart)
           renderer (.getRenderer plot)]
-            
-      (if range-end
-        (let [domain-axis (.getDomainAxis plot)
-              range-axis (.getRangeAxis plot)]
-          (set-range domain-axis range-start range-end tick-interval)
-          (set-range range-axis range-start range-end tick-interval)))
+                  
+      (let [domain-axis (.getDomainAxis plot)
+            range-axis (.getRangeAxis plot)]
+        (if (or tick-interval tick-interval-x)
+          (.setTickUnit domain-axis (new NumberTickUnit (or tick-interval tick-interval-x))))
+        
+        (if (or tick-interval tick-interval-y)
+          (.setTickUnit range-axis (new NumberTickUnit (or tick-interval tick-interval-y))))
+        
+          (if xrange-end (.setRange domain-axis xrange-start xrange-end))                    
+          (if yrange-end (.setRange range-axis yrange-start yrange-end)))
       
       (if time? (.. plot getDomainAxis (setDateFormatOverride formatter)))
       (if points? (.setBaseShapesVisible renderer true))
@@ -82,7 +88,6 @@
             (new StandardXYItemLabelGenerator (or label-format "{1},{2}") format format))
           (.setBaseItemLabelsVisible renderer true)))      
       chart)))
-
 
 
 (defn chart [params & items]
