@@ -9,7 +9,7 @@ A library for easily generating PDFs from Clojure. An example PDF is available [
 Leiningen
 
 ```clojure
-[clj-pdf "1.10.0"]
+[clj-pdf "1.11.0"]
 ```
 
 Maven
@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.0.9</version>
+  <version>1.11.0</version>
 </dependency>
 ```
 
@@ -772,7 +772,7 @@ additional image metadata
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
 ```clojure
-[:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"} 
+[:chart {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"}
   ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
   ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
 ```
