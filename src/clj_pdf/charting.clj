@@ -6,6 +6,7 @@
             org.jfree.data.general.DefaultPieDataset
             org.jfree.chart.renderer.category.StandardBarPainter
             org.jfree.chart.labels.StandardXYItemLabelGenerator
+            org.jfree.chart.axis.NumberTickUnit
             java.text.SimpleDateFormat
             java.text.NumberFormat
             [javax.swing JLabel JFrame ]))
@@ -29,6 +30,10 @@
       (.setValue dataset name (double value)))
     (ChartFactory/createPieChart title dataset true true false)))
 
+(defn- set-range [axis range-start range-end tick-interval]
+  (.setRange axis range-start range-end)
+  (.setTickUnit axis (new NumberTickUnit (or tick-interval 0.1))))
+
 (defn- line-chart [{title         :title
                     points?       :show-points
                     point-labels? :point-labels
@@ -38,7 +43,10 @@
                     time-format   :time-format 
                     label-format  :label-format
                     x-label       :x-label
-                    y-label       :y-label} & data]
+                    y-label       :y-label
+                    tick-interval :tick-interval
+                    [range-start
+                     range-end]   :range} & data]
   (let [dataset   (new XYSeriesCollection)
         formatter (if time? (new SimpleDateFormat 
                                  (or time-format "yyyy-MM-dd-HH:mm:ss")))]
@@ -59,6 +67,12 @@
           plot     (.getPlot chart)
           renderer (.getRenderer plot)]
             
+      (if range-end
+        (let [domain-axis (.getDomainAxis plot)
+              range-axis (.getRangeAxis plot)]
+          (set-range domain-axis range-start range-end tick-interval)
+          (set-range range-axis range-start range-end tick-interval)))
+      
       (if time? (.. plot getDomainAxis (setDateFormatOverride formatter)))
       (if points? (.setBaseShapesVisible renderer true))
       (if point-labels?
