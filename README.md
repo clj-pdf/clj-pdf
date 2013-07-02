@@ -15,6 +15,11 @@ Leiningen
 Maven
 
 ```xml
+<repository>
+  <id>clojars</id>
+  <url>http://clojars.org/repo</url>
+</repository>
+
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
