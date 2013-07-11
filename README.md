@@ -939,7 +939,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
 # Users
 
-* [UHN](http://www.uhn.ca/applications/iNews/ViewStory.aspx?s_id=1375) uses clj-pdf to generate reports for advanced clinical documentation.  
+* [UHN](http://www.simspartners.ca/ourPartners/uhn.aspx) uses clj-pdf to generate reports for advanced clinical documentation.  
 * [SoftAddicts](http://www.softaddicts.ca/) process HL7 results with a mix of discrete values and images to produce a PDF in real time using clj-pdf.
 
 Let me know if you find this library useful or if you have any suggestions.
