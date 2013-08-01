@@ -618,10 +618,11 @@
         height        (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream out) out)
         temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
-        footer        (if (string? footer)
-                        {:text footer :align :right :start-page 1}          
-                        (merge {:align :right :start-page 1} footer))]
- 
+        footer        (when (not= footer false)
+                        (if (string? footer)
+                          {:text footer :align :right :start-page 1}
+                          (merge {:align :right :start-page 1} footer)))]
+
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
     (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)]
@@ -684,19 +685,21 @@
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
         base-font (BaseFont/createFont)
-        footer    (if (string? footer)
-                    {:text footer :align :right :start-page 1}
-                    (merge {:align :right :start-page 1} footer))]    
-    (dotimes [i num-pages]
-      (if (>= i (dec (or (:start-page footer) 1)))
-        (doto (.getOverContent stamper (inc i))
-          (.beginText)
-          (.setFontAndSize base-font 10)        
-          (.setTextMatrix
-            (align-footer width base-font footer) (float 20))        
+        footer    (when (not= footer false)
+                    (if (string? footer)
+                      {:text footer :align :right :start-page 1}
+                      (merge {:align :right :start-page 1} footer)))]
+    (when footer
+      (dotimes [i num-pages]
+        (if (>= i (dec (or (:start-page footer) 1)))
+          (doto (.getOverContent stamper (inc i))
+            (.beginText)
+            (.setFontAndSize base-font 10)        
+            (.setTextMatrix
+             (align-footer width base-font footer) (float 20))        
           
-          (.showText (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages))
-          (.endText))))
+            (.showText (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages))
+            (.endText)))))
     (.close stamper)))
  
 
