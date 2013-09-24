@@ -165,13 +165,13 @@ It is also possible to apply post processing to the anchors in the template:
      [:spacer]]))    
 ```
 
-
 ## Document Elements
 
 [Anchor](#anchor),
 [Chapter](#chapter),
 [Chart](#charting),
 [Chunk](#chunk),
+[Graphics](#graphics),
 [Heading](#heading),
 [Image](#image),
 [Line](#line),
@@ -184,6 +184,7 @@ It is also possible to apply post processing to the anchors in the template:
 [String](#string),
 [Subscript](#subscript),
 [Superscript](#superscript),
+[SVG](#svg),
 [Table](#table),
 [Table Cell](#table-cell)
 
@@ -375,6 +376,29 @@ font metadata (refer to Font section for details)
 [:chunk {:super true} "5"] 
 
 [:chunk {:sub true} "2"]
+```
+
+#### Graphics
+
+tag :graphics
+
+The command takes a function with a single argument, the Graphics2D object, onto which you can draw things. Note that this is actually the *PdfGraphics2D* object which
+will render the drawing instructions as vectors rather than to a raster bitmap. There is no need to dispose of the graphics context as this is done on exiting the function.
+The co-ordinates are absolute from the top left hand side of the current page. There are no restrictions as to the number of times this command can be invoked per page; subsequent
+graphics drawings will be overlaid on prior renderings.
+
+optional metadata:
+
+* :under boolean when true, the rendered graphics are drawn under the page (useful for watermarking), else defaults to above the page
+* :translate ```[dx dy]``` shifts the graphic rendering by (dx,dy)
+* :scale ```[sx sy]``` or ```s``` scales the graphic rendering by (sx,sy), or (s,s)
+* :rotate ```radians``` rotates the graphic rendering by the given angle (in radians)
+
+```clojure
+[:graphics {:under true :translate [100 100]}
+  (fn [g2d]
+    (.setColor g2d Color/RED)
+    (.drawOval 0 0 50 50))]
 ```
 
 #### Heading
@@ -636,6 +660,35 @@ creates a text chunk in subscript
 [:superscript {:style :bold} "some bold superscript text"]
 ```
 
+#### SVG
+
+tag :svg
+
+Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) is recommended here, or if a reader or file is presented, content is retrieved from
+that resource.
+
+optional metadata (refer to Graphics section for details):
+
+* :under
+* :translate
+* :scale
+* :rotate
+
+```clojure
+[:svg {}
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+   <!DOCTYPE svg>
+   <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"304\" height=\"290\">
+     <path d=\"M2,111 h300 l-242.7,176.3 92.7,-285.3 92.7,285.3 z\" 
+           style=\"fill:#FB2;stroke:#BBB;stroke-width:15;stroke-linejoin:round\"/>
+   </svg>"]
+```
+
+```clojure
+[:svg {} (clojure.java.io/file "pentagram.svg")]
+```
+
+
 #### Table
 
 tag :table
@@ -872,80 +925,104 @@ if :time-series is set to true then items on x axis must be dates, the default f
 ### A complete example
 
 ```clojure
-(pdf 
+(ns clj-pdf.test.example
+  (:use [clj-pdf.core])
+  (:import [java.awt Polygon Color]))
+
+(defn radians [degrees] (Math/toRadians degrees))
+
+(defmacro rot [g2d angle & body]
+  `(do (. ~g2d rotate (radians ~angle))
+    (do ~@body)
+    (. ~g2d rotate (radians (- 0 ~angle)))))
+
+(defmacro trans [g2d dx dy & body]
+  `(do (. ~g2d translate ~dx ~dy)
+    (do ~@body)
+    (. ~g2d translate (- 0 ~dx) (- 0 ~dy))))
+
+(defn draw-tree [g2d length depth]
+  (if (> depth 0)
+    (do
+      (.drawLine g2d 0 0 length 0)
+      (trans g2d (int length) 0
+        (rot g2d -30 (draw-tree g2d (* length 0.75) (- depth 1)))
+        (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1)))))))
+
+(pdf
   [{:title         "Test doc"
     :header        "page header"
-    :subject       "Some subject"  
+    :subject       "Some subject"
     :creator       "Jane Doe"
     :doc-header    ["inspired by" "William Shakespeare"]
     :right-margin  50
     :author        "John Doe"
     :bottom-margin 25
-    :left-margin   10    
+    :left-margin   10
     :top-margin    20
     :size          "a4"
     :footer        "page"}
-   
+
    [:heading "Lorem Ipsum"]
-   
+
    [:paragraph
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec non iaculis lectus. Integer vel libero libero. Phasellus metus augue, consequat a viverra vel, fermentum convallis sem. Etiam venenatis laoreet quam, et adipiscing mi lobortis sit amet. Fusce eu velit vitae dolor vulputate imperdiet. Suspendisse dui risus, mollis ut tempor sed, dapibus a leo. Aenean nisi augue, placerat a cursus eu, convallis viverra urna. Nunc iaculis pharetra pretium. Suspendisse sit amet erat nisl, quis lacinia dolor. Integer mollis placerat metus in adipiscing. Fusce tincidunt sapien in quam vehicula tincidunt. Integer id ligula ante, interdum sodales enim. Suspendisse quis erat ut augue porta laoreet."]
-   
+
    [:paragraph
     "Sed pellentesque lacus vel sapien facilisis vehicula. Quisque non lectus lacus, at varius nibh. Integer porttitor porttitor gravida. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus accumsan ante tincidunt magna dictum vulputate. Maecenas suscipit commodo leo sed mattis. Morbi dictum molestie justo eu egestas. Praesent lacus est, euismod vitae consequat non, accumsan in justo. Nam rhoncus dapibus nunc vel dignissim."]
-   
+
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
-   
+
    [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20}
     ["foo"
      [:cell
       [:phrase
        {:style "italic" :size 18 :family "halvetica" :color [200 55 221]}
-       "Hello Clojure!"]]   
+       "Hello Clojure!"]]
      "baz"]
     ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
     ["foo2" "bar2" [:cell ["table" ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]
-   
+
    [:paragraph
     "Suspendisse consequat, mauris vel feugiat suscipit, turpis metus semper metus, et vulputate sem nisi a dolor. Duis egestas luctus elit eget dignissim. Vivamus elit elit, blandit id volutpat semper, luctus id eros. Duis scelerisque aliquam lorem, sed venenatis leo molestie ac. Vivamus diam arcu, sodales at molestie nec, pulvinar posuere est. Morbi a velit ante. Nulla odio leo, volutpat vitae eleifend nec, luctus ac risus. In hac habitasse platea dictumst. In posuere ultricies nulla, eu interdum erat rhoncus ac. Vivamus rutrum porta interdum. Nulla pulvinar dui quis velit varius tristique dignissim sem luctus. Aliquam ac velit enim. Sed sed nisi faucibus ipsum congue lacinia. Morbi id mi in lectus vehicula dictum vel sed metus. Sed commodo lorem non nisl vulputate elementum. Fusce nibh dui, auctor a rhoncus eu, rhoncus eu eros."]
-   
+
    [:paragraph
     "Nulla pretium ornare nisi at pulvinar. Praesent lorem diam, pulvinar nec scelerisque et, mattis vitae felis. Integer eu justo sem, non molestie nisl. Aenean interdum erat non nulla commodo pretium. Quisque egestas ullamcorper lacus id interdum. Ut scelerisque, odio ac mollis suscipit, libero turpis tempus nulla, placerat pretium tellus purus eu nunc. Donec nec nisi non sem vehicula posuere et eget sem. Aliquam pretium est eget lorem lacinia in commodo nisl laoreet. Curabitur porttitor dignissim eros, nec semper neque tempor non. Duis elit neque, sagittis vestibulum consequat ut, rhoncus sed dui."]
-   
+
    [:anchor {:style {:size 15} :leading 20} "some anchor"]
-   
+
    [:anchor [:phrase {:style "bold"} "some anchor phrase"]]
-   
+
    [:anchor "plain anchor"]
-   
+
    [:chunk {:style "bold"} "small chunk of text"]
-   
+
    [:phrase "some text here"]
-   
+
    [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
-   
+
    [:chapter [:paragraph "Second Chapter"]]
-   
+
    [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
-   
+
    [:list {:roman true} [:chunk {:style "bold"} "a bold item"] "another item" "yet another item"]
-   
+
    [:chapter "Charts"]
-   
+
    [:chart
     {:type :bar-chart :title "Bar Chart" :x-label "Items" :y-label "Quality"}
     [2 "Foo"]
     [4 "Bar"]
     [10 "Baz"]]
-   
+
    [:chart
     {:type :line-chart :title "Line Chart" :x-label "checkpoints" :y-label "units"}
     ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
     ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
-   
+
    [:chart {:type :pie-chart :title "Big Pie"} ["One" 21] ["Two" 23] ["Three" 345]]
-   
+
    [:chart
     {:type :line-chart
      :time-series true
@@ -956,8 +1033,59 @@ if :time-series is set to true then items on x axis must be dates, the default f
      ["2011-01-03-11:20:11" 200]
      ["2011-01-03-11:25:11" 400]
      ["2011-01-03-11:35:11" 350]
-     ["2011-01-03-12:20:11" 600]]]]
-     
+     ["2011-01-03-12:20:11" 600]]]
+
+   [:chapter "Graphics2D"]
+
+   [:paragraph
+    "Attribution: "
+    [:anchor
+     {:style {:color [0 0 200]}
+      :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
+     "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
+
+   [:graphics {:translate [200 300] :rotate (radians -90)}
+     (fn [g2d]
+       (.setColor g2d Color/GREEN)
+       (draw-tree g2d 50 10))]
+
+   [:chapter "Embedded SVG"]
+
+   [:paragraph
+    "Attribution: "
+    [:anchor
+     {:style {:color [0 0 200]}
+      :target "https://en.wikipedia.org/wiki/File:Example.svg"}
+     "https://en.wikipedia.org/wiki/File:Example.svg"]]
+
+   [:svg {:under true :translate [0 270] :scale 0.95}
+      (clojure.java.io/file "test/Example.svg")]
+
+   [:pagebreak]
+
+   [:paragraph
+    "Attribution: "
+    [:anchor
+     {:style {:color [0 0 200]}
+      :target "https://commons.wikimedia.org/wiki/SVG_examples"}
+     "https://commons.wikimedia.org/wiki/SVG_examples"]]
+
+   [:svg {}
+     "<?xml version=\"1.0\"?>
+      <!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">
+      <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"467\" height=\"462\">
+        <rect x=\"80\" y=\"60\" width=\"250\" height=\"250\" rx=\"20\" style=\"fill:#ff0000; stroke:#000000;stroke-width:2px;\" />
+        <rect x=\"140\" y=\"120\" width=\"250\" height=\"250\" rx=\"40\" style=\"fill:#0000ff; stroke:#000000; stroke-width:2px; fill-opacity:0.7;\" />
+      </svg>"]
+
+   [:svg {:translate [100 450]}
+     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+      <!DOCTYPE svg>
+      <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"304\" height=\"290\">
+         <path d=\"M2,111 h300 l-242.7,176.3 92.7,-285.3 92.7,285.3 z\"
+               style=\"fill:#FB2;stroke:#F00;stroke-width:3;stroke-linejoin:round\"/>
+      </svg>"]]
+
   "example.pdf")
 ```
 
