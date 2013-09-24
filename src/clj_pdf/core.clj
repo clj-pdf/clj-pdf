@@ -1,6 +1,8 @@
 (ns clj-pdf.core
   (:use clojure.walk [clojure.set :only (rename-keys)])
-  (:require [clj_pdf.charting :as charting])
+  (:require [clj-pdf.charting :as charting]
+            [clj-pdf.svg :as svg]
+            [clj-pdf.graphics-2d :as g2d])
   (:import
     java.awt.Color
     [com.lowagie.text.pdf.draw DottedLineSeparator LineSeparator]
@@ -537,7 +539,6 @@
   [_ width height]
   (new Rectangle width height))
 
-
 (defn- make-section
   ([element] (if element (make-section {} element) ""))
   ([meta element]
@@ -561,6 +562,8 @@
             :chunk       text-chunk
             :heading     heading
             :image       image
+            :graphics    g2d/with-graphics
+            :svg         svg/render
             :line        line
             :list        li
             :paragraph   paragraph
@@ -575,7 +578,7 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
 
- (defn append-to-doc [font-style width height item doc]
+ (defn append-to-doc [font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
      (.newPage doc)
      (.add doc (make-section
@@ -585,7 +588,8 @@
                         :top-margin (.topMargin doc)
                         :bottom-margin (.bottomMargin doc)
                         :page-width width
-                        :page-height height)
+                        :page-height height
+                        :pdf-writer pdf-writer)
                  (or item [:paragraph item])))))
 
  (defn- add-header [header doc]
@@ -624,47 +628,46 @@
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
-    (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)]
-      (if pages
-        (PdfWriter/getInstance doc output-stream-to-use)
-        (let [writer (PdfWriter/getInstance doc output-stream-to-use)]
-          (doseq [page-event page-events]
-            (.setPageEvent writer page-event))
-          (if footer
-            (.setFooter doc
-              (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})), true)
-                (.setBorder 0)
-                (.setAlignment (get-alignment (:align footer)))))))))
+    (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)
+          pdf-writer (PdfWriter/getInstance doc output-stream-to-use)]
+      (when-not pages
+        (doseq [page-event page-events]
+          (.setPageEvent pdf-writer page-event))
+        (if footer
+          (.setFooter doc
+            (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})), true)
+              (.setBorder 0)
+              (.setAlignment (get-alignment (:align footer)))))))
 
-    ;;must set margins before opening the doc
-    (if (and left-margin right-margin top-margin bottom-margin)
-      (.setMargins doc
-        (float left-margin)
-        (float right-margin)
-        (float top-margin)
-        (float (if pages (+ 20 bottom-margin) bottom-margin))))
-
-
-    ;;if we have a letterhead then we want to put it on the first page instead of the header,
-    ;;so we will open doc beofore adding the header
-    (if  letterhead
-      (do
-        (.open doc)
-        (doseq [item letterhead]
-          (append-to-doc  (or font-style {})  width height (if (string? item) [:paragraph item] item) doc))
-        (add-header header doc))
-      (do
-        (add-header header doc)
-        (.open doc)))
+      ;;must set margins before opening the doc
+      (if (and left-margin right-margin top-margin bottom-margin)
+        (.setMargins doc
+          (float left-margin)
+          (float right-margin)
+          (float top-margin)
+          (float (if pages (+ 20 bottom-margin) bottom-margin))))
 
 
-    (if title (.addTitle doc title))
-    (if subject (.addSubject doc subject))
-    (if (and nom head) (.addHeader doc nom head))
-    (if author (.addAuthor doc author))
-    (if creator (.addCreator doc creator))
+      ;;if we have a letterhead then we want to put it on the first page instead of the header,
+      ;;so we will open doc beofore adding the header
+      (if  letterhead
+        (do
+          (.open doc)
+          (doseq [item letterhead]
+            (append-to-doc  (or font-style {})  width height (if (string? item) [:paragraph item] item) doc pdf-writer))
+          (add-header header doc))
+        (do
+          (add-header header doc)
+          (.open doc)))
 
-    [doc width height temp-stream output-stream]))
+
+      (if title (.addTitle doc title))
+      (if subject (.addSubject doc subject))
+      (if (and nom head) (.addHeader doc nom head))
+      (if author (.addAuthor doc author))
+      (if creator (.addCreator doc creator))
+
+      [doc width height temp-stream output-stream pdf-writer])))
 
 (defn write-pages [doc temp-stream output-stream]
   (.writeTo temp-stream output-stream)
@@ -712,31 +715,31 @@
 
     :else item))
 
-(defn add-item [item doc-meta width height doc]
+(defn add-item [item doc-meta width height doc pdf-writer]
   (if (and (coll? item) (coll? (first item)))
     (doseq [element item]
-      (append-to-doc (:font doc-meta) width height (preprocess-item element) doc))
-    (append-to-doc (:font doc-meta) width height (preprocess-item item) doc)))
+      (append-to-doc (:font doc-meta) width height (preprocess-item element) doc pdf-writer))
+    (append-to-doc (:font doc-meta) width height (preprocess-item item) doc pdf-writer)))
 
 (defn write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
-  (let [[doc width height temp-stream output-stream] (setup-doc doc-meta out)]
+  (let [[doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
     (doseq [item content]
-      (add-item item doc-meta width height doc))
+      (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
     (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages doc temp-stream output-stream))
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
 
 (defn to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
-        [doc width height temp-stream output-stream] (setup-doc doc-meta out)]
+        [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
     (loop []
       (if-let [item (input-reader r)]
         (do
-          (add-item item doc-meta width height doc)
+          (add-item item doc-meta width height doc pdf-writer)
           (recur))
         (do
           (.close doc)

@@ -141,13 +141,13 @@ It is also possible to apply post processing to the anchors in the template:
      [:spacer]]))    
 ```
 
-
 ## Document Elements
 
 [Anchor](#anchor),
 [Chapter](#chapter),
 [Chart](#charting),
 [Chunk](#chunk),
+[Graphics](#graphics),
 [Heading](#heading),
 [Image](#image),
 [Line](#line),
@@ -160,6 +160,7 @@ It is also possible to apply post processing to the anchors in the template:
 [String](#string),
 [Subscript](#subscript),
 [Superscript](#superscript),
+[SVG](#svg),
 [Table](#table),
 [Table Cell](#table-cell)
 
@@ -351,6 +352,29 @@ font metadata (refer to Font section for details)
 [:chunk {:super true} "5"] 
 
 [:chunk {:sub true} "2"]
+```
+
+#### Graphics
+
+tag :graphics
+
+The command takes a function with a single argument, the Graphics2D object, onto which you can draw things. Note that this is actually the *PdfGraphics2D* object which
+will render the drawing instructions as vectors rather than to a raster bitmap. There is no need to dispose of the graphics context as this is done on exiting the function.
+The co-ordinates are absolute from the top left hand side of the current page. There are no restrictions as to the number of times this command can be invoked per page; subsequent
+graphics drawings will be overlaid on prior renderings.
+
+optional metadata:
+
+* :under boolean when true, the rendered graphics are drawn under the page (useful for watermarking), else defaults to above the page
+* :translate ```[dx dy]``` shifts the graphic rendering by (dx,dy)
+* :scale ```[sx sy]``` or ```s``` scales the graphic rendering by (sx,sy), or (s,s)
+* :rotate ```radians``` rotates the graphic rendering by the given angle (in radians)
+
+```clojure
+[:graphics {:under true :translate [100 100]}
+  (fn [g2d]
+    (.setColor g2d Color/RED)
+    (.drawOval 0 0 50 50))]
 ```
 
 #### Heading
@@ -611,6 +635,35 @@ creates a text chunk in subscript
 
 [:superscript {:style :bold} "some bold superscript text"]
 ```
+
+#### SVG
+
+tag :svg
+
+Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) is recommended here, or if a reader or file is presented, content is retrieved from
+that resource.
+
+optional metadata (refer to Graphics section for details):
+
+* :under
+* :translate
+* :scale
+* :rotate
+
+```clojure
+[:svg {}
+  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+   <!DOCTYPE svg>
+   <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"304\" height=\"290\">
+     <path d=\"M2,111 h300 l-242.7,176.3 92.7,-285.3 92.7,285.3 z\" 
+           style=\"fill:#FB2;stroke:#BBB;stroke-width:15;stroke-linejoin:round\"/>
+   </svg>"]
+```
+
+```clojure
+[:svg {} (clojure.java.io/file "pentagram.svg")]
+```
+
 
 #### Table
 

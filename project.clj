@@ -7,5 +7,6 @@
             :distribution :repo
             :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [jfree/jfreechart "1.0.13"]
-                 [com.lowagie/itext "4.2.0"]])
+                 [org.jfree/jfreechart "1.0.15"]
+                 [com.lowagie/itext "4.2.1"]
+                 [org.apache.xmlgraphics/batik-gvt "1.7"]])

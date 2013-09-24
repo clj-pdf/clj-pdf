@@ -1,4 +1,4 @@
-(ns clj_pdf.charting
+(ns clj-pdf.charting
   (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart ChartUtilities]
             [org.jfree.chart.plot CategoryPlot PlotOrientation]
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
