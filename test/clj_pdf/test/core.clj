@@ -59,6 +59,27 @@
      [:chunk "meta test"]]
     "pages2.pdf"))
 
+(deftest no-footer
+  (eq?
+   [{:title  "Test doc"
+      :left-margin   10
+      :right-margin  50
+      :top-margin    20
+      :bottom-margin 25
+      :pages true
+      :font  {:size 11}  
+      :size          :a4
+      :orientation   "landscape"
+      :subject "Some subject"
+      :author "John Doe"
+      :creator "Jane Doe"
+      :doc-header ["inspired by" "William Shakespeare"]
+      :header "page header"
+      :footer false}
+     [:paragraph "I should have font size 11"]
+     [:chunk "meta test"]]
+   "nofooter.pdf"))
+
 (deftest image
   (eq?
     [{}
