@@ -395,10 +395,15 @@ optional metadata:
 * :rotate ```radians``` rotates the graphic rendering by the given angle (in radians)
 
 ```clojure
-[:graphics {:under true :translate [100 100]}
-  (fn [g2d]
-    (.setColor g2d Color/RED)
-    (.drawOval 0 0 50 50))]
+(let [img (java.awt.image.BufferedImage. 300 300 java.awt.image.BufferedImage/TYPE_INT_ARGB)
+      g2d (.getGraphics img)]
+  (pdf [{}
+        [:graphics {:under true :translate [100 100]}
+         (fn [g2d]
+           (doto g2d
+             (.setColor java.awt.Color/RED)
+             (.drawOval (int 0) (int 0) (int 50) (int 50))))]]
+       "doc.pdf"))
 ```
 
 #### Heading
