@@ -1,4 +1,5 @@
 (ns clj-pdf.charting
+  (:use [clj-pdf.graphics-2d :only [with-graphics]])
   (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart ChartUtilities]
             [org.jfree.chart.plot CategoryPlot PlotOrientation]
             [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
@@ -9,7 +10,7 @@
             org.jfree.chart.axis.NumberTickUnit
             java.text.SimpleDateFormat
             java.text.NumberFormat
-            [javax.swing JLabel JFrame ]))
+            java.awt.Rectangle))
 
 (defn- bar-chart [{title       :title
                    horizontal? :horizontal
@@ -93,7 +94,8 @@
 (defn chart [params & items]
   (let [{type   :type
          width  :page-width
-         height :page-height} params
+         height :page-height
+         vector :vector} params
         out (new java.io.ByteArrayOutputStream)
         chart (condp = (when type (name type))
                 "bar-chart"  (apply bar-chart params items)
@@ -101,5 +103,11 @@
                 "line-chart" (apply line-chart params items)
                 (throw (new Exception (str "Unsupported chart type " type))))]
 
-    (ChartUtilities/writeScaledChartAsPNG out chart (int width) (int height) 2 2)
-    (.toByteArray out)))
+    (if-let [[x y w h] vector]
+      (with-graphics
+        params
+        (fn [g2d]
+          (.draw chart g2d (Rectangle. x y w h))))
+      (do
+        (ChartUtilities/writeScaledChartAsPNG out chart (int width) (int height) 2 2)
+        (.toByteArray out)))))

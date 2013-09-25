@@ -507,19 +507,20 @@
 
 
 (defn- chart [& [meta & more :as params]]
-  (let [{:keys [align width height page-width page-height]} meta]
-    (image
-      (cond
-        (and align width height) meta
-        (and width height) (assoc meta :align :center)
-        align (assoc meta :width (* 0.85 page-width) :height (* 0.85 page-height))
-        :else
-        (assoc meta
-                  :align :center
-                  :width (* 0.85 page-width)
-                  :height (* 0.85 page-height)))
+  (let [{:keys [vector align width height page-width page-height]} meta]
+    (if vector
+      (apply charting/chart params)
+      (image
+        (cond
+          (and align width height) meta
+          (and width height) (assoc meta :align :center)
+          align (assoc meta :width (* 0.85 page-width) :height (* 0.85 page-height))
+          :else (assoc meta
+                    :align :center
+                    :width (* 0.85 page-width)
+                    :height (* 0.85 page-height)))
 
-           (apply charting/chart params))))
+        (apply charting/chart params)))))
 
 (defn- line [{dotted? :dotted, gap :gap} & args]
   (doto (if dotted?

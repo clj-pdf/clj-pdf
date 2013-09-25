@@ -111,16 +111,30 @@
    [:chapter "Graphics2D"]
 
    [:paragraph
-    "Attribution: "
+    "Tree Attribution: "
     [:anchor
      {:style {:color [0 0 200]}
       :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
      "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
 
-   [:graphics {:translate [200 300] :rotate (radians -90)}
+   [:graphics {:translate [150 300] :rotate (radians -90)}
      (fn [g2d]
        (.setColor g2d Color/GREEN)
        (draw-tree g2d 50 10))]
+
+   [:chart {:type :pie-chart
+            :title "Vector Pie"
+            :vector [270 100 300 250] }
+    ["One" 21] ["Two" 23] ["Three" 345]]
+
+   [:chart
+    {:type :line-chart
+     :title "Vector Line Chart"
+     :x-label "checkpoints"
+     :y-label "units"
+     :vector [50 400 500 300] }
+    ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
+    ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
 
    [:chapter "Embedded SVG"]
 
