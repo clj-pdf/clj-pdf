@@ -857,9 +857,11 @@ additional image metadata (draws the chart as a raster bitmap image, default unl
 * :pad-left number
 * :pad-right number
 
-additional vector metadata (overrides *all* image metadata, draws the chart as a scalable vector diagram)
+alternative vector metadata (used instead of the default image metadata, draws the chart as a scalable vector diagram)
 
-* :vector ```[x y w h]``` draws the chart at the absolute (x,y) page co-ordinates in a rectangle of size (w,h) 
+* :vector boolean - when true, draws the chart at (0,0) on the page, unless the :translate argument is also supplied, in which case the drawing is offset accordingly. 
+* :width num - set width for chart
+* :height num - set height for chart
 
 optional vector metadata (refer to Graphics section for details):
 
@@ -872,6 +874,14 @@ optional vector metadata (refer to Graphics section for details):
 
 ```clojure
 [:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} 
+  [2 "Foo"] [4 "Bar"] [10 "Baz"]]
+```
+
+The same chart rendered with vector drawing:
+
+```clojure
+[:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"
+         :vector true :width 500 :height 400 :translate [50 50]} 
   [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 ```
 
@@ -1063,7 +1073,9 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
    [:chart {:type :pie-chart
             :title "Vector Pie"
-            :vector [270 100 300 250] }
+            :vector true
+            :width 300 :height 250
+            :translate [270 100] }
     ["One" 21] ["Two" 23] ["Three" 345]]
 
    [:chart
@@ -1071,7 +1083,9 @@ if :time-series is set to true then items on x axis must be dates, the default f
      :title "Vector Line Chart"
      :x-label "checkpoints"
      :y-label "units"
-     :vector [50 400 500 300] }
+     :vector true
+     :width 500 :height 300
+     :translate [50 400]}
     ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
     ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
 

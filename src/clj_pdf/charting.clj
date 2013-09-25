@@ -1,16 +1,17 @@
 (ns clj-pdf.charting
   (:use [clj-pdf.graphics-2d :only [with-graphics]])
   (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart ChartUtilities]
-            [org.jfree.chart.plot CategoryPlot PlotOrientation]
-            [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
-            org.jfree.data.category.DefaultCategoryDataset
-            org.jfree.data.general.DefaultPieDataset
-            org.jfree.chart.renderer.category.StandardBarPainter
-            org.jfree.chart.labels.StandardXYItemLabelGenerator
-            org.jfree.chart.axis.NumberTickUnit
-            java.text.SimpleDateFormat
-            java.text.NumberFormat
-            java.awt.Rectangle))
+           [org.jfree.chart.plot CategoryPlot PlotOrientation]
+           [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
+           org.jfree.data.category.DefaultCategoryDataset
+           org.jfree.data.general.DefaultPieDataset
+           org.jfree.chart.renderer.category.StandardBarPainter
+           org.jfree.chart.labels.StandardXYItemLabelGenerator
+           org.jfree.chart.axis.NumberTickUnit
+           java.text.SimpleDateFormat
+           java.text.NumberFormat
+           java.io.ByteArrayOutputStream
+           java.awt.Rectangle))
 
 (defn- bar-chart [{title       :title
                    horizontal? :horizontal
@@ -96,18 +97,18 @@
          width  :page-width
          height :page-height
          vector :vector} params
-        out (new java.io.ByteArrayOutputStream)
         chart (condp = (when type (name type))
                 "bar-chart"  (apply bar-chart params items)
                 "pie-chart"  (apply pie-chart params items)
                 "line-chart" (apply line-chart params items)
                 (throw (new Exception (str "Unsupported chart type " type))))]
 
-    (if-let [[x y w h] vector]
+    (if vector
       (with-graphics
         params
         (fn [g2d]
-          (.draw chart g2d (Rectangle. x y w h))))
-      (do
+          (.draw chart g2d (Rectangle. 0 0 (:width params) (:height params)))))
+
+      (with-open [out (ByteArrayOutputStream.)]
         (ChartUtilities/writeScaledChartAsPNG out chart (int width) (int height) 2 2)
         (.toByteArray out)))))

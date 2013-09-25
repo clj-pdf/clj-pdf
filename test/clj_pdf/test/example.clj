@@ -124,7 +124,9 @@
 
    [:chart {:type :pie-chart
             :title "Vector Pie"
-            :vector [270 100 300 250] }
+            :vector true
+            :width 300 :height 250
+            :translate [270 100] }
     ["One" 21] ["Two" 23] ["Three" 345]]
 
    [:chart
@@ -132,7 +134,9 @@
      :title "Vector Line Chart"
      :x-label "checkpoints"
      :y-label "units"
-     :vector [50 400 500 300] }
+     :vector true
+     :width 500 :height 300
+     :translate [50 400]}
     ["Foo" [1 10] [2 13] [3 120] [4 455] [5 300] [6 600]]
     ["Bar" [1 13] [2 33] [3 320] [4 155] [5 200] [6 300]]]
 
