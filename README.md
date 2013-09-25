@@ -859,7 +859,7 @@ additional image metadata (draws the chart as a raster bitmap image, default unl
 
 additional vector metadata (overrides *all* image metadata, draws the chart as a scalable vector diagram)
 
-* :vector ```[x y w h]``` draws the chart at the absolute (x,y) screen co-ordinates in a rectangle of size (w,h) 
+* :vector ```[x y w h]``` draws the chart at the absolute (x,y) page co-ordinates in a rectangle of size (w,h) 
 
 optional vector metadata (refer to Graphics section for details):
 
