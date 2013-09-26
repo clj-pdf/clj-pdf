@@ -238,6 +238,8 @@
 
 (defn- cell [meta element]
   (cond
+    (nil? element) (make-section [:cell [:chunk meta ""]])
+
     (string? element) (make-section [:cell [:chunk meta element]])
 
     (= "cell" (name (first element)))
@@ -281,6 +283,8 @@
 
 (defn- pdf-cell [meta element]
   (cond
+    (nil? element) (make-section [:pdf-cell [:chunk meta ""]])
+
     (string? element) (make-section [:pdf-cell [:chunk meta element]])
     (= "pdf-cell" (name (first element)))
     (let [meta? (map? (second element))
