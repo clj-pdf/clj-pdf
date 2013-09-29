@@ -302,7 +302,8 @@
                       border-width-bottom
                       border-width-left
                       border-width-right
-                      border-width-top]} (second element)
+                      border-width-top
+                      rotation]} (second element)
               [r g b] color]
 
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
@@ -317,6 +318,7 @@
           (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
           (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
           (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+          (if rotation (.setRotation c (int rotation)))
           (.setHorizontalAlignment c (get-alignment align))))
 
       (if (string? content) c (doto c (.addElement (make-section meta content)))))

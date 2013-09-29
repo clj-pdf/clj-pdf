@@ -827,6 +827,7 @@ optional metadata:
 * :border-width-left number
 * :border-width-right number
 * :border-width-top number
+* :rotation number - rotates the cell
 
 ```clojure
 [:pdf-cell {:colspan 2 :align left} "Foo"]
