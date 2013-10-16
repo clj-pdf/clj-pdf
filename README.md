@@ -708,7 +708,7 @@ metadata:
 * :width number signifying the percentage of the page width that the table will take up
 * :widths vector list of column widths in percentage
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
-* :header can also be formatted via a vector of paragraphs or phrases, and can optionally start with metadata for setting header color
+   and can also be formatted via a vector of paragraphs or phrases
 * :offset number
 * :num-cols number
 
