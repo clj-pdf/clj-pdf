@@ -332,7 +332,7 @@
   (when header
     (let [meta? (map? (first header))
           header-rest (if meta? (rest header) header)
-         header-data (if (string? (first header-rest))
+          header-data (if (string? (first header-rest))
                       header-rest
                       (first header-rest))
           set-bg #(if-let [[r g b] (if meta? (:color (first header)))]
