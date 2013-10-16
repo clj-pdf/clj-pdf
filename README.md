@@ -698,7 +698,8 @@ metadata:
 
 * :align table alignment on the page can be: :left, :center, :right, :justified
 * :color  `[r g b]` (int values)   
-* :header `[{:color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows
+* :header `[{:color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows.
+* :header can also be formatted via a collection of phrases or paragraphs `[{:color [r g b]} [:paragraph ...]`
 * :spacing number
 * :padding number
 * :border boolean
@@ -707,6 +708,7 @@ metadata:
 * :width number signifying the percentage of the page width that the table will take up
 * :widths vector list of column widths in percentage
 * :header is a vector of strings, which specify the headers for each column, can optionally start with metadata for setting header color
+* :header can also be formatted via a vector of paragraphs or phrases, and can optionally start with metadata for setting header color
 * :offset number
 * :num-cols number
 
