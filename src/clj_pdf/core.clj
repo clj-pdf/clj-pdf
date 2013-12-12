@@ -15,6 +15,7 @@
      Chunk
      Document
      Font
+     FontFactory
      GreekList
      HeaderFooter
      Image
@@ -34,6 +35,9 @@
 
 (declare make-section)
 
+; register fonts in usual directories
+(FontFactory/registerDirectories)
+
 (defn- styled-item [meta item]
   (make-section meta (if (string? item) [:chunk item] item)))
 
@@ -44,31 +48,40 @@
   (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
 
 (defn- font
-  [{style   :style
-    size    :size
-    [r g b] :color
-    family  :family}]
-  (new Font
-       (condp = (when family (name family))
-         "courier"      (Font/COURIER)
-         "helvetica"    (Font/HELVETICA)
-         "times-roman"  (Font/TIMES_ROMAN)
-         "symbol"       (Font/SYMBOL)
-         "zapfdingbats" (Font/ZAPFDINGBATS)
-         (Font/HELVETICA))
-       (float (or size 10))
+  [{style    :style
+    size     :size
+    [r g b]  :color
+    family   :family
+    ttf-name :ttf-name}]
+    (FontFactory/getFont
+      (if-not (nil? ttf-name)
+        ttf-name
+        (condp = (when family (name family))
+          "courier"      (FontFactory/COURIER)
+          "helvetica"    (FontFactory/HELVETICA)
+          "times-roman"  (FontFactory/TIMES_ROMAN)
+          "symbol"       (FontFactory/SYMBOL)
+          "zapfdingbats" (FontFactory/ZAPFDINGBATS)
+          (FontFactory/HELVETICA)))
 
-       (condp = (when style (name style))
-         "bold"        (Font/BOLD)
-         "italic"      (Font/ITALIC)
-         "bold-italic" (Font/BOLDITALIC)
-         "normal"      (Font/NORMAL)
-         "strikethru"  (Font/STRIKETHRU)
-         "underline"   (Font/UNDERLINE)
-         (Font/NORMAL))
-       (if (and r g b)
-         (new Color r g b)
-         (new Color 0 0 0))))
+      BaseFont/WINANSI
+
+      true
+
+      (float (or size 10))
+
+      (condp = (when style (name style))
+        "bold"        (Font/BOLD)
+        "italic"      (Font/ITALIC)
+        "bold-italic" (Font/BOLDITALIC)
+        "normal"      (Font/NORMAL)
+        "strikethru"  (Font/STRIKETHRU)
+        "underline"   (Font/UNDERLINE)
+        (Font/NORMAL))
+
+      (if (and r g b)
+        (new Color r g b)
+        (new Color 0 0 0))))
 
 
 (defn- page-size [size]

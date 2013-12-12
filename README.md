@@ -282,6 +282,7 @@ orientation defaults to portrait, unless :landscape is specified
 A font is defined by a map consisting of the following parameters, all parameters are optional
 
 * :family has following options: :courier, :helvetica, :times-roman, :symbol, :zapfdingbats defaults to :helvetica
+* :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter.
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
 * :color is a vector of [r g b] defaults to black
@@ -364,6 +365,7 @@ optional metadata:
 font metadata (refer to Font section for details)
 
 * :family 
+* :ttf-name 
 * :size 
 * :style 
 * :color 
@@ -532,6 +534,7 @@ optional metadata:
 font metadata (refer to Font section for details)
 
 * :family 
+* :ttf-name 
 * :size 
 * :style 
 * :color 
@@ -568,6 +571,7 @@ optional metadata:
 font metadata (refer to Font section for details)
 
 * :family 
+* :ttf-name 
 * :size 
 * :style 
 * :color 
