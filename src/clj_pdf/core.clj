@@ -64,24 +64,24 @@
           "zapfdingbats" (FontFactory/ZAPFDINGBATS)
           (FontFactory/HELVETICA)))
 
-       BaseFont/WINANSI
+      BaseFont/WINANSI
 
-       true
+      true
 
-       (float (or size 10))
+      (float (or size 10))
 
-       (condp = (when style (name style))
-         "bold"        (Font/BOLD)
-         "italic"      (Font/ITALIC)
-         "bold-italic" (Font/BOLDITALIC)
-         "normal"      (Font/NORMAL)
-         "strikethru"  (Font/STRIKETHRU)
-         "underline"   (Font/UNDERLINE)
-         (Font/NORMAL))
+      (condp = (when style (name style))
+        "bold"        (Font/BOLD)
+        "italic"      (Font/ITALIC)
+        "bold-italic" (Font/BOLDITALIC)
+        "normal"      (Font/NORMAL)
+        "strikethru"  (Font/STRIKETHRU)
+        "underline"   (Font/UNDERLINE)
+        (Font/NORMAL))
 
-       (if (and r g b)
-         (new Color r g b)
-         (new Color 0 0 0))))
+      (if (and r g b)
+        (new Color r g b)
+        (new Color 0 0 0))))
 
 
 (defn- page-size [size]
