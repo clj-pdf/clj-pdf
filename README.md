@@ -603,29 +603,24 @@ content:
 
 tag :reference
 
-A reference tag can be used to cache repeating items. The references must be defined in the document metadata section.
+A reference tag can be used to cache repeating items. The references must be defined in the document metadata section. Both `:image` and `:chart` tags are cached by default.
 
 ```clojure
 [:reference :reference-id]
 
 (time
-  (pdf [{:references {:batman [:image "batman.jpg"]
-                      :superman [:image "superman.png"]}}
-      (for [i (range 10)]
-        [:paragraph
-         [:reference :batman]
-         [:reference :superman]])]
+  (pdf [{:references {:repeating [:paragraph "I repeat a lot!"]}}
+        (for [i (range 10000)]
+          [:reference :repeating])]
      "super.pdf"))
-"Elapsed time: 87.161 msecs"
+"Elapsed time: 165.483 msecs"
 
 (time
   (pdf [{}
-      (for [i (range 10)]
-        [:paragraph
-         [:image "batman.jpg"]
-         [:image "superman.png"]])]
+        (for [i (range 10000)]
+          [:paragraph "I repeat a lot!"])]
      "super.pdf"))
-"Elapsed time: 1211.291 msecs"
+"Elapsed time: 584.544 msecs"
 ```
 
 #### Section
