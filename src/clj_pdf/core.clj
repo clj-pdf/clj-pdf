@@ -33,7 +33,7 @@
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
     [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
-(def cache (atom {}))
+(declare ^:dynamic *cache*)
 
 (declare make-section)
 
@@ -441,7 +441,7 @@
 
     tbl))
 
-(defn- image [{:keys [scale
+(defn- make-image [{:keys [scale
                       xscale
                       yscale
                       align
@@ -514,6 +514,13 @@
     (if scale (.scalePercent img scale))
     img))
 
+(defn- image [& [meta img-data :as params]]
+  (let [image-hash (java.util.Objects/hashCode params)]
+    (if-let [cached (get @*cache* image-hash)]
+      cached
+      (let [compiled (make-image meta img-data)]
+        (swap! *cache* assoc image-hash compiled)
+        compiled))))
 
 (defn- section [meta & [title & content]]
   (let [sec (.addSection (:parent meta)
@@ -533,8 +540,7 @@
 (defn- superscript [meta text]
   (text-chunk (assoc meta :super true) text))
 
-
-(defn- chart [& [meta & more :as params]]
+(defn- make-chart [& [meta & more :as params]]
   (let [{:keys [vector align width height page-width page-height]} meta]
     (if vector
       (apply charting/chart params)
@@ -547,8 +553,15 @@
                     :align :center
                     :width (* 0.85 page-width)
                     :height (* 0.85 page-height)))
-
         (apply charting/chart params)))))
+
+(defn- chart [& params]
+  (let [chart-hash (java.util.Objects/hashCode params)]
+    (if-let [cached (get @*cache* chart-hash)]
+      cached
+      (let [compiled (apply make-chart params)]
+        (swap! *cache* assoc chart-hash compiled)
+        compiled))))
 
 (defn- line [{dotted? :dotted, gap :gap} & args]
   (doto (if dotted?
@@ -559,11 +572,11 @@
     (.setOffset -5)))
 
 (defn- reference [meta reference-id]
-  (if-let [item (get @cache reference-id)]
+  (if-let [item (get @*cache* reference-id)]
     item
     (if-let [item (get-in meta [:references reference-id])]
       (let [item (make-section item)]
-        (swap! cache assoc reference-id item)
+        (swap! *cache* assoc reference-id item)
         item)
       (throw (Exception. (str "reference tag not found: " reference-id))))))
 
@@ -616,7 +629,7 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
 
- (defn append-to-doc [references font-style width height item doc pdf-writer]
+ (defn- append-to-doc [references font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
      (.newPage doc)
      (.add doc (make-section
@@ -636,7 +649,7 @@
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
 
-(defn setup-doc [{:keys [left-margin
+(defn- setup-doc [{:keys [left-margin
                          right-margin
                          top-margin
                          bottom-margin
@@ -709,7 +722,7 @@
 
       [doc width height temp-stream output-stream pdf-writer])))
 
-(defn write-pages [doc temp-stream output-stream]
+(defn- write-pages [doc temp-stream output-stream]
   (.writeTo temp-stream output-stream)
   (.flush output-stream)
   (.close output-stream))
@@ -722,7 +735,7 @@
         :left   (+ 50 font-width)
         :center (- (/ page-width 2) (/ font-width 2))))))
 
-(defn write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]
+(defn- write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]
   (let [reader    (new PdfReader (.toByteArray temp-stream))
         stamper   (new PdfStamper reader, output-stream)
         num-pages (.getNumberOfPages reader)
@@ -757,13 +770,13 @@
 
     :else item))
 
-(defn add-item [item {:keys [font references]} width height doc pdf-writer]
+(defn- add-item [item {:keys [font references]} width height doc pdf-writer]
   (if (and (coll? item) (coll? (first item)))
     (doseq [element item]
       (append-to-doc references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc references font width height (preprocess-item item) doc pdf-writer)))
 
-(defn write-doc
+(defn- write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
@@ -775,7 +788,7 @@
     (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages doc temp-stream output-stream))
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
 
-(defn to-pdf [input-reader r out]
+(defn- to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
         [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
     (loop []
@@ -787,7 +800,7 @@
           (.close doc)
           (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream)))))))
 
-(defn stream-doc
+(defn- stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
    NOTE: setting the :pages to true in doc meta will require the entire document to remain in memory for
          post processing!"
@@ -803,9 +816,10 @@
    out can be either a string, in which case it's treated as a file name, or an output stream.
    NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed."
   [in out]
-  (if (instance? InputStream in)
-    (stream-doc in out)
-    (write-doc in out)))
+  (binding [*cache* (atom {})]
+    (if (instance? InputStream in)
+      (stream-doc in out)
+      (write-doc in out))))
 
 ;;;templating
 (defmacro template [t]

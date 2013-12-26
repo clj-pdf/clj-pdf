@@ -4,7 +4,7 @@
 
 (defn doc-to-str [doc]
   (let [out (new java.io.ByteArrayOutputStream)]
-    (write-doc doc out)
+    (pdf doc out)
   (.toString out)))
 
 (defn fix-pdf [pdf]
