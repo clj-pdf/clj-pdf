@@ -177,6 +177,7 @@ It is also possible to apply post processing to the anchors in the template:
 [Pagebreak](#pagebreak),
 [Paragraph](#paragraph),
 [Phrase](#phrase),
+[Reference](#reference),
 [Section](#section),
 [Spacer](#spacer),
 [String](#string),
@@ -213,7 +214,13 @@ All fields in the metadata section are optional:
           :start-page 2 ;optional parameter to indicate on what page the footer starts, has no effect when :pages is set to false
          }
  
- :pages true ;specifies if total pages should be printed in the footer of each page
+ ;; specifies if total pages should be printed in the footer of each page
+ :pages true 
+ 
+ ;; references can be used to cache compiled items for faster compilation,
+ ;; see the :reference tag for details
+ :references {:batman [:image "batman.jpg"]
+              :superman [:image "superman.png"]}
 }
 ```
 
@@ -590,6 +597,36 @@ content:
 [:phrase [:chunk {:style :italic} "chunk one"]
          [:chunk {:size 20} "Big text"]
          "some other text"]
+```
+
+#### Reference
+
+tag :reference
+
+A reference tag can be used to cache repeating items. The references must be defined in the document metadata section.
+
+```clojure
+[:reference :reference-id]
+
+(time
+  (pdf [{:references {:batman [:image "batman.jpg"]
+                      :superman [:image "superman.png"]}}
+      (for [i (range 10)]
+        [:paragraph
+         [:reference :batman]
+         [:reference :superman]])]
+     "super.pdf"))
+"Elapsed time: 87.161 msecs"
+
+(time
+  (pdf [{:references {:batman [:image "batman.jpg"]
+                      :superman [:image "superman.png"]}}
+      (for [i (range 10)]
+        [:paragraph
+         [:image "batman.jpg"]
+         [:image "superman.png"]])]
+     "super.pdf"))
+"Elapsed time: 1211.291 msecs"
 ```
 
 #### Section

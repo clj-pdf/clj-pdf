@@ -33,6 +33,8 @@
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
     [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
+(def cache (atom {}))
+
 (declare make-section)
 
 ; register fonts in usual directories
@@ -556,6 +558,12 @@
           (new LineSeparator))
     (.setOffset -5)))
 
+(defn- reference [meta reference-id]
+  (if-let [item (get @cache reference-id)]
+    item
+    (let [item (make-section (get-in meta [:references reference-id]))]
+      (swap! cache assoc reference-id item)
+      item)))
 
 (defn- spacer
   ([_] (make-section [:paragraph {:leading 12} "\n"]))
@@ -595,6 +603,7 @@
             :list        li
             :paragraph   paragraph
             :phrase      phrase
+            :reference   reference
             :rectangle   rectangle
             :section     section
             :spacer      spacer
@@ -605,11 +614,12 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
 
- (defn append-to-doc [font-style width height item doc pdf-writer]
+ (defn append-to-doc [references font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
      (.newPage doc)
      (.add doc (make-section
                  (assoc font-style
+                        :references references
                         :left-margin (.leftMargin doc)
                         :right-margin (.rightMargin doc)
                         :top-margin (.topMargin doc)
@@ -682,7 +692,7 @@
         (do
           (.open doc)
           (doseq [item letterhead]
-            (append-to-doc  (or font-style {})  width height (if (string? item) [:paragraph item] item) doc pdf-writer))
+            (append-to-doc nil (or font-style {})  width height (if (string? item) [:paragraph item] item) doc pdf-writer))
           (add-header header doc))
         (do
           (add-header header doc)
@@ -745,11 +755,11 @@
 
     :else item))
 
-(defn add-item [item doc-meta width height doc pdf-writer]
+(defn add-item [item {:keys [font references]} width height doc pdf-writer]
   (if (and (coll? item) (coll? (first item)))
     (doseq [element item]
-      (append-to-doc (:font doc-meta) width height (preprocess-item element) doc pdf-writer))
-    (append-to-doc (:font doc-meta) width height (preprocess-item item) doc pdf-writer)))
+      (append-to-doc references font width height (preprocess-item element) doc pdf-writer))
+    (append-to-doc references font width height (preprocess-item item) doc pdf-writer)))
 
 (defn write-doc
   "(write-doc document out)
