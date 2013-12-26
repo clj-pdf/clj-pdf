@@ -561,9 +561,11 @@
 (defn- reference [meta reference-id]
   (if-let [item (get @cache reference-id)]
     item
-    (let [item (make-section (get-in meta [:references reference-id]))]
-      (swap! cache assoc reference-id item)
-      item)))
+    (if-let [item (get-in meta [:references reference-id])]
+      (let [item (make-section item)]
+        (swap! cache assoc reference-id item)
+        item)
+      (throw (Exception. (str "reference tag not found: " reference-id))))))
 
 (defn- spacer
   ([_] (make-section [:paragraph {:leading 12} "\n"]))
