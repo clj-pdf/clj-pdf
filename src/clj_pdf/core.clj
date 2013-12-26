@@ -515,7 +515,7 @@
     img))
 
 (defn- image [& [meta img-data :as params]]
-  (let [image-hash (java.util.Objects/hashCode params)]
+  (let [image-hash (.hashCode params)]
     (if-let [cached (get @*cache* image-hash)]
       cached
       (let [compiled (make-image meta img-data)]
@@ -556,7 +556,7 @@
         (apply charting/chart params)))))
 
 (defn- chart [& params]
-  (let [chart-hash (java.util.Objects/hashCode params)]
+  (let [chart-hash (.hashCode params)]
     (if-let [cached (get @*cache* chart-hash)]
       cached
       (let [compiled (apply make-chart params)]
@@ -564,7 +564,7 @@
         compiled))))
 
 (defn- svg-element [& params]
-  (let [svg-hash (java.util.Objects/hashCode params)]
+  (let [svg-hash (.hashCode params)]
     (if-let [cached (get *cache* svg-hash)]
       cached
       (let [compiled (apply svg/render params)]
