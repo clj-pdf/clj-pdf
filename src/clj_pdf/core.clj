@@ -34,11 +34,9 @@
     [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
 (declare ^:dynamic *cache*)
+(def fonts-registered? (atom nil))
 
 (declare make-section)
-
-; register fonts in usual directories
-(FontFactory/registerDirectories)
 
 (defn- styled-item [meta item]
   (make-section meta (if (string? item) [:chunk item] item)))
@@ -784,11 +782,19 @@
       (append-to-doc references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc references font width height (preprocess-item item) doc pdf-writer)))
 
+(defn register-fonts [doc-meta]
+  (when (and (= true (:register-system-fonts? doc-meta))
+             (nil? @fonts-registered?))
+    ; register fonts in usual directories
+    (FontFactory/registerDirectories)
+    (reset! fonts-registered? true)))
+
 (defn- write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
+  (register-fonts doc-meta)
   (let [[doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
     (doseq [item content]
       (add-item item doc-meta width height doc pdf-writer))
@@ -799,6 +805,7 @@
 (defn- to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
         [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
+    (register-fonts doc-meta)
     (loop []
       (if-let [item (input-reader r)]
         (do

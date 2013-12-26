@@ -21,7 +21,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.11.10</version>
+  <version>1.11.12</version>
 </dependency>
 ```
 
@@ -221,6 +221,10 @@ All fields in the metadata section are optional:
  ;; see the :reference tag for details
  :references {:batman [:image "batman.jpg"]
               :superman [:image "superman.png"]}
+
+ ;; Register TTF fonts in some probable directories, set this to true if
+ ;; you're going to use :ttf-name to set custom system fonts
+ :register-system-fonts? true
 }
 ```
 
@@ -376,6 +380,8 @@ font metadata (refer to Font section for details)
 * :size 
 * :style 
 * :color 
+
+Note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts.
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
