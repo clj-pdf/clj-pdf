@@ -21,7 +21,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.11.7</version>
+  <version>1.11.9</version>
 </dependency>
 ```
 
@@ -619,8 +619,7 @@ A reference tag can be used to cache repeating items. The references must be def
 "Elapsed time: 87.161 msecs"
 
 (time
-  (pdf [{:references {:batman [:image "batman.jpg"]
-                      :superman [:image "superman.png"]}}
+  (pdf [{}
       (for [i (range 10)]
         [:paragraph
          [:image "batman.jpg"]
