@@ -563,6 +563,14 @@
         (swap! *cache* assoc chart-hash compiled)
         compiled))))
 
+(defn- svg-element [& params]
+  (let [svg-hash (java.util.Objects/hashCode params)]
+    (if-let [cached (get *cache* svg-hash)]
+      cached
+      (let [compiled (apply svg/render params)]
+        (swap! *cache* assoc svg-hash compiled)
+        compiled))))
+
 (defn- line [{dotted? :dotted, gap :gap} & args]
   (doto (if dotted?
           (if gap
@@ -613,7 +621,7 @@
             :heading     heading
             :image       image
             :graphics    g2d/with-graphics
-            :svg         svg/render
+            :svg         svg-element
             :line        line
             :list        li
             :paragraph   paragraph
