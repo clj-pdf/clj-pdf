@@ -47,6 +47,10 @@
 (defn- get-alignment [align]
   (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
 
+(defn- set-background [element {:keys [background]}]
+  (when background
+    (let [[r g b] background] (.setBackground element (Color. r g b)))))
+
 (defn- font
   [{style    :style
     size     :size
@@ -216,9 +220,9 @@
             (.addAll (map (partial make-section meta) content)))]
     (if leading (.setLeading p (float leading))) p))
 
-
 (defn- text-chunk [style content]
   (let [ch (new Chunk (make-section content) (font style))]
+    (set-background ch style)
     (cond
       (:super style) (.setTextRise ch (float 5))
       (:sub style) (.setTextRise ch (float -4))

@@ -379,12 +379,15 @@ font metadata (refer to Font section for details)
 * :ttf-name 
 * :size 
 * :style 
-* :color 
+* :color
+* :background [r b g]
 
 Note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts.
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
+
+[:chunk {:background [0 255 0]} "green chunk"]
 
 [:chunk {:super true} "5"] 
 
