@@ -389,6 +389,8 @@ Note that when using `:ttf-name`, you should set `:register-system-fonts? true` 
 
 [:chunk {:background [0 255 0]} "green chunk"]
 
+[:chunk {:color [0 0 0] :background [255 0 0]} "more fun with color"]
+
 [:chunk {:super true} "5"] 
 
 [:chunk {:sub true} "2"]
