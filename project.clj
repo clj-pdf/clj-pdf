@@ -1,5 +1,5 @@
 (defproject clj-pdf
-  "1.11.13"
+  "1.11.14"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
   :license {:name "GNU Lesser General Public License - v 3"
