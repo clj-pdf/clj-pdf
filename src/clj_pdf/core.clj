@@ -51,8 +51,22 @@
   (when background
     (let [[r g b] background] (.setBackground element (Color. r g b)))))
 
+(defn get-style [style]
+  (condp = (when style (name style))
+        "bold"        (Font/BOLD)
+        "italic"      (Font/ITALIC)
+        "bold-italic" (Font/BOLDITALIC)
+        "normal"      (Font/NORMAL)
+        "strikethru"  (Font/STRIKETHRU)
+        "underline"   (Font/UNDERLINE)
+        (Font/NORMAL)))
+
+(defn- compute-font-style [styles]
+  (apply bit-or (map get-style styles)))
+
 (defn- font
   [{style    :style
+    styles   :styles
     size     :size
     [r g b]  :color
     family   :family
@@ -73,20 +87,14 @@
       true
 
       (float (or size 10))
-
-      (condp = (when style (name style))
-        "bold"        (Font/BOLD)
-        "italic"      (Font/ITALIC)
-        "bold-italic" (Font/BOLDITALIC)
-        "normal"      (Font/NORMAL)
-        "strikethru"  (Font/STRIKETHRU)
-        "underline"   (Font/UNDERLINE)
-        (Font/NORMAL))
+      (cond
+        style (get-style style)
+        styles (compute-font-style styles)
+        :else (Font/NORMAL))
 
       (if (and r g b)
         (new Color r g b)
         (new Color 0 0 0))))
-
 
 (defn- page-size [size]
   (condp = (when size (name size))
