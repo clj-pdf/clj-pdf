@@ -62,7 +62,9 @@
         (Font/NORMAL)))
 
 (defn- compute-font-style [styles]
-  (apply bit-or (map get-style styles)))
+  (if (> (count styles) 1)
+    (apply bit-or (map get-style styles))
+    (get-style (first styles))))
 
 (defn- font
   [{style    :style
@@ -88,8 +90,8 @@
 
       (float (or size 10))
       (cond
-        style (get-style style)
         styles (compute-font-style styles)
+        style (get-style style)
         :else (Font/NORMAL))
 
       (if (and r g b)
