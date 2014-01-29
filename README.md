@@ -326,6 +326,7 @@ optional metadata:
 * :id name of the anchor
 * :target an external link or a name of the anchor this anchor points to, if referencing another anchor then prefix target with # 
 * :style font
+* :styles a vector of font styles
 * :leading number
 
 content:
@@ -382,7 +383,8 @@ font metadata (refer to Font section for details)
 * :family 
 * :ttf-name 
 * :size 
-* :style 
+* :style
+* :styles
 * :color
 * :background [r b g]
 
@@ -390,6 +392,8 @@ Note that when using `:ttf-name`, you should set `:register-system-fonts? true` 
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
+
+[:chunk {:styles [:bold :italic]} "small chunk of text"]
 
 [:chunk {:background [0 255 0]} "green chunk"]
 
@@ -432,6 +436,7 @@ optional metadata:
 
 * :align specifies alignement of heading possible valuse :left, :center, :right, :justified
 * :style font (refer to Font section for details)
+* :styles font (refer to Font section for details)
 
 ```clojure
 [:heading "Lorem Ipsum"]
@@ -559,6 +564,7 @@ font metadata (refer to Font section for details)
 * :ttf-name 
 * :size 
 * :style 
+* :styles
 * :color 
 
 content:
@@ -595,7 +601,8 @@ font metadata (refer to Font section for details)
 * :family 
 * :ttf-name 
 * :size 
-* :style 
+* :style
+* :styles
 * :color 
 
 content:
@@ -684,6 +691,7 @@ tag :subscript
 optional metadata:
 
 * :style font
+* :styles fonts
  
 creates a text chunk in subscript
 
@@ -700,7 +708,8 @@ tag :superscript
 optional metadata:
 
 * :style font
- 
+* :styles fonts
+
 creates a text chunk in subscript
 
 ```clojure
