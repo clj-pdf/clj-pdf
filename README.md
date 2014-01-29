@@ -21,7 +21,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.11.12</version>
+  <version>1.11.14</version>
 </dependency>
 ```
 
@@ -296,6 +296,7 @@ A font is defined by a map consisting of the following parameters, all parameter
 * :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter.
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
+* :styles a vector of multiple style keys
 * :color is a vector of [r g b] defaults to black
 
 example font:
@@ -305,6 +306,9 @@ example font:
  :size 18
  :family :helvetica
  :color [0 234 123]}
+ 
+ {:styles [:bold :underline]
+  :family :helvetica}
 ```
 note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
 
@@ -322,6 +326,7 @@ optional metadata:
 * :id name of the anchor
 * :target an external link or a name of the anchor this anchor points to, if referencing another anchor then prefix target with # 
 * :style font
+* :styles a vector of font styles
 * :leading number
 
 content:
@@ -378,7 +383,8 @@ font metadata (refer to Font section for details)
 * :family 
 * :ttf-name 
 * :size 
-* :style 
+* :style
+* :styles
 * :color
 * :background [r b g]
 
@@ -386,6 +392,8 @@ Note that when using `:ttf-name`, you should set `:register-system-fonts? true` 
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
+
+[:chunk {:styles [:bold :italic]} "small chunk of text"]
 
 [:chunk {:background [0 255 0]} "green chunk"]
 
@@ -428,6 +436,7 @@ optional metadata:
 
 * :align specifies alignement of heading possible valuse :left, :center, :right, :justified
 * :style font (refer to Font section for details)
+* :styles font (refer to Font section for details)
 
 ```clojure
 [:heading "Lorem Ipsum"]
@@ -555,6 +564,7 @@ font metadata (refer to Font section for details)
 * :ttf-name 
 * :size 
 * :style 
+* :styles
 * :color 
 
 content:
@@ -591,7 +601,8 @@ font metadata (refer to Font section for details)
 * :family 
 * :ttf-name 
 * :size 
-* :style 
+* :style
+* :styles
 * :color 
 
 content:
@@ -680,6 +691,7 @@ tag :subscript
 optional metadata:
 
 * :style font
+* :styles fonts
  
 creates a text chunk in subscript
 
@@ -696,7 +708,8 @@ tag :superscript
 optional metadata:
 
 * :style font
- 
+* :styles fonts
+
 creates a text chunk in subscript
 
 ```clojure
