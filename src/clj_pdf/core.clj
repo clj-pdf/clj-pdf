@@ -174,7 +174,7 @@
 
 (defn- paragraph [meta & content]
   (let [paragraph (new Paragraph)
-        {:keys [first-line-indent indent style keep-together leading align]} meta]
+        {:keys [first-line-indent indent keep-together leading align]} meta]
 
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
