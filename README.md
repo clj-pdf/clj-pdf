@@ -296,6 +296,7 @@ A font is defined by a map consisting of the following parameters, all parameter
 * :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter.
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
+* :styles a vector of multiple style keys
 * :color is a vector of [r g b] defaults to black
 
 example font:
@@ -305,6 +306,9 @@ example font:
  :size 18
  :family :helvetica
  :color [0 234 123]}
+ 
+ {:styles [:bold :underline]
+  :family :helvetica}
 ```
 note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
 
