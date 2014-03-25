@@ -208,11 +208,14 @@ All fields in the metadata section are optional:
  :doc-header ["inspired by" "William Shakespeare"]
  :header "Page header text appears on each page"
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
+ 
+ ;;setting :footer to false will pevent page numbers from being displayed
  :footer {:text "Page footer text appears on each page (includes page number)"
           :align :left ;optional footer alignment of :left|:right|:center defaults to :right
           :footer-separator "text which will be displayed between current page number and total pages, defaults to /"
           :start-page 2 ;optional parameter to indicate on what page the footer starts, has no effect when :pages is set to false
          }
+         
  
  ;; specifies if total pages should be printed in the footer of each page
  :pages true 
