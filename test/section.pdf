@@ -1,36 +1,36 @@
 %PDF-1.4
 %����
 3 0 obj
-<</Length 166/Filter/FlateDecode>>stream
-x����� ��}����Q�g�M�x��9�@7�?�΄FiK�/�6���AѪ���-��$ќAb<}3��kh�dD��qa��2�k�dP�oj*2���t�ܧ�'��|ɕo�E������c���l�۝�' 1f6��5N�k��0R�;Gx��r�
+<</Filter/FlateDecode/Length 166>>stream
+x����� ��}����Q�g�M�x��9�@7�?�΄FiK�/�6���AѪ���-��$ќAb<}3��kh�dD��qa��2�k��dP�oj*2���t�ܧ�'��|ɕo�E������c���l��۝�' 1f6��5N�k��0R�;Gx��r�
 endstream
 endobj
 2 0 obj
-<</Parent 4 0 R/Contents 3 0 R/Type/Page/Resources<</ProcSet /Font<</F1 1 0 R>>>>/MediaBox>>
+<</Contents 3 0 R/Type/Page/Resources<</ProcSet /Font<</F1 1 0 R>>>>/Parent 4 0 R/MediaBox>>
 endobj
 8 0 obj
-<</Parent 7 0 R/Dest/Title(1.1.1. Nested Section Title)>>
+<</Dest/Title(1.1.1. Nested Section Title)/Parent 7 0 R>>
 endobj
 7 0 obj
-<</Parent 6 0 R/Dest/Title(1.1. Section Title)/Count 1/Last 8 0 R/First 8 0 R>>
+<</Dest/Count 1/Title(1.1. Section Title)/Parent 6 0 R/First 8 0 R/Last 8 0 R>>
 endobj
 6 0 obj
-<</Parent 5 0 R/Dest/Title(1. Chapter)/Count 2/Last 7 0 R/First 7 0 R>>
+<</Dest/Count 2/Title(1. Chapter)/Parent 5 0 R/First 7 0 R/Last 7 0 R>>
 endobj
 5 0 obj
-<</Type/Outlines/Count 3/Last 6 0 R/First 6 0 R>>
+<</Type/Outlines/Count 3/First 6 0 R/Last 6 0 R>>
 endobj
 1 0 obj
-<</BaseFont/Helvetica/Type/Font/Encoding/WinAnsiEncoding/Subtype/Type1>>
+<</Subtype/Type1/Type/Font/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>
 endobj
 4 0 obj
-<</ITXT(4.2.0)/Type/Pages/Count 1/Kids>>
+<</Kids/Type/Pages/Count 1/ITXT(4.2.0)>>
 endobj
 9 0 obj
 <</Type/Catalog/Outlines 5 0 R/Pages 4 0 R>>
 endobj
 10 0 obj
-<</Producer(iText 4.2.0 by 1T3XT)//>>
+<<///Producer(iText 4.2.0 by 1T3XT)>>
 endobj
 xref
 0 11
@@ -46,7 +46,7 @@ xref
 0000000924 00000 n 
 0000000984 00000 n 
 trailer
-<</Root 9 0 R/ID /Info 10 0 R/Size 11>>
+<</Info 10 0 R/ID /Root 9 0 R/Size 11>>
 startxref
 1107
 %%EOF

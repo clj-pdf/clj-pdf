@@ -359,9 +359,7 @@
   (when header
     (let [meta? (map? (first header))
           header-rest (if meta? (rest header) header)
-          header-data (if (string? (first header-rest))
-                      header-rest
-                      (first header-rest))
+          header-data header-rest
           set-bg #(if-let [[r g b] (if meta? (:color (first header)))]
                     (doto % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
@@ -376,7 +374,7 @@
           (.addCell tbl header-cell))
 
         (doseq [h header-data]
-          (let [header-text (if (string? (first header-data))
+          (let [header-text (if (string? (first h))
                               (make-section [:chunk {:style "bold"} h])
                               (make-section h))
                 header-cell (doto (new Cell header-text) (.setHeader true))]

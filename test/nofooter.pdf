@@ -1,27 +1,27 @@
 %PDF-1.4
 %����
 1 0 obj
-<</BaseFont/Helvetica/Type/Font/Subtype/Type1/Encoding/WinAnsiEncoding>>
+<</Subtype/Type1/Type/Font/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>
 endobj
 2 0 obj
-<</Length 166/Filter/FlateDecode>>stream
-x�e���@E���:%�����&2�Dj��[��L���M���
+<</Filter/FlateDecode/Length 166>>stream
+x�e���@E�����:%�����&2�Dj��[��L���M���
 :��%�b
 �W�+
 #:�&%�z��h+V��<������ِ���.��$4:��!s6v��䂨/�^J��F�Ii�F�U�"Ff/Iu��nN��b�w�-]gѹ��AF޸�5<D
 endstream
 endobj
 3 0 obj
-<</ITXT(4.2.0)/Type/Pages/Count 1/Kids>>
+<</Kids/Type/Pages/Count 1/ITXT(4.2.0)>>
 endobj
 4 0 obj
-<</Parent 3 0 R/Type/Page/Contents 2 0 R/Resources<</ProcSet/Font<</F1 1 0 R>>>>/MediaBox/Rotate 90>>
+<</Contents 2 0 R/Type/Page/Resources<</ProcSet/Font<</F1 1 0 R>>>>/Parent 3 0 R/Rotate 90/MediaBox>>
 endobj
 5 0 obj
 <</Type/Catalog/Pages 3 0 R>>
 endobj
 6 0 obj
-<</Creator(Jane Doe)/Producer(iText 4.2.0 by 1T3XT)/inspired#20by(William Shakespeare)/Title(Test doc)/Subject(Some subject)//Author(John Doe)/>>
+<</inspired#20by(William Shakespeare)//Creator(Jane Doe)//Producer(iText 4.2.0 by 1T3XT)/Subject(Some subject)/Author(John Doe)/Title(Test doc)>>
 endobj
 xref
 0 7
@@ -33,7 +33,7 @@ xref
 0000000561 00000 n 
 0000000606 00000 n 
 trailer
-<</Root 5 0 R/ID /Info 6 0 R/Size 7>>
+<</Info 6 0 R/ID /Root 5 0 R/Size 7>>
 startxref
 836
 %%EOF

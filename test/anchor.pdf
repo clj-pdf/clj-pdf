@@ -1,33 +1,33 @@
 %PDF-1.4
 %����
 5 0 obj
-<</C/Border/A<</URI(http://google.com)/S/URI>>/Subtype/Link/Rect>>
+<</A<</S/URI/URI(http://google.com)>>/Subtype/Link/C/Border/Rect>>
 endobj
 6 0 obj
-<</C/Border/A<</URI(#target)/S/URI>>/Subtype/Link/Rect>>
+<</A<</S/URI/URI(#target)>>/Subtype/Link/C/Border/Rect>>
 endobj
 7 0 obj
-<</C/Border/A<</D 4 0 R/S/GoTo>>/Subtype/Link/Rect>>
+<</A<</S/GoTo/D 4 0 R>>/Subtype/Link/C/Border/Rect>>
 endobj
 8 0 obj
-<</Length 157/Filter/FlateDecode>>stream
-x�m��� ��}��0GU��%�n�E�L����0]��H�����F�N '������-!1�W`�N0�µ����$�����Rs���0�6F��`��C�rg��ī�m1V��jй�ܶ����Q�k�7�.��U���Y���]�Ru
+<</Filter/FlateDecode/Length 157>>stream
+x�m��� ��}��0GU��%�n�E�L����0]��H�����F�N '������-!1�W`�N0�µ����$�����Rs���0�6F��`��C�rg��ī�m1V��jй�ܶ����Q�k�7�.��U���Y������]�Ru
 endstream
 endobj
 3 0 obj
-<</Parent 9 0 R/Contents 8 0 R/Type/Page/Resources<</ProcSet /Font<</F1 1 0 R/F2 2 0 R>>>>/MediaBox/Annots>>
+<</Contents 8 0 R/Type/Page/Resources<</ProcSet /Font<</F1 1 0 R/F2 2 0 R>>>>/Annots/Parent 9 0 R/MediaBox>>
 endobj
 4 0 obj
 
 endobj
 1 0 obj
-<</BaseFont/Helvetica/Type/Font/Encoding/WinAnsiEncoding/Subtype/Type1>>
+<</Subtype/Type1/Type/Font/BaseFont/Helvetica/Encoding/WinAnsiEncoding>>
 endobj
 2 0 obj
-<</BaseFont/Helvetica-Bold/Type/Font/Encoding/WinAnsiEncoding/Subtype/Type1>>
+<</Subtype/Type1/Type/Font/BaseFont/Helvetica-Bold/Encoding/WinAnsiEncoding>>
 endobj
 9 0 obj
-<</ITXT(4.2.0)/Type/Pages/Count 1/Kids>>
+<</Kids/Type/Pages/Count 1/ITXT(4.2.0)>>
 endobj
 10 0 obj
 <</Names>>
@@ -39,7 +39,7 @@ endobj
 <</Names 11 0 R/Type/Catalog/Pages 9 0 R>>
 endobj
 13 0 obj
-<</Producer(iText 4.2.0 by 1T3XT)//>>
+<<///Producer(iText 4.2.0 by 1T3XT)>>
 endobj
 xref
 0 14
@@ -58,7 +58,7 @@ xref
 0000001117 00000 n 
 0000001176 00000 n 
 trailer
-<</Root 12 0 R/ID /Info 13 0 R/Size 14>>
+<</Info 13 0 R/ID /Root 12 0 R/Size 14>>
 startxref
 1299
 %%EOF
