@@ -21,7 +21,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>1.11.15</version>
+  <version>1.11.16</version>
 </dependency>
 ```
 
@@ -783,6 +783,12 @@ metadata:
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
 
+[:table {:header [{:color [100 100 100]}
+                  [:paragraph {:style :bold :size 15} "FOO"]
+                  [:paragraph {:size 20} "BAR"]]
+         :CellSpacing 20}
+  ["foo" "bar"]]
+       
 ;; the widths will be: a width of 50% for the first column,
 ;; 25% for the second and third column.     
 [:table {:border false
