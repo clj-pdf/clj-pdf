@@ -363,9 +363,10 @@
           set-bg #(if-let [[r g b] (if meta? (:color (first header)))]
                     (doto % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
-        (let [header-text (if (string? (first header-data))
-                            (make-section [:chunk {:style "bold"} (first header-data)])
-                            (make-section header-data))
+        (let [header (first header-data)
+               header-text (if (string? header)
+                            (make-section [:chunk {:style "bold"} header])
+                            (make-section header))
               header-cell (doto (new Cell header-text)
                             (.setHorizontalAlignment 1)
                             (.setHeader true)
@@ -374,10 +375,14 @@
           (.addCell tbl header-cell))
 
         (doseq [h header-data]
-          (let [header-text (if (string? (first h))
+          (let [header-text (if (string? h)
                               (make-section [:chunk {:style "bold"} h])
                               (make-section h))
                 header-cell (doto (new Cell header-text) (.setHeader true))]
+            (when-not (and (string? h)
+                           (map? (second h)))
+              (when-let [align (:align (second h))]
+                (.setHorizontalAlignment header-cell (get-alignment align))))
             (set-bg header-cell)
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
