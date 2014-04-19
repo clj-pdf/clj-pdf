@@ -777,7 +777,13 @@ metadata:
   [[:cell {:colspan 2} "Foo"] "Bar"]             
   ["foo1" "bar1" "baz1"] 
   ["foo2" "bar2" "baz2"]]
-     
+
+;;header elements can set alignment
+[:table {:header [{:color [100 100 100]}
+                  [:paragraph {:style :bold :size 15} "Foo"]
+                  [:paragraph {:align :center :style :bold :size 15} "Bar"]]}
+  ["foo" "bar"]]
+    
 [:table {:border-width 10 :header ["Row 1" "Row 2" "Row 3"]} 
   ["foo" "bar" "baz"] 
   ["foo1" "bar1" "baz1"] 
