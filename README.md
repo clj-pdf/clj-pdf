@@ -1206,6 +1206,8 @@ if :time-series is set to true then items on x axis must be dates, the default f
   "example.pdf")
 ```
 
+# iText [API](https://github.com/ymasory/iText-4.2.0)
+
 # Users
 
 * [UHN](http://www.simspartners.ca/ourPartners/uhn.aspx) uses clj-pdf to generate reports for advanced clinical documentation.  
