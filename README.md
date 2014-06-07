@@ -96,15 +96,16 @@ For example, a `pdf-table` is expected to have the following format:
 We can add a helper generate the expected format from the given data:
 
 ```clojure
-(defn pdf-table [column-widths rows]
-  (into [:pdf-table column-widths]
-    (map (fn [element] [:pdf-cell element]) rows)))
+(defn pdf-table [column-widths & rows]
+  (into
+    [:pdf-table column-widths]
+    (map (partial map (fn [element] [:pdf-cell element])) rows)))
 
-(pdf-table 
- [10 20 15]
- [["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
+(pdf-table
+  [10 20 15]
+  ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
   ["foo" "foo" "foo"]
-  ["foo" "foo" "foo"]])
+  ["foo" "foo" "foo"])
 ```
 
 ### Templating
