@@ -894,6 +894,7 @@ optional metadata:
 
 * :color `[r g b]` 
 * :align :left, :center, :right, :justified
+* :valign :top, :middle, :bottom
 * :colspan number
 * :rowspan number
 * :border boolean
@@ -904,9 +905,18 @@ optional metadata:
 * :border-width-right number
 * :border-width-top number
 * :rotation number - rotates the cell
+* :height - number
+* :min-height - number
 
 ```clojure
 [:pdf-cell {:colspan 2 :align left} "Foo"]
+
+[:pdf-table
+  [10 20 15]
+  [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
+  [[:pdf-cell {:min-height 40 :align :center :valign :middle} "foo"]
+   [:pdf-cell {:valign :top}"foo"]
+   [:pdf-cell {:valign :bottom} "foo"]]]
 ```
 
 ### Charting

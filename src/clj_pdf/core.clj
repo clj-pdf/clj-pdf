@@ -14,6 +14,7 @@
      ChapterAutoNumber
      Chunk
      Document
+     Element
      Font
      FontFactory
      GreekList
@@ -45,7 +46,15 @@
   (make-section meta (if (string? item) [:phrase item] item)))
 
 (defn- get-alignment [align]
-  (condp = (when align (name align)) "left" 0, "center" 1, "right" 2, "justified", 3, 0))
+  (condp = (when align (name align))
+    "left"      Element/ALIGN_LEFT
+    "center"    Element/ALIGN_CENTER
+    "right"     Element/ALIGN_RIGHT
+    "justified" Element/ALIGN_JUSTIFIED
+    "top"       Element/ALIGN_TOP
+    "middle"    Element/ALIGN_MIDDLE
+    "bottom"    Element/ALIGN_BOTTOM
+    Element/ALIGN_LEFT))
 
 (defn- set-background [element {:keys [background]}]
   (when background
@@ -53,13 +62,13 @@
 
 (defn get-style [style]
   (condp = (when style (name style))
-        "bold"        (Font/BOLD)
-        "italic"      (Font/ITALIC)
-        "bold-italic" (Font/BOLDITALIC)
-        "normal"      (Font/NORMAL)
-        "strikethru"  (Font/STRIKETHRU)
-        "underline"   (Font/UNDERLINE)
-        (Font/NORMAL)))
+        "bold"        Font/BOLD
+        "italic"      Font/ITALIC
+        "bold-italic" Font/BOLDITALIC
+        "normal"      Font/NORMAL
+        "strikethru"  Font/STRIKETHRU
+        "underline"   Font/UNDERLINE
+        Font/NORMAL))
 
 (defn- compute-font-style [styles]
   (if (> (count styles) 1)
@@ -77,12 +86,12 @@
       (if-not (nil? ttf-name)
         ttf-name
         (condp = (when family (name family))
-          "courier"      (FontFactory/COURIER)
-          "helvetica"    (FontFactory/HELVETICA)
-          "times-roman"  (FontFactory/TIMES_ROMAN)
-          "symbol"       (FontFactory/SYMBOL)
-          "zapfdingbats" (FontFactory/ZAPFDINGBATS)
-          (FontFactory/HELVETICA)))
+          "courier"      FontFactory/COURIER
+          "helvetica"    FontFactory/HELVETICA
+          "times-roman"  FontFactory/TIMES_ROMAN
+          "symbol"       FontFactory/SYMBOL
+          "zapfdingbats" FontFactory/ZAPFDINGBATS
+          FontFactory/HELVETICA))
 
       BaseFont/WINANSI
 
@@ -92,7 +101,7 @@
       (cond
         styles (compute-font-style styles)
         style (get-style style)
-        :else (Font/NORMAL))
+        :else Font/NORMAL)
 
       (if (and r g b)
         (new Color r g b)
@@ -100,59 +109,58 @@
 
 (defn- page-size [size]
   (condp = (when size (name size))
-    "a0"                        (PageSize/A0)
-    "a1"                        (PageSize/A1)
-    "a2"                        (PageSize/A2)
-    "a3"                        (PageSize/A3)
-    "a4"                        (PageSize/A4)
-    "a5"                        (PageSize/A5)
-    "a6"                        (PageSize/A6)
-    "a7"                        (PageSize/A7)
-    "a8"                        (PageSize/A8)
-    "a9"                        (PageSize/A9)
-    "a10"                       (PageSize/A10)
-    "arch-a"                    (PageSize/ARCH_A)
-    "arch-b"                    (PageSize/ARCH_B)
-    "arch-c"                    (PageSize/ARCH_C)
-    "arch-d"                    (PageSize/ARCH_D)
-    "arch-e"                    (PageSize/ARCH_E)
-    "b0"                        (PageSize/B0)
-    "b1"                        (PageSize/B1)
-    "b2"                        (PageSize/B2)
-    "b3"                        (PageSize/B3)
-    "b4"                        (PageSize/B4)
-    "b5"                        (PageSize/B5)
-    "b6"                        (PageSize/B6)
-    "b7"                        (PageSize/B7)
-    "b8"                        (PageSize/B8)
-    "b9"                        (PageSize/B9)
-    "b10"                       (PageSize/B10)
-    "crown-octavo"              (PageSize/CROWN_OCTAVO)
-    "crown-quarto"              (PageSize/CROWN_QUARTO)
-    "demy-octavo"               (PageSize/DEMY_OCTAVO)
-    "demy-quarto"               (PageSize/DEMY_QUARTO)
-    "executive"                 (PageSize/EXECUTIVE)
-    "flsa"                      (PageSize/FLSA)
-    "flse"                      (PageSize/FLSE)
-    "halfletter"                (PageSize/HALFLETTER)
-    "id-1"                      (PageSize/ID_1)
-    "id-2"                      (PageSize/ID_2)
-    "id-3"                      (PageSize/ID_3)
-    "large-crown-octavo"        (PageSize/LARGE_CROWN_OCTAVO)
-    "large-crown-quarto"        (PageSize/LARGE_CROWN_QUARTO)
-    "ledger"                    (PageSize/LEDGER)
-    "legal"                     (PageSize/LEGAL)
-    "letter"                    (PageSize/LETTER)
-    "note"                      (PageSize/NOTE)
-    "penguin-large-paperback"   (PageSize/PENGUIN_LARGE_PAPERBACK)
-    "penguin-small-paperback"   (PageSize/PENGUIN_SMALL_PAPERBACK)
-    "postcard"                  (PageSize/POSTCARD)
-    "royal-octavo"              (PageSize/ROYAL_OCTAVO)
-    "royal-quarto"              (PageSize/ROYAL_QUARTO)
-    "small-paperback"           (PageSize/SMALL_PAPERBACK)
-    "tabloid"                   (PageSize/TABLOID)
-    (PageSize/A4)))
-
+    "a0"                        PageSize/A0
+    "a1"                        PageSize/A1
+    "a2"                        PageSize/A2
+    "a3"                        PageSize/A3
+    "a4"                        PageSize/A4
+    "a5"                        PageSize/A5
+    "a6"                        PageSize/A6
+    "a7"                        PageSize/A7
+    "a8"                        PageSize/A8
+    "a9"                        PageSize/A9
+    "a10"                       PageSize/A10
+    "arch-a"                    PageSize/ARCH_A
+    "arch-b"                    PageSize/ARCH_B
+    "arch-c"                    PageSize/ARCH_C
+    "arch-d"                    PageSize/ARCH_D
+    "arch-e"                    PageSize/ARCH_E
+    "b0"                        PageSize/B0
+    "b1"                        PageSize/B1
+    "b2"                        PageSize/B2
+    "b3"                        PageSize/B3
+    "b4"                        PageSize/B4
+    "b5"                        PageSize/B5
+    "b6"                        PageSize/B6
+    "b7"                        PageSize/B7
+    "b8"                        PageSize/B8
+    "b9"                        PageSize/B9
+    "b10"                       PageSize/B10
+    "crown-octavo"              PageSize/CROWN_OCTAVO
+    "crown-quarto"              PageSize/CROWN_QUARTO
+    "demy-octavo"               PageSize/DEMY_OCTAVO
+    "demy-quarto"               PageSize/DEMY_QUARTO
+    "executive"                 PageSize/EXECUTIVE
+    "flsa"                      PageSize/FLSA
+    "flse"                      PageSize/FLSE
+    "halfletter"                PageSize/HALFLETTER
+    "id-1"                      PageSize/ID_1
+    "id-2"                      PageSize/ID_2
+    "id-3"                      PageSize/ID_3
+    "large-crown-octavo"        PageSize/LARGE_CROWN_OCTAVO
+    "large-crown-quarto"        PageSize/LARGE_CROWN_QUARTO
+    "ledger"                    PageSize/LEDGER
+    "legal"                     PageSize/LEGAL
+    "letter"                    PageSize/LETTER
+    "note"                      PageSize/NOTE
+    "penguin-large-paperback"   PageSize/PENGUIN_LARGE_PAPERBACK
+    "penguin-small-paperback"   PageSize/PENGUIN_SMALL_PAPERBACK
+    "postcard"                  PageSize/POSTCARD
+    "royal-octavo"              PageSize/ROYAL_OCTAVO
+    "royal-quarto"              PageSize/ROYAL_QUARTO
+    "small-paperback"           PageSize/SMALL_PAPERBACK
+    "tabloid"                   PageSize/TABLOID
+    PageSize/A4))
 
 (defn- page-orientation [page-size orientation]
   (if page-size
@@ -324,13 +332,16 @@
                       rowspan
                       border
                       align
+                      valign
                       set-border
                       border-width
                       border-width-bottom
                       border-width-left
                       border-width-right
                       border-width-top
-                      rotation]} (second element)
+                      rotation
+                      height
+                      min-height]} (second element)
               [r g b] color]
 
           (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
@@ -346,7 +357,10 @@
           (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
           (if border-width-top (.setBorderWidthTop c (float border-width-top)))
           (if rotation (.setRotation c (int rotation)))
-          (.setHorizontalAlignment c (get-alignment align))))
+          (if height (.setFixedHeight c (float height)))
+          (if min-height (.setMinimumHeight c (float min-height)))
+          (.setHorizontalAlignment c (get-alignment align))
+          (.setVerticalAlignment c (get-alignment valign))))
 
       (if (string? content) c (doto c (.addElement (make-section meta content)))))
 
