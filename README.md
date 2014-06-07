@@ -915,7 +915,7 @@ optional metadata:
   [10 20 15]
   [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
   [[:pdf-cell {:min-height 40 :align :center :valign :middle} "foo"]
-   [:pdf-cell {:valign :top}"foo"]
+   [:pdf-cell {:valign :top} "foo"]
    [:pdf-cell {:valign :bottom} "foo"]]]
 ```
 
