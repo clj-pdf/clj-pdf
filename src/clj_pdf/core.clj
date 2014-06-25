@@ -402,7 +402,7 @@
     (.endHeaders tbl)))
 
 
-(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align title num-cols]
+(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align num-cols]
                :as meta}
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
@@ -436,7 +436,7 @@
 
     tbl))
 
-(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align title table-events]
+(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events]
                   :as meta}
                   widths
                   & rows]
@@ -471,24 +471,23 @@
     tbl))
 
 (defn- make-image [{:keys [scale
-                      xscale
-                      yscale
-                      align
-                      width
-                      height
-                      base64
-                      rotation
-                      annotation
-                      pad-left
-                      pad-right
-                      left-margin
-                      right-margin
-                      top-margin
-                      bottom-margin
-                      page-width
-                      page-height
-                      alt]}
-              img-data]
+                           xscale
+                           yscale
+                           align
+                           width
+                           height
+                           base64
+                           rotation
+                           annotation
+                           pad-left
+                           pad-right
+                           left-margin
+                           right-margin
+                           top-margin
+                           bottom-margin
+                           page-width
+                           page-height]}
+                   img-data]
   (let [img (cond
               (instance? java.awt.Image img-data)
               (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)
@@ -521,8 +520,8 @@
                             (and (> img-width available-width)
                                  (> img-height available-height))
                             (if (> img-width img-height)
-                                (/ available-width img-width)
-                                (/ available-height img-height))
+                              (/ available-width img-width)
+                              (/ available-height img-height))
 
                             (> img-width available-width)
                             (/ available-width img-width)
@@ -600,7 +599,7 @@
         (swap! *cache* assoc svg-hash compiled)
         compiled))))
 
-(defn- line [{dotted? :dotted, gap :gap} & args]
+(defn- line [{dotted? :dotted, gap :gap} & _]
   (doto (if dotted?
           (if gap
             (doto (new DottedLineSeparator) (.setGap (float gap)))
@@ -759,7 +758,7 @@
 
       [doc width height temp-stream output-stream pdf-writer])))
 
-(defn- write-pages [doc temp-stream output-stream]
+(defn- write-pages [temp-stream output-stream]
   (.writeTo temp-stream output-stream)
   (.flush output-stream)
   (.close output-stream))
@@ -830,7 +829,7 @@
     (doseq [item content]
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
-    (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages doc temp-stream output-stream))
+    (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages temp-stream output-stream))
     (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
 
 (defn- to-pdf [input-reader r out]
@@ -846,6 +845,15 @@
           (.close doc)
           (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream)))))))
 
+(defn- seq-to-doc [items out]
+  (let [doc-meta (first items)
+        [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
+    (register-fonts doc-meta)
+    (doseq [item (rest items)]
+      (add-item item doc-meta width height doc pdf-writer))
+    (.close doc)
+    (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
+
 (defn- stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
    NOTE: setting the :pages to true in doc meta will require the entire document to remain in memory for
@@ -855,7 +863,6 @@
     (binding [*read-eval* false]
       (to-pdf (fn [r] (read r nil nil)) r out))))
 
-
 (defn pdf
   "usage:
    in can be either a vector containing the document or an input stream. If in is an input stream then the forms will be read sequentially from it.
@@ -863,9 +870,9 @@
    NOTE: using the :pages option will cause the complete document to reside in memory as it will need to be post processed."
   [in out]
   (binding [*cache* (atom {})]
-    (if (instance? InputStream in)
-      (stream-doc in out)
-      (write-doc in out))))
+    (cond (instance? InputStream in) (stream-doc in out)
+          (seq? in) (seq-to-doc in out)
+          :else (write-doc in out))))
 
 ;;;templating
 (defmacro template [t]
