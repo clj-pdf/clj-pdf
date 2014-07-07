@@ -98,12 +98,8 @@
           (.setBaseItemLabelsVisible renderer true)))
       chart)))
 
-(defn chart [params & items]
-  (let [{type   :type
-         width  :page-width
-         height :page-height
-         vector :vector} params
-        chart (condp = (when type (name type))
+(defn chart [{:keys [type page-width page-height vector] :as params} & items]
+  (let [chart (condp = (when type (name type))
                 "bar-chart"  (apply bar-chart params items)
                 "pie-chart"  (apply pie-chart params items)
                 "line-chart" (apply line-chart params items)
@@ -116,5 +112,5 @@
           (.draw chart g2d (Rectangle. 0 0 (:width params) (:height params)))))
 
       (with-open [out (ByteArrayOutputStream.)]
-        (ChartUtilities/writeScaledChartAsPNG out chart (int width) (int height) 2 2)
+        (ChartUtilities/writeScaledChartAsPNG out chart (int page-width) (int page-height) 2 2)
         (.toByteArray out)))))
