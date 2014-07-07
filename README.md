@@ -927,6 +927,7 @@ metadata:
 * :type        - bar-chart, line-chart, pie-chart
 * :x-label     - only used for line and bar charts
 * :y-label     - only used for line and bar charts
+* :background  - a vector of [r g b] integer values 
 * :time-series - only used in line chart
 * :time-format - can optionally be used with time-series to provide custom date formatting, defaults to "yyyy-MM-dd-HH:mm:ss"
 * :horizontal  - can be used with bar charts and line charts, not supported by time series
@@ -959,7 +960,12 @@ optional vector metadata (refer to Graphics section for details):
 #### bar chart
 
 ```clojure
-[:chart {:type "bar-chart" :title "Bar Chart" :x-label "Items" :y-label "Quality"} 
+[:chart
+  {:type "bar-chart"
+   :title "Bar Chart"
+   :background [10 100 40]
+   :x-label "Items"
+   :y-label "Quality"} 
   [2 "Foo"] [4 "Bar"] [10 "Baz"]]
 ```
 
