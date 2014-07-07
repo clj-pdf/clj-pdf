@@ -11,64 +11,71 @@
            java.text.SimpleDateFormat
            java.text.NumberFormat
            java.io.ByteArrayOutputStream
-           java.awt.Rectangle))
+           java.awt.Rectangle
+           java.awt.Color))
 
-(defn- bar-chart [{title       :title
-                   horizontal? :horizontal
-                   x-label     :x-label
-                   y-label     :y-label} & data]
+(defn- set-background [chart [r g b]]
+  (when (and r g b)        
+    (-> chart .getPlot (.setBackgroundPaint (Color. (int r) (int g) (int b))))))
+
+(defn- bar-chart [{:keys [title horizontal x-label y-label background]} & data]
   (let [dataset (new DefaultCategoryDataset)]
     (doseq [[val name] data]
       (.setValue dataset (double val) y-label name))
     (let [chart (ChartFactory/createBarChart title x-label y-label dataset
-                                             (if horizontal? PlotOrientation/HORIZONTAL PlotOrientation/VERTICAL)
+                                             (if horizontal PlotOrientation/HORIZONTAL PlotOrientation/VERTICAL)
                                              true true false)]
+      (set-background chart background)
       (.. chart getCategoryPlot getRenderer (setBarPainter (new StandardBarPainter)))
       chart)))
 
-(defn- pie-chart [{title :title} & data]
+(defn- pie-chart [{:keys [title background]} & data]
   (let [dataset (new DefaultPieDataset)]
     (doseq [[name value] data]
       (.setValue dataset name (double value)))
-    (ChartFactory/createPieChart title dataset true true false)))
+    (let [chart (ChartFactory/createPieChart title dataset true true false)]
+      (set-background chart background)
+      chart)))
 
-
-(defn- line-chart [{title           :title
-                    points?         :show-points
-                    point-labels?   :point-labels
-                    percision       :label-percision
-                    horizontal?     :horizontal
-                    time?           :time-series
-                    time-format     :time-format
-                    label-format    :label-format
-                    x-label         :x-label
-                    y-label         :y-label
-                    tick-interval   :tick-interval
-                    tick-interval-x :tick-interval-x
-                    tick-interval-y :tick-interval-y
-                    [xrange-start
-                     xrange-end]    :x-range
-                    [yrange-start
-                     yrange-end]    :y-range} & data]
-  (let [dataset   (new XYSeriesCollection)
-        formatter (if time? (new SimpleDateFormat
+(defn- line-chart [{:keys [title
+                           background
+                           show-points
+                           point-labels
+                           label-percision
+                           horizontal
+                           time-series
+                           time-format
+                           label-format
+                           x-label
+                           y-label
+                           tick-interval
+                           tick-interval-x
+                           tick-interval-y
+                           x-range
+                           y-range]} & data]
+  (let [[xrange-start xrange-end] x-range
+        [yrange-start yrange-end] y-range
+        dataset   (new XYSeriesCollection)
+        formatter (if time-series (new SimpleDateFormat
                                  (or time-format "yyyy-MM-dd-HH:mm:ss")))]
     (doseq [[series-title & points] data]
       (let [series (new XYSeries series-title)]
         (doseq [[x y] points]
           (.add series
-            (if time? (.. formatter (parse x) getTime) (double x))
+            (if time-series (.. formatter (parse x) getTime) (double x))
             (double y)))
         (.addSeries dataset series)))
 
-    (let [chart    (if time?
+    (let [chart    (if time-series
                      (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)
                      (ChartFactory/createXYLineChart title x-label y-label dataset
-                                                     (if horizontal?
+                                                     (if horizontal
                                                        PlotOrientation/HORIZONTAL
                                                        PlotOrientation/VERTICAL) true true false))
           plot     (.getPlot chart)
           renderer (.getRenderer plot)]
+      
+      (set-background chart background)
 
       (let [domain-axis (.getDomainAxis plot)
             range-axis (.getRangeAxis plot)]
@@ -81,16 +88,15 @@
           (if xrange-end (.setRange domain-axis xrange-start xrange-end))
           (if yrange-end (.setRange range-axis yrange-start yrange-end)))
 
-      (if time? (.. plot getDomainAxis (setDateFormatOverride formatter)))
-      (if points? (.setBaseShapesVisible renderer true))
-      (if point-labels?
+      (if time-series (.. plot getDomainAxis (setDateFormatOverride formatter)))
+      (if show-points (.setBaseShapesVisible renderer true))
+      (if point-labels
         (let [format (NumberFormat/getNumberInstance)]
-          (if percision (.setMaximumFractionDigits format (int percision)))
+          (if label-percision (.setMaximumFractionDigits format (int label-percision)))
           (.setBaseItemLabelGenerator renderer
             (new StandardXYItemLabelGenerator (or label-format "{1},{2}") format format))
           (.setBaseItemLabelsVisible renderer true)))
       chart)))
-
 
 (defn chart [params & items]
   (let [{type   :type
