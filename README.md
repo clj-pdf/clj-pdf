@@ -1056,12 +1056,11 @@ if :time-series is set to true then items on x axis must be dates, the default f
     (. ~g2d translate (- 0 ~dx) (- 0 ~dy))))
 
 (defn draw-tree [g2d length depth]
-  (if (> depth 0)
-    (do
-      (.drawLine g2d 0 0 length 0)
-      (trans g2d (int length) 0
-        (rot g2d -30 (draw-tree g2d (* length 0.75) (- depth 1)))
-        (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1)))))))
+  (when (pos? depth)
+    (.drawLine g2d 0 0 length 0)
+    (trans g2d (int length) 0
+      (rot g2d -30 (draw-tree g2d (* length 0.75) (- depth 1)))
+      (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1))))))
 
 (pdf
   [{:title         "Test doc"
