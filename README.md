@@ -141,27 +141,29 @@ the following output will be produced when the template is applied to the data:
 ```clojure
 (employee-template employees)
 
-([:paragraph [:heading "Neil Chetty"] 
-  [:chunk {:style :bold} "occupation: "] "Engineer" "\n" 
-  [:chunk {:style :bold} "place: "] "Nuremberg" "\n" 
-  [:chunk {:style :bold} "country: "] "Germany" [:spacer]] 
- [:paragraph [:heading "Vera Ellison"] 
-  [:chunk {:style :bold} "occupation: "] "Engineer" "\n" 
-  [:chunk {:style :bold} "place: "] "Ulm" "\n" 
-  [:chunk {:style :bold} "country: "] "Germany" [:spacer]])
+=>
+
+'([:paragraph [:heading "Neil Chetty"]
+   [:chunk {:style :bold} "occupation: "] "Engineer" "\n"
+   [:chunk {:style :bold} "place: "] "Nuremberg" "\n"
+   [:chunk {:style :bold} "country: "] "Germany" [:spacer]]
+  [:paragraph [:heading "Vera Ellison"]
+   [:chunk {:style :bold} "occupation: "] "Engineer" "\n"
+   [:chunk {:style :bold} "place: "] "Ulm" "\n"
+   [:chunk {:style :bold} "country: "] "Germany" [:spacer]])
 ```
 
 It is also possible to apply post processing to the anchors in the template:
 ```clojure
-(def employee-template-paragraph 
-  (template 
-    [:paragraph 
-     [:heading (if (and $name (.startsWith $name "Alfred")) 
+(def employee-template-paragraph
+  (template
+    [:paragraph
+     [:heading (if (and $name (.startsWith $name "Alfred"))
                  (.toUpperCase $name) $name)]
      [:chunk {:style :bold} "occupation: "] $occupation "\n"
      [:chunk {:style :bold} "place: "] $place "\n"
      [:chunk {:style :bold} "country: "] $country
-     [:spacer]]))    
+     [:spacer]]))
 ```
 
 ## Document Elements
@@ -472,18 +474,18 @@ optional metadata:
 
 ```clojure
 
-[:image 
+[:image
    {:xscale     0.5
-    :yscale     0.8       
+    :yscale     0.8
     :align      :center
     :annotation ["FOO" "BAR"]
     :pad-left   100
     :pad-right  50}
-   (javax.imageio.ImageIO/read "mandelbrot.jpg")]   
+   (javax.imageio.ImageIO/read (-> "mandelbrot.jpg" clojure.java.io/resource clojure.java.io/file) )]
 [:image "test/mandelbrot.jpg"]
 [:image "http://clojure.org/space/showimage/clojure-icon.gif"]
 
-   
+
 ```
 
 #### Line
@@ -577,15 +579,15 @@ content:
 
 ```clojure
 [:paragraph "a fine paragraph"]
-    
+
 [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
 [:paragraph
   {:style :bold :size 10 :family :halvetica :color [0 255 221]}
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
 
-font set in the paragraph can be modified by its children
-[:paragraph {:indent 50 :color [0 255 221]} 
+; font set in the paragraph can be modified by its children:
+[:paragraph {:indent 50 :color [0 255 221]}
   [:phrase {:style :bold :size 18 :family :halvetica} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
@@ -908,7 +910,7 @@ optional metadata:
 * :min-height - number
 
 ```clojure
-[:pdf-cell {:colspan 2 :align left} "Foo"]
+[:pdf-cell {:colspan 2 :align :left} "Foo"]
 
 [:pdf-table
   [10 20 15]
@@ -1038,11 +1040,9 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
 ### A complete example
 
-```clojure
-(ns clj-pdf.test.example
-  (:use [clj-pdf.core])
-  (:import [java.awt Polygon Color]))
+Given these macros:
 
+```clojure
 (defn radians [degrees] (Math/toRadians degrees))
 
 (defmacro rot [g2d angle & body]
@@ -1054,6 +1054,12 @@ if :time-series is set to true then items on x axis must be dates, the default f
   `(do (. ~g2d translate ~dx ~dy)
     (do ~@body)
     (. ~g2d translate (- 0 ~dx) (- 0 ~dy))))
+```
+
+creating a pdf:
+
+```clojure
+(import [java.awt Color])
 
 (defn draw-tree [g2d length depth]
   (when (pos? depth)
@@ -1159,7 +1165,7 @@ if :time-series is set to true then items on x axis must be dates, the default f
 
    [:graphics {:translate [150 300] :rotate (radians -90)}
      (fn [g2d]
-       (.setColor g2d Color/GREEN)
+       (.setColor g2d java.awt.Color/GREEN)
        (draw-tree g2d 50 10))]
 
    [:chart {:type :pie-chart

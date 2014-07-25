@@ -3,3 +3,4 @@
 /.lein-failures
 /target
 /target
+test/readme.clj
