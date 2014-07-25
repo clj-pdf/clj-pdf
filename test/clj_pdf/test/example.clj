@@ -1,6 +1,6 @@
 (ns clj-pdf.test.example
   (:use [clj-pdf.core])
-  (:import [java.awt Polygon Color]))
+  (:import [java.awt Color]))
 
 (defn radians [degrees] (Math/toRadians degrees))
 
