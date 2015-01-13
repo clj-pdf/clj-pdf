@@ -705,15 +705,16 @@
                   out]
 
   (let [[nom head] doc-header
-        doc           (new Document (page-orientation (page-size size) orientation))
-        width         (.. doc getPageSize getWidth)
-        height        (.. doc getPageSize getHeight)
-        output-stream (if (string? out) (new FileOutputStream out) out)
-        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
-        footer        (when (not= footer false)
-                        (if (string? footer)
-                          {:text footer :align :right :start-page 1}
-                          (merge {:align :right :start-page 1} footer)))]
+        doc            (new Document (page-orientation (page-size size) orientation))
+        width          (.. doc getPageSize getWidth)
+        height         (.. doc getPageSize getHeight)
+        output-stream  (if (string? out) (new FileOutputStream out) out)
+        temp-stream    (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
+        footer         (when (not= footer false)
+                         (if (string? footer)
+                           {:text footer :align :right :start-page 1}
+                           (merge {:align :right :start-page 1} footer)))
+        page-numbers? (not= false (:page-numbers footer))]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
@@ -724,7 +725,7 @@
           (.setPageEvent pdf-writer page-event))
         (if footer
           (.setFooter doc
-            (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})), true)
+            (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})) page-numbers?)
               (.setBorder 0)
               (.setAlignment (get-alignment (:align footer)))))))
 
@@ -788,11 +789,9 @@
             (.setFontAndSize base-font 10)
             (.setTextMatrix
              (align-footer width base-font footer) (float 20))
-
             (.showText (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages))
             (.endText)))))
     (.close stamper)))
-
 
 (defn- preprocess-item [item]
   (cond

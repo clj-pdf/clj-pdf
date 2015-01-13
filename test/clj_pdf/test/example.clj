@@ -22,7 +22,7 @@
         (rot g2d -30 (draw-tree g2d (* length 0.75) (- depth 1)))
         (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1)))))))
 
-(pdf
+#_(pdf
   [{:title         "Test doc"
     :header        "page header"
     :subject       "Some subject"
