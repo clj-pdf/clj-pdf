@@ -407,7 +407,9 @@
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
 
-  (let [cols (or num-cols (apply max (cons ((fnil count []) header) (map count rows))))
+  (let [header-cols (cond-> (count header)
+                      (map? (first header)) dec)
+        cols (or num-cols (apply max (cons header-cols (map count rows))))
         tbl  (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
 
     (when widths
