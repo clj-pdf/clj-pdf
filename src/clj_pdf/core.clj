@@ -463,7 +463,7 @@
 
     tbl))
 
-(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events]
+(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
                   widths
                   & rows]
@@ -473,6 +473,8 @@
 
   (let [cols (or num-cols (apply max (map count rows)))
         tbl (new PdfPTable cols)]
+
+    (when width-percent (.setWidthPercentage tbl (float width-percent)))
 
     (if bounding-box
       (let [[x y] bounding-box]
