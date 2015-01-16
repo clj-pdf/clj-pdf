@@ -837,6 +837,7 @@ metadata:
 * :bounding-box `[width height]`
 * :horizontal-align :left, :rigth, :center, :justified
 * :title string
+* :width-percent number (0-100)
 
 ```clojure
 [:pdf-table
@@ -906,6 +907,11 @@ optional metadata:
 * :border-width-left number
 * :border-width-right number
 * :border-width-top number
+* :padding number (or a [CSS-like](https://developer.mozilla.org/en-US/docs/Web/CSS/padding#Examples) vector of numbers)
+* :padding-bottom number
+* :padding-left number
+* :padding-right number
+* :padding-top number
 * :rotation number - rotates the cell
 * :height - number
 * :min-height - number
