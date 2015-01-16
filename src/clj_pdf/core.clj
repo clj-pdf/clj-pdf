@@ -316,6 +316,21 @@
     (doto (new Cell) (.addElement (make-section meta element)))))
 
 
+(defn- pdf-cell-padding*
+  ([cell a]       (.setPadding cell (float a)))
+  ([cell a b]     (pdf-cell-padding* cell a b a b))
+  ([cell a b c]   (pdf-cell-padding* cell a b c b))
+  ([cell a b c d]
+   (doto cell
+     (.setPaddingTop    (float a))
+     (.setPaddingRight  (float b))
+     (.setPaddingBottom (float c))
+     (.setPaddingLeft   (float d)))))
+
+(defn- pdf-cell-padding [cell pad]
+  (when-let [args (if (sequential? pad) pad [pad])]
+    (apply pdf-cell-padding* cell args)))
+
 (defn- pdf-cell [meta element]
   (cond
     (nil? element) (make-section [:pdf-cell [:chunk meta ""]])
@@ -339,6 +354,11 @@
                       border-width-left
                       border-width-right
                       border-width-top
+                      padding
+                      padding-bottom
+                      padding-left
+                      padding-right
+                      padding-top
                       rotation
                       height
                       min-height]} (second element)
@@ -356,6 +376,11 @@
           (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
           (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
           (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+          (if padding (pdf-cell-padding c padding))
+          (if padding-bottom (.setPaddingBottom c (float padding-bottom)))
+          (if padding-left (.setPaddingLeft c (float padding-left)))
+          (if padding-right (.setPaddingRight c  (float padding-right)))
+          (if padding-top (.setPaddingTop c (float padding-top)))
           (if rotation (.setRotation c (int rotation)))
           (if height (.setFixedHeight c (float height)))
           (if min-height (.setMinimumHeight c (float min-height)))
