@@ -763,7 +763,7 @@ metadata:
 * :align table alignment on the page can be: :left, :center, :right, :justified
 * :background-color  `[r g b]` (int values)
 * :header `[{:background-color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows.
-* :header can also be formatted via a collection of phrases or paragraphs `[{:color [r g b]} [:paragraph ...]`
+* :header can also be formatted via a collection of phrases or paragraphs `[{:background-color [r g b]} [:paragraph ...]`
 * :spacing number
 * :padding number
 * :border boolean
@@ -810,8 +810,7 @@ metadata:
 
 [:table {:cell-border false
          :header [{:background-color [100 100 100]} "Row 1" "Row 2" "Row 3"]
-         :cellSpacing 20
-         :header-color [100 100 100]}
+         :cellSpacing 20}
   ["foo"
     [:cell
       [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]}
@@ -1100,7 +1099,7 @@ creating a pdf:
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-   [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20}
+   [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
     ["foo"
      [:cell
       [:phrase
