@@ -166,6 +166,30 @@ It is also possible to apply post processing to the anchors in the template:
      [:spacer]]))
 ```
 
+### Stylesheets
+
+To use a CSS-like stylesheet, you can create a stylesheet map of class names.
+Each class name will have an associated attribute map.  A specific stylesheet
+must be included in the document metadata map in order to use it.
+
+Use the CSS-like shortcut for applying classes to elements (e.g. `[:paragraph.foo.bar]`):
+
+```clojure
+(def stylesheet
+  {:foo {:color [255 0 0]
+         :family :helvetica}
+   :bar {:color [0 0 255]
+         :family :helvetica}
+   :baz {:align :right}})
+
+(pdf
+ [{:stylesheet stylesheet}
+  [:paragraph.foo "item: 0"]
+  [:paragraph.bar "item: 1"]
+  [:paragraph.bar.baz "item: 2"]]
+ "doc.pdf")
+```
+
 ## Document Elements
 
 [Anchor](#anchor),
