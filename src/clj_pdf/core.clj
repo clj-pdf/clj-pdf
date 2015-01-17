@@ -1,5 +1,7 @@
 (ns clj-pdf.core
-  (:use clojure.walk [clojure.set :only (rename-keys)])
+  (:use clojure.walk
+        [clojure.set :only (rename-keys)]
+        [clojure.string :only [split]])
   (:require [clj-pdf.charting :as charting]
             [clj-pdf.svg :as svg]
             [clj-pdf.graphics-2d :as g2d])
@@ -271,49 +273,37 @@
 
 
 
-(defn- cell [meta element]
-  (cond
-    (nil? element) (make-section [:cell [:chunk meta ""]])
+(defn- cell [{:keys [color
+                     colspan
+                     rowspan
+                     border
+                     align
+                     set-border
+                     border-width
+                     border-width-bottom
+                     border-width-left
+                     border-width-right
+                     border-width-top] :as meta}
+             content]
 
-    (string? element) (make-section [:cell [:chunk meta element]])
+  (let [c (if (string? content) (new Cell (styled-item meta content)) (new Cell))
+        [r g b] color]
 
-    (= "cell" (name (first element)))
-    (let [meta? (map? (second element))
-          content (last element)
-          c (if (string? content) (new Cell (styled-item meta content)) (new Cell))]
+    (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+    (when (not (nil? border))
+      (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
 
-      (if meta?
-        (let [{:keys [color
-                      colspan
-                      rowspan
-                      border
-                      align
-                      set-border
-                      border-width
-                      border-width-bottom
-                      border-width-left
-                      border-width-right
-                      border-width-top]} (second element)
-              [r g b] color]
+    (if rowspan (.setRowspan c (int rowspan)))
+    (if colspan (.setColspan c (int colspan)))
+    (if set-border (.setBorder c (int (get-border set-border))))
+    (if border-width (.setBorderWidth c (float border-width)))
+    (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
+    (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
+    (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
+    (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+    (.setHorizontalAlignment c (get-alignment align))
 
-          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
-          (when (not (nil? border))
-            (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
-
-          (if rowspan (.setRowspan c (int rowspan)))
-          (if colspan (.setColspan c (int colspan)))
-          (if set-border (.setBorder c (int (get-border set-border))))
-          (if border-width (.setBorderWidth c (float border-width)))
-          (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
-          (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
-          (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
-          (if border-width-top (.setBorderWidthTop c (float border-width-top)))
-          (.setHorizontalAlignment c (get-alignment align))))
-
-      (if (string? content) c (doto c (.addElement (make-section meta content)))))
-
-    :else
-    (doto (new Cell) (.addElement (make-section meta element)))))
+    (if (string? content) c (doto c (.addElement (make-section meta content))))))
 
 
 (defn- pdf-cell-padding*
@@ -331,67 +321,54 @@
   (when-let [args (if (sequential? pad) pad [pad])]
     (apply pdf-cell-padding* cell args)))
 
-(defn- pdf-cell [meta element]
-  (cond
-    (nil? element) (make-section [:pdf-cell [:chunk meta ""]])
+(defn- pdf-cell [{:keys [color
+                         colspan
+                         rowspan
+                         border
+                         align
+                         valign
+                         set-border
+                         border-width
+                         border-width-bottom
+                         border-width-left
+                         border-width-right
+                         border-width-top
+                         padding
+                         padding-bottom
+                         padding-left
+                         padding-right
+                         padding-top
+                         rotation
+                         height
+                         min-height] :as meta}
+                 content]
+  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))
+        [r g b] color]
 
-    (string? element) (make-section [:pdf-cell [:chunk meta element]])
-    (= "pdf-cell" (name (first element)))
-    (let [meta? (map? (second element))
-          content (last element)
-          c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))]
+    (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+    (when (not (nil? border))
+      (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
 
-      (if meta?
-        (let [{:keys [color
-                      colspan
-                      rowspan
-                      border
-                      align
-                      valign
-                      set-border
-                      border-width
-                      border-width-bottom
-                      border-width-left
-                      border-width-right
-                      border-width-top
-                      padding
-                      padding-bottom
-                      padding-left
-                      padding-right
-                      padding-top
-                      rotation
-                      height
-                      min-height]} (second element)
-              [r g b] color]
+    (if rowspan (.setRowspan c (int rowspan)))
+    (if colspan (.setColspan c (int colspan)))
+    (if set-border (.setBorder c (int (get-border set-border))))
+    (if border-width (.setBorderWidth c (float border-width)))
+    (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
+    (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
+    (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
+    (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+    (if padding (pdf-cell-padding c padding))
+    (if padding-bottom (.setPaddingBottom c (float padding-bottom)))
+    (if padding-left (.setPaddingLeft c (float padding-left)))
+    (if padding-right (.setPaddingRight c  (float padding-right)))
+    (if padding-top (.setPaddingTop c (float padding-top)))
+    (if rotation (.setRotation c (int rotation)))
+    (if height (.setFixedHeight c (float height)))
+    (if min-height (.setMinimumHeight c (float min-height)))
+    (.setHorizontalAlignment c (get-alignment align))
+    (.setVerticalAlignment c (get-alignment valign))
 
-          (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
-          (when (not (nil? border))
-            (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
-
-          (if rowspan (.setRowspan c (int rowspan)))
-          (if colspan (.setColspan c (int colspan)))
-          (if set-border (.setBorder c (int (get-border set-border))))
-          (if border-width (.setBorderWidth c (float border-width)))
-          (if border-width-bottom (.setBorderWidthBottom c (float border-width-bottom)))
-          (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
-          (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
-          (if border-width-top (.setBorderWidthTop c (float border-width-top)))
-          (if padding (pdf-cell-padding c padding))
-          (if padding-bottom (.setPaddingBottom c (float padding-bottom)))
-          (if padding-left (.setPaddingLeft c (float padding-left)))
-          (if padding-right (.setPaddingRight c  (float padding-right)))
-          (if padding-top (.setPaddingTop c (float padding-top)))
-          (if rotation (.setRotation c (int rotation)))
-          (if height (.setFixedHeight c (float height)))
-          (if min-height (.setMinimumHeight c (float min-height)))
-          (.setHorizontalAlignment c (get-alignment align))
-          (.setVerticalAlignment c (get-alignment valign))))
-
-      (if (string? content) c (doto c (.addElement (make-section meta content)))))
-
-    :else
-    (doto (new PdfPCell) (.addElement (make-section meta element)))))
-
+    (if (string? content) c (doto c (.addElement (make-section meta content))))))
 
 
 (defn- table-header [tbl header cols]
@@ -426,6 +403,18 @@
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
 
+(declare split-classes-from-tag)
+
+(defn- add-table-cell
+  [tbl meta content]
+  (let [[tag & classes] (when (vector? content)
+                          (split-classes-from-tag (first content)))
+        element (cond
+                  (= tag :cell)     content
+                  (nil? content)    [:cell [:chunk meta ""]]
+                  (string? content) [:cell [:chunk meta content]]
+                  :else             [:cell content])]
+    (.addCell tbl (make-section meta element))))
 
 (defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align num-cols]
                :as meta}
@@ -459,9 +448,20 @@
 
     (doseq [row rows]
       (doseq [column row]
-        (.addCell tbl (cell meta column))))
+        (add-table-cell tbl meta column)))
 
     tbl))
+
+(defn- add-pdf-table-cell
+  [tbl meta content]
+  (let [[tag & classes] (when (vector? content)
+                          (split-classes-from-tag (first content)))
+        element (cond
+                  (= tag :pdf-cell) content
+                  (nil? content)    [:pdf-cell [:chunk meta ""]]
+                  (string? content) [:pdf-cell [:chunk meta content]]
+                  :else             [:pdf-cell content])]
+    (.addCell tbl (make-section meta element))))
 
 (defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
@@ -495,7 +495,7 @@
 
     (doseq [row rows]
       (doseq [column row]
-        (.addCell tbl (pdf-cell meta column))))
+        (add-pdf-table-cell tbl meta column)))
 
     tbl))
 
@@ -654,6 +654,14 @@
   [_ width height]
   (new Rectangle width height))
 
+(defn- split-classes-from-tag
+  [tag]
+  (map keyword (split (name tag) #"\.")))
+
+(defn- get-class-attributes
+  [stylesheet classes]
+  (apply merge (map stylesheet classes)))
+
 (defn- make-section
   ([element] (if element (make-section {} element) ""))
   ([meta element]
@@ -664,7 +672,10 @@
       :else
       (let [[element-name & [h & t :as content]] element
             tag (if (string? element-name) (keyword element-name) element-name)
-            [params elements] (if (map? h) [(merge meta h) t] [meta content])]
+            [tag & classes] (split-classes-from-tag tag)
+            class-attrs (get-class-attributes (:stylesheet meta) classes)
+            [params elements] (if (map? h) [(merge meta h) t] [meta content])
+            params (merge class-attrs params)]
 
         (apply
           (condp = tag
@@ -694,11 +705,12 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons params elements))))))
 
- (defn- append-to-doc [references font-style width height item doc pdf-writer]
+ (defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
      (.newPage doc)
      (.add doc (make-section
                  (assoc font-style
+                        :stylesheet stylesheet
                         :references references
                         :left-margin (.leftMargin doc)
                         :right-margin (.rightMargin doc)
@@ -773,7 +785,7 @@
         (do
           (.open doc)
           (doseq [item letterhead]
-            (append-to-doc nil (or font-style {})  width height (if (string? item) [:paragraph item] item) doc pdf-writer))
+            (append-to-doc nil nil (or font-style {})  width height (if (string? item) [:paragraph item] item) doc pdf-writer))
           (add-header header doc))
         (do
           (add-header header doc)
@@ -834,11 +846,11 @@
 
     :else item))
 
-(defn- add-item [item {:keys [font references]} width height doc pdf-writer]
+(defn- add-item [item {:keys [stylesheet font references]} width height doc pdf-writer]
   (if (and (coll? item) (coll? (first item)))
     (doseq [element item]
-      (append-to-doc references font width height (preprocess-item element) doc pdf-writer))
-    (append-to-doc references font width height (preprocess-item item) doc pdf-writer)))
+      (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
+    (append-to-doc stylesheet references font width height (preprocess-item item) doc pdf-writer)))
 
 (defn register-fonts [doc-meta]
   (when (and (= true (:register-system-fonts? doc-meta))
