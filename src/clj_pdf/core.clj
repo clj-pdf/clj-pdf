@@ -427,7 +427,7 @@
     (.endHeaders tbl)))
 
 
-(defn- table [{:keys [color spacing padding offset header border border-width cell-border width widths align num-cols]
+(defn- table [{:keys [background-color spacing padding offset header border border-width cell-border width widths align num-cols]
                :as meta}
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
@@ -449,7 +449,7 @@
     (when (= false cell-border)
       (.setDefaultCell tbl (doto (new Cell) (.setBorder Rectangle/NO_BORDER))))
 
-    (if color (let [[r g b] color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
+    (if background-color (let [[r g b] background-color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (.setPadding tbl (if padding (float padding) (float 3)))
     (if spacing (.setSpacing tbl (float spacing)))
     (if offset (.setOffset tbl (float offset)))
@@ -459,11 +459,11 @@
 
     (doseq [row rows]
       (doseq [column row]
-        (.addCell tbl (cell meta column))))
+        (.addCell tbl (cell (dissoc meta :header :align :offset :num-cols :width :widths) column))))
 
     tbl))
 
-(defn- pdf-table [{:keys [color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
+(defn- pdf-table [{:keys [background-color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
                   widths
                   & rows]
@@ -487,7 +487,7 @@
     (when (= false cell-border)
       (doto (.getDefaultCell tbl) (.setBorder Rectangle/NO_BORDER)))
 
-    (if color (let [[r g b] color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
+    (if background-color (let [[r g b] background-color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
