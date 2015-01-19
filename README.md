@@ -925,6 +925,7 @@ optional metadata:
 * :rowspan number
 * :border boolean
 * :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
+* :border-color `[r g b]`
 * :border-width number
 * :border-width-bottom number
 * :border-width-left number

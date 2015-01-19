@@ -279,6 +279,7 @@
                      border
                      align
                      set-border
+                     border-color
                      border-width
                      border-width-bottom
                      border-width-left
@@ -328,6 +329,7 @@
                          align
                          valign
                          set-border
+                         border-color
                          border-width
                          border-width-bottom
                          border-width-left
@@ -342,10 +344,14 @@
                          height
                          min-height] :as meta}
                  content]
-  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))
-        [r g b] background-color]
+  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))]
 
-    (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+    (let [[r g b] background-color]
+      (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b)))))
+
+    (let [[r g b] border-color]
+      (if (and r g b) (.setBorderColor c (new Color (int r) (int g) (int b)))))
+
     (when (not (nil? border))
       (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
 
