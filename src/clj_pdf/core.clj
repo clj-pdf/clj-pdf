@@ -469,7 +469,7 @@
                   :else             [:pdf-cell content])]
     (.addCell tbl (make-section meta element))))
 
-(defn- pdf-table [{:keys [background-color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
+(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
                   widths
                   & rows]
@@ -493,7 +493,6 @@
     (when (= false cell-border)
       (doto (.getDefaultCell tbl) (.setBorder Rectangle/NO_BORDER)))
 
-    (if background-color (let [[r g b] background-color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
