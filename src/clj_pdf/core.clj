@@ -273,7 +273,7 @@
 
 
 
-(defn- cell [{:keys [color
+(defn- cell [{:keys [background-color
                      colspan
                      rowspan
                      border
@@ -287,7 +287,7 @@
              content]
 
   (let [c (if (string? content) (new Cell (styled-item meta content)) (new Cell))
-        [r g b] color]
+        [r g b] background-color]
 
     (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
     (when (not (nil? border))
@@ -321,7 +321,7 @@
   (when-let [args (if (sequential? pad) pad [pad])]
     (apply pdf-cell-padding* cell args)))
 
-(defn- pdf-cell [{:keys [color
+(defn- pdf-cell [{:keys [background-color
                          colspan
                          rowspan
                          border
@@ -343,7 +343,7 @@
                          min-height] :as meta}
                  content]
   (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))
-        [r g b] color]
+        [r g b] background-color]
 
     (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
     (when (not (nil? border))
