@@ -679,8 +679,10 @@
             tag (if (string? element-name) (keyword element-name) element-name)
             [tag & classes] (split-classes-from-tag tag)
             class-attrs (get-class-attributes (:stylesheet meta) classes)
-            [params elements] (if (map? h) [(merge meta h) t] [meta content])
-            params (merge class-attrs params)]
+            new-meta (cond-> meta
+                       class-attrs (merge class-attrs)
+                       (map? h)    (merge h))
+            elements (if (map? h) t content)]
 
         (apply
           (condp = tag
@@ -708,7 +710,7 @@
             :table       table
             :pdf-table   pdf-table
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
-          (cons params elements))))))
+          (cons new-meta elements))))))
 
  (defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
