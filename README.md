@@ -882,7 +882,7 @@ tag :cell
 metadata:
 
 * :align :left, :center, :right, :justified
-* :color `[r g b]` (int values)
+* :background-color `[r g b]` (int values)
 * :colspan number
 * :border boolean
 * :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
@@ -918,13 +918,14 @@ tag :pdf-cell
 
 optional metadata:
 
-* :color `[r g b]`
+* :background-color `[r g b]`
 * :align :left, :center, :right, :justified
 * :valign :top, :middle, :bottom
 * :colspan number
 * :rowspan number
 * :border boolean
 * :set-border `[:top :bottom :left :right]` list of enabled borders, pass empty vector to disable all borders
+* :border-color `[r g b]`
 * :border-width number
 * :border-width-bottom number
 * :border-width-left number
@@ -1130,7 +1131,7 @@ creating a pdf:
        {:style "italic" :size 18 :family "halvetica" :color [200 55 221]}
        "Hello Clojure!"]]
      "baz"]
-    ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
+    ["foo1" [:cell {:background-color [100 10 200]} "bar1"] "baz1"]
     ["foo2" "bar2" [:cell ["table" ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]
 
    [:paragraph

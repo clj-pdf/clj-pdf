@@ -273,12 +273,13 @@
 
 
 
-(defn- cell [{:keys [color
+(defn- cell [{:keys [background-color
                      colspan
                      rowspan
                      border
                      align
                      set-border
+                     border-color
                      border-width
                      border-width-bottom
                      border-width-left
@@ -287,7 +288,7 @@
              content]
 
   (let [c (if (string? content) (new Cell (styled-item meta content)) (new Cell))
-        [r g b] color]
+        [r g b] background-color]
 
     (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
     (when (not (nil? border))
@@ -321,13 +322,14 @@
   (when-let [args (if (sequential? pad) pad [pad])]
     (apply pdf-cell-padding* cell args)))
 
-(defn- pdf-cell [{:keys [color
+(defn- pdf-cell [{:keys [background-color
                          colspan
                          rowspan
                          border
                          align
                          valign
                          set-border
+                         border-color
                          border-width
                          border-width-bottom
                          border-width-left
@@ -342,10 +344,14 @@
                          height
                          min-height] :as meta}
                  content]
-  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))
-        [r g b] color]
+  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))]
 
-    (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+    (let [[r g b] background-color]
+      (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b)))))
+
+    (let [[r g b] border-color]
+      (if (and r g b) (.setBorderColor c (new Color (int r) (int g) (int b)))))
+
     (when (not (nil? border))
       (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
 
@@ -463,7 +469,7 @@
                   :else             [:pdf-cell content])]
     (.addCell tbl (make-section meta element))))
 
-(defn- pdf-table [{:keys [background-color spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
+(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
                   widths
                   & rows]
@@ -487,7 +493,6 @@
     (when (= false cell-border)
       (doto (.getDefaultCell tbl) (.setBorder Rectangle/NO_BORDER)))
 
-    (if background-color (let [[r g b] background-color] (.setBackgroundColor tbl (new Color (int r) (int g) (int b)))))
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
@@ -674,8 +679,10 @@
             tag (if (string? element-name) (keyword element-name) element-name)
             [tag & classes] (split-classes-from-tag tag)
             class-attrs (get-class-attributes (:stylesheet meta) classes)
-            [params elements] (if (map? h) [(merge meta h) t] [meta content])
-            params (merge class-attrs params)]
+            new-meta (cond-> meta
+                       class-attrs (merge class-attrs)
+                       (map? h)    (merge h))
+            elements (if (map? h) t content)]
 
         (apply
           (condp = tag
@@ -703,7 +710,7 @@
             :table       table
             :pdf-table   pdf-table
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
-          (cons params elements))))))
+          (cons new-meta elements))))))
 
  (defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
    (if (= [:pagebreak] item)
