@@ -1021,7 +1021,7 @@ The same chart rendered with vector drawing:
 * :tick-interval-y - the range between ticks on the y axis
 * :range-x - a vector representing the start and end of the x axis range for the chart
 * :range-y - a vector representing the start and end of the y axis range for the chart
-* time-format - string representing the date format in a time-series
+* :time-format - string representing the date format in a time-series
 
 if :time-series is set to true then items on x axis must be dates, the default format is "yyyy-MM-dd-HH:mm:ss", for custom formatting options refer [here](http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html)
 
