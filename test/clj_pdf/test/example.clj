@@ -51,7 +51,7 @@
     ["foo"
      [:cell
       [:phrase
-       {:style "italic" :size 18 :family "halvetica" :color [200 55 221]}
+       {:style "italic" :size 18 :family "helvetica" :color [200 55 221]}
        "Hello Clojure!"]]
      "baz"]
     ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
@@ -73,7 +73,7 @@
 
    [:phrase "some text here"]
 
-   [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+   [:phrase {:style "italic" :size 18 :family "helvetica" :color [0 255 221]} "Hello Clojure!"]
 
    [:chapter [:paragraph "Second Chapter"]]
 
