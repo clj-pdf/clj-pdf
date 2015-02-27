@@ -608,12 +608,12 @@ content:
 [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
 
 [:paragraph
-  {:style :bold :size 10 :family :halvetica :color [0 255 221]}
+  {:style :bold :size 10 :family :helvetica :color [0 255 221]}
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit."]
 
 ; font set in the paragraph can be modified by its children:
 [:paragraph {:indent 50 :color [0 255 221]}
-  [:phrase {:style :bold :size 18 :family :halvetica} "Hello Clojure!"]]
+  [:phrase {:style :bold :size 18 :family :helvetica} "Hello Clojure!"]]
 
 [:paragraph "256" [:chunk {:super true} "5"] " or 128" [:chunk {:sub true} "2"]]
 
@@ -644,7 +644,7 @@ content:
 ```clojure
 [:phrase "some text here"]
 
-[:phrase {:style :bold :size 18 :family :halvetica :color [0 255 221]}
+[:phrase {:style :bold :size 18 :family :helvetica :color [0 255 221]}
          "Hello Clojure!"]
 
 [:phrase [:chunk {:style :italic} "chunk one"]
@@ -837,7 +837,7 @@ metadata:
          :cellSpacing 20}
   ["foo"
     [:cell
-      [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]}
+      [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]}
         "Hello Clojure!"]]
     "baz"]
   ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
@@ -903,7 +903,7 @@ note: Cells can contain other elements including tables
 
 [:cell {:colspan 3 :rowspan 2} "Foo"]
 
-[:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]]
+[:cell [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]} "Hello Clojure!"]]
 
 [:cell {:color [100 10 200]} "bar1"]
 
@@ -1130,7 +1130,7 @@ creating a pdf:
     ["foo"
      [:cell
       [:phrase
-       {:style "italic" :size 18 :family "halvetica" :color [200 55 221]}
+       {:style "italic" :size 18 :family "helvetica" :color [200 55 221]}
        "Hello Clojure!"]]
      "baz"]
     ["foo1" [:cell {:background-color [100 10 200]} "bar1"] "baz1"]
@@ -1152,7 +1152,7 @@ creating a pdf:
 
    [:phrase "some text here"]
 
-   [:phrase {:style "italic" :size 18 :family "halvetica" :color [0 255 221]} "Hello Clojure!"]
+   [:phrase {:style "italic" :size 18 :family "helvetica" :color [0 255 221]} "Hello Clojure!"]
 
    [:chapter [:paragraph "Second Chapter"]]
 

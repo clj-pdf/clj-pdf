@@ -146,7 +146,7 @@
 
      [:table {:cell-border false :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :cellSpacing 20 :header-color [100 100 100]}
       ["foo"
-       [:cell [:phrase {:style :italic :size 18 :family :halvetica :color [200 55 221]} "Hello Clojure!"]]
+       [:cell [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]} "Hello Clojure!"]]
        "baz"]
       ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
       ["foo2" "bar2" "baz2"]]]
@@ -178,14 +178,14 @@
 (deftest phrase
   (eq? [{}
        [:phrase "some text here"]
-       [:phrase {:style :italic :size 18 :family :halvetica :color [0 255 221]} "Hello Clojure!"]
+       [:phrase {:style :italic :size 18 :family :helvetica :color [0 255 221]} "Hello Clojure!"]
        [:phrase [:chunk {:style :strikethru} "chunk one"] [:chunk {:size 20} "Big text"] "some other text"]]
       "phrase.pdf"))
 
 (deftest paragraph
   (eq? [{}
        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
-       [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :halvetica :color [0 255 221]} "Hello Clojure!"]]
+       [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :helvetica :color [0 255 221]} "Hello Clojure!"]]
        [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
        [:paragraph {:align :center} "centered paragraph"]
        [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]]
