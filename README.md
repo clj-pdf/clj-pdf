@@ -325,6 +325,7 @@ A font is defined by a map consisting of the following parameters, all parameter
 
 * :family has following options: :courier, :helvetica, :times-roman, :symbol, :zapfdingbats defaults to :helvetica
 * :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter.
+* :encoding should be set to :unicode to enable unicode support if custom :ttf-name font is used
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
 * :styles a vector of multiple style keys
