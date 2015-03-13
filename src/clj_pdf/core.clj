@@ -83,7 +83,8 @@
     size     :size
     [r g b]  :color
     family   :family
-    ttf-name :ttf-name}]
+    ttf-name :ttf-name
+    encoding :encoding}]
     (FontFactory/getFont
       (if-not (nil? ttf-name)
         ttf-name
@@ -95,7 +96,10 @@
           "zapfdingbats" FontFactory/ZAPFDINGBATS
           FontFactory/HELVETICA))
 
-      BaseFont/WINANSI
+      (case [(not (nil? ttf-name)) encoding]
+        [true :unicode] BaseFont/IDENTITY_H
+        [true :default] BaseFont/WINANSI
+        BaseFont/WINANSI)
 
       true
 
