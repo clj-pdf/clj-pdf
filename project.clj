@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.0.0"
+(defproject clj-pdf "2.0.2"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
   :license {:name "GNU Lesser General Public License - v 3"
@@ -12,8 +12,7 @@
 
   :plugins [[lein-marginalia "0.7.1"]
             [lein-midje "3.0.0"]
-            [midje-readme "1.0.2"]
-            ]
+            [midje-readme "1.0.2"]]
 
   :profiles {:dev {:global-vars {*warn-on-reflection* true}
                    :dependencies [[midje "1.5.0"]
