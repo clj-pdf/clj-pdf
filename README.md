@@ -227,7 +227,7 @@ All fields in the metadata section are optional:
  :top-margin    20
  :bottom-margin 25
  :subject "Some subject"
- :size          :a4
+ :size          :a4 ;explicit size can also be specified using a vector, eg: :size [1296 1296]
  :orientation   :landscape
  :author "John Doe"
  :creator "Jane Doe"
