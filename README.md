@@ -227,7 +227,7 @@ All fields in the metadata section are optional:
  :top-margin    20
  :bottom-margin 25
  :subject "Some subject"
- :size          :a4 ;explicit size can also be specified using a vector, eg: :size [1296 1296]
+ :size          :a4
  :orientation   :landscape
  :author "John Doe"
  :creator "Jane Doe"
@@ -314,10 +314,14 @@ available page sizes:
  :small-paperback
  :tabloid
  ```
+Alternatively, explicit page size can also be specified using a vector, eg:
 
-defaults to A4 page size if none provided
+```clojure
+:size [1296 1296]
+```
+The size defaults to A4 page size if none is provided.
 
-orientation defaults to portrait, unless :landscape is specified
+Orientation defaults to portrait, unless `:landscape` is specified.
 
 #### Font
 
