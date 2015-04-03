@@ -1275,6 +1275,9 @@ Let me know if you find this library useful or if you have any suggestions.
 
 # License
 ***
+
+Copyright © 2015 Dmitri Sotnikov
+
 Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 0.4.2 and [JFreeChart](http://www.jfree.org/jfreechart/) on which this library depends on.
 
 
