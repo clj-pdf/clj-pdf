@@ -482,7 +482,7 @@
 (defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
                   widths
-                  & rows]
+                  & rows]  
   (when (empty? rows) (throw (new Exception "Table must contain at least one row")))
   (when (not= (count widths) (or num-cols (apply max (map count rows))))
     (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
@@ -500,20 +500,16 @@
     (doseq [table-event table-events]
       (.setTableEvent tbl table-event))
 
-    (when (= false cell-border)
-      (doto (.getDefaultCell tbl) (.setBorder Rectangle/NO_BORDER)))
-
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
-
+    
     (.setHorizontalAlignment tbl (get-alignment horizontal-align))
 
     (doseq [row rows]
       (doseq [column row]
-        (add-pdf-table-cell tbl meta column)))
+        (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
 
     tbl))
-
 (defn- make-image [{:keys [scale
                            xscale
                            yscale
