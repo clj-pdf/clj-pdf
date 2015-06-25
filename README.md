@@ -791,8 +791,8 @@ metadata:
 
 * :align table alignment on the page can be: :left, :center, :right, :justified
 * :background-color  `[r g b]` (int values)
-* :header `[{:background-color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows.
-* :header can also be formatted via a collection of phrases or paragraphs `[{:background-color [r g b]} [:paragraph ...]`
+* :header `[{:backdrop-color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows.
+* :header can also be formatted via a collection of phrases or paragraphs `[{:backdrop-color [r g b]} [:paragraph ...]`
 * :spacing number
 * :padding number
 * :border boolean
@@ -812,7 +812,7 @@ metadata:
   ["foo2" "bar2" "baz2"]]
 
 ;;header elements can set alignment
-[:table {:header [{:background-color [100 100 100]}
+[:table {:header [{:backdrop-color [100 100 100]}
                   [:paragraph {:style :bold :size 15} "Foo"]
                   [:paragraph {:align :center :style :bold :size 15} "Bar"]]}
   ["foo" "bar"]]
@@ -822,7 +822,7 @@ metadata:
   ["foo1" "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
 
-[:table {:header [{:background-color [100 100 100]}
+[:table {:header [{:backdrop-color [100 100 100]}
                   [:paragraph {:style :bold :size 15} "FOO"]
                   [:paragraph {:size 20} "BAR"]]
          :CellSpacing 20}
@@ -832,13 +832,13 @@ metadata:
 ;; 25% for the second and third column.
 [:table {:border false
 	     :widths [2 1 1]
-         :header [{:background-color [100 100 100]} "Singe Header"]}
+         :header [{:backdrop-color [100 100 100]} "Singe Header"]}
   ["foo" "bar" "baz"]
   ["foo1" "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
 
 [:table {:cell-border false
-         :header [{:background-color [100 100 100]} "Row 1" "Row 2" "Row 3"]
+         :header [{:backdrop-color [100 100 100]} "Row 1" "Row 2" "Row 3"]
          :cellSpacing 20}
   ["foo"
     [:cell
