@@ -718,10 +718,20 @@
             (throw (new Exception (str "invalid tag: " tag " in element: " element) )))
           (cons new-meta elements))))))
 
- (defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
-   (if (= [:pagebreak] item)
-     (.newPage doc)
-     (.add doc (make-section
+(declare append-to-doc)
+
+(defn- pad-until-even [stylesheet references font-style width height item doc pdf-writer]
+  ;; The page number seems to be zero-indexed
+  (when (odd? (+ 1 (.getPageNumber doc)))
+    (doseq [item [[:pagebreak] [:paragraph " "] [:pagebreak]]]
+      (append-to-doc stylesheet references font-style width height item doc pdf-writer))))
+
+(defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
+  (cond
+    (= [:pagebreak] item) (.newPage doc)
+    (= [:pad-until-even] item) (pad-until-even stylesheet references font-style width height item doc pdf-writer)
+    :else (.add doc
+                (make-section
                  (assoc font-style
                         :stylesheet stylesheet
                         :references references
