@@ -67,7 +67,7 @@
       :top-margin    20
       :bottom-margin 25
       :pages true
-      :font  {:size 11}  
+      :font  {:size 11}
       :size          :a4
       :orientation   "landscape"
       :subject "Some subject"
