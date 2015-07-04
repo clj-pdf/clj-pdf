@@ -196,6 +196,7 @@ Use the CSS-like shortcut for applying classes to elements (e.g. `[:paragraph.fo
 [Chapter](#chapter),
 [Chart](#charting),
 [Chunk](#chunk),
+[Clear double page](#clear-double-page),
 [Graphics](#graphics),
 [Heading](#heading),
 [Image](#image),
@@ -438,6 +439,34 @@ Note that when using `:ttf-name`, you should set `:register-system-fonts? true` 
 [:chunk {:super true} "5"]
 
 [:chunk {:sub true} "2"]
+```
+
+#### Clear double page
+
+tag :clear-double-page
+
+Ends current page and inserts a blank page if necessary to ensure that subsequent content starts on the next odd-numbered page. In other words, if you print the resulting PDF on double-sided paper, the content that comes after a `:clear-double-page` will always be on a different sheet of paper from the content that came before it.
+
+```clojure
+;; Example documents
+
+[[:paragraph "this is on page 1"] [:clear-double-page] [:paragraph "this is on page 3"]]
+
+[[:paragraph "this is on page 1"] 
+ [:clear-double-page] [:clear-double-page] 
+ [:paragraph "this is on page 3"]]
+
+[[:paragraph "this is on page 1"] [:pagebreak] 
+ [:paragraph "this is on page 2"] [:clear-double-page] 
+ [:paragraph "this is on page 3"]]
+
+[[:paragraph "this is on page 1"] [:pagebreak] 
+ [:paragraph "this is on page 2"] [:pagebreak] 
+ [:paragraph "this is on page 3"] [:clear-double-page] 
+ [:paragraph "this is on page 5"]]
+
+;; :clear-double-page on an empty page 1 does nothing
+[[:clear-double-page] [:paragraph "This is on page 1"]]
 ```
 
 #### Graphics
