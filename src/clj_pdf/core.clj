@@ -721,10 +721,18 @@
 (declare append-to-doc)
 
 (defn- clear-double-page [stylesheet references font-style width height item doc pdf-writer]
-  ;; The page number seems to be zero-indexed
-  (when (odd? (+ 1 (.getPageNumber doc)))
-    (doseq [item [[:pagebreak] [:paragraph " "] [:pagebreak]]]
-      (append-to-doc stylesheet references font-style width height item doc pdf-writer))))
+  "End current page and make sure that subsequent content will start on
+     the next odd-numbered page, inserting a blank page if necessary."
+  (let [append (fn [item] (append-to-doc stylesheet references font-style width height item doc pdf-writer))]
+    ;; Inserting a :pagebreak starts a new page, unless we already happen to
+    ;; be on a blank page, in which case it does nothing;
+    (append [:pagebreak])
+    ;; in either case we're now on a blank page, and if it's even-numbered,
+    ;; we need to insert some whitespace to force the next :pagebreak to start
+    ;; a new, odd-numbered page.
+    (when (even? (.getPageNumber pdf-writer))
+      (append [:paragraph " "])
+      (append [:pagebreak]))))
 
 (defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
   (cond
