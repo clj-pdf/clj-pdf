@@ -7,7 +7,7 @@
             :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.jfree/jfreechart "1.0.15"]
-                 [com.lowagie/itext "4.2.1"]
+                 [com.itextpdf/itextpdf "5.0.6"]
                  [org.apache.xmlgraphics/batik-gvt "1.7"]]
 
   :plugins [[lein-marginalia "0.7.1"]
