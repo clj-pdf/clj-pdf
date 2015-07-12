@@ -1,6 +1,6 @@
 (ns clj-pdf.graphics-2d
-  (:import [com.itextpdf.text.pdf PdfTemplate PdfGraphics2D FontMapper DefaultFontMapper]
-           [com.itextpdf.text Rectangle]))
+  (:import com.lowagie.text.pdf.DefaultFontMapper
+           com.lowagie.text.Rectangle))
 
 (defn with-graphics [{:keys [pdf-writer page-width page-height font-mapper under translate rotate scale] :as meta} f]
   (let [font-mapper (or font-mapper (DefaultFontMapper.))
