@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.0.7"
+(defproject clj-pdf "2.0.8"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
   :license {:name "GNU Lesser General Public License - v 3"
@@ -7,11 +7,8 @@
             :comments "same as  iText and JFreeChart"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.jfree/jfreechart "1.0.15"]
-                 [com.lowagie/itext "4.2.1"]
+                 [itext "4.2.0"]
                  [org.apache.xmlgraphics/batik-gvt "1.7"]]
-
-  :mirrors {"central" {:name "central"
-                       :url "http://mirrors.ibiblio.org/pub/mirrors/maven2"}}
 
   :plugins [[lein-marginalia "0.7.1"]
             [lein-midje "3.0.0"]
