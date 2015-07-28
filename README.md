@@ -349,6 +349,17 @@ example font:
 ```
 note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
 
+#### Using Custom TTF Fonts
+
+The following example illustrates how to specify a custom font file such as Cyrillic font.
+
+```clojure
+(pdf
+  [{:font {:encoding :unicode
+           :ttf-name "fonts/Arialuni.ttf"}}
+  [:phrase "тест 123"]]
+  "doc.pdf")
+```
 
 ### Document sections
 
