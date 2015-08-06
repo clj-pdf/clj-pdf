@@ -2,6 +2,7 @@
 
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
+
   :license {:name         "GNU Lesser General Public License - v 3"
             :url          "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo}
@@ -15,6 +16,7 @@
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.6" "-source" "1.6"]
+
   :profiles {:dev     {:global-vars  {*warn-on-reflection* true}
                        :dependencies [[midje "1.7.0"]
                                       [environ "0.5.0"]

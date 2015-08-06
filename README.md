@@ -329,7 +329,7 @@ Orientation defaults to portrait, unless `:landscape` is specified.
 A font is defined by a map consisting of the following parameters, all parameters are optional
 
 * :family has following options: :courier, :helvetica, :times-roman, :symbol, :zapfdingbats defaults to :helvetica
-* :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter.
+* :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter. It could be an absolute or relative path to a font file; it will also seek for a font in classpath resources.
 * :encoding should be set to :unicode to enable unicode support if custom :ttf-name font is used
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
@@ -349,6 +349,21 @@ example font:
 ```
 note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
 
+#### Using Custom TTF Fonts
+
+For non-ASCII text output you will probably have to use external font and define `:encoding` as `:unicode`.
+
+The following example illustrates how to specify a custom font file such as Cyrillic font.
+
+```clojure
+(pdf
+  [{:font {:encoding :unicode
+           :ttf-name "fonts/Arialuni.ttf"}}
+  [:phrase "тест 123"]]
+  "doc.pdf")
+```
+
+You could set `:ttf-name` as absolute or relative path to the font file. It will also load fonts from classpath resources by default.
 
 ### Document sections
 
@@ -425,7 +440,7 @@ font metadata (refer to Font section for details)
 * :color
 * :background [r b g]
 
-Note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts.
+Note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts, or manually provide paths to the font files.
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
@@ -452,17 +467,17 @@ Ends current page and inserts a blank page if necessary to ensure that subsequen
 
 [[:paragraph "this is on page 1"] [:clear-double-page] [:paragraph "this is on page 3"]]
 
-[[:paragraph "this is on page 1"] 
- [:clear-double-page] [:clear-double-page] 
+[[:paragraph "this is on page 1"]
+ [:clear-double-page] [:clear-double-page]
  [:paragraph "this is on page 3"]]
 
-[[:paragraph "this is on page 1"] [:pagebreak] 
- [:paragraph "this is on page 2"] [:clear-double-page] 
+[[:paragraph "this is on page 1"] [:pagebreak]
+ [:paragraph "this is on page 2"] [:clear-double-page]
  [:paragraph "this is on page 3"]]
 
-[[:paragraph "this is on page 1"] [:pagebreak] 
- [:paragraph "this is on page 2"] [:pagebreak] 
- [:paragraph "this is on page 3"] [:clear-double-page] 
+[[:paragraph "this is on page 1"] [:pagebreak]
+ [:paragraph "this is on page 2"] [:pagebreak]
+ [:paragraph "this is on page 3"] [:clear-double-page]
  [:paragraph "this is on page 5"]]
 
 ;; :clear-double-page on an empty page 1 does nothing
@@ -1308,11 +1323,3 @@ Let me know if you find this library useful or if you have any suggestions.
 Copyright © 2015 Dmitri Sotnikov
 
 Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 0.4.2 and [JFreeChart](http://www.jfree.org/jfreechart/) on which this library depends on.
-
-
-
-
-
-
-
-
