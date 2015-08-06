@@ -383,7 +383,7 @@ optional metadata:
 
 content:
 
-iText idiosynchorsies:
+idiosynchorsies:
 
 * when both font style and leading number are specified the content must be a string
 * when leading number is specified content can be a chunk or a string
@@ -1308,8 +1308,6 @@ creating a pdf:
   "example.pdf")
 ```
 
-# iText [API](https://github.com/ymasory/iText-4.2.0)
-
 # Users
 
 * [UHN](http://www.simspartners.ca/ourPartners/uhn.aspx) uses clj-pdf to generate reports for advanced clinical documentation.
@@ -1322,4 +1320,4 @@ Let me know if you find this library useful or if you have any suggestions.
 
 Copyright © 2015 Dmitri Sotnikov
 
-Distributed under LGPL, the same as [iText](http://itextpdf.com/) version 0.4.2 and [JFreeChart](http://www.jfree.org/jfreechart/) on which this library depends on.
+Distributed under LGPL 3
