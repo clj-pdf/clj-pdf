@@ -852,7 +852,7 @@ metadata:
 ```clojure
 [:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
   [[:cell {:colspan 2} "Foo"] "Bar"]
-  ["foo1" "bar1" "baz1"]
+  [[:cell "foo1" " " "foo2"] "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
 
 ;;header elements can set alignment
