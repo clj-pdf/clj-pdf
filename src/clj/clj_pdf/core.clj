@@ -354,14 +354,14 @@
                          rotation
                          height
                          min-height] :as meta}
-                 content]
-  (let [c (if (string? content) (new PdfPCell (pdf-styled-item meta content)) (new PdfPCell))]
+                 & content]
+  (let [c (PdfPCell.)]
 
     (let [[r g b] background-color]
-      (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b)))))
+      (if (and r g b) (.setBackgroundColor c (Color. (int r) (int g) (int b)))))
 
     (let [[r g b] border-color]
-      (if (and r g b) (.setBorderColor c (new Color (int r) (int g) (int b)))))
+      (if (and r g b) (.setBorderColor c (Color. (int r) (int g) (int b)))))
 
     (when (not (nil? border))
       (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
@@ -384,8 +384,11 @@
     (if min-height (.setMinimumHeight c (float min-height)))
     (.setHorizontalAlignment c (get-alignment align))
     (.setVerticalAlignment c (get-alignment valign))
-
-    (if (string? content) c (doto c (.addElement (make-section meta content))))))
+    (doseq [item (map
+                  #(make-section meta (if (string? %) [:chunk %] %))
+                  content)]
+      (.addElement c item))
+    c))
 
 
 (defn- table-header [tbl header cols]
