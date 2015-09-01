@@ -281,8 +281,6 @@
         {:top Cell/TOP :bottom Cell/BOTTOM :left Cell/LEFT :right Cell/RIGHT}
         borders))))
 
-
-
 (defn- cell [{:keys [background-color
                      colspan
                      rowspan
@@ -295,12 +293,12 @@
                      border-width-left
                      border-width-right
                      border-width-top] :as meta}
-             content]
+             & content]
 
-  (let [c (if (string? content) (new Cell (styled-item meta content)) (new Cell))
+  (let [c       (Cell.)
         [r g b] background-color]
 
-    (if (and r g b) (.setBackgroundColor c (new Color (int r) (int g) (int b))))
+    (if (and r g b) (.setBackgroundColor c (Color. (int r) (int g) (int b))))
     (when (not (nil? border))
       (.setBorder c (if border Rectangle/BOX Rectangle/NO_BORDER)))
 
@@ -313,8 +311,11 @@
     (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
     (if border-width-top (.setBorderWidthTop c (float border-width-top)))
     (.setHorizontalAlignment c (get-alignment align))
-
-    (if (string? content) c (doto c (.addElement (make-section meta content))))))
+    (doseq [item (map
+                  #(make-section meta (if (string? %) [:chunk %] %))
+                  content)]
+      (.addElement c item))
+    c))
 
 
 (defn- pdf-cell-padding*
