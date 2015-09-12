@@ -2,7 +2,6 @@
   (:use [clj-pdf.graphics-2d :only [with-graphics]])
   (:import [org.apache.batik.bridge BridgeContext DocumentLoader GVTBuilder UserAgentAdapter]
            [org.apache.batik.dom.svg SAXSVGDocumentFactory]
-           [org.apache.batik.gvt GraphicsNode]
            [org.apache.batik.util XMLResourceDescriptor]
            [java.io Reader StringReader]))
 

@@ -1,8 +1,8 @@
 (ns clj-pdf.charting
   (:use [clj-pdf.graphics-2d :only [with-graphics]])
-  (:import [org.jfree.chart ChartFactory ChartFrame JFreeChart ChartUtilities]
-           [org.jfree.chart.plot CategoryPlot PlotOrientation]
-           [org.jfree.data.xy XYDataset XYSeries XYSeriesCollection]
+  (:import [org.jfree.chart ChartFactory ChartUtilities]
+           [org.jfree.chart.plot PlotOrientation]
+           [org.jfree.data.xy XYSeries XYSeriesCollection]
            org.jfree.data.category.DefaultCategoryDataset
            org.jfree.data.general.DefaultPieDataset
            org.jfree.chart.renderer.category.StandardBarPainter
@@ -15,7 +15,7 @@
            java.awt.Color))
 
 (defn- set-background [chart [r g b]]
-  (when (and r g b)        
+  (when (and r g b)
     (-> chart .getPlot (.setBackgroundPaint (Color. (int r) (int g) (int b))))))
 
 (defn- bar-chart [{:keys [title horizontal x-label y-label background]} & data]
@@ -74,7 +74,7 @@
                                                        PlotOrientation/VERTICAL) true true false))
           plot     (.getPlot chart)
           renderer (.getRenderer plot)]
-      
+
       (set-background chart background)
 
       (let [domain-axis (.getDomainAxis plot)

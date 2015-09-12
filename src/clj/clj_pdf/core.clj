@@ -30,11 +30,10 @@
      Rectangle
      RectangleReadOnly
      RomanList
-     Section
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
-    [cljpdf.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfPCell PdfPTable ]
+    [cljpdf.text.pdf BaseFont PdfReader PdfStamper PdfWriter PdfPCell PdfPTable ]
     [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
 
 (declare ^:dynamic *cache*)
