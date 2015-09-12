@@ -86,33 +86,35 @@
     family   :family
     ttf-name :ttf-name
     encoding :encoding}]
-    (FontFactory/getFont
-      (if-not (nil? ttf-name)
-        ttf-name
-        (condp = (when family (name family))
-          "courier"      FontFactory/COURIER
-          "helvetica"    FontFactory/HELVETICA
-          "times-roman"  FontFactory/TIMES_ROMAN
-          "symbol"       FontFactory/SYMBOL
-          "zapfdingbats" FontFactory/ZAPFDINGBATS
-          FontFactory/HELVETICA))
+  (FontFactory/getFont
+   (if-not (nil? ttf-name)
+     ttf-name
+     (condp = (when family (name family))
+       "courier"      FontFactory/COURIER
+       "helvetica"    FontFactory/HELVETICA
+       "times-roman"  FontFactory/TIMES_ROMAN
+       "symbol"       FontFactory/SYMBOL
+       "zapfdingbats" FontFactory/ZAPFDINGBATS
+       FontFactory/HELVETICA))
 
-      (case [(not (nil? ttf-name)) encoding]
-        [true :unicode] BaseFont/IDENTITY_H
-        [true :default] BaseFont/WINANSI
-        BaseFont/WINANSI)
+   (case [(not (nil? ttf-name))
+          (if (keyword? encoding) encoding :custom)]
+     [true :unicode] BaseFont/IDENTITY_H
+     [true :custom]  encoding
+     [true :default] BaseFont/WINANSI
+     BaseFont/WINANSI)
 
-      true
+   true
 
-      (float (or size 10))
-      (cond
-        styles (compute-font-style styles)
-        style (get-style style)
-        :else Font/NORMAL)
+   (float (or size 10))
+   (cond
+    styles (compute-font-style styles)
+    style (get-style style)
+    :else Font/NORMAL)
 
-      (if (and r g b)
-        (new Color r g b)
-        (new Color 0 0 0))))
+   (if (and r g b)
+     (new Color r g b)
+     (new Color 0 0 0))))
 
 (defn- custom-page-size [width height]
   (RectangleReadOnly. width height))
@@ -194,9 +196,9 @@
     (into [:paragraph (merge meta (merge {:size 18 :style :bold} (:style meta)))] content)))
 
 
-(defn- paragraph [meta & content]
-  (let [paragraph (new Paragraph)
-        {:keys [first-line-indent indent keep-together leading align]} meta]
+(defn- paragraph [{:keys [first-line-indent indent keep-together leading align] :as meta}
+                  & content]
+  (let [paragraph (new Paragraph)]
 
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
