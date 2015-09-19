@@ -386,7 +386,7 @@
     (.setHorizontalAlignment c (get-alignment align))
     (.setVerticalAlignment c (get-alignment valign))
     (doseq [item (map
-                  #(make-section meta (if (string? %) [:chunk %] %))
+                  #(make-section meta (if (string? %) [:paragraph %] %))
                   content)]
       (.addElement c item))
     c))
