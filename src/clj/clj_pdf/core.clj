@@ -197,13 +197,12 @@
 
 (defn- paragraph [{:keys [first-line-indent indent keep-together leading align] :as meta}
                   & content]
-  (let [paragraph (new Paragraph)]
+  (let [paragraph (if leading (Paragraph. (float leading)) (Paragraph.))]
 
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
     (if first-line-indent (.setFirstLineIndent paragraph (float first-line-indent)))
     (if indent (.setIndentationLeft paragraph (float indent)))
-    (if leading (.setLeading paragraph (float leading)))
     (if align (.setAlignment paragraph (get-alignment align)))
 
     (doseq [item content]
@@ -244,12 +243,10 @@
 
 
 (defn- phrase
-  [meta & content]
-  (let [leading (:leading meta)
-        p (doto (new Phrase)
-            (.setFont (font meta))
-            (.addAll (map (partial make-section meta) content)))]
-    (if leading (.setLeading p (float leading))) p))
+  [{:keys [leading] :as meta} & content]
+   (doto (if leading (new Phrase (float leading)) (new Phrase))
+         (.setFont (font meta))
+         (.addAll (map (partial make-section meta) content))))
 
 (defn- text-chunk [style content]
   (let [ch (new Chunk (make-section content) (font style))]
