@@ -30,11 +30,12 @@
      Rectangle
      RectangleReadOnly
      RomanList
+     Section
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
     [cljpdf.text.pdf BaseFont PdfReader PdfStamper PdfWriter PdfPCell PdfPTable ]
-    [java.io PushbackReader InputStream InputStreamReader FileOutputStream ByteArrayOutputStream]))
+    [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream]))
 
 (declare ^:dynamic *cache*)
 (def fonts-registered? (atom nil))
@@ -58,7 +59,7 @@
     "bottom"    Element/ALIGN_BOTTOM
     Element/ALIGN_LEFT))
 
-(defn- set-background [element {:keys [background]}]
+(defn- set-background [^Chunk element {:keys [background]}]
   (when background
     (let [[r g b] background] (.setBackground element (Color. r g b)))))
 
@@ -175,7 +176,7 @@
       "tabloid"                   PageSize/TABLOID
       PageSize/A4)))
 
-(defn- page-orientation [page-size orientation]
+(defn- page-orientation [^Rectangle page-size orientation]
   (if page-size
     (condp = (if orientation (name orientation))
       "landscape"    (.rotate page-size)
@@ -203,7 +204,7 @@
     (if keep-together (.setKeepTogether paragraph true))
     (if first-line-indent (.setFirstLineIndent paragraph (float first-line-indent)))
     (if indent (.setIndentationLeft paragraph (float indent)))
-    (if align (.setAlignment paragraph (get-alignment align)))
+    (if align (.setAlignment paragraph ^int (get-alignment align)))
 
     (doseq [item content]
       (.add paragraph
@@ -226,12 +227,13 @@
                    indent
                    symbol] :as meta}
            & items]
-  (let [list (cond
+  (let [^List list
+             (cond
                roman           (new RomanList)
                greek           (new GreekList)
                dingbats        (new ZapfDingbatsList dingbats-char-num)
                dingbatsnumber  (new ZapfDingbatsNumberList dingbatsnumber-type)
-               :else (new List (or numbered false) (or lettered false)))]
+               :else (new List (boolean (or numbered false)) (boolean (or lettered false))))]
 
     (if lowercase (.setLowercase list lowercase))
     (if indent (.setIndentationLeft list (float indent)))
@@ -249,7 +251,7 @@
          (.addAll (map (partial make-section meta) content))))
 
 (defn- text-chunk [style content]
-  (let [ch (new Chunk (make-section content) (font style))]
+  (let [ch (new Chunk ^String (make-section content) (font style))]
     (set-background ch style)
     (cond
       (:super style) (.setTextRise ch (float 5))
@@ -308,7 +310,7 @@
     (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
     (if border-width-right (.setBorderWidthRight c  (float border-width-right)))
     (if border-width-top (.setBorderWidthTop c (float border-width-top)))
-    (.setHorizontalAlignment c (get-alignment align))
+    (.setHorizontalAlignment c ^int (get-alignment align))
     (doseq [item (map
                   #(make-section meta (if (string? %) [:chunk %] %))
                   content)]
@@ -317,17 +319,17 @@
 
 
 (defn- pdf-cell-padding*
-  ([cell a]       (.setPadding cell (float a)))
-  ([cell a b]     (pdf-cell-padding* cell a b a b))
-  ([cell a b c]   (pdf-cell-padding* cell a b c b))
-  ([cell a b c d]
+  ([^PdfPCell cell a]       (.setPadding cell (float a)))
+  ([^PdfPCell cell a b]     (pdf-cell-padding* cell a b a b))
+  ([^PdfPCell cell a b c]   (pdf-cell-padding* cell a b c b))
+  ([^PdfPCell cell a b c d]
    (doto cell
      (.setPaddingTop    (float a))
      (.setPaddingRight  (float b))
      (.setPaddingBottom (float c))
      (.setPaddingLeft   (float d)))))
 
-(defn- pdf-cell-padding [cell pad]
+(defn- pdf-cell-padding [^PdfPCell cell pad]
   (when-let [args (if (sequential? pad) pad [pad])]
     (apply pdf-cell-padding* cell args)))
 
@@ -380,8 +382,8 @@
     (if rotation (.setRotation c (int rotation)))
     (if height (.setFixedHeight c (float height)))
     (if min-height (.setMinimumHeight c (float min-height)))
-    (.setHorizontalAlignment c (get-alignment align))
-    (.setVerticalAlignment c (get-alignment valign))
+    (.setHorizontalAlignment c ^int (get-alignment align))
+    (.setVerticalAlignment c ^int (get-alignment valign))
     (doseq [item (map
                   #(make-section meta (if (string? %) [:paragraph %] %))
                   content)]
@@ -389,16 +391,16 @@
     c))
 
 
-(defn- table-header [tbl header cols]
+(defn- table-header [^Table tbl header cols]
   (when header
     (let [meta? (map? (first header))
           header-rest (if meta? (rest header) header)
           header-data header-rest
           set-bg #(if-let [[r g b] (if meta? (:backdrop-color (first header)))]
-                    (doto % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
+                    (doto ^Cell % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
         (let [header (first header-data)
-               header-text (if (string? header)
+              ^Element header-text (if (string? header)
                             (make-section [:chunk {:style "bold"} header])
                             (make-section header))
               header-cell (doto (new Cell header-text)
@@ -409,14 +411,14 @@
           (.addCell tbl header-cell))
 
         (doseq [h header-data]
-          (let [header-text (if (string? h)
+          (let [^Element header-text (if (string? h)
                               (make-section [:chunk {:style "bold"} h])
                               (make-section h))
                 header-cell (doto (new Cell header-text) (.setHeader true))]
             (when-not (and (string? h)
                            (map? (second h)))
               (when-let [align (:align (second h))]
-                (.setHorizontalAlignment header-cell (get-alignment align))))
+                (.setHorizontalAlignment header-cell ^int (get-alignment align))))
             (set-bg header-cell)
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
@@ -424,7 +426,7 @@
 (declare split-classes-from-tag)
 
 (defn- add-table-cell
-  [tbl meta content]
+  [^Table tbl meta content]
   (let [[tag & classes] (when (vector? content)
                           (split-classes-from-tag (first content)))
         element (cond
@@ -432,7 +434,7 @@
                   (nil? content)    [:cell [:chunk meta ""]]
                   (string? content) [:cell [:chunk meta content]]
                   :else             [:cell content])]
-    (.addCell tbl (make-section meta element))))
+    (.addCell tbl ^Cell (make-section meta element))))
 
 (defn- table [{:keys [background-color spacing padding offset header border border-width cell-border width widths align num-cols]
                :as meta}
@@ -442,7 +444,7 @@
   (let [header-cols (cond-> (count header)
                       (map? (first header)) dec)
         cols (or num-cols (apply max (cons header-cols (map count rows))))
-        tbl  (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
+        ^Table tbl (doto (new Table cols (count rows)) (.setWidth (float (or width 100))))]
 
     (when widths
       (if (= (count widths) cols)
@@ -462,7 +464,7 @@
     (if offset (.setOffset tbl (float offset)))
     (table-header tbl header cols)
 
-    (.setAlignment tbl (get-alignment align))
+    (.setAlignment tbl ^int (get-alignment align))
 
     (doseq [row rows]
       (doseq [column row]
@@ -471,7 +473,7 @@
     tbl))
 
 (defn- add-pdf-table-cell
-  [tbl meta content]
+  [^PdfPTable tbl meta content]
   (let [[tag & classes] (when (vector? content)
                           (split-classes-from-tag (first content)))
         element (cond
@@ -479,7 +481,7 @@
                   (nil? content)    [:pdf-cell [:chunk meta ""]]
                   (string? content) [:pdf-cell [:chunk meta content]]
                   :else             [:pdf-cell content])]
-    (.addCell tbl (make-section meta element))))
+    (.addCell tbl ^PdfPCell (make-section meta element))))
 
 (defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
                   :as meta}
@@ -489,7 +491,7 @@
   (when (not= (count widths) (or num-cols (apply max (map count rows))))
     (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
 
-  (let [cols (or num-cols (apply max (map count rows)))
+  (let [^int cols (or num-cols (apply max (map count rows)))
         tbl (new PdfPTable cols)]
 
     (when width-percent (.setWidthPercentage tbl (float width-percent)))
@@ -505,13 +507,14 @@
     (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
-    (.setHorizontalAlignment tbl (get-alignment horizontal-align))
+    (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
 
     (doseq [row rows]
       (doseq [column row]
         (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
 
     tbl))
+
 (defn- make-image [{:keys [scale
                            xscale
                            yscale
@@ -530,25 +533,28 @@
                            page-width
                            page-height]}
                    img-data]
-  (let [img (cond
+  (let [^Image img (cond
               (instance? java.awt.Image img-data)
-              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource img-data)) nil)
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
 
               base64
               (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
 
               (= Byte/TYPE (.getComponentType (class img-data)))
-              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) img-data) nil)
+              (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) ^bytes img-data) nil)
 
-              (or (string? img-data) (instance? java.net.URL img-data))
-              (Image/getInstance img-data)
+              (string? img-data)
+              (Image/getInstance ^String img-data)
+
+              ((instance? java.net.URL img-data))
+              (Image/getInstance ^java.net.URL img-data)
 
               :else
               (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
         img-width (.getWidth img)
         img-height (.getHeight img)]
     (if rotation (.setRotation img (float rotation)))
-    (if align (.setAlignment img (get-alignment align)))
+    (if align (.setAlignment img ^int (get-alignment align)))
     (if annotation (let [[title text] annotation] (.setAnnotation img (make-section [:annotation title text]))))
     (if pad-left (.setIndentationLeft img (float pad-left)))
     (if pad-right (.setIndentationRight img (float pad-right)))
@@ -593,8 +599,8 @@
         compiled))))
 
 (defn- section [meta & [title & content]]
-  (let [sec (.addSection (:parent meta)
-              (make-section meta (if (string? title) [:paragraph title] title)))
+  (let [paragraph (make-section meta (if (string? title) [:paragraph title] title))
+        sec (.addSection ^Section (:parent meta) ^Paragraph paragraph)
         indent (:indent meta)]
     (if indent (.setIndentation sec (float indent)))
     (doseq [item content]
@@ -642,12 +648,12 @@
         compiled))))
 
 (defn- line [{dotted? :dotted, gap :gap} & _]
-  (doto (if dotted?
+  (let [^LineSeparator lineSeparator (if dotted?
           (if gap
             (doto (new DottedLineSeparator) (.setGap (float gap)))
             (new DottedLineSeparator))
-          (new LineSeparator))
-    (.setOffset -5)))
+          (new LineSeparator))]
+    (doto lineSeparator (.setOffset -5))))
 
 (defn- reference [meta reference-id]
   (if-let [item (get @*cache* reference-id)]
@@ -722,7 +728,7 @@
 
 (declare append-to-doc)
 
-(defn- clear-double-page [stylesheet references font-style width height item doc pdf-writer]
+(defn- clear-double-page [stylesheet references font-style width height item doc ^PdfWriter pdf-writer]
   "End current page and make sure that subsequent content will start on
      the next odd-numbered page, inserting a blank page if necessary."
   (let [append (fn [item] (append-to-doc stylesheet references font-style width height item doc pdf-writer))]
@@ -736,7 +742,7 @@
       (append [:paragraph " "])
       (append [:pagebreak]))))
 
-(defn- append-to-doc [stylesheet references font-style width height item doc pdf-writer]
+(defn- append-to-doc [stylesheet references font-style width height item ^Document doc ^PdfWriter pdf-writer]
   (cond
     (= [:pagebreak] item) (.newPage doc)
     (= [:clear-double-page] item) (clear-double-page stylesheet references font-style width height item doc pdf-writer)
@@ -754,7 +760,7 @@
                         :pdf-writer pdf-writer)
                  (or item [:paragraph item])))))
 
- (defn- add-header [header doc]
+ (defn- add-header [header ^Document doc]
    (if header
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
@@ -782,7 +788,7 @@
         doc            (new Document (page-orientation (page-size size) orientation))
         width          (.. doc getPageSize getWidth)
         height         (.. doc getPageSize getHeight)
-        output-stream  (if (string? out) (new FileOutputStream out) out)
+        output-stream  (if (string? out) (new FileOutputStream ^String out) out)
         temp-stream    (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
         footer         (when (not= footer false)
                          (if (string? footer)
@@ -799,9 +805,9 @@
           (.setPageEvent pdf-writer page-event))
         (if footer
           (.setFooter doc
-            (doto (new HeaderFooter (new Phrase (str (:text footer) " ") (font {:size 10})) page-numbers?)
+            (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font {:size 10})) page-numbers?)
               (.setBorder 0)
-              (.setAlignment (get-alignment (:align footer)))))))
+              (.setAlignment ^int (get-alignment (:align footer)))))))
 
       ;;must set margins before opening the doc
       (if (and left-margin right-margin top-margin bottom-margin)
@@ -833,12 +839,12 @@
 
       [doc width height temp-stream output-stream pdf-writer])))
 
-(defn- write-pages [temp-stream output-stream]
+(defn- write-pages [^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (.writeTo temp-stream output-stream)
   (.flush output-stream)
   (.close output-stream))
 
-(defn- align-footer [page-width base-font {:keys [text align]}]
+(defn- align-footer [page-width ^BaseFont base-font {:keys [text align]}]
   (let [font-width (.getWidthPointKerned base-font (or text "") (float 10))]
     (float
       (condp = align
@@ -846,9 +852,9 @@
         :left   (+ 50 font-width)
         :center (- (/ page-width 2) (/ font-width 2))))))
 
-(defn- write-total-pages [doc width {:keys [footer footer-separator]} temp-stream output-stream]
+(defn- write-total-pages [^Document doc width {:keys [footer footer-separator]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (let [reader    (new PdfReader (.toByteArray temp-stream))
-        stamper   (new PdfStamper reader, output-stream)
+        stamper   (new PdfStamper reader output-stream)
         num-pages (.getNumberOfPages reader)
         base-font (BaseFont/createFont)
         footer    (when (not= footer false)
@@ -879,7 +885,7 @@
 
     :else item))
 
-(defn- add-item [item {:keys [stylesheet font references]} width height doc pdf-writer]
+(defn- add-item [item {:keys [stylesheet font references]} width height ^Document doc ^PdfWriter pdf-writer]
   (if (and (coll? item) (coll? (first item)))
     (doseq [element item]
       (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
@@ -898,7 +904,11 @@
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
   (register-fonts doc-meta)
-  (let [[doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
+  (let [[^Document doc
+         width height
+         ^ByteArrayOutputStream temp-stream
+         ^OutputStream output-stream
+         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
     (doseq [item content]
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
@@ -907,7 +917,11 @@
 
 (defn- to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
-        [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
+        [^Document doc
+         width height
+         ^ByteArrayOutputStream temp-stream
+         ^OutputStream output-stream
+         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
     (register-fonts doc-meta)
     (loop []
       (if-let [item (input-reader r)]
@@ -920,7 +934,11 @@
 
 (defn- seq-to-doc [items out]
   (let [doc-meta (first items)
-        [doc width height temp-stream output-stream pdf-writer] (setup-doc doc-meta out)]
+        [^Document doc
+         width height
+         ^ByteArrayOutputStream temp-stream
+         ^OutputStream output-stream
+         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
     (register-fonts doc-meta)
     (doseq [item (rest items)]
       (add-item item doc-meta width height doc pdf-writer))
