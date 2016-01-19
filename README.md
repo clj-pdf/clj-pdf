@@ -2,6 +2,53 @@
 
 A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Templating](#templating)
+    - [Stylesheets](#stylesheets)
+  - [Document Elements](#document-elements)
+  - [Document Format](#document-format)
+    - [Metadata](#metadata)
+      - [Font](#font)
+      - [Using Custom TTF Fonts](#using-custom-ttf-fonts)
+    - [Document sections](#document-sections)
+      - [Anchor](#anchor)
+      - [Chapter](#chapter)
+      - [Chunk](#chunk)
+      - [Clear double page](#clear-double-page)
+      - [Graphics](#graphics)
+      - [Heading](#heading)
+      - [Image](#image)
+      - [Line](#line)
+      - [List](#list)
+      - [Pagebreak](#pagebreak)
+      - [Paragraph](#paragraph)
+      - [Phrase](#phrase)
+      - [Reference](#reference)
+      - [Section](#section)
+      - [Spacer](#spacer)
+      - [String](#string)
+      - [Subscript](#subscript)
+      - [Superscript](#superscript)
+      - [SVG](#svg)
+      - [Table](#table)
+      - [PDF Table](#pdf-table)
+      - [Table Cell](#table-cell)
+      - [PDF Table Cell](#pdf-table-cell)
+    - [Charting](#charting)
+      - [bar chart](#bar-chart)
+      - [line chart](#line-chart)
+      - [pie chart](#pie-chart)
+    - [A complete example](#a-complete-example)
+- [Users](#users)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 
 `clj-pdf` is available as a Maven artifact from [Clojars](https://clojars.org/search?q=clj-pdf):
@@ -263,58 +310,59 @@ All fields in the metadata section are optional:
 available page sizes:
 
 ```clojure
- :a0
- :a1
- :a10
- :a2
- :a3
- :a4
- :a5
- :a6
- :a7
- :a8
- :a9
- :arch-a
- :arch-b
- :arch-c
- :arch-d
- :arch-e
- :b0
- :b1
- :b10
- :b2
- :b3
- :b4
- :b5
- :b6
- :b7
- :b8
- :b9
- :crown-octavo
- :crown-quarto
- :demy-octavo
- :demy-quarto
- :executive
- :flsa
- :flse
- :halfletter
- :id-1
- :id-2
- :id-3
- :large-crown-octavo
- :large-crown-quarto
- :ledger
- :legal
- :letter
- :note
- :penguin-large-paperback
- :penguin-small-paperback
- :postcard
- :royal-octavo
- :royal-quarto
- :small-paperback
- :tabloid
- ```
+:a0
+:a1
+:a10
+:a2
+:a3
+:a4
+:a5
+:a6
+:a7
+:a8
+:a9
+:arch-a
+:arch-b
+:arch-c
+:arch-d
+:arch-e
+:b0
+:b1
+:b10
+:b2
+:b3
+:b4
+:b5
+:b6
+:b7
+:b8
+:b9
+:crown-octavo
+:crown-quarto
+:demy-octavo
+:demy-quarto
+:executive
+:flsa
+:flse
+:halfletter
+:id-1
+:id-2
+:id-3
+:large-crown-octavo
+:large-crown-quarto
+:ledger
+:legal
+:letter
+:note
+:penguin-large-paperback
+:penguin-small-paperback
+:postcard
+:royal-octavo
+:royal-quarto
+:small-paperback
+:tabloid
+```
+
 Alternatively, explicit page size can also be specified using a vector, eg:
 
 ```clojure
