@@ -8,11 +8,9 @@
 
   :dependencies [[dom4j "1.6.1"]
                  [org.clojure/clojure "1.6.0"]
-                 [org.jfree/jfreechart "1.0.19"]
+                 [org.jfree/jfreechart "1.0.15"]
                  [org.apache.xmlgraphics/batik-gvt "1.7"]
-                 [org.swinglabs/pdf-renderer "1.0.5"]
-                 [bouncycastle/bcprov-jdk16 "140"]
-                 [bouncycastle/bcmail-jdk16 "140"]]
+                 [org.swinglabs/pdf-renderer "1.0.5"]]
   :resource-paths ["src/java"]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
