@@ -1,26 +1,26 @@
 (ns clj-pdf.charting
   (:use [clj-pdf.graphics-2d :only [with-graphics]])
-  (:import [org.jfree.chart ChartFactory ChartUtilities]
-           [org.jfree.chart.plot PlotOrientation]
+  (:import [org.jfree.chart ChartFactory ChartUtilities JFreeChart]
+           [org.jfree.chart.plot XYPlot PlotOrientation]
            [org.jfree.data.xy XYSeries XYSeriesCollection]
            org.jfree.data.category.DefaultCategoryDataset
            org.jfree.data.general.DefaultPieDataset
            org.jfree.chart.renderer.category.StandardBarPainter
            org.jfree.chart.labels.StandardXYItemLabelGenerator
-           org.jfree.chart.axis.NumberTickUnit
+           [org.jfree.chart.axis DateAxis NumberAxis NumberTickUnit]
            java.text.SimpleDateFormat
            java.text.NumberFormat
            java.io.ByteArrayOutputStream
            java.awt.Rectangle
            java.awt.Color))
 
-(defn- set-background [chart [r g b]]
+(defn- set-background [^JFreeChart chart [r g b]]
   (when (and r g b)
     (-> chart .getPlot (.setBackgroundPaint (Color. (int r) (int g) (int b))))))
 
-(defn- bar-chart [{:keys [title horizontal x-label y-label background]} & data]
+(defn- bar-chart [{:keys [title horizontal ^String x-label ^String y-label background]} & data]
   (let [dataset (new DefaultCategoryDataset)]
-    (doseq [[val name] data]
+    (doseq [[val ^String name] data]
       (.setValue dataset (double val) y-label name))
     (let [chart (ChartFactory/createBarChart title x-label y-label dataset
                                              (if horizontal PlotOrientation/HORIZONTAL PlotOrientation/VERTICAL)
@@ -29,15 +29,15 @@
       (.. chart getCategoryPlot getRenderer (setBarPainter (new StandardBarPainter)))
       chart)))
 
-(defn- pie-chart [{:keys [title background]} & data]
+(defn- pie-chart [{:keys [^String title background]} & data]
   (let [dataset (new DefaultPieDataset)]
-    (doseq [[name value] data]
+    (doseq [[^String name value] data]
       (.setValue dataset name (double value)))
     (let [chart (ChartFactory/createPieChart title dataset true true false)]
       (set-background chart background)
       chart)))
 
-(defn- line-chart [{:keys [title
+(defn- line-chart [{:keys [^String title
                            background
                            show-points
                            point-labels
@@ -62,22 +62,23 @@
       (let [series (new XYSeries series-title)]
         (doseq [[x y] points]
           (.add series
-            (if time-series (.. formatter (parse x) getTime) (double x))
+            (double (if time-series (.. formatter (parse x) getTime) x))
             (double y)))
         (.addSeries dataset series)))
 
-    (let [chart    (if time-series
+    (let [^JFreeChart chart
+                   (if time-series
                      (ChartFactory/createTimeSeriesChart title x-label y-label dataset true true false)
                      (ChartFactory/createXYLineChart title x-label y-label dataset
                                                      (if horizontal
                                                        PlotOrientation/HORIZONTAL
                                                        PlotOrientation/VERTICAL) true true false))
-          plot     (.getPlot chart)
+          ^XYPlot plot (.getPlot chart)
           renderer (.getRenderer plot)]
 
       (set-background chart background)
 
-      (let [domain-axis (.getDomainAxis plot)
+      (let [^NumberAxis domain-axis (.getDomainAxis plot)
             range-axis (.getRangeAxis plot)]
         (if (or tick-interval tick-interval-x)
           (.setTickUnit domain-axis (new NumberTickUnit (or tick-interval tick-interval-x))))
@@ -88,7 +89,7 @@
           (if xrange-end (.setRange domain-axis xrange-start xrange-end))
           (if yrange-end (.setRange range-axis yrange-start yrange-end)))
 
-      (if time-series (.. plot getDomainAxis (setDateFormatOverride formatter)))
+      (if time-series (.. plot ^DateAxis getDomainAxis (setDateFormatOverride formatter)))
       (if show-points (.setBaseShapesVisible renderer true))
       (if point-labels
         (let [format (NumberFormat/getNumberInstance)]
@@ -99,7 +100,7 @@
       chart)))
 
 (defn chart [{:keys [type page-width page-height vector] :as params} & items]
-  (let [chart (condp = (when type (name type))
+  (let [^JFreeChart chart (condp = (when type (name type))
                 "bar-chart"  (apply bar-chart params items)
                 "pie-chart"  (apply pie-chart params items)
                 "line-chart" (apply line-chart params items)
