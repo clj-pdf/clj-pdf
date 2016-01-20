@@ -46,65 +46,18 @@
  */
 package cljpdf.text.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.xml.sax.SAXException;
-
-import cljpdf.text.pdf.AcroFields;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.FdfReader;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfAppearance;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfContents;
-import cljpdf.text.pdf.PdfDate;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfDocument;
-import cljpdf.text.pdf.PdfException;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfImportedPage;
-import cljpdf.text.pdf.PdfIndirectObject;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLayer;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNameTree;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStamper;
-import cljpdf.text.pdf.PdfStamperImp;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfTransition;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-import cljpdf.text.pdf.StampContent;
-
-import cljpdf.text.Document;
-import cljpdf.text.DocumentException;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Image;
-import cljpdf.text.Rectangle;
+import cljpdf.text.*;
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.exceptions.BadPasswordException;
 import cljpdf.text.pdf.collection.PdfCollection;
 import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
 import cljpdf.text.pdf.internal.PdfViewerPreferencesImp;
 import cljpdf.text.xml.xmp.XmpReader;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
 class PdfStamperImp extends PdfWriter {
     HashMap readers2intrefs = new HashMap();
@@ -153,7 +106,7 @@ class PdfStamperImp extends PdfWriter {
         this.append = append;
         if (append) {
             if (reader.isRebuilt())
-                throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));            
+                throw new DocumentException(MessageLocalization.getComposedMessage("append.mode.requires.a.document.without.errors.even.if.recovery.was.possible"));
             pdf_version.setAppendmode(true);
             file.reOpen();
             byte buf[] = new byte[8192];
@@ -291,7 +244,7 @@ class PdfStamperImp extends PdfWriter {
         	}
         	xmp.put(PdfName.TYPE, PdfName.METADATA);
         	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-        	
+
         	if (append && xmpo != null) {
         		body.add(xmp, xmpo.getIndRef());
         	}
@@ -339,7 +292,7 @@ class PdfStamperImp extends PdfWriter {
         }
         PdfIndirectReference encryption = null;
         PdfObject fileID = null;
-        
+
         PRIndirectReference iRoot = (PRIndirectReference)reader.trailer.get(PdfName.ROOT);
         PdfIndirectReference root = new PdfIndirectReference(0, getNewObjectNumber(reader, iRoot.getNumber(), 0));
         PdfIndirectReference info = null;

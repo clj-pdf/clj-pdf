@@ -46,16 +46,10 @@
  */
 package cljpdf.text;
 
-import cljpdf.text.Chunk;
-import cljpdf.text.Font;
-import cljpdf.text.FontFactory;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use zapfdingbats-letters.
- * 
+ *
  * @see cljpdf.text.List
  * @author Michael Niedermair and Bruno Lowagie
  */
@@ -69,7 +63,7 @@ public class ZapfDingbatsList extends List {
 
 	/**
 	 * Creates a ZapfDingbatsList
-	 * 
+	 *
 	 * @param zn a char-number
 	 */
 	public ZapfDingbatsList(int zn) {
@@ -82,7 +76,7 @@ public class ZapfDingbatsList extends List {
 
 	/**
 	 * Creates a ZapfDingbatsList
-	 * 
+	 *
 	 * @param zn a char-number
 	 * @param symbolIndent	indent
 	 */
@@ -95,7 +89,7 @@ public class ZapfDingbatsList extends List {
 	}
 
 	/**
-	 * set the char-number 
+	 * set the char-number
 	 * @param zn a char-number
 	 */
 	public void setCharNumber(int zn) {

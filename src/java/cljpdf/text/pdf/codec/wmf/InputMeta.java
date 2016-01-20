@@ -49,17 +49,17 @@
 
 package cljpdf.text.pdf.codec.wmf;
 
-import java.awt.Color;
+import cljpdf.text.Utilities;
+
+import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 
-import cljpdf.text.Utilities;
-
 public class InputMeta {
-    
+
     InputStream in;
     int length;
-    
+
     public InputMeta(InputStream in) {
         this.in = in;
     }
@@ -88,21 +88,21 @@ public class InputMeta {
         int k3 = in.read() << 16;
         return k1 + k2 + k3 + (in.read() << 24);
     }
-    
+
     public int readByte() throws IOException{
         ++length;
         return in.read() & 0xff;
     }
-    
+
     public void skip(int len) throws IOException{
         length += len;
         Utilities.skip(in, len);
     }
-    
+
     public int getLength() {
         return length;
     }
-    
+
     public Color readColor() throws IOException{
         int red = readByte();
         int green = readByte();

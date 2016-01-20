@@ -51,24 +51,6 @@ package cljpdf.text;
 
 import java.util.ArrayList;
 
-import cljpdf.text.Anchor;
-import cljpdf.text.Cell;
-import cljpdf.text.Chapter;
-import cljpdf.text.Chunk;
-import cljpdf.text.ElementListener;
-import cljpdf.text.Header;
-import cljpdf.text.Image;
-import cljpdf.text.Jpeg;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-import cljpdf.text.Meta;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Row;
-import cljpdf.text.Section;
-import cljpdf.text.Table;
-
 /**
  * Interface for a text element.
  * <P>
@@ -82,7 +64,7 @@ import cljpdf.text.Table;
  * classes (I think they're really great). However, if I use the
  * javax.swing.text classes, it will become very difficult to downgrade rugPdf.
  * </OL>
- * 
+ *
  * @see Anchor
  * @see Cell
  * @see Chapter
@@ -199,7 +181,7 @@ public interface Element {
 
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MULTI_COLUMN_TEXT = 40;
-	
+
 	/** This is a possible type of <CODE>Element</CODE>. */
 	public static final int MARKED = 50;
 
@@ -321,7 +303,7 @@ public interface Element {
 	/**
 	 * Processes the element by adding it (or the different parts) to an <CODE>
 	 * ElementListener</CODE>.
-	 * 
+	 *
 	 * @param listener
 	 *            an <CODE>ElementListener</CODE>
 	 * @return <CODE>true</CODE> if the element was processed successfully
@@ -331,7 +313,7 @@ public interface Element {
 
 	/**
 	 * Gets the type of the text element.
-	 * 
+	 *
 	 * @return a type
 	 */
 
@@ -343,20 +325,20 @@ public interface Element {
 	 * @since	iText 2.0.8
 	 * @return	true if this is a 'content' element; false if this is a 'metadata' element
 	 */
-	
+
 	public boolean isContent();
-	
+
 	/**
 	 * Checks if this element is nestable.
 	 * @since	iText 2.0.8
 	 * @return	true if this element can be nested inside other elements.
 	 */
-	
+
 	public boolean isNestable();
-	
+
 	/**
 	 * Gets all the chunks in this element.
-	 * 
+	 *
 	 * @return an <CODE>ArrayList</CODE>
 	 */
 
@@ -364,7 +346,7 @@ public interface Element {
 
 	/**
 	 * Gets the content of the text element.
-	 * 
+	 *
 	 * @return a type
 	 */
 

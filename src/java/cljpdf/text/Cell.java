@@ -50,26 +50,11 @@
 
 package cljpdf.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Cell;
-import cljpdf.text.Chunk;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementListener;
-import cljpdf.text.ElementTags;
-import cljpdf.text.List;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Row;
-import cljpdf.text.Table;
-import cljpdf.text.TextElementArray;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfPCell;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A <CODE>Cell</CODE> is a <CODE>Rectangle</CODE> containing other
@@ -142,16 +127,16 @@ public class Cell extends Rectangle implements TextElementArray {
 	protected boolean header;
 
 	/**
-	 * Maximum number of lines allowed in the cell.  
+	 * Maximum number of lines allowed in the cell.
 	 * The default value of this property is not to limit the maximum number of lines
 	 * (contributed by dperezcar@fcc.es)
 	 */
 	protected int maxLines = Integer.MAX_VALUE;
-	
+
 	/**
-	 * If a truncation happens due to the maxLines property, then this text will 
+	 * If a truncation happens due to the maxLines property, then this text will
 	 * be added to indicate a truncation has happened.
-	 * Default value is null, and means avoiding marking the truncation.  
+	 * Default value is null, and means avoiding marking the truncation.
 	 * A useful value of this property could be e.g. "..."
 	 * (contributed by dperezcar@fcc.es)
 	 */
@@ -176,7 +161,7 @@ public class Cell extends Rectangle implements TextElementArray {
      * this only has an effect when rendered to PDF.
      */
     protected boolean useBorderPadding;
-    
+
 	/** Does this <CODE>Cell</CODE> force a group change? */
 	protected boolean groupChange = true;
 
@@ -333,7 +318,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setWidth(float value) {
 		this.width = value;
 	}
-	
+
 	/**
 	 * Sets the width.
 	 * It can be an absolute value "100" or a percentage "20%"
@@ -347,7 +332,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		}
 		width = Integer.parseInt(value);
 	}
-	
+
 	/**
 	 * Gets the width.
 	 */
@@ -439,7 +424,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public boolean isHeader() {
 		return header;
 	}
-	
+
 	/**
 	 * Setter for maxLines
 	 * @param value the maximum number of lines
@@ -447,7 +432,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setMaxLines(int value) {
 		maxLines = value;
 	}
-	
+
 	/**
 	 * Getter for maxLines
 	 * @return the maxLines value
@@ -455,7 +440,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public int getMaxLines() {
 		return maxLines;
 	}
-		
+
 	/**
 	 * Setter for showTruncation
 	 * @param value	Can be null for avoiding marking the truncation.
@@ -463,7 +448,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setShowTruncation(String value) {
 		showTruncation = value;
 	}
-	
+
 	/**
 	 * Getter for showTruncation
 	 * @return the showTruncation value
@@ -537,7 +522,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public void setGroupChange(boolean value) {
 		groupChange = value;
 	}
-	
+
 // arraylist stuff
 
 	/**
@@ -557,7 +542,7 @@ public class Cell extends Rectangle implements TextElementArray {
 	public Iterator getElements() {
 		return arrayList.iterator();
 	}
-	
+
 	/**
 	 * Clears all the <CODE>Element</CODE>s of this <CODE>Cell</CODE>.
 	 */
@@ -591,7 +576,7 @@ public class Cell extends Rectangle implements TextElementArray {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * Makes sure there is at least 1 object in the Cell.
 	 *
@@ -610,7 +595,7 @@ public class Cell extends Rectangle implements TextElementArray {
 		return (size() == 1)
 			&& (((Element)arrayList.get(0)).type() == Element.TABLE);
 	}
-	
+
 	/**
 	 * Adds an element to this <CODE>Cell</CODE>.
 	 * <P>
@@ -723,9 +708,9 @@ public class Cell extends Rectangle implements TextElementArray {
 	}
 
 	// helper methods
-	
+
 	/**
-     * Get dummy cell used when merging inner tables. 
+     * Get dummy cell used when merging inner tables.
      * @return a cell with colspan 3 and no border
      */
     private static Cell getDummyCell() {

@@ -46,11 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-
 /** The graphic state dictionary.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -82,7 +77,7 @@ public class PdfGState extends PdfDictionary {
     public static final PdfName BM_DIFFERENCE = new PdfName("Difference");
     /** A possible blend mode */
     public static final PdfName BM_EXCLUSION = new PdfName("Exclusion");
-    
+
     /**
      * Sets the flag whether to apply overprint for stroking.
      * @param ov
@@ -106,7 +101,7 @@ public class PdfGState extends PdfDictionary {
     public void setOverPrintMode(int ov) {
         put(PdfName.OPM, new PdfNumber(ov==0 ? 0 : 1));
     }
-    
+
     /**
      * Sets the current stroking alpha constant, specifying the constant shape or
      * constant opacity value to be used for stroking operations in the transparent
@@ -116,7 +111,7 @@ public class PdfGState extends PdfDictionary {
     public void setStrokeOpacity(float n) {
         put(PdfName.CA, new PdfNumber(n));
     }
-    
+
     /**
      * Sets the current stroking alpha constant, specifying the constant shape or
      * constant opacity value to be used for nonstroking operations in the transparent
@@ -126,17 +121,17 @@ public class PdfGState extends PdfDictionary {
     public void setFillOpacity(float n) {
         put(PdfName.ca, new PdfNumber(n));
     }
-    
+
     /**
      * The alpha source flag specifying whether the current soft mask
      * and alpha constant are to be interpreted as shape values (true)
-     * or opacity values (false). 
+     * or opacity values (false).
      * @param v
      */
     public void setAlphaIsShape(boolean v) {
         put(PdfName.AIS, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
-    
+
     /**
      * Determines the behavior of overlapping glyphs within a text object
      * in the transparent imaging model.
@@ -145,7 +140,7 @@ public class PdfGState extends PdfDictionary {
     public void setTextKnockout(boolean v) {
         put(PdfName.TK, v ? PdfBoolean.PDFTRUE : PdfBoolean.PDFFALSE);
     }
-    
+
     /**
      * The current blend mode to be used in the transparent imaging model.
      * @param bm
@@ -153,5 +148,5 @@ public class PdfGState extends PdfDictionary {
     public void setBlendMode(PdfName bm) {
         put(PdfName.BM, bm);
     }
-    
+
 }

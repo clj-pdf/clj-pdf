@@ -49,19 +49,10 @@
 
 package cljpdf.text.pdf;
 
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.ColumnText;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDocument;
-
-import cljpdf.text.Chunk;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementListener;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
+import cljpdf.text.*;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.util.ArrayList;
 
 /**
  * Formats content into one or more columns bounded by a
@@ -114,11 +105,11 @@ public class MultiColumnText implements Element {
     private boolean simple = true;
 
     private int currentColumn = 0;
-    
+
     private float nextY = AUTOMATIC;
-    
+
     private boolean columnsRightToLeft = false;
-    
+
     private PdfDocument document;
     /**
      * Default constructor.  Sets height to <CODE>AUTOMATIC</CODE>.
@@ -160,7 +151,7 @@ public class MultiColumnText implements Element {
         columnText = new ColumnText(null);
         totalHeight = 0f;
     }
-    
+
     /**
      * Indicates that all of the text did not fit in the
      * specified height. Note that isOverflow will return
@@ -239,7 +230,7 @@ public class MultiColumnText implements Element {
     public void addText(Phrase phrase) {
     	columnText.addText(phrase);
     }
-    
+
     /**
      * Adds a <CODE>Chunk</CODE> to the current text array.
      * Will not have any effect if addElement() was called before.
@@ -249,7 +240,7 @@ public class MultiColumnText implements Element {
     public void addText(Chunk chunk) {
     	columnText.addText(chunk);
     }
-    
+
     /**
      * Add an element to be rendered in a column.
      * Note that you can only add a <CODE>Phrase</CODE>
@@ -315,7 +306,7 @@ public class MultiColumnText implements Element {
                         right[i] -= delta;
                     }
                 }
-                
+
                 currentHeight = Math.max(currentHeight, getHeight(left, right));
 
                 if (currentDef.isSimple()) {
@@ -365,7 +356,7 @@ public class MultiColumnText implements Element {
             document.newPage();
         }
     }
-    
+
     /**
      * Figure out the height of a column from the border extents
      *
@@ -422,7 +413,7 @@ public class MultiColumnText implements Element {
     public ArrayList getChunks() {
         return null;
     }
-    
+
 	/**
 	 * @see cljpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -457,7 +448,7 @@ public class MultiColumnText implements Element {
      * Moves the text insertion point to the beginning of the next column, issuing a page break if
      * needed.
      * @throws DocumentException on error
-     */    
+     */
     public void nextColumn() throws DocumentException {
         currentColumn = (currentColumn + 1) % columnDefs.size();
         top = nextY;
@@ -473,17 +464,17 @@ public class MultiColumnText implements Element {
     public int getCurrentColumn() {
     	if (columnsRightToLeft) {
     		return (columnDefs.size() - currentColumn - 1);
-    	} 
+    	}
         return currentColumn;
     }
-    
+
     /**
      * Resets the current column.
      */
     public void resetCurrentColumn() {
     	currentColumn = 0;
     }
-    
+
     /**
      * Shifts the current column.
      * @return true if the current column has changed
@@ -495,7 +486,7 @@ public class MultiColumnText implements Element {
     	}
     	return false;
     }
-    
+
     /**
      * Sets the direction of the columns.
      * @param direction true = right2left; false = left2right
@@ -503,7 +494,7 @@ public class MultiColumnText implements Element {
     public void setColumnsRightToLeft(boolean direction) {
     	columnsRightToLeft = direction;
     }
-    
+
     /** Sets the ratio between the extra word spacing and the extra character spacing
      * when the text is fully justified.
      * Extra word spacing will grow <CODE>spaceCharRatio</CODE> times more than extra character spacing.
@@ -515,13 +506,13 @@ public class MultiColumnText implements Element {
         columnText.setSpaceCharRatio(spaceCharRatio);
     }
 
-    /** Sets the run direction. 
+    /** Sets the run direction.
      * @param runDirection the run direction
-     */    
+     */
     public void setRunDirection(int runDirection) {
         columnText.setRunDirection(runDirection);
     }
-    
+
     /** Sets the arabic shaping options. The option can be AR_NOVOWEL,
      * AR_COMPOSEDTASHKEEL and AR_LIG.
      * @param arabicOptions the arabic shaping options
@@ -529,14 +520,14 @@ public class MultiColumnText implements Element {
     public void setArabicOptions(int arabicOptions) {
         columnText.setArabicOptions(arabicOptions);
     }
-    
+
     /** Sets the default alignment
      * @param alignment the default alignment
      */
     public void setAlignment(int alignment) {
         columnText.setAlignment(alignment);
     }
-    
+
     /**
      * Inner class used to define a column
      */
@@ -604,7 +595,7 @@ public class MultiColumnText implements Element {
 
         /**
          * Checks if column definition is a simple rectangle
-         * @return true if it is a simple column 
+         * @return true if it is a simple column
          */
         private boolean isSimple() {
             return (left.length == 4 && right.length == 4) && (left[0] == left[2] && right[0] == right[2]);

@@ -46,16 +46,10 @@
  */
 package cljpdf.text;
 
-import cljpdf.text.Chunk;
-import cljpdf.text.Font;
-import cljpdf.text.FontFactory;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use zapfdingbats-numbers (1..10).
- * 
+ *
  * @see cljpdf.text.List
  * @author Michael Niedermair and Bruno Lowagie
  */
@@ -93,8 +87,8 @@ public class ZapfDingbatsNumberList extends List {
 	}
 
 	/**
-	 * set the type 
-	 * 
+	 * set the type
+	 *
 	 * @param type
 	 */
 	public void setType(int type) {

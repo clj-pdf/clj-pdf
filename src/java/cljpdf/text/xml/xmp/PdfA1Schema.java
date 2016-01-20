@@ -49,29 +49,27 @@
 
 package cljpdf.text.xml.xmp;
 
-import cljpdf.text.xml.xmp.XmpSchema;
-
 /**
  * An implementation of an XmpSchema.
  */
 public class PdfA1Schema extends XmpSchema {
-    
+
     private static final long serialVersionUID = 5300646133692948168L;
     /** default namespace identifier*/
     public static final String DEFAULT_XPATH_ID = "pdfaid";
     /** default namespace uri*/
     public static final String DEFAULT_XPATH_URI = "http://www.aiim.org/pdfa/ns/id/";
-    
+
     /** Part, always 1. */
     public static final String PART = "pdfaid:part";
     /** Conformance, A or B. */
     public static final String CONFORMANCE = "pdfaid:conformance";
-    
+
     public PdfA1Schema() {
         super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
         addPart("1");
     }
-    
+
     /**
      * Adds part.
      * @param part
@@ -79,7 +77,7 @@ public class PdfA1Schema extends XmpSchema {
     public void addPart(String part) {
         setProperty(PART, part);
     }
-    
+
     /**
      * Adds the conformance.
      * @param conformance

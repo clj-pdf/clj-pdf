@@ -49,25 +49,11 @@
 
 package cljpdf.text.pdf.internal;
 
-import java.awt.Color;
-
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.PatternColor;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfGState;
-import cljpdf.text.pdf.PdfImage;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.PdfXConformanceException;
-import cljpdf.text.pdf.ShadingColor;
-import cljpdf.text.pdf.SpotColor;
+import cljpdf.text.pdf.*;
 import cljpdf.text.pdf.interfaces.PdfXConformance;
+
+import java.awt.*;
 
 public class PdfXConformanceImp implements PdfXConformance {
 
@@ -85,12 +71,12 @@ public class PdfXConformanceImp implements PdfXConformance {
     public static final int PDFXKEY_GSTATE = 6;
     /** A key for an aspect that can be checked for PDF/X Conformance. */
     public static final int PDFXKEY_LAYER = 7;
-    
+
     /**
      * The value indicating if the PDF has to be in conformance with PDF/X.
      */
     protected int pdfxConformance = PdfWriter.PDFXNONE;
-    
+
     /**
      * @see cljpdf.text.pdf.interfaces.PdfXConformance#setPDFXConformance(int)
      */
@@ -104,7 +90,7 @@ public class PdfXConformanceImp implements PdfXConformance {
 	public int getPDFXConformance() {
 		return pdfxConformance;
 	}
-    
+
     /**
      * Checks if the PDF/X Conformance is necessary.
      * @return true if the PDF has to be in conformance with any of the PDF/X specifications
@@ -126,7 +112,7 @@ public class PdfXConformanceImp implements PdfXConformance {
     public boolean isPdfX32002() {
     	return pdfxConformance == PdfWriter.PDFX32002;
     }
-    
+
     /**
      * Checks if the PDF has to be in conformance with PDFA1
      * @return true of the PDF has to be in conformance with PDFA1
@@ -134,7 +120,7 @@ public class PdfXConformanceImp implements PdfXConformance {
     public boolean isPdfA1() {
     	return pdfxConformance == PdfWriter.PDFA1A || pdfxConformance == PdfWriter.PDFA1B;
     }
-    
+
     /**
      * Checks if the PDF has to be in conformance with PDFA1A
      * @return true of the PDF has to be in conformance with PDFA1A
@@ -142,7 +128,7 @@ public class PdfXConformanceImp implements PdfXConformance {
     public boolean isPdfA1A() {
     	return pdfxConformance == PdfWriter.PDFA1A;
     }
-    
+
     public void completeInfoDictionary(PdfDictionary info) {
         if (isPdfX() && !isPdfA1()) {
             if (info.get(PdfName.GTS_PDFXVERSION) == null) {
@@ -164,7 +150,7 @@ public class PdfXConformanceImp implements PdfXConformance {
             }
         }
     }
-    
+
     public void completeExtraCatalog(PdfDictionary extraCatalog) {
         if (isPdfX() && !isPdfA1()) {
             if (extraCatalog.get(PdfName.OUTPUTINTENTS) == null) {
@@ -178,7 +164,7 @@ public class PdfXConformanceImp implements PdfXConformance {
             }
         }
     }
-    
+
     /**
 	 * Business logic that checks if a certain object is in conformance with PDF/X.
      * @param writer	the writer that is supposed to write the PDF/X file

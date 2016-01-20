@@ -48,19 +48,13 @@
  */
 package cljpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.MemoryImageSource;
-
-import cljpdf.text.pdf.Barcode;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfContentByte;
-
 import cljpdf.text.Element;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the code interleaved 2 of 5. The text can include
  * non numeric characters that are printed but do not generate bars.
@@ -82,7 +76,7 @@ import cljpdf.text.error_messages.MessageLocalization;
 public class BarcodeInter25 extends Barcode{
 
     /** The bars to generate the code.
-     */    
+     */
 	private static final byte BARS[][] =
     {
         {0,0,1,1,0},
@@ -114,11 +108,11 @@ public class BarcodeInter25 extends Barcode{
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /** Deletes all the non numeric characters from <CODE>text</CODE>.
      * @param text the text
      * @return a <CODE>String</CODE> with only numeric characters
-     */    
+     */
     public static String keepNumbers(String text) {
         StringBuffer sb = new StringBuffer();
         for (int k = 0; k < text.length(); ++k) {
@@ -128,11 +122,11 @@ public class BarcodeInter25 extends Barcode{
         }
         return sb.toString();
     }
-    
+
     /** Calculates the checksum.
      * @param text the numeric text
      * @return the checksum
-     */    
+     */
     public static char getChecksum(String text) {
         int mul = 3;
         int total = 0;
@@ -147,7 +141,7 @@ public class BarcodeInter25 extends Barcode{
     /** Creates the bars for the barcode.
      * @param text the text. It can contain non numeric characters
      * @return the barcode
-     */    
+     */
     public static byte[] getBarsInter25(String text) {
         text = keepNumbers(text);
         if ((text.length() & 1) != 0)
@@ -178,7 +172,7 @@ public class BarcodeInter25 extends Barcode{
     /** Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
      * @return the size the barcode occupies.
-     */    
+     */
     public Rectangle getBarcodeSize() {
         float fontX = 0;
         float fontY = 0;
@@ -201,7 +195,7 @@ public class BarcodeInter25 extends Barcode{
         float fullHeight = barHeight + fontY;
         return new Rectangle(fullWidth, fullHeight);
     }
-    
+
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
@@ -237,7 +231,7 @@ public class BarcodeInter25 extends Barcode{
      * @param barColor the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
-     */    
+     */
     public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
         String fullCode = code;
         float fontX = 0;
@@ -301,14 +295,14 @@ public class BarcodeInter25 extends Barcode{
             cb.endText();
         }
         return getBarcodeSize();
-    }   
-    
+    }
+
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
@@ -335,10 +329,10 @@ public class BarcodeInter25 extends Barcode{
                 pix[ptr++] = c;
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth); 
+            System.arraycopy(pix, 0, pix, k, fullWidth);
         }
         Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-        
+
         return img;
-    }    
+    }
 }

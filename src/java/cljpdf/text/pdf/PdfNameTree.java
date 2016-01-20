@@ -50,24 +50,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * Creates a name tree.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfNameTree {
-    
+
     private static final int leafSize = 64;
-    
+
     /**
      * Writes a name tree to a PdfWriter.
      * @param items the item of the name tree. The key is a <CODE>String</CODE>
@@ -79,7 +69,7 @@ public class PdfNameTree {
      * @throws IOException on error
      * @return the dictionary with the name tree. This dictionary is the one
      * generally pointed to by the key /Dests, for example
-     */    
+     */
     public static PdfDictionary writeTree(HashMap items, PdfWriter writer) throws IOException {
         if (items.isEmpty())
             return null;
@@ -144,7 +134,7 @@ public class PdfNameTree {
             top = tt;
         }
     }
-    
+
     private static void iterateItems(PdfDictionary dic, HashMap items) {
         PdfArray nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.NAMES));
         if (nn != null) {
@@ -160,7 +150,7 @@ public class PdfNameTree {
             }
         }
     }
-    
+
     public static HashMap readTree(PdfDictionary dic) {
         HashMap items = new HashMap();
         if (dic != null)

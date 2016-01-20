@@ -48,66 +48,21 @@
  */
 
 package cljpdf.text.pdf;
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.print.PrinterJob;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.CMYKColor;
-import cljpdf.text.pdf.ColorDetails;
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.FontDetails;
-import cljpdf.text.pdf.FontMapper;
-import cljpdf.text.pdf.GrayColor;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PatternColor;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfAppearance;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDestination;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfDocument;
-import cljpdf.text.pdf.PdfGState;
-import cljpdf.text.pdf.PdfGraphics2D;
-import cljpdf.text.pdf.PdfImage;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLayer;
-import cljpdf.text.pdf.PdfLayerMembership;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfOCG;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfOutline;
-import cljpdf.text.pdf.PdfPSXObject;
-import cljpdf.text.pdf.PdfPatternPainter;
-import cljpdf.text.pdf.PdfPrinterGraphics2D;
-import cljpdf.text.pdf.PdfShading;
-import cljpdf.text.pdf.PdfShadingPattern;
-import cljpdf.text.pdf.PdfSpotColor;
-import cljpdf.text.pdf.PdfStructureElement;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfTextArray;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.ShadingColor;
-import cljpdf.text.pdf.SpotColor;
-
-import cljpdf.text.Annotation;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
+import cljpdf.text.*;
 import cljpdf.text.Image;
-import cljpdf.text.ImgJBIG2;
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.exceptions.IllegalPdfSyntaxException;
 import cljpdf.text.pdf.internal.PdfAnnotationsImp;
 import cljpdf.text.pdf.internal.PdfXConformanceImp;
+
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.print.PrinterJob;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * <CODE>PdfContentByte</CODE> is an object containing the user positioned
@@ -229,7 +184,7 @@ public class PdfContentByte {
     /** The separator between commands.
      */
     protected int separator = '\n';
-    
+
     private int mcDepth = 0;
     private boolean inText = false;
 
@@ -1229,8 +1184,8 @@ public class PdfContentByte {
                         boolean check = true;
                         if (key.equals(PdfName.COLORSPACE) && value.isArray()) {
                             PdfArray ar = (PdfArray)value;
-                            if (ar.size() == 4 
-                                && PdfName.INDEXED.equals(ar.getAsName(0)) 
+                            if (ar.size() == 4
+                                && PdfName.INDEXED.equals(ar.getAsName(0))
                                 && ar.getPdfObject(1).isName()
                                 && ar.getPdfObject(2).isNumber()
                                 && ar.getPdfObject(3).isString()
@@ -1326,7 +1281,7 @@ public class PdfContentByte {
         state = new GraphicState();
     }
 
-    
+
     /**
      * Starts the writing of text.
      */
@@ -3143,12 +3098,12 @@ public class PdfContentByte {
     public void beginMarkedContentSequence(PdfName tag) {
         beginMarkedContentSequence(tag, null, false);
     }
-    
+
     /**
      * Checks for any dangling state: Mismatched save/restore state, begin/end text,
      * begin/end layer, or begin/end marked content sequence.
      * If found, this function will throw.  This function is called automatically
-     * during a reset() (from Document.newPage() for example), and before writing 
+     * during a reset() (from Document.newPage() for example), and before writing
      * itself out in toPdf().
      * One possible cause: not calling myPdfGraphics2D.dispose() will leave dangling
      *                     saveState() calls.

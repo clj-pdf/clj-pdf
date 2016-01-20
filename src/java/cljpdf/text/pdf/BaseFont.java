@@ -48,35 +48,16 @@
  */
 
 package cljpdf.text.pdf;
+
+import cljpdf.text.DocumentException;
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.CJKFont;
-import cljpdf.text.pdf.DocumentFont;
-import cljpdf.text.pdf.EnumerateTTC;
-import cljpdf.text.pdf.GlyphList;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.TrueTypeFont;
-import cljpdf.text.pdf.TrueTypeFontUnicode;
-import cljpdf.text.pdf.Type1Font;
-
-import cljpdf.text.DocumentException;
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * Base class for the several font types supported

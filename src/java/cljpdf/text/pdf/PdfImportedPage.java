@@ -48,22 +48,12 @@
  */
 
 package cljpdf.text.pdf;
-import java.io.IOException;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfImportedPage;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReaderInstance;
-import cljpdf.text.pdf.PdfSpotColor;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfTransparencyGroup;
-import cljpdf.text.pdf.PdfWriter;
 
 import cljpdf.text.DocumentException;
 import cljpdf.text.Image;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
 
 /** Represents an imported page.
  *
@@ -73,7 +63,7 @@ public class PdfImportedPage extends cljpdf.text.pdf.PdfTemplate {
 
     PdfReaderInstance readerInstance;
     int pageNumber;
-    
+
     PdfImportedPage(PdfReaderInstance readerInstance, PdfWriter writer, int pageNumber) {
         this.readerInstance = readerInstance;
         this.pageNumber = pageNumber;
@@ -105,11 +95,11 @@ public class PdfImportedPage extends cljpdf.text.pdf.PdfTemplate {
      * @param d dummy
      * @param e dummy
      * @param f dummy
-     * @throws DocumentException  dummy */    
+     * @throws DocumentException  dummy */
     public void addImage(Image image, float a, float b, float c, float d, float e, float f) throws DocumentException {
         throwError();
     }
-    
+
     /** Always throws an error. This operation is not allowed.
      * @param template dummy
      * @param a dummy
@@ -117,13 +107,13 @@ public class PdfImportedPage extends cljpdf.text.pdf.PdfTemplate {
      * @param c dummy
      * @param d dummy
      * @param e dummy
-     * @param f  dummy */    
+     * @param f  dummy */
     public void addTemplate(PdfTemplate template, float a, float b, float c, float d, float e, float f) {
         throwError();
     }
-    
+
     /** Always throws an error. This operation is not allowed.
-     * @return  dummy */    
+     * @return  dummy */
     public PdfContentByte getDuplicate() {
         throwError();
         return null;
@@ -139,31 +129,31 @@ public class PdfImportedPage extends cljpdf.text.pdf.PdfTemplate {
     PdfStream getFormXObject(int compressionLevel) throws IOException {
          return readerInstance.getFormXObject(pageNumber, compressionLevel);
     }
-    
+
     public void setColorFill(PdfSpotColor sp, float tint) {
         throwError();
     }
-    
+
     public void setColorStroke(PdfSpotColor sp, float tint) {
         throwError();
     }
-    
+
     PdfObject getResources() {
         return readerInstance.getResources(pageNumber);
     }
-    
+
     /** Always throws an error. This operation is not allowed.
      * @param bf dummy
-     * @param size dummy */    
+     * @param size dummy */
     public void setFontAndSize(BaseFont bf, float size) {
         throwError();
     }
-    
+
     /**
      * Always throws an error. This operation is not allowed.
      * @param group New value of property group.
      * @since	2.1.6
-     */ 
+     */
     public void setGroup(PdfTransparencyGroup group) {
         throwError();
 	}
@@ -171,7 +161,7 @@ public class PdfImportedPage extends cljpdf.text.pdf.PdfTemplate {
 	void throwError() {
         throw new RuntimeException(MessageLocalization.getComposedMessage("content.can.not.be.added.to.a.pdfimportedpage"));
     }
-    
+
     PdfReaderInstance getPdfReaderInstance() {
         return readerInstance;
     }

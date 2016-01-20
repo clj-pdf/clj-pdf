@@ -48,17 +48,14 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.image.MemoryImageSource;
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.PdfEncodings;
-
 import cljpdf.text.BadElementException;
 import cljpdf.text.Image;
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.codec.CCITTG4Encoder;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
+import java.util.ArrayList;
 
 /** Generates the 2D barcode PDF417. Supports dimensioning auto-sizing, fixed
  * and variable sizes, automatic and manual error levels, raw codeword input,
@@ -68,23 +65,23 @@ import cljpdf.text.pdf.codec.CCITTG4Encoder;
  */
 public class BarcodePDF417 {
 
-    /** Auto-size is made based on <CODE>aspectRatio</CODE> and <CODE>yHeight</CODE>. */    
+    /** Auto-size is made based on <CODE>aspectRatio</CODE> and <CODE>yHeight</CODE>. */
     public static final int PDF417_USE_ASPECT_RATIO = 0;
-    /** The size of the barcode will be at least <CODE>codeColumns*codeRows</CODE>. */    
+    /** The size of the barcode will be at least <CODE>codeColumns*codeRows</CODE>. */
     public static final int PDF417_FIXED_RECTANGLE = 1;
     /** The size will be at least <CODE>codeColumns</CODE>
      * with a variable number of <CODE>codeRows</CODE>.
-     */    
+     */
     public static final int PDF417_FIXED_COLUMNS = 2;
     /** The size will be at least <CODE>codeRows</CODE>
      * with a variable number of <CODE>codeColumns</CODE>.
-     */    
+     */
     public static final int PDF417_FIXED_ROWS = 4;
     /** The error level correction is set automatically according
      * to ISO 15438 recommendations.
-     */    
+     */
     public static final int PDF417_AUTO_ERROR_LEVEL = 0;
-    /** The error level correction is set by the user. It can be 0 to 8. */    
+    /** The error level correction is set by the user. It can be 0 to 8. */
     public static final int PDF417_USE_ERROR_LEVEL = 16;
     /**
      * One single binary segment is used
@@ -92,19 +89,19 @@ public class BarcodePDF417 {
     public static final int PDF417_FORCE_BINARY = 32;
     /** No <CODE>text</CODE> interpretation is done and the content of <CODE>codewords</CODE>
      * is used directly.
-     */    
+     */
     public static final int PDF417_USE_RAW_CODEWORDS = 64;
     /** Inverts the output bits of the raw bitmap that is normally
      * bit one for black. It has only effect for the raw bitmap.
-     */    
+     */
     public static final int PDF417_INVERT_BITMAP = 128;
     /** Use Macro PDF417 Encoding
      * @see #setMacroFileId(String)
      * @see #setMacroSegmentId(int)
      * @see #setMacroSegmentCount(int)
-     */    
+     */
     public static final int PDF417_USE_MACRO = 256;
-    
+
 
     private int macroSegmentCount=0;
     private int macroSegmentId=-1;
@@ -113,13 +110,13 @@ public class BarcodePDF417 {
     protected int bitPtr;
     protected int cwPtr;
     protected SegmentList segmentList;
-    
-    
-    /** Creates a new <CODE>BarcodePDF417</CODE> with the default settings. */    
+
+
+    /** Creates a new <CODE>BarcodePDF417</CODE> with the default settings. */
     public BarcodePDF417() {
         setDefaultParameters();
     }
-    
+
     /**
      * Sets the segment id for macro PDF417 encoding
      * @param id the id (starting at 0)
@@ -128,7 +125,7 @@ public class BarcodePDF417 {
     public void setMacroSegmentId(int id) {
         this.macroSegmentId = id;
     }
-    
+
     /**
      * Sets the segment count for macro PDF417 encoding
      * @param cnt the number of macro segments
@@ -139,28 +136,28 @@ public class BarcodePDF417 {
     }
 
     /**
-     * Sets the File ID for macro PDF417 encoding 
+     * Sets the File ID for macro PDF417 encoding
      * @param id the file id
      */
     public void setMacroFileId(String id) {
-        this.macroFileId = id;        
+        this.macroFileId = id;
     }
-       
+
     protected boolean checkSegmentType(Segment segment, char type) {
         if (segment == null)
             return false;
         return segment.type == type;
     }
-    
+
     protected int getSegmentLength(Segment segment) {
         if (segment == null)
             return 0;
         return segment.end - segment.start;
     }
-    
+
     /** Set the default settings that correspond to <CODE>PDF417_USE_ASPECT_RATIO</CODE>
      * and <CODE>PDF417_AUTO_ERROR_LEVEL</CODE>.
-     */    
+     */
     public void setDefaultParameters() {
         options = 0;
         outBits = null;
@@ -270,7 +267,7 @@ public class BarcodePDF417 {
         for (int k = 0; k < Alength; ++k)
             codewords[dest + k] = (MOD - codewords[dest + k]) % MOD;
     }
-    
+
     private static int getTextTypeAndValue(byte[] input, int maxLength, int idx) {
         if (idx >= maxLength)
             return 0;
@@ -291,11 +288,11 @@ public class BarcodePDF417 {
             return (MIXED + ms);
         return (PUNCTUATION + ps);
     }
-    
+
     protected int getTextTypeAndValue(int maxLength, int idx) {
         return getTextTypeAndValue(text, maxLength,idx);
     }
-    
+
     private void textCompaction(byte[] input, int start, int length) {
         int dest[] = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
         int mode = ALPHA;
@@ -465,9 +462,9 @@ public class BarcodePDF417 {
         for (k = start; k < length; k += 44) {
             size = length - k < 44 ? length - k : 44;
             basicNumberCompaction(input, k, size);
-        }        
         }
-    
+        }
+
     protected void numberCompaction(int start, int length) {
         numberCompaction(text, start, length);
     }
@@ -525,7 +522,7 @@ public class BarcodePDF417 {
         Segment v;
         Segment vp;
         Segment vn;
-        
+
         if ((options & PDF417_FORCE_BINARY) != 0) {
             segmentList.add('B', 0, textLength);
             return;
@@ -583,7 +580,7 @@ public class BarcodePDF417 {
             vp = segmentList.get(k - 1);
             vn = segmentList.get(k + 1);
             if (checkSegmentType(v, 'B') && getSegmentLength(v) == 1) {
-                if (checkSegmentType(vp, 'T') && checkSegmentType(vn, 'T') 
+                if (checkSegmentType(vp, 'T') && checkSegmentType(vn, 'T')
                     && getSegmentLength(vp) + getSegmentLength(vn) >= 3) {
                     vp.end = vn.end;
                     segmentList.remove(k);
@@ -682,7 +679,7 @@ public class BarcodePDF417 {
         }
 
     }
-    
+
     private void macroCodes() {
         if (macroSegmentId < 0) {
             throw new IllegalStateException(MessageLocalization.getComposedMessage("macrosegmentid.must.be.gt.eq.0"));
@@ -697,34 +694,34 @@ public class BarcodePDF417 {
         macroIndex = cwPtr;
         codewords[cwPtr++] = MACRO_SEGMENT_ID;
         append(macroSegmentId, 5);
-            
+
         if (macroFileId != null) {
             append(macroFileId);
         }
-                
+
         if (macroSegmentId >= macroSegmentCount-1) {
             codewords[cwPtr++] = MACRO_LAST_SEGMENT;
         }
-        
+
     }
-    
+
     private void append(int in, int len) {
         StringBuffer sb = new StringBuffer(len+1);
         sb.append(Integer.toString(in));
         for(int i = sb.length(); i < len; i++) {
             sb.insert(0, "0");
         }
-    
+
         byte[] bytes = PdfEncodings.convertToBytes(sb.toString(), "cp437");
         numberCompaction(bytes, 0, bytes.length);
-    }    
-    
+    }
+
     private void append(String s) {
         byte[] bytes = PdfEncodings.convertToBytes(s, "cp437");
         textCompaction(bytes, 0, bytes.length);
-    }    
-    
-    
+    }
+
+
     protected static int maxPossibleErrorLevel(int remain) {
         int level = 8;
         int size = 512;
@@ -768,7 +765,7 @@ public class BarcodePDF417 {
         return MAX_DATA_CODEWORDS + 2;
     }
 
-    /** Paints the barcode. If no exception was thrown a valid barcode is available. */    
+    /** Paints the barcode. If no exception was thrown a valid barcode is available. */
     public void paintCode() {
         int maxErr, lenErr, tot, pad;
         if ((options & PDF417_USE_RAW_CODEWORDS) != 0) {
@@ -889,7 +886,7 @@ public class BarcodePDF417 {
      * to have the right printing aspect.
      * @return the barcode <CODE>Image</CODE>
      * @throws BadElementException on error
-     */    
+     */
     public Image getImage() throws BadElementException {
         paintCode();
         byte g4[] = CCITTG4Encoder.compress(outBits, bitColumns, codeRows);
@@ -900,7 +897,7 @@ public class BarcodePDF417 {
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
@@ -923,11 +920,11 @@ public class BarcodePDF417 {
             }
             ptr += bitColumns * (h - 1);
         }
-        
+
         java.awt.Image img = canvas.createImage(new MemoryImageSource(bitColumns, codeRows * h, pix, 0, bitColumns));
         return img;
     }
-    
+
     /** Gets the raw image bits of the barcode. The image will have to
      * be scaled in the Y direction by <CODE>yHeight</CODE>.
      * @return The raw barcode image
@@ -935,14 +932,14 @@ public class BarcodePDF417 {
     public byte[] getOutBits() {
         return this.outBits;
     }
-    
+
     /** Gets the number of X pixels of <CODE>outBits</CODE>.
      * @return the number of X pixels of <CODE>outBits</CODE>
      */
     public int getBitColumns() {
         return this.bitColumns;
     }
-    
+
     /** Gets the number of Y pixels of <CODE>outBits</CODE>.
      * It is also the number of rows in the barcode.
      * @return the number of Y pixels of <CODE>outBits</CODE>
@@ -950,7 +947,7 @@ public class BarcodePDF417 {
     public int getCodeRows() {
         return this.codeRows;
     }
-    
+
     /** Sets the number of barcode rows. This number may be changed
      * to keep the barcode valid.
      * @param codeRows the number of barcode rows
@@ -958,14 +955,14 @@ public class BarcodePDF417 {
     public void setCodeRows(int codeRows) {
         this.codeRows = codeRows;
     }
-    
+
     /** Gets the number of barcode data columns.
      * @return he number of barcode data columns
      */
     public int getCodeColumns() {
         return this.codeColumns;
     }
-    
+
     /** Sets the number of barcode data columns.
      * This number may be changed to keep the barcode valid.
      * @param codeColumns the number of barcode data columns
@@ -973,7 +970,7 @@ public class BarcodePDF417 {
     public void setCodeColumns(int codeColumns) {
         this.codeColumns = codeColumns;
     }
-    
+
     /** Gets the codeword array. This array is always 928 elements long.
      * It can be written to if the option <CODE>PDF417_USE_RAW_CODEWORDS</CODE>
      * is set.
@@ -982,21 +979,21 @@ public class BarcodePDF417 {
     public int[] getCodewords() {
         return this.codewords;
     }
-    
+
     /** Gets the length of the codewords.
      * @return the length of the codewords
      */
     public int getLenCodewords() {
         return this.lenCodewords;
     }
-    
+
     /** Sets the length of the codewords.
      * @param lenCodewords the length of the codewords
      */
     public void setLenCodewords(int lenCodewords) {
         this.lenCodewords = lenCodewords;
     }
-    
+
     /** Gets the error level correction used for the barcode. It may different
      * from the previously set value.
      * @return the error level correction used for the barcode
@@ -1004,14 +1001,14 @@ public class BarcodePDF417 {
     public int getErrorLevel() {
         return this.errorLevel;
     }
-    
+
     /** Sets the error level correction for the barcode.
      * @param errorLevel the error level correction for the barcode
      */
     public void setErrorLevel(int errorLevel) {
         this.errorLevel = errorLevel;
     }
-    
+
     /** Gets the bytes that form the barcode. This bytes should
      * be interpreted in the codepage Cp437.
      * @return the bytes that form the barcode
@@ -1019,7 +1016,7 @@ public class BarcodePDF417 {
     public byte[] getText() {
         return this.text;
     }
-    
+
     /** Sets the bytes that form the barcode. This bytes should
      * be interpreted in the codepage Cp437.
      * @param text the bytes that form the barcode
@@ -1027,22 +1024,22 @@ public class BarcodePDF417 {
     public void setText(byte[] text) {
         this.text = text;
     }
-    
+
     /** Sets the text that will form the barcode. This text is converted
      * to bytes using the encoding Cp437.
      * @param s the text that will form the barcode
-     */    
+     */
     public void setText(String s) {
         this.text = PdfEncodings.convertToBytes(s, "cp437");
     }
-    
+
     /** Gets the options to generate the barcode.
      * @return the options to generate the barcode
      */
     public int getOptions() {
         return this.options;
     }
-    
+
     /** Sets the options to generate the barcode. This can be all
      * the <CODE>PDF417_*</CODE> constants.
      * @param options the options to generate the barcode
@@ -1050,14 +1047,14 @@ public class BarcodePDF417 {
     public void setOptions(int options) {
         this.options = options;
     }
-    
+
     /** Gets the barcode aspect ratio.
      * @return the barcode aspect ratio
      */
     public float getAspectRatio() {
         return this.aspectRatio;
     }
-    
+
     /** Sets the barcode aspect ratio. A ratio or 0.5 will make the
      * barcode width twice as large as the height.
      * @param aspectRatio the barcode aspect ratio
@@ -1065,21 +1062,21 @@ public class BarcodePDF417 {
     public void setAspectRatio(float aspectRatio) {
         this.aspectRatio = aspectRatio;
     }
-    
+
     /** Gets the Y pixel height relative to X.
      * @return the Y pixel height relative to X
      */
     public float getYHeight() {
         return this.yHeight;
     }
-    
+
     /** Sets the Y pixel height relative to X. It is usually 3.
      * @param yHeight the Y pixel height relative to X
      */
     public void setYHeight(float yHeight) {
         this.yHeight = yHeight;
     }
-    
+
     protected static final int START_PATTERN = 0x1fea8;
     protected static final int STOP_PATTERN = 0x3fa29;
     protected static final int START_CODE_SIZE = 17;
@@ -1467,7 +1464,7 @@ public class BarcodePDF417 {
         0x10396, 0x107b6, 0x187d4, 0x187d2, 0x10794, 0x10fb4, 0x10792, 0x10fb2,
         0x1c7ea
     }};
-    
+
     private static final int ERROR_LEVEL[][] =
     {{
          27, 917
@@ -1545,55 +1542,55 @@ public class BarcodePDF417 {
         407, 164, 332, 899, 165, 726, 600, 325, 498, 655, 357, 752, 768, 223, 849, 647,
         63, 310, 863, 251, 366, 304, 282, 738, 675, 410, 389, 244, 31, 121, 303, 263
     }};
-    
+
     /** Holds value of property outBits. */
     private byte[] outBits;
-    
+
     /** Holds value of property bitColumns. */
     private int bitColumns;
-    
+
     /** Holds value of property codeRows. */
     private int codeRows;
-    
+
     /** Holds value of property codeColumns. */
     private int codeColumns;
-    
+
     /** Holds value of property codewords. */
     private int[] codewords = new int[MAX_DATA_CODEWORDS + 2];
-    
+
     /** Holds value of property lenCodewords. */
     private int lenCodewords;
-    
+
     /** Holds value of property errorLevel. */
     private int errorLevel;
-    
+
     /** Holds value of property text. */
     private byte[] text;
-    
+
     /** Holds value of property options. */
     private int options;
-    
+
     /** Holds value of property aspectRatio. */
     private float aspectRatio;
-    
+
     /** Holds value of property yHeight. */
     private float yHeight;
-    
+
     protected static class Segment {
         public char type;
         public int start;
         public int end;
-        
+
         public Segment(char type, int start, int end) {
             this.type = type;
             this.start = start;
             this.end = end;
         }
     }
-    
+
     protected static class SegmentList {
         protected ArrayList list = new ArrayList();
-        
+
         public void add(char type, int start, int end) {
             list.add(new Segment(type, start, end));
         }
@@ -1609,7 +1606,7 @@ public class BarcodePDF417 {
                 return;
             list.remove(idx);
         }
-        
+
         public int size() {
             return list.size();
         }

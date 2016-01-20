@@ -49,25 +49,12 @@
 
 package cljpdf.text;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-
-import cljpdf.text.ChapterAutoNumber;
-import cljpdf.text.DocListener;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Header;
-import cljpdf.text.HeaderFooter;
-import cljpdf.text.LargeElement;
-import cljpdf.text.Meta;
-import cljpdf.text.PageSize;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Table;
-
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * A generic Document class.
@@ -92,8 +79,8 @@ import cljpdf.text.error_messages.MessageLocalization;
  *
  * <PRE>// creation of the document with a certain size and certain margins
  * <STRONG>Document document = new Document(PageSize.A4, 50, 50, 50, 50);
- * </STRONG> try { 
- *   // creation of the different writers 
+ * </STRONG> try {
+ *   // creation of the different writers
  *   HtmlWriter.getInstance(<STRONG>document </STRONG>, System.out);
  *   PdfWriter.getInstance(<STRONG>document </STRONG>, new FileOutputStream("text.pdf"));
  *   // we add some meta information to the document
@@ -107,12 +94,12 @@ import cljpdf.text.error_messages.MessageLocalization;
  *  }
  *  <STRONG>document.close();</STRONG>
  * </PRE>
- * 
+ *
  * </BLOCKQUOTE>
  */
 
 public class Document implements DocListener {
-    
+
     // membervariables
     /**
      * This constant may only be changed by Paulo Soares and/or Bruno Lowagie.
@@ -126,57 +113,57 @@ public class Document implements DocListener {
 	private static final String RELEASE = "4.2.0";
 	/** This constant may only be changed by Paulo Soares and/or Bruno Lowagie. */
 	private static final String ITEXT_VERSION = ITEXT + " " + RELEASE + " by 1T3XT";
-    
+
 	/**
 	 * Allows the pdf documents to be produced without compression for debugging
 	 * purposes.
 	 */
-    public static boolean compress = true; 
-    
+    public static boolean compress = true;
+
 	/**
 	 * When true the file access is not done through a memory mapped file. Use it if the file
      * is too big to be mapped in your address space.
 	 */
-    public static boolean plainRandomAccess = false; 
- 
+    public static boolean plainRandomAccess = false;
+
     /** Scales the WMF font size. The default value is 0.86. */
     public static float wmfFontCorrection = 0.86f;
-    
+
 	/** The DocListener. */
     private ArrayList listeners = new ArrayList();
-    
+
 	/** Is the document open or not? */
     protected boolean open;
-    
+
 	/** Has the document already been closed? */
     protected boolean close;
-    
+
     // membervariables concerning the layout
-    
+
 	/** The size of the page. */
     protected Rectangle pageSize;
-    
+
 	/** margin in x direction starting from the left */
     protected float marginLeft = 0;
-    
+
 	/** margin in x direction starting from the right */
     protected float marginRight = 0;
-    
+
 	/** margin in y direction starting from the top */
     protected float marginTop = 0;
-    
+
 	/** margin in y direction starting from the bottom */
     protected float marginBottom = 0;
-    
+
     /** mirroring of the left/right margins */
     protected boolean marginMirroring = false;
-    
+
     /**
      * mirroring of the top/bottom margins
      * @since	2.1.6
      */
     protected boolean marginMirroringTopBottom = false;
-    
+
 	/** Content of JavaScript onLoad function */
     protected String javaScript_onLoad = null;
 
@@ -187,40 +174,40 @@ public class Document implements DocListener {
     protected String htmlStyleClass = null;
 
     // headers, footers
-    
+
 	/** Current pagenumber */
     protected int pageN = 0;
-    
+
 	/** This is the textual part of a Page; it can contain a header */
     protected HeaderFooter header = null;
-    
+
 	/** This is the textual part of the footer */
     protected HeaderFooter footer = null;
-    
+
     /** This is a chapter number in case ChapterAutoNumber is used. */
     protected int chapternumber = 0;
-    
+
     // constructor
-    
+
 	/**
 	 * Constructs a new <CODE>Document</CODE> -object.
  */
-    
+
     public Document() {
         this(PageSize.A4);
     }
-    
+
 	/**
 	 * Constructs a new <CODE>Document</CODE> -object.
  *
 	 * @param pageSize
 	 *            the pageSize
  */
-    
+
     public Document(Rectangle pageSize) {
         this(pageSize, 36, 36, 36, 36);
     }
-    
+
 	/**
 	 * Constructs a new <CODE>Document</CODE> -object.
  *
@@ -235,7 +222,7 @@ public class Document implements DocListener {
 	 * @param marginBottom
 	 *            the margin on the bottom
  */
-    
+
 	public Document(Rectangle pageSize, float marginLeft, float marginRight,
 			float marginTop, float marginBottom) {
         this.pageSize = pageSize;
@@ -244,33 +231,33 @@ public class Document implements DocListener {
         this.marginTop = marginTop;
         this.marginBottom = marginBottom;
     }
-    
+
     // listener methods
-    
+
 	/**
  * Adds a <CODE>DocListener</CODE> to the <CODE>Document</CODE>.
  *
 	 * @param listener
 	 *            the new DocListener.
  */
-    
+
     public void addDocListener(DocListener listener) {
         listeners.add(listener);
     }
-    
+
 	/**
  * Removes a <CODE>DocListener</CODE> from the <CODE>Document</CODE>.
  *
 	 * @param listener
 	 *            the DocListener that has to be removed.
  */
-    
+
     public void removeDocListener(DocListener listener) {
         listeners.remove(listener);
     }
-    
+
     // methods implementing the DocListener interface
-    
+
 	/**
 	 * Adds an <CODE>Element</CODE> to the <CODE>Document</CODE>.
  *
@@ -281,7 +268,7 @@ public class Document implements DocListener {
 	 * @throws DocumentException
 	 *             when a document isn't open yet, or has been closed
  */
-    
+
     public boolean add(Element element) throws DocumentException {
         if (close) {
 			throw new DocumentException(MessageLocalization.getComposedMessage("the.document.has.been.closed.you.can.t.add.any.elements"));
@@ -305,7 +292,7 @@ public class Document implements DocListener {
 		}
         return success;
     }
-    
+
 	/**
  * Opens the document.
  * <P>
@@ -313,7 +300,7 @@ public class Document implements DocListener {
 	 * Meta-information anymore. You have to open the document before you can
 	 * begin to add content to the body of the document.
  */
-    
+
     public void open() {
 		if (!close) {
             open = true;
@@ -327,7 +314,7 @@ public class Document implements DocListener {
             listener.open();
         }
     }
-    
+
 	/**
  * Sets the pagesize.
  *
@@ -335,7 +322,7 @@ public class Document implements DocListener {
 	 *            the new pagesize
  * @return	a <CODE>boolean</CODE>
  */
-    
+
     public boolean setPageSize(Rectangle pageSize) {
         this.pageSize = pageSize;
         DocListener listener;
@@ -345,7 +332,7 @@ public class Document implements DocListener {
         }
         return true;
     }
-    
+
 	/**
  * Sets the margins.
  *
@@ -359,7 +346,7 @@ public class Document implements DocListener {
 	 *            the margin on the bottom
  * @return	a <CODE>boolean</CODE>
  */
-    
+
 	public boolean setMargins(float marginLeft, float marginRight,
 			float marginTop, float marginBottom) {
         this.marginLeft = marginLeft;
@@ -374,14 +361,14 @@ public class Document implements DocListener {
         }
         return true;
     }
-    
+
 	/**
  * Signals that an new page has to be started.
  *
 	 * @return <CODE>true</CODE> if the page was added, <CODE>false</CODE>
 	 *         if not.
  */
-    
+
     public boolean newPage() {
         if (!open || close) {
             return false;
@@ -393,14 +380,14 @@ public class Document implements DocListener {
         }
         return true;
     }
-    
+
 	/**
  * Changes the header of this document.
  *
 	 * @param header
 	 *            the new header
  */
-    
+
     public void setHeader(HeaderFooter header) {
         this.header = header;
         DocListener listener;
@@ -409,11 +396,11 @@ public class Document implements DocListener {
             listener.setHeader(header);
         }
     }
-    
+
 	/**
  * Resets the header of this document.
  */
-    
+
     public void resetHeader() {
         this.header = null;
         DocListener listener;
@@ -422,14 +409,14 @@ public class Document implements DocListener {
             listener.resetHeader();
         }
     }
-    
+
 	/**
  * Changes the footer of this document.
  *
 	 * @param footer
 	 *            the new footer
  */
-    
+
     public void setFooter(HeaderFooter footer) {
         this.footer = footer;
         DocListener listener;
@@ -438,11 +425,11 @@ public class Document implements DocListener {
             listener.setFooter(footer);
         }
     }
-    
+
 	/**
  * Resets the footer of this document.
  */
-    
+
     public void resetFooter() {
         this.footer = null;
         DocListener listener;
@@ -451,11 +438,11 @@ public class Document implements DocListener {
             listener.resetFooter();
         }
     }
-    
+
 	/**
  * Sets the page number to 0.
  */
-    
+
     public void resetPageCount() {
         pageN = 0;
         DocListener listener;
@@ -464,14 +451,14 @@ public class Document implements DocListener {
             listener.resetPageCount();
         }
     }
-    
+
 	/**
  * Sets the page number.
  *
 	 * @param pageN
 	 *            the new page number
  */
-    
+
     public void setPageCount(int pageN) {
         this.pageN = pageN;
         DocListener listener;
@@ -480,24 +467,24 @@ public class Document implements DocListener {
             listener.setPageCount(pageN);
         }
     }
-    
+
 	/**
  * Returns the current page number.
  *
  * @return the current page number
  */
-    
+
     public int getPageNumber() {
         return this.pageN;
     }
-    
+
 	/**
  * Closes the document.
  * <P>
 	 * Once all the content has been written in the body, you have to close the
 	 * body. After that nothing can be written to the body anymore.
  */
-    
+
     public void close() {
 		if (!close) {
             open = false;
@@ -509,9 +496,9 @@ public class Document implements DocListener {
             listener.close();
         }
     }
-    
+
     // methods concerning the header or some meta information
-    
+
 	/**
  * Adds a user defined header to the document.
  *
@@ -521,7 +508,7 @@ public class Document implements DocListener {
 	 *            the content of the header
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addHeader(String name, String content) {
         try {
             return add(new Header(name, content));
@@ -529,7 +516,7 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the title to a Document.
  *
@@ -537,7 +524,7 @@ public class Document implements DocListener {
 	 *            the title
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addTitle(String title) {
         try {
             return add(new Meta(Element.TITLE, title));
@@ -545,7 +532,7 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the subject to a Document.
  *
@@ -553,7 +540,7 @@ public class Document implements DocListener {
 	 *            the subject
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addSubject(String subject) {
         try {
             return add(new Meta(Element.SUBJECT, subject));
@@ -561,7 +548,7 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the keywords to a Document.
  *
@@ -569,7 +556,7 @@ public class Document implements DocListener {
 	 *            adds the keywords to the document
  * @return <CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addKeywords(String keywords) {
         try {
             return add(new Meta(Element.KEYWORDS, keywords));
@@ -577,7 +564,7 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the author to a Document.
  *
@@ -585,7 +572,7 @@ public class Document implements DocListener {
 	 *            the name of the author
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addAuthor(String author) {
         try {
             return add(new Meta(Element.AUTHOR, author));
@@ -593,7 +580,7 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the creator to a Document.
  *
@@ -601,7 +588,7 @@ public class Document implements DocListener {
 	 *            the name of the creator
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addCreator(String creator) {
         try {
             return add(new Meta(Element.CREATOR, creator));
@@ -609,13 +596,13 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the producer to a Document.
  *
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addProducer() {
         try {
             return add(new Meta(Element.PRODUCER, getVersion()));
@@ -623,13 +610,13 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
 	/**
  * Adds the current date and time to a Document.
  *
  * @return	<CODE>true</CODE> if successful, <CODE>false</CODE> otherwise
  */
-    
+
     public boolean addCreationDate() {
         try {
 			/* bugfix by 'taqua' (Thomas) */
@@ -640,89 +627,89 @@ public class Document implements DocListener {
             throw new ExceptionConverter(de);
         }
     }
-    
+
     // methods to get the layout of the document.
-    
+
 	/**
  * Returns the left margin.
  *
  * @return	the left margin
  */
-    
+
     public float leftMargin() {
         return marginLeft;
     }
-    
+
 	/**
  * Return the right margin.
  *
  * @return	the right margin
  */
-    
+
     public float rightMargin() {
         return marginRight;
     }
-    
+
 	/**
  * Returns the top margin.
  *
  * @return	the top margin
  */
-    
+
     public float topMargin() {
         return marginTop;
     }
-    
+
 	/**
  * Returns the bottom margin.
  *
  * @return	the bottom margin
  */
-    
+
     public float bottomMargin() {
         return marginBottom;
     }
-    
+
 	/**
  * Returns the lower left x-coordinate.
  *
  * @return	the lower left x-coordinate
  */
-    
+
     public float left() {
         return pageSize.getLeft(marginLeft);
     }
-    
+
 	/**
  * Returns the upper right x-coordinate.
  *
  * @return	the upper right x-coordinate
  */
-    
+
     public float right() {
         return pageSize.getRight(marginRight);
     }
-    
+
 	/**
  * Returns the upper right y-coordinate.
  *
  * @return	the upper right y-coordinate
  */
-    
+
     public float top() {
         return pageSize.getTop(marginTop);
     }
-    
+
 	/**
  * Returns the lower left y-coordinate.
  *
  * @return	the lower left y-coordinate
  */
-    
+
     public float bottom() {
         return pageSize.getBottom(marginBottom);
     }
-    
+
 	/**
  * Returns the lower left x-coordinate considering a given margin.
  *
@@ -730,11 +717,11 @@ public class Document implements DocListener {
 	 *            a margin
  * @return	the lower left x-coordinate
  */
-    
+
     public float left(float margin) {
         return pageSize.getLeft(marginLeft + margin);
     }
-    
+
 	/**
  * Returns the upper right x-coordinate, considering a given margin.
  *
@@ -742,11 +729,11 @@ public class Document implements DocListener {
 	 *            a margin
  * @return	the upper right x-coordinate
  */
-    
+
     public float right(float margin) {
         return pageSize.getRight(marginRight + margin);
     }
-    
+
 	/**
  * Returns the upper right y-coordinate, considering a given margin.
  *
@@ -754,11 +741,11 @@ public class Document implements DocListener {
 	 *            a margin
  * @return	the upper right y-coordinate
  */
-    
+
     public float top(float margin) {
         return pageSize.getTop(marginTop + margin);
     }
-    
+
 	/**
  * Returns the lower left y-coordinate, considering a given margin.
  *
@@ -766,55 +753,55 @@ public class Document implements DocListener {
 	 *            a margin
  * @return	the lower left y-coordinate
  */
-    
+
     public float bottom(float margin) {
         return pageSize.getBottom(marginBottom + margin);
     }
-    
+
 	/**
  * Gets the pagesize.
-	 * 
+	 *
  * @return the page size
  */
-    
+
 	public Rectangle getPageSize() {
         return this.pageSize;
     }
-    
+
 	/**
 	 * Checks if the document is open.
-	 * 
+	 *
      * @return <CODE>true</CODE> if the document is open
-     */    
+     */
     public boolean isOpen() {
         return open;
     }
-    
+
 	/**
 	 * Gets the product name.
 	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @return the product name
      * @since	2.1.6
-     */    
+     */
     public static final String getProduct() {
         return ITEXT;
     }
-    
+
 	/**
 	 * Gets the release number.
 	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @return the product name
      * @since	2.1.6
-     */    
+     */
     public static final String getRelease() {
         return RELEASE;
     }
-    
+
 	/**
 	 * Gets the iText version.
 	 * This method may only be changed by Paulo Soares and/or Bruno Lowagie.
      * @return iText version
-     */    
+     */
     public static final String getVersion() {
         return ITEXT_VERSION;
     }
@@ -825,14 +812,14 @@ public class Document implements DocListener {
 	 * @param code
 	 *            the JavaScript code to be executed on load of the HTML page
  */
-    
+
     public void setJavaScript_onLoad(String code) {
         this.javaScript_onLoad = code;
     }
 
 	/**
  * Gets the JavaScript onLoad command.
-	 * 
+	 *
  * @return the JavaScript onLoad command
  */
 
@@ -846,14 +833,14 @@ public class Document implements DocListener {
 	 * @param code
 	 *            the JavaScript code to be executed on unload of the HTML page
  */
-    
+
     public void setJavaScript_onUnLoad(String code) {
         this.javaScript_onUnLoad = code;
     }
 
 	/**
  * Gets the JavaScript onUnLoad command.
-	 * 
+	 *
  * @return the JavaScript onUnLoad command
  */
 
@@ -867,7 +854,7 @@ public class Document implements DocListener {
 	 * @param htmlStyleClass
 	 *            the style class for the HTML body tag
  */
-    
+
     public void setHtmlStyleClass(String htmlStyleClass) {
         this.htmlStyleClass = htmlStyleClass;
     }
@@ -877,20 +864,20 @@ public class Document implements DocListener {
  *
  * @return		the style class of the HTML body tag
  */
-    
+
     public String getHtmlStyleClass() {
         return this.htmlStyleClass;
     }
-    
+
     /**
      * Set the margin mirroring. It will mirror right/left margins for odd/even pages.
      * <p>
      * Note: it will not work with {@link Table}.
-	 * 
+	 *
 	 * @param marginMirroring
 	 *            <CODE>true</CODE> to mirror the margins
      * @return always <CODE>true</CODE>
-     */    
+     */
     public boolean setMarginMirroring(boolean marginMirroring) {
         this.marginMirroring = marginMirroring;
         DocListener listener;
@@ -900,17 +887,17 @@ public class Document implements DocListener {
         }
         return true;
     }
-    
+
     /**
      * Set the margin mirroring. It will mirror top/bottom margins for odd/even pages.
      * <p>
      * Note: it will not work with {@link Table}.
-	 * 
+	 *
 	 * @param marginMirroringTopBottom
 	 *            <CODE>true</CODE> to mirror the margins
      * @return always <CODE>true</CODE>
      * @since	2.1.6
-     */    
+     */
     public boolean setMarginMirroringTopBottom(boolean marginMirroringTopBottom) {
         this.marginMirroringTopBottom = marginMirroringTopBottom;
         DocListener listener;
@@ -920,12 +907,12 @@ public class Document implements DocListener {
         }
         return true;
     }
-    
+
     /**
      * Gets the margin mirroring flag.
-	 * 
+	 *
      * @return the margin mirroring flag
-     */    
+     */
     public boolean isMarginMirroring() {
         return marginMirroring;
     }

@@ -49,9 +49,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Element;
-import cljpdf.text.Meta;
-
 /**
  * This is an <CODE>Element</CODE> that contains
  * some user defined meta information about the document.
@@ -66,26 +63,26 @@ import cljpdf.text.Meta;
  */
 
 public class Header extends Meta {
-    
+
     // membervariables
-    
+
 	/** This is the content of this chunk of text. */
     private StringBuffer name;
-    
+
     // constructors
-    
+
     /**
      * Constructs a <CODE>Meta</CODE>.
      *
      * @param	name		the name of the meta-information
      * @param	content		the content
      */
-    
+
     public Header(String name, String content) {
         super(Element.HEADER, content);
         this.name = new StringBuffer(name);
     }
-    
+
     // methods to retrieve information
 
 	/**

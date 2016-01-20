@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.GrayColor;
-
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)
@@ -61,7 +58,7 @@ public class GrayColor extends ExtendedColor {
     private static final long serialVersionUID = -6571835680819282746L;
 
 	private float gray;
-    
+
     public static final GrayColor GRAYBLACK = new GrayColor(0f);
     public static final GrayColor GRAYWHITE = new GrayColor(1f);
 
@@ -73,7 +70,7 @@ public class GrayColor extends ExtendedColor {
         super(TYPE_GRAY, floatGray, floatGray, floatGray);
         gray = normalize(floatGray);
     }
-    
+
     public float getGray() {
         return gray;
     }
@@ -81,9 +78,9 @@ public class GrayColor extends ExtendedColor {
     public boolean equals(Object obj) {
         return obj instanceof GrayColor && ((GrayColor)obj).gray == this.gray;
     }
-    
+
     public int hashCode() {
         return Float.floatToIntBits(gray);
     }
-    
+
 }

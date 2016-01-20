@@ -46,29 +46,11 @@
  */
 package cljpdf.text.pdf.parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
-
-import cljpdf.text.pdf.parser.ContentOperator;
-import cljpdf.text.pdf.parser.GraphicsState;
-import cljpdf.text.pdf.parser.Matrix;
-import cljpdf.text.pdf.parser.PdfContentStreamProcessor;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.CMapAwareDocumentFont;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRTokeniser;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentParser;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfString;
+import cljpdf.text.pdf.*;
+
+import java.util.*;
 
 /**
  * Processor for a PDF content Stream.
@@ -88,11 +70,11 @@ public class PdfContentStreamProcessor {
     private Matrix textLineMatrix;
     /** A list of listeners that will be notified of render events */
     final private RenderListener renderListener;
-    
+
     /**
      * Creates a new PDF Content Stream Processor that will send it's output to the
      * designated render listener.
-     * 
+     *
      * @param renderListener the {@link AbstractRenderListener} that will receive rendering notifications
      */
     public PdfContentStreamProcessor(RenderListener renderListener) {
@@ -106,12 +88,12 @@ public class PdfContentStreamProcessor {
      */
     private void populateOperators(){
         operators = new HashMap();
-        
+
         registerContentOperator("q", new PushGraphicsState());
         registerContentOperator("Q", new PopGraphicsState());
         registerContentOperator("cm", new ModifyCurrentTransformationMatrix());
         registerContentOperator("gs", new ProcessGraphicsStateResource());
-        
+
         SetTextCharacterSpacing tcOperator = new SetTextCharacterSpacing();
         registerContentOperator("Tc", tcOperator);
         SetTextWordSpacing twOperator = new SetTextWordSpacing();
@@ -122,7 +104,7 @@ public class PdfContentStreamProcessor {
         registerContentOperator("Tf", new SetTextFont());
         registerContentOperator("Tr", new SetTextRenderMode());
         registerContentOperator("Ts", new SetTextRise());
-        
+
         registerContentOperator("BT", new BeginText());
         registerContentOperator("ET", new EndText());
 
@@ -140,7 +122,7 @@ public class PdfContentStreamProcessor {
         registerContentOperator("\"", new MoveNextLineAndShowTextWithSpacing(twOperator, tcOperator, tickOperator));
         registerContentOperator("TJ", new ShowTextArray());
     }
-    
+
     /**
      * Registers a content operator that will be called when the specified operator string is encountered during content processing.
      * Each operator may be registered only once (it is not legal to have multiple operators with the same operatorString)
@@ -153,7 +135,7 @@ public class PdfContentStreamProcessor {
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("operator.1.already.registered", operatorString));
         operators.put(operatorString, operator);
     }
-    
+
     /**
      * Resets the graphics state stack, matrices and resources.
      */
@@ -164,7 +146,7 @@ public class PdfContentStreamProcessor {
         textLineMatrix = null;
         resources = null;
     }
-    
+
     /**
      * Returns the current graphics state.
      * @return	the graphics state
@@ -172,7 +154,7 @@ public class PdfContentStreamProcessor {
     private GraphicsState gs(){
         return (GraphicsState)gsStack.peek();
     }
-    
+
     /**
      * Returns the current text matrix.
      * @return	the text matrix
@@ -181,7 +163,7 @@ public class PdfContentStreamProcessor {
     private Matrix getCurrentTextMatrix(){
         return textMatrix;
     }
-    
+
     /**
      * Returns the current line matrix.
      * @return	the line matrix
@@ -190,7 +172,7 @@ public class PdfContentStreamProcessor {
     private Matrix getCurrentTextLineMatrix(){
         return textLineMatrix;
     }
-    
+
     /**
      * Invokes an operator.
      * @param operator	the PDF Syntax of the operator
@@ -202,7 +184,7 @@ public class PdfContentStreamProcessor {
             //System.out.println("Skipping operator " + operator);
             return;
         }
-        
+
         op.invoke(this, operator, operands);
     }
 
@@ -217,38 +199,38 @@ public class PdfContentStreamProcessor {
         byte[] bytes = in.getBytes();
         return gs().font.decode(bytes, 0, bytes.length);
     }
-    
+
     /**
      * Displays text.
      * @param string	the text to display
      */
     private void displayPdfString(PdfString string){
         String unicode = decode(string);
-        
+
         TextRenderInfo renderInfo = new TextRenderInfo(unicode, gs(), textMatrix);
 
         renderListener.renderText(renderInfo);
 
         textMatrix = new Matrix(renderInfo.getUnscaledWidth(), 0).multiply(textMatrix);
     }
-    
+
     /**
      * Adjusts the text matrix for the specified adjustment value (see TJ operator in the PDF spec for information)
      * @param tj the text adjustment
      */
     private void applyTextAdjust(float tj){
         float adjustBy = -tj/1000f * gs().fontSize * gs().horizontalScaling;
-        
+
         textMatrix = new Matrix(adjustBy, 0).multiply(textMatrix);
     }
-    
+
     /**
      * Processes PDF syntax
      * @param contentBytes	the bytes of a content stream
      * @param resources		the resources that come with the content stream
      */
     public void processContent(byte[] contentBytes, PdfDictionary resources){
-        
+
         reset();
         this.resources = resources;
         try {
@@ -258,14 +240,14 @@ public class PdfContentStreamProcessor {
                 PdfLiteral operator = (PdfLiteral)operands.get(operands.size()-1);
                 invokeOperator(operator, operands);
             }
-            
+
         }
         catch (Exception e) {
             throw new ExceptionConverter(e);
-        }    
-        
+        }
+
     }
-    
+
 
     /**
      * A content operator implementation (TJ).
@@ -295,18 +277,18 @@ public class PdfContentStreamProcessor {
         private final SetTextWordSpacing setTextWordSpacing;
         private final SetTextCharacterSpacing setTextCharacterSpacing;
         private final MoveNextLineAndShowText moveNextLineAndShowText;
-        
+
         public MoveNextLineAndShowTextWithSpacing(SetTextWordSpacing setTextWordSpacing, SetTextCharacterSpacing setTextCharacterSpacing, MoveNextLineAndShowText moveNextLineAndShowText) {
             this.setTextWordSpacing = setTextWordSpacing;
             this.setTextCharacterSpacing = setTextCharacterSpacing;
             this.moveNextLineAndShowText = moveNextLineAndShowText;
         }
-        
+
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             PdfNumber aw = (PdfNumber)operands.get(0);
             PdfNumber ac = (PdfNumber)operands.get(1);
             PdfString string = (PdfString)operands.get(2);
-            
+
             ArrayList twOperands = new ArrayList(1);
             twOperands.add(0, aw);
             setTextWordSpacing.invoke(processor, null, twOperands);
@@ -314,7 +296,7 @@ public class PdfContentStreamProcessor {
             ArrayList tcOperands = new ArrayList(1);
             tcOperands.add(0, ac);
             setTextCharacterSpacing.invoke(processor, null, tcOperands);
-            
+
             ArrayList tickOperands = new ArrayList(1);
             tickOperands.add(0, string);
             moveNextLineAndShowText.invoke(processor, null, tickOperands);
@@ -331,7 +313,7 @@ public class PdfContentStreamProcessor {
             this.textMoveNextLine = textMoveNextLine;
             this.showText = showText;
         }
-        
+
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             textMoveNextLine.invoke(processor, null, new ArrayList(0));
             showText.invoke(processor, null, operands);
@@ -344,11 +326,11 @@ public class PdfContentStreamProcessor {
     private static class ShowText implements ContentOperator{
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             PdfString string = (PdfString)operands.get(0);
-            
+
             processor.displayPdfString(string);
         }
     }
-    
+
 
     /**
      * A content operator implementation (T*).
@@ -358,7 +340,7 @@ public class PdfContentStreamProcessor {
         public TextMoveNextLine(TextMoveStartNextLine moveStartNextLine){
             this.moveStartNextLine = moveStartNextLine;
         }
-        
+
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             ArrayList tdoperands = new ArrayList(2);
             tdoperands.add(0, new PdfNumber(0));
@@ -378,7 +360,7 @@ public class PdfContentStreamProcessor {
             float d = ((PdfNumber)operands.get(3)).floatValue();
             float e = ((PdfNumber)operands.get(4)).floatValue();
             float f = ((PdfNumber)operands.get(5)).floatValue();
-            
+
             processor.textLineMatrix = new Matrix(a, b, c, d, e, f);
             processor.textMatrix = processor.textLineMatrix;
         }
@@ -396,7 +378,7 @@ public class PdfContentStreamProcessor {
         }
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             float ty = ((PdfNumber)operands.get(1)).floatValue();
-            
+
             ArrayList tlOperands = new ArrayList(1);
             tlOperands.add(0, new PdfNumber(-ty));
             setTextLeading.invoke(processor, null, tlOperands);
@@ -411,7 +393,7 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             float tx = ((PdfNumber)operands.get(0)).floatValue();
             float ty = ((PdfNumber)operands.get(1)).floatValue();
-            
+
             Matrix translationMatrix = new Matrix(tx, ty);
             processor.textMatrix =  translationMatrix.multiply(processor.textLineMatrix);
             processor.textLineMatrix = processor.textMatrix;
@@ -425,13 +407,13 @@ public class PdfContentStreamProcessor {
         public void invoke(PdfContentStreamProcessor processor, PdfLiteral operator, ArrayList operands) {
             PdfName fontResourceName = (PdfName)operands.get(0);
             float size = ((PdfNumber)operands.get(1)).floatValue();
-            
+
             PdfDictionary fontsDictionary = processor.resources.getAsDict(PdfName.FONT);
             CMapAwareDocumentFont font = new CMapAwareDocumentFont((PRIndirectReference)fontsDictionary.get(fontResourceName));
-            
+
             processor.gs().font = font;
             processor.gs().fontSize = size;
-            
+
         }
     }
 
@@ -507,16 +489,16 @@ public class PdfContentStreamProcessor {
             PdfDictionary gsDic = extGState.getAsDict(dictionaryName);
             if (gsDic == null)
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("1.is.an.unknown.graphics.state.dictionary", dictionaryName));
-            
+
             // at this point, all we care about is the FONT entry in the GS dictionary
             PdfArray fontParameter = gsDic.getAsArray(PdfName.FONT);
             if (fontParameter != null){
                 CMapAwareDocumentFont font = new CMapAwareDocumentFont((PRIndirectReference)fontParameter.getPdfObject(0));
                 float size = fontParameter.getAsNumber(1).floatValue();
-                
+
                 processor.gs().font = font;
                 processor.gs().fontSize = size;
-            }            
+            }
         }
     }
 
@@ -530,7 +512,7 @@ public class PdfContentStreamProcessor {
             processor.gsStack.push(copy);
         }
     }
-    
+
     /**
      * A content operator implementation (cm).
      */
@@ -576,5 +558,5 @@ public class PdfContentStreamProcessor {
             processor.textLineMatrix = null;
         }
     }
-    
+
 }

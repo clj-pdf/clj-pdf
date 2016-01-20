@@ -49,31 +49,19 @@
 
 package cljpdf.text.pdf;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.URL;
-import java.nio.channels.FileChannel;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.MappedRandomAccessFile;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-
 import cljpdf.text.Document;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.FileChannel;
 /** An implementation of a RandomAccessFile for input only
  * that accepts a file or a byte array as data source.
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class RandomAccessFileOrArray implements DataInput {
-    
+
     MappedRandomAccessFile rf;
     RandomAccessFile trf;
     boolean plainRandomAccess;
@@ -82,19 +70,19 @@ public class RandomAccessFileOrArray implements DataInput {
     int arrayInPtr;
     byte back;
     boolean isBack = false;
-    
+
     /** Holds value of property startOffset. */
     private int startOffset = 0;
 
     public RandomAccessFileOrArray(String filename) throws IOException {
     	this(filename, false, Document.plainRandomAccess);
     }
-    
+
     public RandomAccessFileOrArray(String filename, boolean forceRead, boolean plainRandomAccess) throws IOException {
         this.plainRandomAccess = plainRandomAccess;
         File file = new File(filename);
         if (!file.canRead()) {
-            if (filename.startsWith("file:/") || filename.startsWith("http://") 
+            if (filename.startsWith("file:/") || filename.startsWith("http://")
                     || filename.startsWith("https://") || filename.startsWith("jar:") || filename.startsWith("wsjar:")) {
                 InputStream is = new URL(filename).openStream();
                 try {
@@ -149,7 +137,7 @@ public class RandomAccessFileOrArray implements DataInput {
     public RandomAccessFileOrArray(InputStream is) throws IOException {
         this.arrayIn = InputStreamToArray(is);
     }
-    
+
     public static byte[] InputStreamToArray(InputStream is) throws IOException {
         byte b[] = new byte[8192];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -166,19 +154,19 @@ public class RandomAccessFileOrArray implements DataInput {
     public RandomAccessFileOrArray(byte arrayIn[]) {
         this.arrayIn = arrayIn;
     }
-    
+
     public RandomAccessFileOrArray(RandomAccessFileOrArray file) {
         filename = file.filename;
         arrayIn = file.arrayIn;
         startOffset = file.startOffset;
         plainRandomAccess = file.plainRandomAccess;
     }
-    
+
     public void pushBack(byte b) {
         back = b;
         isBack = true;
     }
-    
+
     public int read() throws IOException {
         if(isBack) {
             isBack = false;
@@ -192,7 +180,7 @@ public class RandomAccessFileOrArray implements DataInput {
             return arrayIn[arrayInPtr++] & 0xff;
         }
     }
-    
+
     public int read(byte[] b, int off, int len) throws IOException {
         if (len == 0)
             return 0;
@@ -222,15 +210,15 @@ public class RandomAccessFileOrArray implements DataInput {
             return len + n;
         }
     }
-    
+
     public int read(byte b[]) throws IOException {
         return read(b, 0, b.length);
     }
-    
+
     public void readFully(byte b[]) throws IOException {
         readFully(b, 0, b.length);
     }
-    
+
     public void readFully(byte b[], int off, int len) throws IOException {
         int n = 0;
         do {
@@ -240,11 +228,11 @@ public class RandomAccessFileOrArray implements DataInput {
             n += count;
         } while (n < len);
     }
-    
+
     public long skip(long n) throws IOException {
         return skipBytes((int)n);
     }
-    
+
     public int skipBytes(int n) throws IOException {
         if (n <= 0) {
             return 0;
@@ -263,7 +251,7 @@ public class RandomAccessFileOrArray implements DataInput {
         int pos;
         int len;
         int newpos;
-        
+
         pos = getFilePointer();
         len = length();
         newpos = pos + n;
@@ -271,11 +259,11 @@ public class RandomAccessFileOrArray implements DataInput {
             newpos = len;
         }
         seek(newpos);
-        
+
         /* return the actual number of bytes skipped */
         return newpos - pos + adj;
     }
-    
+
     public void reOpen() throws IOException {
         if (filename != null && rf == null && trf == null) {
             if (plainRandomAccess)
@@ -285,17 +273,17 @@ public class RandomAccessFileOrArray implements DataInput {
         }
         seek(0);
     }
-    
+
     protected void insureOpen() throws IOException {
         if (filename != null && rf == null && trf == null) {
             reOpen();
         }
     }
-    
+
     public boolean isOpen() {
         return (filename == null || rf != null || trf != null);
     }
-    
+
     public void close() throws IOException {
         isBack = false;
         if (rf != null) {
@@ -311,7 +299,7 @@ public class RandomAccessFileOrArray implements DataInput {
             trf = null;
         }
     }
-    
+
     public int length() throws IOException {
         if (arrayIn == null) {
             insureOpen();
@@ -320,7 +308,7 @@ public class RandomAccessFileOrArray implements DataInput {
         else
             return arrayIn.length - startOffset;
     }
-    
+
     public void seek(int pos) throws IOException {
         pos += startOffset;
         isBack = false;
@@ -334,11 +322,11 @@ public class RandomAccessFileOrArray implements DataInput {
         else
             arrayInPtr = pos;
     }
-    
+
     public void seek(long pos) throws IOException {
         seek((int)pos);
     }
-    
+
     public int getFilePointer() throws IOException {
         insureOpen();
         int n = isBack ? 1 : 0;
@@ -348,28 +336,28 @@ public class RandomAccessFileOrArray implements DataInput {
         else
             return arrayInPtr - n - startOffset;
     }
-    
+
     public boolean readBoolean() throws IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return (ch != 0);
     }
-    
+
     public byte readByte() throws IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return (byte)(ch);
     }
-    
+
     public int readUnsignedByte() throws IOException {
         int ch = this.read();
         if (ch < 0)
             throw new EOFException();
         return ch;
     }
-    
+
     public short readShort() throws IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -377,7 +365,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (short)((ch1 << 8) + ch2);
     }
-    
+
     /**
      * Reads a signed 16-bit number from this stream in little-endian order.
      * The method reads two
@@ -406,7 +394,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (short)((ch2 << 8) + (ch1 << 0));
     }
-    
+
     public int readUnsignedShort() throws IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -414,7 +402,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (ch1 << 8) + ch2;
     }
-    
+
     /**
      * Reads an unsigned 16-bit number from this stream in little-endian order.
      * This method reads
@@ -443,7 +431,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (ch2 << 8) + (ch1 << 0);
     }
-    
+
     public char readChar() throws IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -451,7 +439,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (char)((ch1 << 8) + ch2);
     }
-    
+
     /**
      * Reads a Unicode character from this stream in little-endian order.
      * This method reads two
@@ -479,7 +467,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return (char)((ch2 << 8) + (ch1 << 0));
     }
-    
+
     public int readInt() throws IOException {
         int ch1 = this.read();
         int ch2 = this.read();
@@ -489,7 +477,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
     }
-    
+
     /**
      * Reads a signed 32-bit integer from this stream in little-endian order.
      * This method reads 4
@@ -520,7 +508,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
     }
-    
+
     /**
      * Reads an unsigned 32-bit integer from this stream. This method reads 4
      * bytes from the stream, starting at the current stream pointer.
@@ -550,7 +538,7 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
-    
+
     public final long readUnsignedIntLE() throws IOException {
         long ch1 = this.read();
         long ch2 = this.read();
@@ -560,38 +548,38 @@ public class RandomAccessFileOrArray implements DataInput {
             throw new EOFException();
         return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
     }
-    
+
     public long readLong() throws IOException {
         return ((long)(readInt()) << 32) + (readInt() & 0xFFFFFFFFL);
     }
-    
+
     public final long readLongLE() throws IOException {
         int i1 = readIntLE();
         int i2 = readIntLE();
         return ((long)i2 << 32) + (i1 & 0xFFFFFFFFL);
     }
-    
+
     public float readFloat() throws IOException {
         return Float.intBitsToFloat(readInt());
     }
-    
+
     public final float readFloatLE() throws IOException {
         return Float.intBitsToFloat(readIntLE());
     }
-    
+
     public double readDouble() throws IOException {
         return Double.longBitsToDouble(readLong());
     }
-    
+
     public final double readDoubleLE() throws IOException {
         return Double.longBitsToDouble(readLongLE());
     }
-    
+
     public String readLine() throws IOException {
         StringBuffer input = new StringBuffer();
         int c = -1;
         boolean eol = false;
-        
+
         while (!eol) {
             switch (c = read()) {
                 case -1:
@@ -610,17 +598,17 @@ public class RandomAccessFileOrArray implements DataInput {
                     break;
             }
         }
-        
+
         if ((c == -1) && (input.length() == 0)) {
             return null;
         }
         return input.toString();
     }
-    
+
     public String readUTF() throws IOException {
         return DataInputStream.readUTF(this);
     }
-    
+
     /** Getter for property startOffset.
      * @return Value of property startOffset.
      *
@@ -628,7 +616,7 @@ public class RandomAccessFileOrArray implements DataInput {
     public int getStartOffset() {
         return this.startOffset;
     }
-    
+
     /** Setter for property startOffset.
      * @param startOffset New value of property startOffset.
      *

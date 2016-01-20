@@ -51,15 +51,15 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * Part of this code is based on the Quick-and-Dirty XML parser by Steven Brandt.
  * The code for the Quick-and-Dirty parser was published in JavaWorld (java tip 128).
  * Steven Brandt and JavaWorld gave permission to use the code for free.
@@ -67,7 +67,7 @@
  * conformance with the rest of the code).
  * The original code can be found on this url: <A HREF="http://www.javaworld.com/javatips/jw-javatip128_p.html">http://www.javaworld.com/javatips/jw-javatip128_p.html</A>.
  * It was substantially refactored by Bruno Lowagie.
- * 
+ *
  * The method 'private static String getEncodingName(byte[] b4)' was found
  * in org.apache.xerces.impl.XMLEntityManager, originaly published by the
  * Apache Software Foundation under the Apache Software License; now being
@@ -75,22 +75,11 @@
  */
 package cljpdf.text.xml.simpleparser;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Stack;
-
-import cljpdf.text.xml.simpleparser.EntitiesToUnicode;
-import cljpdf.text.xml.simpleparser.IanaEncodings;
-import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import cljpdf.text.xml.simpleparser.SimpleXMLDocHandlerComment;
-import cljpdf.text.xml.simpleparser.SimpleXMLParser;
-
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * A simple XML and HTML parser.  This parser is, like the SAX parser,
@@ -125,7 +114,7 @@ public final class SimpleXMLParser {
 	private final static int ATTRIBUTE_KEY = 12;
 	private final static int ATTRIBUTE_EQUAL = 13;
 	private final static int ATTRIBUTE_VALUE = 14;
-    
+
 	/** the state stack */
 	Stack stack;
 	/** The current character. */
@@ -169,7 +158,7 @@ public final class SimpleXMLParser {
 	String attributekey = null;
 	/** the attribute value. */
 	String attributevalue = null;
-    
+
 	/**
 	 * Creates a Simple XML parser object.
 	 * Call go(BufferedReader) immediately after creation.
@@ -181,7 +170,7 @@ public final class SimpleXMLParser {
     	stack = new Stack();
     	state = html ? TEXT : UNKNOWN;
     }
-    
+
     /**
      * Does the actual parsing. Perform this immediately
      * after creating the parser object.
@@ -203,7 +192,7 @@ public final class SimpleXMLParser {
 				character = previousCharacter;
 				previousCharacter = -1;
 			}
-			
+
 			// the end of the file was reached
 			if (character == -1) {
 				if (html) {
@@ -215,7 +204,7 @@ public final class SimpleXMLParser {
 				}
 				return;
 			}
-            
+
 			// dealing with  \n and \r
 			if (character == '\n' && eol) {
 				eol = false;
@@ -233,7 +222,7 @@ public final class SimpleXMLParser {
 			} else {
 				columns++;
 			}
-            
+
 			switch(state) {
             // we are in an unknown state before there's actual content
 			case UNKNOWN:
@@ -317,7 +306,7 @@ public final class SimpleXMLParser {
                     state = ATTRIBUTE_KEY;
                 }
                 break;
-                
+
                 // we are processing a closing tag: e.g. </foo>
 			case IN_CLOSETAG:
                 if(character == '>') {
@@ -330,7 +319,7 @@ public final class SimpleXMLParser {
                         text.append((char)character);
                 }
                 break;
-                
+
             // we have just seen something like this: <foo a="b"/
             // and are looking for the final >.
 			case SINGLE_TAG:
@@ -346,7 +335,7 @@ public final class SimpleXMLParser {
                 }
                 state = restoreState();
                 break;
-                
+
             // we are processing CDATA
 			case CDATA:
                 if(character == '>'
@@ -357,7 +346,7 @@ public final class SimpleXMLParser {
                 } else
                     text.append((char)character);
                 break;
-                
+
             // we are processing a comment.  We are inside
             // the <!-- .... --> looking for the -->.
 			case COMMENT:
@@ -369,7 +358,7 @@ public final class SimpleXMLParser {
                 } else
                     text.append((char)character);
                 break;
-                
+
             // We are inside one of these <? ... ?> or one of these <!DOCTYPE ... >
 			case PI:
                 if(character == '>') {
@@ -377,7 +366,7 @@ public final class SimpleXMLParser {
                     if(state == TEXT) state = UNKNOWN;
                 }
                 break;
-                
+
             // we are processing an entity, e.g. &lt;, &#187;, etc.
 			case ENTITY:
                 if(character == ';') {
@@ -428,7 +417,7 @@ public final class SimpleXMLParser {
                     text.append((char)character);
                 }
                 break;
-                
+
 			case ATTRIBUTE_KEY:
                 if(Character.isWhitespace((char)character)) {
                     flush();
@@ -445,7 +434,7 @@ public final class SimpleXMLParser {
                     text.append((char)character);
                 }
                 break;
-                
+
 			case ATTRIBUTE_EQUAL:
                 if(character == '=') {
                     state = ATTRIBUTE_VALUE;
@@ -467,7 +456,7 @@ public final class SimpleXMLParser {
                     throwException(MessageLocalization.getComposedMessage("error.in.attribute.processing"));
                 }
                 break;
-                
+
 			case ATTRIBUTE_VALUE:
                 if(character == '"' || character == '\'') {
                     quoteCharacter = character;
@@ -574,7 +563,7 @@ public final class SimpleXMLParser {
     private void throwException(String s) throws IOException {
         throw new IOException(MessageLocalization.getComposedMessage("1.near.line.2.column.3", s, String.valueOf(lines), String.valueOf(columns)));
     }
-    
+
     /**
      * Parses the XML document firing the events to the handler.
      * @param doc the document handler
@@ -585,13 +574,13 @@ public final class SimpleXMLParser {
     	SimpleXMLParser parser = new SimpleXMLParser(doc, comment, html);
     	parser.go(r);
     }
-    
+
     /**
      * Parses the XML document firing the events to the handler.
      * @param doc the document handler
      * @param in the document. The encoding is deduced from the stream. The stream is not closed
      * @throws IOException on error
-     */    
+     */
     public static void parse(SimpleXMLDocHandler doc, InputStream in) throws IOException {
         byte b4[] = new byte[4];
         int count = in.read(b4);
@@ -626,7 +615,7 @@ public final class SimpleXMLParser {
         }
         parse(doc, new InputStreamReader(in, IanaEncodings.getJavaEncoding(encoding)));
     }
-    
+
     private static String getDeclaredEncoding(String decl) {
         if (decl == null)
             return null;
@@ -651,17 +640,17 @@ public final class SimpleXMLParser {
         }
         return null;
     }
-    
+
     public static void parse(SimpleXMLDocHandler doc,Reader r) throws IOException {
         parse(doc, null, r, false);
     }
-    
+
     /**
      * Escapes a string with the appropriated XML codes.
      * @param s the string to be escaped
      * @param onlyASCII codes above 127 will always be escaped with &amp;#nn; if <CODE>true</CODE>
      * @return the escaped string
-     */    
+     */
     public static String escapeXML(String s, boolean onlyASCII) {
         char cc[] = s.toCharArray();
         int len = cc.length;
@@ -688,10 +677,10 @@ public final class SimpleXMLParser {
                 	if ((c == 0x9) || (c == 0xA) || (c == 0xD)
                 		|| ((c >= 0x20) && (c <= 0xD7FF))
                 		|| ((c >= 0xE000) && (c <= 0xFFFD))
-                		|| ((c >= 0x10000) && (c <= 0x10FFFF))) { 
+                		|| ((c >= 0x10000) && (c <= 0x10FFFF))) {
                 		if (onlyASCII && c > 127)
                 			sb.append("&#").append(c).append(';');
-                		else 
+                		else
                 			sb.append((char)c);
                 	}
             }
@@ -708,7 +697,7 @@ public final class SimpleXMLParser {
      * @return an IANA-encoding string
      */
     private static String getEncodingName(byte[] b4) {
-        
+
         // UTF-16, with BOM
         int b0 = b4[0] & 0xFF;
         int b1 = b4[1] & 0xFF;
@@ -720,13 +709,13 @@ public final class SimpleXMLParser {
             // UTF-16, little-endian
             return "UTF-16LE";
         }
-        
+
         // UTF-8 with a BOM
         int b2 = b4[2] & 0xFF;
         if (b0 == 0xEF && b1 == 0xBB && b2 == 0xBF) {
             return "UTF-8";
         }
-        
+
         // other encodings
         int b3 = b4[3] & 0xFF;
         if (b0 == 0x00 && b1 == 0x00 && b2 == 0x00 && b3 == 0x3C) {
@@ -763,7 +752,7 @@ public final class SimpleXMLParser {
             // a la xerces1, return CP037 instead of EBCDIC here
             return "CP037";
         }
-        
+
         // default encoding
         return "UTF-8";
     }

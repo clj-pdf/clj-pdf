@@ -49,15 +49,8 @@
 
 package cljpdf.text.pdf.internal;
 
-import java.awt.Shape;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.PathIterator;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
-import cljpdf.text.pdf.internal.PolylineShapeIterator;
+import java.awt.*;
+import java.awt.geom.*;
 
 /**
  * Class that defines a Polyline shape.
@@ -94,7 +87,7 @@ public class PolylineShape implements Shape {
 		int[] r = rect();
 		return r==null?null:new Rectangle2D.Double(r[0], r[1], r[2], r[3]);
 	}
-	
+
 	/**
 	 * Returns the bounding box of this polyline.
 	 * @see java.awt.Shape#getBounds()
@@ -127,19 +120,19 @@ public class PolylineShape implements Shape {
 	 * @see java.awt.Shape#contains(double, double)
 	 */
 	public boolean contains(double x, double y) { return false; }
-	
+
 	/**
 	 * A polyline can't contain a point.
 	 * @see java.awt.Shape#contains(java.awt.geom.Point2D)
 	 */
 	public boolean contains(Point2D p) { return false; }
-	
+
 	/**
 	 * A polyline can't contain a point.
 	 * @see java.awt.Shape#contains(double, double, double, double)
 	 */
 	public boolean contains(double x, double y, double w, double h) { return false; }
-	
+
 	/**
 	 * A polyline can't contain a point.
 	 * @see java.awt.Shape#contains(java.awt.geom.Rectangle2D)

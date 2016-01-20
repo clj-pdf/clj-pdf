@@ -47,8 +47,6 @@
 
 package cljpdf.text.html.simpleparser;
 
-import cljpdf.text.html.simpleparser.ChainedProperties;
-
 import cljpdf.text.Paragraph;
 /**
  *

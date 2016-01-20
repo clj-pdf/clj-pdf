@@ -49,45 +49,18 @@
 
 package cljpdf.text.xml;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.Stack;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
-
-import cljpdf.text.Anchor;
-import cljpdf.text.Annotation;
-import cljpdf.text.BadElementException;
-import cljpdf.text.Cell;
-import cljpdf.text.Chapter;
-import cljpdf.text.Chunk;
-import cljpdf.text.DocListener;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementTags;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Font;
-import cljpdf.text.Image;
+import cljpdf.text.*;
 import cljpdf.text.List;
-import cljpdf.text.ListItem;
-import cljpdf.text.Meta;
-import cljpdf.text.PageSize;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Section;
-import cljpdf.text.Table;
-import cljpdf.text.TextElementArray;
 import cljpdf.text.factories.ElementFactory;
 import cljpdf.text.html.HtmlTagMap;
 import cljpdf.text.pdf.BaseFont;
 import cljpdf.text.pdf.draw.LineSeparator;
 import cljpdf.text.xml.simpleparser.EntitiesToSymbol;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * This class is a Handler that controls the iText XML to PDF conversion.
@@ -181,7 +154,7 @@ public class SAXiTextHandler extends DefaultHandler {
      * Document object when the start-root-tag is encountered and close it when
      * the end-root-tag is met. If you set it to false, you have to open and
      * close the Document object yourself.
-     * 
+     *
      * @param controlOpenClose
      *            set this to false if you plan to open/close the Document
      *            yourself
@@ -193,7 +166,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * This method gets called when a start tag is encountered.
-     * 
+     *
      * @param uri
      *            the Uniform Resource Identifier
      * @param lname
@@ -220,7 +193,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * This method deals with the starting tags.
-     * 
+     *
      * @param name
      *            the name of the tag
      * @param attributes
@@ -296,7 +269,7 @@ public class SAXiTextHandler extends DefaultHandler {
             stack.push(ElementFactory.getList(attributes));
             return;
         }
-        
+
         // listitems
         if (ElementTags.LISTITEM.equals(name)) {
             stack.push(ElementFactory.getListItem(attributes));
@@ -447,7 +420,7 @@ public class SAXiTextHandler extends DefaultHandler {
             }
             return;
         }
-        
+
         // documentroot
         if (isDocumentRoot(name)) {
             String key;
@@ -544,10 +517,10 @@ public class SAXiTextHandler extends DefaultHandler {
             return;
         }
     }
-    
+
     /**
      * This method gets called when ignorable white space encountered.
-     * 
+     *
      * @param ch
      *            an array of characters
      * @param start
@@ -562,7 +535,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * This method gets called when characters are encountered.
-     * 
+     *
      * @param ch
      *            an array of characters
      * @param start
@@ -622,7 +595,7 @@ public class SAXiTextHandler extends DefaultHandler {
     }
 
     private BaseFont bf = null;
-    
+
     /**
      * Sets the font that has to be used.
      * @param bf
@@ -633,7 +606,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * This method gets called when an end tag is encountered.
-     * 
+     *
      * @param uri
      *            the Uniform Resource Identifier
      * @param lname
@@ -649,7 +622,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * This method deals with the starting tags.
-     * 
+     *
      * @param name
      *            the name of the tag
      */
@@ -862,7 +835,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * Checks if a certain tag corresponds with the newpage-tag.
-     * 
+     *
      * @param tag
      *            a presumed tagname
      * @return <CODE>true</CODE> or <CODE>false</CODE>
@@ -874,7 +847,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * Checks if a certain tag corresponds with the newpage-tag.
-     * 
+     *
      * @param tag
      *            a presumed tagname
      * @return <CODE>true</CODE> or <CODE>false</CODE>
@@ -886,7 +859,7 @@ public class SAXiTextHandler extends DefaultHandler {
 
     /**
      * Checks if a certain tag corresponds with the roottag.
-     * 
+     *
      * @param tag
      *            a presumed tagname
      * @return <CODE>true</CODE> if <VAR>tag </VAR> equals <CODE>itext

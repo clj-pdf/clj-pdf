@@ -1,13 +1,7 @@
 package cljpdf.text.pdf.collection;
 
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDate;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
+import cljpdf.text.pdf.*;
 
 /**
  * @author blowagie
@@ -30,7 +24,7 @@ public class PdfCollectionField extends PdfDictionary {
 	public static final int CREATIONDATE = 6;
 	/** A possible type of collection field. */
 	public static final int SIZE = 7;
-	
+
 	/**
 	 * The type of the PDF collection field.
 	 * @since 2.1.2 (was called <code>type</code> previously)
@@ -73,7 +67,7 @@ public class PdfCollectionField extends PdfDictionary {
 			break;
 		}
 	}
-	
+
 	/**
 	 * The relative order of the field name. Fields are sorted in ascending order.
 	 * @param i	a number indicating the order of the field
@@ -81,7 +75,7 @@ public class PdfCollectionField extends PdfDictionary {
 	public void setOrder(int i) {
 		put(PdfName.O, new PdfNumber(i));
 	}
-	
+
 	/**
 	 * Sets the initial visibility of the field.
 	 * @param visible	the default is true (visible)
@@ -89,7 +83,7 @@ public class PdfCollectionField extends PdfDictionary {
 	public void setVisible(boolean visible) {
 		put(PdfName.V, new PdfBoolean(visible));
 	}
-	
+
 	/**
 	 * Indication if the field value should be editable in the viewer.
 	 * @param editable	the default is false (not editable)
@@ -111,10 +105,10 @@ public class PdfCollectionField extends PdfDictionary {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns a PdfObject that can be used as the value of a Collection Item.
-	 * @param v	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)	
+	 * @param v	value	the value that has to be changed into a PdfObject (PdfString, PdfDate or PdfNumber)
 	 */
 	public PdfObject getValue(String v) {
 		switch(fieldType) {

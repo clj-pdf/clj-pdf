@@ -49,8 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.BadPdfFormatException;
-
 import cljpdf.text.DocumentException;
 
 /**
@@ -60,9 +58,9 @@ import cljpdf.text.DocumentException;
  */
 
 public class PdfException extends DocumentException {
-    
+
     // constructors
-    
+
     private static final long serialVersionUID = 6767433960955483999L;
 
 	public PdfException(Exception ex) {
@@ -72,17 +70,17 @@ public class PdfException extends DocumentException {
  /**
  * Constructs a <CODE>PdfException</CODE> without a message.
  */
-    
+
     PdfException() {
         super();
     }
-    
+
 /**
  * Constructs a <code>PdfException</code> with a message.
  *
  * @param		message			a message describing the exception
  */
-    
+
     PdfException(String message) {
         super(message);
     }

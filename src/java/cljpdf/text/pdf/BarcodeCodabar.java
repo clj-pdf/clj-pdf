@@ -48,19 +48,13 @@
  */
 package cljpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.MemoryImageSource;
-
-import cljpdf.text.pdf.Barcode;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfContentByte;
-
 import cljpdf.text.Element;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the code codabar. The default parameters are:
  * <pre>
@@ -81,8 +75,8 @@ import cljpdf.text.error_messages.MessageLocalization;
 public class BarcodeCodabar extends Barcode{
 
     /** The bars to generate the code.
-     */    
-	private static final byte BARS[][] = 
+     */
+	private static final byte BARS[][] =
     {
         {0,0,0,0,0,1,1}, // 0
         {0,0,0,0,1,1,0}, // 1
@@ -105,14 +99,14 @@ public class BarcodeCodabar extends Barcode{
         {0,0,0,1,0,1,1}, // c
         {0,0,0,1,1,1,0}  // d
     };
- 
+
     /** The index chars to <CODE>BARS</CODE>.
-     */    
+     */
 	private static final String CHARS = "0123456789-$:/.+ABCD";
-    
-    private static final int START_STOP_IDX = 16;    
+
+    private static final int START_STOP_IDX = 16;
     /** Creates a new BarcodeCodabar.
-     */    
+     */
     public BarcodeCodabar() {
         try {
             x = 0.8f;
@@ -131,11 +125,11 @@ public class BarcodeCodabar extends Barcode{
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /** Creates the bars.
      * @param text the text to create the bars
      * @return the bars
-     */    
+     */
     public static byte[] getBarsCodabar(String text) {
         text = text.toUpperCase();
         int len = text.length();
@@ -154,7 +148,7 @@ public class BarcodeCodabar extends Barcode{
         }
         return bars;
     }
-    
+
     public static String calculateChecksum(String code) {
         if (code.length() < 2)
             return code;
@@ -166,11 +160,11 @@ public class BarcodeCodabar extends Barcode{
         sum = (sum + 15) / 16 * 16 - sum;
         return code.substring(0, len - 1) + CHARS.charAt(sum) + code.substring(len - 1);
     }
-    
+
     /** Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
      * @return the size the barcode occupies.
-     */    
+     */
     public Rectangle getBarcodeSize() {
         float fontX = 0;
         float fontY = 0;
@@ -200,7 +194,7 @@ public class BarcodeCodabar extends Barcode{
         float fullHeight = barHeight + fontY;
         return new Rectangle(fullWidth, fullHeight);
     }
-    
+
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
@@ -236,7 +230,7 @@ public class BarcodeCodabar extends Barcode{
      * @param barColor the color of the bars. It can be <CODE>null</CODE>
      * @param textColor the color of the text. It can be <CODE>null</CODE>
      * @return the dimensions the barcode occupies
-     */    
+     */
     public Rectangle placeBarcode(PdfContentByte cb, Color barColor, Color textColor) {
         String fullCode = code;
         if (generateChecksum && checksumText)
@@ -310,7 +304,7 @@ public class BarcodeCodabar extends Barcode{
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
@@ -342,10 +336,10 @@ public class BarcodeCodabar extends Barcode{
                 pix[ptr++] = c;
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth); 
+            System.arraycopy(pix, 0, pix, k, fullWidth);
         }
         Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-        
+
         return img;
     }
 }

@@ -47,9 +47,7 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Font;
-
-import cljpdf.text.pdf.BaseFont;
+import java.awt.*;
 
 /**
  * A FontMapper implementation handles mappings between AWT Fonts and PDF

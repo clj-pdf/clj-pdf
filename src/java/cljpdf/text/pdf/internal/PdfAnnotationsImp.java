@@ -49,25 +49,15 @@
 
 package cljpdf.text.pdf.internal;
 
+import cljpdf.text.Annotation;
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.Rectangle;
+import cljpdf.text.pdf.*;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import cljpdf.text.Annotation;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Rectangle;
-import cljpdf.text.pdf.PdfAcroForm;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
 
 public class PdfAnnotationsImp {
 
@@ -81,25 +71,25 @@ public class PdfAnnotationsImp {
      * that were added to the document.
      */
     protected ArrayList annotations;
-    
+
     /**
      * This is an array containing references to some delayed annotations
      * (that were added for a page that doesn't exist yet).
      */
     protected ArrayList delayedAnnotations = new ArrayList();
-    
-    
+
+
     public PdfAnnotationsImp(PdfWriter writer) {
     	acroForm = new PdfAcroForm(writer);
     }
-    
+
     /**
      * Checks if the AcroForm is valid.
      */
     public boolean hasValidAcroForm() {
     	return acroForm.isValid();
     }
-    
+
     /**
      * Gets the AcroForm object.
      * @return the PdfAcroform object of the PdfDocument
@@ -107,15 +97,15 @@ public class PdfAnnotationsImp {
     public PdfAcroForm getAcroForm() {
         return acroForm;
     }
-    
+
     public void setSigFlags(int f) {
         acroForm.setSigFlags(f);
     }
-    
+
     public void addCalculationOrder(PdfFormField formField) {
         acroForm.addCalculationOrder(formField);
     }
-    
+
     public void addAnnotation(PdfAnnotation annot) {
         if (annot.isForm()) {
             PdfFormField field = (PdfFormField)annot;
@@ -125,11 +115,11 @@ public class PdfAnnotationsImp {
         else
             annotations.add(annot);
     }
-    
+
     public void addPlainAnnotation(PdfAnnotation annot) {
     	annotations.add(annot);
     }
-    
+
     void addFormFieldRaw(PdfFormField field) {
         annotations.add(field);
         ArrayList kids = field.getKids();
@@ -138,7 +128,7 @@ public class PdfAnnotationsImp {
                 addFormFieldRaw((PdfFormField)kids.get(k));
         }
     }
-    
+
     public boolean hasUnusedAnnotations() {
     	return !annotations.isEmpty();
     }
@@ -147,7 +137,7 @@ public class PdfAnnotationsImp {
         annotations = delayedAnnotations;
         delayedAnnotations = new ArrayList();
     }
-    
+
     public PdfArray rotateAnnotations(PdfWriter writer, Rectangle pageSize) {
         PdfArray array = new PdfArray();
         int rotation = pageSize.getRotation() % 360;
@@ -212,7 +202,7 @@ public class PdfAnnotationsImp {
         }
         return array;
     }
-    
+
     public static PdfAnnotation convertAnnotation(PdfWriter writer, Annotation annot, Rectangle defaultRect) throws IOException {
         switch(annot.annotationType()) {
            case Annotation.URL_NET:

@@ -30,7 +30,7 @@
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE 
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -49,9 +49,6 @@
 
 package cljpdf.text.xml.xmp;
 
-import cljpdf.text.xml.xmp.XmpArray;
-import cljpdf.text.xml.xmp.XmpSchema;
-
 /**
  * An implementation of an XmpSchema.
  */
@@ -62,7 +59,7 @@ public class DublinCoreSchema extends XmpSchema {
 	public static final String DEFAULT_XPATH_ID = "dc";
 	/** default namespace uri*/
 	public static final String DEFAULT_XPATH_URI = "http://purl.org/dc/elements/1.1/";
-	
+
 	/** External Contributors to the resource (other than the authors). */
 	public static final String CONTRIBUTOR = "dc:contributor";
 	/** The extent or scope of the resource. */
@@ -94,12 +91,12 @@ public class DublinCoreSchema extends XmpSchema {
 	/** A document type; for example, novel, poem, or working paper. */
 	public static final String TYPE = "dc:type";
 
-	
+
 	public DublinCoreSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 		setProperty(FORMAT, "application/pdf");
 	}
-	
+
 	/**
 	 * Adds a title.
 	 * @param title
@@ -130,7 +127,7 @@ public class DublinCoreSchema extends XmpSchema {
 		setProperty(SUBJECT, array);
 	}
 
-	
+
 	/**
 	 * Adds a subject.
 	 * @param subject array of subjects
@@ -142,7 +139,7 @@ public class DublinCoreSchema extends XmpSchema {
 		}
 		setProperty(SUBJECT, array);
 	}
-	
+
 	/**
 	 * Adds a single author.
 	 * @param author

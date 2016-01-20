@@ -52,19 +52,17 @@ package cljpdf.text;
 import java.net.URL;
 import java.security.MessageDigest;
 
-import cljpdf.text.Image;
-
 /**
  * Support for JBIG2 images.
  * @since 2.1.5
  */
 public class ImgJBIG2 extends Image {
-	
+
 	/** JBIG2 globals */
 	private  byte[] global;
 	/** A unique hash */
 	private  byte[] globalHash;
-	
+
 	/**
 	 * Copy contstructor.
 	 * @param	image another Image
@@ -110,10 +108,10 @@ public class ImgJBIG2 extends Image {
 			} catch (Exception e) {
 				//ignore
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Getter for the JBIG2 global data.
 	 * @return 	an array of bytes
@@ -121,7 +119,7 @@ public class ImgJBIG2 extends Image {
 	public byte[] getGlobalBytes() {
 		return this.global;
 	}
-	
+
 	/**
 	 * Getter for the unique hash.
 	 * @return	an array of bytes

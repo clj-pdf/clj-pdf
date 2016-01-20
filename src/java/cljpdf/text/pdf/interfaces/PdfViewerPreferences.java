@@ -49,8 +49,6 @@
 
 package cljpdf.text.pdf.interfaces;
 
-import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
-
 import cljpdf.text.pdf.PdfName;
 import cljpdf.text.pdf.PdfObject;
 
@@ -63,8 +61,8 @@ import cljpdf.text.pdf.PdfObject;
  * for reasons of convenience.
  */
 
-public interface PdfViewerPreferences {	
-		
+public interface PdfViewerPreferences {
+
     /**
      * Sets the page layout and page mode preferences by ORing one or two of these constants.
      * <p>
@@ -135,7 +133,7 @@ public interface PdfViewerPreferences {
 	 * @see PdfViewerPreferences#addViewerPreference
      */
     public void setViewerPreferences(int preferences);
-    
+
     /**
      * Adds a viewer preference.
      * <ul>
@@ -198,5 +196,5 @@ public interface PdfViewerPreferences {
      * @param value	the value of the viewer preference
 	 * @see PdfViewerPreferences#setViewerPreferences
      */
-    public void addViewerPreference(PdfName key, PdfObject value);    	
+    public void addViewerPreference(PdfName key, PdfObject value);
 }

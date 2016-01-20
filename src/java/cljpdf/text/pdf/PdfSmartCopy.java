@@ -18,9 +18,9 @@
  * All Rights Reserved.
  * Co-Developer of the code is Paulo Soares. Portions created by the Co-Developer
  * are Copyright (C) 2000, 2001, 2002 by Paulo Soares. All Rights Reserved.
- * 
+ *
  * This class was written by Michael Neuweiler based on hints given by Bruno Lowagie
- * 
+ *
  * Contributor(s): all the names of the contributors are added in the source code
  * where applicable.
  *
@@ -50,27 +50,15 @@
  */
 package cljpdf.text.pdf;
 
+import cljpdf.text.Document;
+import cljpdf.text.DocumentException;
+import cljpdf.text.ExceptionConverter;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfCopy;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-
-import cljpdf.text.Document;
-import cljpdf.text.DocumentException;
-import cljpdf.text.ExceptionConverter;
 
 /**
  * PdfSmartCopy has the same functionality as PdfCopy,
@@ -97,7 +85,7 @@ public class PdfSmartCopy extends PdfCopy {
      * referenced object to the output file if it wasn't available
      * in the cache yet. If it's in the cache, the reference to
      * the already used stream is returned.
-     * 
+     *
      * NB: PRIndirectReferences (and PRIndirectObjects) really need to know what
      * file they came from, because each file has its own namespace. The translation
      * we do from their namespace to ours is *at best* heuristic, and guaranteed to
@@ -182,7 +170,7 @@ public class PdfSmartCopy extends PdfCopy {
             else
                 bb.append("$L").append(obj.toString());
         }
-        
+
         private void serDic(PdfDictionary dic, int level, ByteBuffer bb) throws IOException {
             bb.append("$D");
             if (level <= 0)
@@ -194,7 +182,7 @@ public class PdfSmartCopy extends PdfCopy {
                 serObject(dic.get((PdfName)keys[k]), level, bb);
             }
         }
-        
+
         private void serArray(PdfArray array, int level, ByteBuffer bb) throws IOException {
             bb.append("$A");
             if (level <= 0)
@@ -203,7 +191,7 @@ public class PdfSmartCopy extends PdfCopy {
                 serObject(array.getPdfObject(k), level, bb);
             }
         }
-        
+
         ByteStore(PRStream str) throws IOException {
             try {
                 md5 = MessageDigest.getInstance("MD5");

@@ -50,21 +50,15 @@
 
 package cljpdf.text;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-import cljpdf.text.Utilities;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfTemplate;
 import cljpdf.text.pdf.codec.wmf.InputMeta;
 import cljpdf.text.pdf.codec.wmf.MetaDo;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * An <CODE>ImgWMF</CODE> is the representation of a windows metafile
@@ -75,13 +69,13 @@ import cljpdf.text.pdf.codec.wmf.MetaDo;
  */
 
 public class ImgWMF extends Image {
-    
+
     // Constructors
-    
+
     ImgWMF(Image image) {
         super(image);
     }
-    
+
     /**
      * Constructs an <CODE>ImgWMF</CODE>-object, using an <VAR>url</VAR>.
      *
@@ -89,12 +83,12 @@ public class ImgWMF extends Image {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgWMF(URL url) throws BadElementException, IOException {
         super(url);
         processParameters();
     }
-    
+
     /**
      * Constructs an <CODE>ImgWMF</CODE>-object, using a <VAR>filename</VAR>.
      *
@@ -103,11 +97,11 @@ public class ImgWMF extends Image {
      * @throws MalformedURLException on error
      * @throws IOException on error
      */
-    
+
     public ImgWMF(String filename) throws BadElementException, MalformedURLException, IOException {
         this(Utilities.toURL(filename));
     }
-    
+
     /**
      * Constructs an <CODE>ImgWMF</CODE>-object from memory.
      *
@@ -115,20 +109,20 @@ public class ImgWMF extends Image {
      * @throws BadElementException on error
      * @throws IOException on error
      */
-    
+
     public ImgWMF(byte[] img) throws BadElementException, IOException {
         super((URL)null);
         rawData = img;
         originalData = img;
         processParameters();
     }
-    
+
 /**
  * This method checks if the image is a valid WMF and processes some parameters.
  * @throws BadElementException
  * @throws IOException
  */
-    
+
     private void processParameters() throws BadElementException, IOException {
         type = IMGTEMPLATE;
         originalType = ORIGINAL_WMF;
@@ -168,12 +162,12 @@ public class ImgWMF extends Image {
             plainHeight = getHeight();
         }
     }
-    
+
     /** Reads the WMF into a template.
      * @param template the template to read to
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public void readWMF(PdfTemplate template) throws IOException, DocumentException {
         setTemplateData(template);
         template.setWidth(getWidth());

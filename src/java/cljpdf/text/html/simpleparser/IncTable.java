@@ -47,12 +47,12 @@
 
 package cljpdf.text.html.simpleparser;
 
+import cljpdf.text.pdf.PdfPCell;
+import cljpdf.text.pdf.PdfPTable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-
-import cljpdf.text.pdf.PdfPCell;
-import cljpdf.text.pdf.PdfPTable;
 
 /**
  *
@@ -66,20 +66,20 @@ public class IncTable {
     public IncTable(HashMap props) {
         this.props.putAll(props);
     }
-    
+
     public void addCol(PdfPCell cell) {
         if (cols == null)
             cols = new ArrayList();
         cols.add(cell);
     }
-    
+
     public void addCols(ArrayList ncols) {
         if (cols == null)
             cols = new ArrayList(ncols);
         else
             cols.addAll(ncols);
     }
-    
+
     public void endRow() {
         if (cols != null) {
             Collections.reverse(cols);
@@ -87,11 +87,11 @@ public class IncTable {
             cols = null;
         }
     }
-    
+
     public ArrayList getRows() {
         return rows;
     }
-    
+
     public PdfPTable buildTable() {
         if (rows.isEmpty())
             return new PdfPTable(1);

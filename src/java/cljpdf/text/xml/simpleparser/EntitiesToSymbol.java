@@ -49,23 +49,23 @@
 
 package cljpdf.text.xml.simpleparser;
 
-import java.util.HashMap;
-
 import cljpdf.text.Chunk;
 import cljpdf.text.Font;
+
+import java.util.HashMap;
 
 /**
  * This class contains entities that can be used in an entity tag.
  */
 
 public class EntitiesToSymbol {
-    
+
     /**
      * This is a map that contains all possible id values of the entity tag
      * that can be translated to a character in font Symbol.
      */
     public static final HashMap map;
-    
+
     static {
         map = new HashMap();
         map.put("169", new Character((char)227));
@@ -343,7 +343,7 @@ public class EntitiesToSymbol {
         map.put("xi", new Character((char)120));
         map.put("zeta", new Character((char)122));
     }
-    
+
     /**
      * Gets a chunk with a symbol character.
      * @param e a symbol value (see Entities class: alfa is greek alfa,...)
@@ -363,7 +363,7 @@ public class EntitiesToSymbol {
         Font symbol = new Font(Font.SYMBOL, font.getSize(), font.getStyle(), font.getColor());
         return new Chunk(String.valueOf(s), symbol);
     }
-    
+
     /**
      * Looks for the corresponding symbol in the font Symbol.
      *

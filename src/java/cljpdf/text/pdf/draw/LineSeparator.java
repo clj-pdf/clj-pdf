@@ -49,12 +49,10 @@
 
 package cljpdf.text.pdf.draw;
 
-import java.awt.Color;
-
-import cljpdf.text.pdf.draw.VerticalPositionMark;
-
 import cljpdf.text.Element;
 import cljpdf.text.pdf.PdfContentByte;
+
+import java.awt.*;
 
 /**
  * Element that draws a solid line from left to right.
@@ -64,7 +62,7 @@ import cljpdf.text.pdf.PdfContentByte;
  * @since	2.1.2
  */
 public class LineSeparator extends VerticalPositionMark {
-	
+
     /** The thickness of the line. */
     protected float lineWidth = 1;
     /** The width of the line as a percentage of the available page width. */
@@ -73,7 +71,7 @@ public class LineSeparator extends VerticalPositionMark {
     protected Color lineColor;
     /** The alignment of the line. */
     protected int alignment = Element.ALIGN_CENTER;
-    
+
     /**
      * Creates a new instance of the LineSeparator class.
      * @param lineWidth		the thickness of the line
@@ -138,7 +136,7 @@ public class LineSeparator extends VerticalPositionMark {
         canvas.lineTo(s + w + leftX, y + offset);
         canvas.stroke();
     }
-    
+
     /**
      * Getter for the line width.
      * @return	the thickness of the line that will be drawn.

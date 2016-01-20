@@ -46,10 +46,6 @@
  */
 
 package cljpdf.text.pdf;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.Type3Glyph;
 
 import cljpdf.text.DocumentException;
 import cljpdf.text.Image;
@@ -61,11 +57,11 @@ public final class Type3Glyph extends PdfContentByte {
 
     private PageResources pageResources;
     private boolean colorized;
-    
+
     private Type3Glyph() {
         super(null);
     }
-    
+
     Type3Glyph(PdfWriter writer, PageResources pageResources, float wx, float llx, float lly, float urx, float ury, boolean colorized) {
         super(writer);
         this.pageResources = pageResources;
@@ -77,7 +73,7 @@ public final class Type3Glyph extends PdfContentByte {
             content.append(wx).append(" 0 ").append(llx).append(' ').append(lly).append(' ').append(urx).append(' ').append(ury).append(" d1\n");
         }
     }
-    
+
     PageResources getPageResources() {
         return pageResources;
     }
@@ -87,7 +83,7 @@ public final class Type3Glyph extends PdfContentByte {
             throw new DocumentException(MessageLocalization.getComposedMessage("not.colorized.typed3.fonts.only.accept.mask.images"));
         super.addImage(image, a, b, c, d, e, f, inlineImage);
     }
-    
+
     public PdfContentByte getDuplicate() {
         Type3Glyph dup = new Type3Glyph();
         dup.writer = writer;
@@ -96,5 +92,5 @@ public final class Type3Glyph extends PdfContentByte {
         dup.colorized = colorized;
         return dup;
     }
-    
+
 }

@@ -41,7 +41,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
  * details.
- * 
+ *
  * Contributions by:
  * Lubos Strapko
  *
@@ -51,33 +51,19 @@
  */
 package cljpdf.text.factories;
 
-import java.awt.Color;
+import cljpdf.text.*;
+import cljpdf.text.Image;
+import cljpdf.text.List;
+import cljpdf.text.Rectangle;
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.html.Markup;
+
+import java.awt.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
-import cljpdf.text.Anchor;
-import cljpdf.text.Annotation;
-import cljpdf.text.BadElementException;
-import cljpdf.text.Cell;
-import cljpdf.text.ChapterAutoNumber;
-import cljpdf.text.Chunk;
-import cljpdf.text.ElementTags;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.FontFactory;
-import cljpdf.text.Image;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Section;
-import cljpdf.text.Table;
-import cljpdf.text.Utilities;
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.html.Markup;
 
 /**
  * This class is able to create Element objects based on a list of properties.

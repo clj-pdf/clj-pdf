@@ -1,6 +1,6 @@
 /*
  * Copyright 2002 by Phillip Pan
- * 
+ *
  * The contents of this file are subject to the Mozilla Public License Version 1.1
  * (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.mozilla.org/MPL/
@@ -46,13 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfPatternPainter;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStream;
-
 import cljpdf.text.ExceptionConverter;
 
 /**
@@ -62,7 +55,7 @@ import cljpdf.text.ExceptionConverter;
  */
 
 public class PdfPattern extends PdfStream {
-    
+
 	/**
 	 * Creates a PdfPattern object.
 	 * @param	painter	a pattern painter instance

@@ -55,13 +55,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfString;
-
 /**
  * This class captures an AcroForm on input. Basically, it extends Dictionary
  * by indexing the fields of an AcroForm
@@ -69,7 +62,7 @@ import cljpdf.text.pdf.PdfString;
  */
 
 public class PRAcroForm extends PdfDictionary {
-    
+
     /**
      * This class holds the information for a single field
      */
@@ -77,7 +70,7 @@ public class PRAcroForm extends PdfDictionary {
         String name;
         PdfDictionary info;
         PRIndirectReference ref;
-        
+
         FieldInformation(String name, PdfDictionary info, PRIndirectReference ref) {
             this.name = name; this.info = info; this.ref = ref;
         }
@@ -89,7 +82,7 @@ public class PRAcroForm extends PdfDictionary {
     ArrayList stack;
     HashMap fieldByName;
     PdfReader reader;
-    
+
     /**
      * Constructor
      * @param reader reader of the input file
@@ -107,15 +100,15 @@ public class PRAcroForm extends PdfDictionary {
     public int size() {
         return fields.size();
     }
-    
+
     public ArrayList getFields() {
         return fields;
     }
-    
+
     public FieldInformation getField(String name) {
         return (FieldInformation)fieldByName.get(name);
     }
-    
+
     /**
      * Given the title (/T) of a reference, return the associated reference
      * @param name a string containing the path
@@ -138,7 +131,7 @@ public class PRAcroForm extends PdfDictionary {
         PdfArray fieldlist = (PdfArray)PdfReader.getPdfObjectRelease(root.get(PdfName.FIELDS));
         iterateFields(fieldlist, null, null);
     }
-    
+
     /**
      * After reading, we index all of the fields. Recursive.
      * @param fieldlist An array of fields
@@ -149,19 +142,19 @@ public class PRAcroForm extends PdfDictionary {
         for (Iterator it = fieldlist.listIterator(); it.hasNext();) {
             PRIndirectReference ref = (PRIndirectReference)it.next();
             PdfDictionary dict = (PdfDictionary) PdfReader.getPdfObjectRelease(ref);
-            
+
             // if we are not a field dictionary, pass our parent's values
             PRIndirectReference myFieldDict = fieldDict;
             String myTitle = title;
             PdfString tField = (PdfString)dict.get(PdfName.T);
             boolean isFieldDict = tField != null;
-            
+
             if (isFieldDict) {
                 myFieldDict = ref;
                 if (title == null) myTitle = tField.toString();
                 else myTitle = title + '.' + tField.toString();
             }
-            
+
             PdfArray kids = (PdfArray)dict.get(PdfName.KIDS);
             if (kids != null) {
                 pushAttrib(dict);
@@ -173,7 +166,7 @@ public class PRAcroForm extends PdfDictionary {
                     PdfDictionary mergedDict = (PdfDictionary)stack.get(stack.size() - 1);
                     if (isFieldDict)
                         mergedDict = mergeAttrib(mergedDict, dict);
-                    
+
                     mergedDict.put(PdfName.T, new PdfString(myTitle));
                     FieldInformation fi = new FieldInformation(myTitle, mergedDict, myFieldDict);
                     fields.add(fi);
@@ -191,7 +184,7 @@ public class PRAcroForm extends PdfDictionary {
     protected PdfDictionary mergeAttrib(PdfDictionary parent, PdfDictionary child) {
         PdfDictionary targ = new PdfDictionary();
         if (parent != null) targ.putAll(parent);
-        
+
         for (Iterator it = child.getKeys().iterator(); it.hasNext();) {
             PdfName key = (PdfName) it.next();
             if (key.equals(PdfName.DR) || key.equals(PdfName.DA) ||

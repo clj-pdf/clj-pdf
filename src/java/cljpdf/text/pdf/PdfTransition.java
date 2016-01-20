@@ -47,10 +47,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-
 public class PdfTransition {
     /**
      *  Out Vertical Split
@@ -116,7 +112,7 @@ public class PdfTransition {
      *  Diagonal Glitter
      */
     public static final int DGLITTER  = 16;
-    
+
     /**
      *  duration of the transition effect
      */
@@ -125,7 +121,7 @@ public class PdfTransition {
      *  type of the transition effect
      */
     protected int type;
-    
+
     /**
      *  Constructs a <CODE>Transition</CODE>.
      *
@@ -133,7 +129,7 @@ public class PdfTransition {
     public PdfTransition() {
         this(BLINDH);
     }
-    
+
     /**
      *  Constructs a <CODE>Transition</CODE>.
      *
@@ -142,7 +138,7 @@ public class PdfTransition {
     public PdfTransition(int type) {
         this(type,1);
     }
-    
+
     /**
      *  Constructs a <CODE>Transition</CODE>.
      *
@@ -153,17 +149,17 @@ public class PdfTransition {
         this.duration = duration;
         this.type = type;
     }
-    
-    
+
+
     public int getDuration() {
         return duration;
     }
-    
-    
+
+
     public int getType() {
         return type;
     }
-    
+
     public PdfDictionary getTransitionDictionary() {
         PdfDictionary trans = new PdfDictionary(PdfName.TRANS);
         switch (type) {

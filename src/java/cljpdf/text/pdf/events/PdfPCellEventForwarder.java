@@ -49,13 +49,13 @@
 
 package cljpdf.text.pdf.events;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import cljpdf.text.Rectangle;
 import cljpdf.text.pdf.PdfContentByte;
 import cljpdf.text.pdf.PdfPCell;
 import cljpdf.text.pdf.PdfPCellEvent;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * If you want to add more than one event to a cell,
@@ -68,8 +68,8 @@ public class PdfPCellEventForwarder implements PdfPCellEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
 	protected ArrayList events = new ArrayList();
-	
-	/** 
+
+	/**
 	 * Add a page event to the forwarder.
 	 * @param event an event that has to be added to the forwarder.
 	 */

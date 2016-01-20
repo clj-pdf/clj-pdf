@@ -46,20 +46,11 @@
  */
 package cljpdf.text.pdf;
 
-import java.io.IOException;
-
-import cljpdf.text.pdf.BaseField;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfAppearance;
-import cljpdf.text.pdf.PdfBorderDictionary;
-import cljpdf.text.pdf.PdfDashPattern;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.DocumentException;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Rectangle;
+
+import java.io.IOException;
 
 /**
  * Creates a radio or a check field.
@@ -118,24 +109,24 @@ public class RadioCheckField extends BaseField {
     public static final int TYPE_SQUARE = 5;
     /** A field with the symbol star */
     public static final int TYPE_STAR = 6;
-    
+
     private static String typeChars[] = {"4", "l", "8", "u", "n", "H"};
-    
+
     /**
      * Holds value of property checkType.
      */
     private int checkType;
-    
+
     /**
      * Holds value of property onValue.
      */
     private String onValue;
-    
+
     /**
      * Holds value of property checked.
      */
     private boolean checked;
-    
+
     /**
      * Creates a new instance of RadioCheckField
      * @param writer the document <CODE>PdfWriter</CODE>
@@ -148,7 +139,7 @@ public class RadioCheckField extends BaseField {
         setOnValue(onValue);
         setCheckType(TYPE_CIRCLE);
     }
-    
+
     /**
      * Getter for property checkType.
      * @return Value of property checkType.
@@ -156,7 +147,7 @@ public class RadioCheckField extends BaseField {
     public int getCheckType() {
         return this.checkType;
     }
-    
+
     /**
      * Sets the checked symbol. It can be
      * <CODE>TYPE_CHECK</CODE>,
@@ -179,7 +170,7 @@ public class RadioCheckField extends BaseField {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     /**
      * Getter for property onValue.
      * @return Value of property onValue.
@@ -187,7 +178,7 @@ public class RadioCheckField extends BaseField {
     public String getOnValue() {
         return this.onValue;
     }
-    
+
     /**
      * Sets the value when the field is checked.
      * @param onValue the value when the field is checked
@@ -195,7 +186,7 @@ public class RadioCheckField extends BaseField {
     public void setOnValue(String onValue) {
         this.onValue = onValue;
     }
-    
+
     /**
      * Getter for property checked.
      * @return Value of property checked.
@@ -203,7 +194,7 @@ public class RadioCheckField extends BaseField {
     public boolean isChecked() {
         return this.checked;
     }
-    
+
     /**
      * Sets the state of the field to checked or unchecked.
      * @param checked the state of the field, <CODE>true</CODE> for checked
@@ -212,7 +203,7 @@ public class RadioCheckField extends BaseField {
     public void setChecked(boolean checked) {
         this.checked = checked;
     }
-    
+
     /**
      * Gets the field appearance.
      * @param isRadio <CODE>true</CODE> for a radio field and <CODE>false</CODE>
@@ -222,7 +213,7 @@ public class RadioCheckField extends BaseField {
      * @throws IOException on error
      * @throws DocumentException on error
      * @return the appearance
-     */    
+     */
     public PdfAppearance getAppearance(boolean isRadio, boolean on) throws IOException, DocumentException {
         if (isRadio && checkType == TYPE_CIRCLE)
             return getAppearanceRadioCircle(on);
@@ -262,7 +253,7 @@ public class RadioCheckField extends BaseField {
             app.setColorFill(textColor);
         app.beginText();
         app.setFontAndSize(ufont, fsize);
-        app.setTextMatrix((box.getWidth() - ufont.getWidthPoint(text, fsize)) / 2, 
+        app.setTextMatrix((box.getWidth() - ufont.getWidthPoint(text, fsize)) / 2,
             (box.getHeight() - ufont.getAscentPoint(text, fsize)) / 2);
         app.showText(text);
         app.endText();
@@ -275,7 +266,7 @@ public class RadioCheckField extends BaseField {
      * @param on <CODE>true</CODE> for the checked state, <CODE>false</CODE>
      * otherwise
      * @return the appearance
-     */    
+     */
     public PdfAppearance getAppearanceRadioCircle(boolean on) {
         PdfAppearance app = PdfAppearance.createAppearance(writer, box.getWidth(), box.getHeight());
         switch (rotation) {
@@ -316,7 +307,7 @@ public class RadioCheckField extends BaseField {
         }
         return app;
     }
-    
+
     /**
      * Gets a radio group. It's composed of the field specific keys, without the widget
      * ones. This field is to be used as a field aggregator with {@link PdfFormField#addKid(PdfFormField) addKid()}.
@@ -329,7 +320,7 @@ public class RadioCheckField extends BaseField {
      * one is checked, they are all checked. If <CODE>false</CODE>, the buttons are mutually exclusive
      * (the same behavior as HTML radio buttons)
      * @return the radio group
-     */    
+     */
     public PdfFormField getRadioGroup(boolean noToggleToOff, boolean radiosInUnison) {
         PdfFormField field = PdfFormField.createRadioButton(writer, noToggleToOff);
         if (radiosInUnison)
@@ -342,28 +333,28 @@ public class RadioCheckField extends BaseField {
         field.setValueAsName(checked ? onValue : "Off");
         return field;
     }
-    
+
     /**
      * Gets the radio field. It's only composed of the widget keys and must be used
      * with {@link #getRadioGroup(boolean,boolean)}.
      * @return the radio field
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public PdfFormField getRadioField() throws IOException, DocumentException {
         return getField(true);
     }
-    
+
     /**
      * Gets the check field.
      * @return the check field
      * @throws IOException on error
      * @throws DocumentException on error
-     */    
+     */
     public PdfFormField getCheckField() throws IOException, DocumentException {
         return getField(false);
     }
-    
+
     /**
      * Gets a radio or check field.
      * @param isRadio <CODE>true</CODE> to get a radio field, <CODE>false</CODE> to get
@@ -371,7 +362,7 @@ public class RadioCheckField extends BaseField {
      * @throws IOException on error
      * @throws DocumentException on error
      * @return the field
-     */    
+     */
     protected PdfFormField getField(boolean isRadio) throws IOException, DocumentException {
         PdfFormField field = null;
         if (isRadio)

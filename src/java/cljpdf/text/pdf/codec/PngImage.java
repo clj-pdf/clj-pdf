@@ -45,76 +45,62 @@
  * http://www.lowagie.com/iText/
  *
  * This code is based on a series of source files originally released
- * by SUN in the context of the JAI project. The original code was released 
+ * by SUN in the context of the JAI project. The original code was released
  * under the BSD license in a specific wording. In a mail dating from
  * January 23, 2008, Brian Burkhalter (@sun.com) gave us permission
  * to use the code under the following version of the BSD license:
  *
  * Copyright (c) 2005 Sun Microsystems, Inc. All  Rights Reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
- * are met: 
- * 
- * - Redistribution of source code must retain the above copyright 
+ * are met:
+ *
+ * - Redistribution of source code must retain the above copyright
  *   notice, this  list of conditions and the following disclaimer.
- * 
+ *
  * - Redistribution in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in 
+ *   notice, this list of conditions and the following disclaimer in
  *   the documentation and/or other materials provided with the
  *   distribution.
- * 
- * Neither the name of Sun Microsystems, Inc. or the names of 
- * contributors may be used to endorse or promote products derived 
+ *
+ * Neither the name of Sun Microsystems, Inc. or the names of
+ * contributors may be used to endorse or promote products derived
  * from this software without specific prior written permission.
- * 
- * This software is provided "AS IS," without a warranty of any 
- * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND 
- * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, 
+ *
+ * This software is provided "AS IS," without a warranty of any
+ * kind. ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND
+ * WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY
- * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL 
- * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF 
+ * EXCLUDED. SUN MIDROSYSTEMS, INC. ("SUN") AND ITS LICENSORS SHALL
+ * NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE AS A RESULT OF
  * USING, MODIFYING OR DISTRIBUTING THIS SOFTWARE OR ITS
- * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR 
+ * DERIVATIVES. IN NO EVENT WILL SUN OR ITS LICENSORS BE LIABLE FOR
  * ANY LOST REVENUE, PROFIT OR DATA, OR FOR DIRECT, INDIRECT, SPECIAL,
  * CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED AND
  * REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF THE USE OF OR
  * INABILITY TO USE THIS SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGES. 
- * 
- * You acknowledge that this software is not designed or intended for 
- * use in the design, construction, operation or maintenance of any 
+ * POSSIBILITY OF SUCH DAMAGES.
+ *
+ * You acknowledge that this software is not designed or intended for
+ * use in the design, construction, operation or maintenance of any
  * nuclear facility.
  */
 
 package cljpdf.text.pdf.codec;
-
-import java.awt.color.ICC_Profile;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-
-import cljpdf.text.pdf.codec.PngImage;
 
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Image;
 import cljpdf.text.ImgRaw;
 import cljpdf.text.Utilities;
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfString;
+import cljpdf.text.pdf.*;
+
+import java.awt.color.ICC_Profile;
+import java.io.*;
+import java.net.URL;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /** Reads a PNG image. All types of PNG can be read.
  * <p>
@@ -125,37 +111,37 @@ import cljpdf.text.pdf.PdfString;
 public class PngImage {
 /** Some PNG specific values. */
     public static final int[] PNGID = {137, 80, 78, 71, 13, 10, 26, 10};
-    
+
 /** A PNG marker. */
     public static final String IHDR = "IHDR";
-    
+
 /** A PNG marker. */
     public static final String PLTE = "PLTE";
-    
+
 /** A PNG marker. */
     public static final String IDAT = "IDAT";
-    
+
 /** A PNG marker. */
     public static final String IEND = "IEND";
-    
+
 /** A PNG marker. */
     public static final String tRNS = "tRNS";
-    
+
 /** A PNG marker. */
     public static final String pHYs = "pHYs";
-    
+
 /** A PNG marker. */
     public static final String gAMA = "gAMA";
-    
+
 /** A PNG marker. */
     public static final String cHRM = "cHRM";
-    
+
 /** A PNG marker. */
     public static final String sRGB = "sRGB";
-    
+
 /** A PNG marker. */
     public static final String iCCP = "iCCP";
-    
+
     private static final int TRANSFERSIZE = 4096;
     private static final int PNG_FILTER_NONE = 0;
     private static final int PNG_FILTER_SUB = 1;
@@ -164,7 +150,7 @@ public class PngImage {
     private static final int PNG_FILTER_PAETH = 4;
     private static final PdfName intents[] = {PdfName.PERCEPTUAL,
         PdfName.RELATIVECOLORIMETRIC,PdfName.SATURATION,PdfName.ABSOLUTECOLORIMETRIC};
-    
+
     InputStream is;
     DataInputStream dataStream;
     int width;
@@ -196,18 +182,18 @@ public class PngImage {
     PdfName intent;
     ICC_Profile icc_profile;
 
-    
-    
+
+
     /** Creates a new instance of PngImage */
     PngImage(InputStream is) {
         this.is = is;
     }
-    
+
     /** Reads a PNG from an url.
      * @param url the url
      * @throws IOException on error
      * @return the image
-     */    
+     */
     public static Image getImage(URL url) throws IOException {
         InputStream is = null;
         try {
@@ -222,38 +208,38 @@ public class PngImage {
             }
         }
     }
-    
+
     /** Reads a PNG from a stream.
      * @param is the stream
      * @throws IOException on error
      * @return the image
-     */    
+     */
     public static Image getImage(InputStream is) throws IOException {
         PngImage png = new PngImage(is);
         return png.getImage();
     }
-    
+
     /** Reads a PNG from a file.
      * @param file the file
      * @throws IOException on error
      * @return the image
-     */    
+     */
     public static Image getImage(String file) throws IOException {
         return getImage(Utilities.toURL(file));
     }
-    
+
     /** Reads a PNG from a byte array.
      * @param data the byte array
      * @throws IOException on error
      * @return the image
-     */    
+     */
     public static Image getImage(byte data[]) throws IOException {
         ByteArrayInputStream is = new ByteArrayInputStream(data);
         Image img = getImage(is);
         img.setOriginalData(data);
         return img;
     }
-    
+
     boolean checkMarker(String s) {
         if (s.length() != 4)
             return false;
@@ -264,7 +250,7 @@ public class PngImage {
         }
         return true;
     }
-    
+
     void readPng() throws IOException {
         for (int i = 0; i < PNGID.length; i++) {
             if (PNGID[i] != is.read())	{
@@ -328,7 +314,7 @@ public class PngImage {
             else if (IHDR.equals(marker)) {
                 width = getInt(is);
                 height = getInt(is);
-                
+
                 bitDepth = is.read();
                 colorType = is.read();
                 compressionMethod = is.read();
@@ -440,7 +426,7 @@ public class PngImage {
             Utilities.skip(is, 4);
         }
     }
-    
+
     PdfObject getColorspace() {
         if (icc_profile != null) {
             if ((colorType & 2) == 0)
@@ -513,7 +499,7 @@ public class PngImage {
             return array;
         }
     }
-    
+
     Image getImage() throws IOException {
         readPng();
         try {
@@ -609,7 +595,7 @@ public class PngImage {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     void decodeIdat() {
         int nbitDepth = bitDepth;
         if (nbitDepth == 16)
@@ -647,7 +633,7 @@ public class PngImage {
         ByteArrayInputStream bai = new ByteArrayInputStream(idat.getBuf(), 0, idat.size());
         InputStream infStream = new InflaterInputStream(bai, new Inflater());
         dataStream = new DataInputStream(infStream);
-        
+
         if (interlaceMethod != 1) {
             decodePass(0, 0, 1, 1, width, height);
         }
@@ -660,20 +646,20 @@ public class PngImage {
             decodePass(1, 0, 2, 2, width/2, (height + 1)/2);
             decodePass(0, 1, 1, 2, width, height/2);
         }
-        
+
     }
-    
+
     void decodePass( int xOffset, int yOffset,
     int xStep, int yStep,
     int passWidth, int passHeight) {
         if ((passWidth == 0) || (passHeight == 0)) {
             return;
         }
-        
+
         int bytesPerRow = (inputBands*passWidth*bitDepth + 7)/8;
         byte[] curr = new byte[bytesPerRow];
         byte[] prior = new byte[bytesPerRow];
-        
+
         // Decode the (sub)image row-by-row
         int srcY, dstY;
         for (srcY = 0, dstY = yOffset;
@@ -687,7 +673,7 @@ public class PngImage {
             } catch (Exception e) {
                 // empty on purpose
             }
-            
+
             switch (filter) {
                 case PNG_FILTER_NONE:
                     break;
@@ -707,16 +693,16 @@ public class PngImage {
                     // Error -- uknown filter type
                     throw new RuntimeException(MessageLocalization.getComposedMessage("png.filter.unknown"));
             }
-            
+
             processPixels(curr, xOffset, xStep, dstY, passWidth);
-            
+
             // Swap curr and prior
             byte[] tmp = prior;
             prior = curr;
             curr = tmp;
         }
     }
-    
+
     void processPixels(byte curr[], int xOffset, int step, int y, int width) {
         int srcX, dstX;
 
@@ -801,7 +787,7 @@ public class PngImage {
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++) {
                         int markRed = inputBands * srcX;
-                        v[0] = (out[markRed] == transRedGray && out[markRed + 1] == transGreen 
+                        v[0] = (out[markRed] == transRedGray && out[markRed + 1] == transGreen
                             && out[markRed + 2] == transBlue ? 1 : 0);
                         setPixel(smask, v, 0, 1, dstX, y, 1, yStride);
                         dstX += step;
@@ -811,7 +797,7 @@ public class PngImage {
             }
         }
     }
-    
+
     static int getPixel(byte image[], int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + x;
@@ -823,7 +809,7 @@ public class PngImage {
             return v & ((1 << bitDepth) - 1);
         }
     }
-    
+
     static void setPixel(byte image[], int data[], int offset, int size, int x, int y, int bitDepth, int bytesPerRow) {
         if (bitDepth == 8) {
             int pos = bytesPerRow * y + size * x;
@@ -841,7 +827,7 @@ public class PngImage {
             image[pos] |= v;
         }
     }
-    
+
     int[] getPixel(byte curr[]) {
         switch (bitDepth) {
             case 8: {
@@ -863,61 +849,61 @@ public class PngImage {
                 int mask = (1 << bitDepth) - 1;
                 for (int k = 0; k < curr.length; ++k) {
                     for (int j = passes - 1; j >= 0; --j) {
-                        out[idx++] = (curr[k] >>> (bitDepth * j)) & mask; 
+                        out[idx++] = (curr[k] >>> (bitDepth * j)) & mask;
                     }
                 }
                 return out;
             }
         }
     }
-    
+
     private static void decodeSubFilter(byte[] curr, int count, int bpp) {
         for (int i = bpp; i < count; i++) {
             int val;
-            
+
             val = curr[i] & 0xff;
             val += curr[i - bpp] & 0xff;
-            
+
             curr[i] = (byte)val;
         }
     }
-    
+
     private static void decodeUpFilter(byte[] curr, byte[] prev,
     int count) {
         for (int i = 0; i < count; i++) {
             int raw = curr[i] & 0xff;
             int prior = prev[i] & 0xff;
-            
+
             curr[i] = (byte)(raw + prior);
         }
     }
-    
+
     private static void decodeAverageFilter(byte[] curr, byte[] prev,
     int count, int bpp) {
         int raw, priorPixel, priorRow;
-        
+
         for (int i = 0; i < bpp; i++) {
             raw = curr[i] & 0xff;
             priorRow = prev[i] & 0xff;
-            
+
             curr[i] = (byte)(raw + priorRow/2);
         }
-        
+
         for (int i = bpp; i < count; i++) {
             raw = curr[i] & 0xff;
             priorPixel = curr[i - bpp] & 0xff;
             priorRow = prev[i] & 0xff;
-            
+
             curr[i] = (byte)(raw + (priorPixel + priorRow)/2);
         }
     }
-    
+
     private static int paethPredictor(int a, int b, int c) {
         int p = a + b - c;
         int pa = Math.abs(p - a);
         int pb = Math.abs(p - b);
         int pc = Math.abs(p - c);
-        
+
         if ((pa <= pb) && (pa <= pc)) {
             return a;
         } else if (pb <= pc) {
@@ -926,30 +912,30 @@ public class PngImage {
             return c;
         }
     }
-    
+
     private static void decodePaethFilter(byte[] curr, byte[] prev,
     int count, int bpp) {
         int raw, priorPixel, priorRow, priorRowPixel;
-        
+
         for (int i = 0; i < bpp; i++) {
             raw = curr[i] & 0xff;
             priorRow = prev[i] & 0xff;
-            
+
             curr[i] = (byte)(raw + priorRow);
         }
-        
+
         for (int i = bpp; i < count; i++) {
             raw = curr[i] & 0xff;
             priorPixel = curr[i - bpp] & 0xff;
             priorRow = prev[i] & 0xff;
             priorRowPixel = prev[i - bpp] & 0xff;
-            
+
             curr[i] = (byte)(raw + paethPredictor(priorPixel,
             priorRow,
             priorRowPixel));
         }
     }
-    
+
     static class NewByteArrayOutputStream extends ByteArrayOutputStream {
         public byte[] getBuf() {
             return buf;
@@ -962,29 +948,29 @@ public class PngImage {
  * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
-    
+
     public static final int getInt(InputStream is) throws IOException {
         return (is.read() << 24) + (is.read() << 16) + (is.read() << 8) + is.read();
     }
-    
+
 /**
  * Gets a <CODE>word</CODE> from an <CODE>InputStream</CODE>.
  *
  * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
-    
+
     public static final int getWord(InputStream is) throws IOException {
         return (is.read() << 8) + is.read();
     }
-    
+
 /**
  * Gets a <CODE>String</CODE> from an <CODE>InputStream</CODE>.
  *
  * @param		is      an <CODE>InputStream</CODE>
  * @return		the value of an <CODE>int</CODE>
  */
-    
+
     public static final String getString(InputStream is) throws IOException {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < 4; i++) {

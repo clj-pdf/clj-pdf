@@ -49,57 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.InflaterInputStream;
-import java.util.Stack;
-import java.security.Key;
-import java.security.MessageDigest;
-import java.security.cert.Certificate;
-
-import org.bouncycastle.cms.CMSEnvelopedData;
-import org.bouncycastle.cms.RecipientInformation;
-
-import cljpdf.text.pdf.AcroFields;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.LZWDecoder;
-import cljpdf.text.pdf.PRAcroForm;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PRTokeniser;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNameTree;
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfReaderInstance;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-import cljpdf.text.pdf.SequenceList;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.PageSize;
 import cljpdf.text.Rectangle;
@@ -109,6 +58,13 @@ import cljpdf.text.exceptions.InvalidPdfException;
 import cljpdf.text.exceptions.UnsupportedPdfException;
 import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
 import cljpdf.text.pdf.internal.PdfViewerPreferencesImp;
+
+import java.io.*;
+import java.net.URL;
+import java.security.Key;
+import java.security.cert.Certificate;
+import java.util.*;
+import java.util.zip.InflaterInputStream;
 
 /** Reads a PDF document.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -144,7 +100,7 @@ public class PdfReader implements PdfViewerPreferences {
     protected boolean tampered = false;
     protected int lastXref;
     protected int eofPos;
-    protected char pdfVersion;    
+    protected char pdfVersion;
     protected byte password[] = null; //added by ujihara for decryption
     protected Key certificateKey = null; //added by Aiken Sam for certificate decryption
     protected Certificate certificate = null; //added by Aiken Sam for certificate decryption
@@ -301,7 +257,7 @@ public class PdfReader implements PdfViewerPreferences {
         this.eofPos = reader.eofPos;
         this.freeXref = reader.freeXref;
         this.lastXref = reader.lastXref;
-        this.tokens = new PRTokeniser(reader.tokens.getSafeFile());        
+        this.tokens = new PRTokeniser(reader.tokens.getSafeFile());
         this.pValue = reader.pValue;
         this.rValue = reader.rValue;
         this.xrefObj = new ArrayList(reader.xrefObj);
@@ -782,7 +738,7 @@ public class PdfReader implements PdfViewerPreferences {
 
     protected void readDocObjPartial() throws IOException {
         xrefObj = new ArrayList(xref.length / 2);
-        xrefObj.addAll(Collections.nCopies(xref.length / 2, null));        
+        xrefObj.addAll(Collections.nCopies(xref.length / 2, null));
         if (objStmToOffset != null) {
             int keys[] = objStmToOffset.getKeys();
             for (int k = 0; k < keys.length; ++k) {
@@ -819,7 +775,7 @@ public class PdfReader implements PdfViewerPreferences {
         try {
             obj = readPRObject();
             for (int j = 0; j < strings.size(); ++j) {
-                PdfString str = (PdfString)strings.get(j);                
+                PdfString str = (PdfString)strings.get(j);
             }
             if (obj.isStream()) {
                 checkPRStreamLength((PRStream)obj);
@@ -917,7 +873,7 @@ public class PdfReader implements PdfViewerPreferences {
         }
         for (int k = 0; k < streams.size(); ++k) {
             checkPRStreamLength((PRStream)streams.get(k));
-        }        
+        }
         if (objStmMark != null) {
             for (Iterator i = objStmMark.entrySet().iterator(); i.hasNext();) {
                 Map.Entry entry = (Map.Entry)i.next();
@@ -1962,7 +1918,7 @@ public class PdfReader implements PdfViewerPreferences {
         else {
             b = new byte[stream.getLength()];
             file.seek(stream.getOffset());
-            file.readFully(b);                       
+            file.readFully(b);
         }
         return b;
     }
@@ -2324,7 +2280,7 @@ public class PdfReader implements PdfViewerPreferences {
     public HashMap getNamedDestinationFromNames() {
     	return getNamedDestinationFromNames(false);
     }
-    
+
     /**
      * Gets the named destinations from the /Dests key in the catalog as an <CODE>HashMap</CODE>. The key is the name
      * and the value is the destinations array.
@@ -2492,7 +2448,7 @@ public class PdfReader implements PdfViewerPreferences {
                 pageRefs.releasePage(k);
         }
     }
-    
+
     /**
      * Converts a remote named destination GoToR with a local named destination
      * if there's a corresponding name.

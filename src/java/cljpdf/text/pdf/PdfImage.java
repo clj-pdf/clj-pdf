@@ -49,38 +49,28 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.Image;
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfImage;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfStream;
-
-import cljpdf.text.Image;
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * <CODE>PdfImage</CODE> is a <CODE>PdfStream</CODE> containing an image-<CODE>Dictionary</CODE> and -stream.
  */
 
 public class PdfImage extends PdfStream {
-    
+
     static final int TRANSFERSIZE = 4096;
     // membervariables
-    
+
     /** This is the <CODE>PdfName</CODE> of the image. */
     protected PdfName name = null;
-    
+
     // constructor
-    
+
     /**
      * Constructs a <CODE>PdfImage</CODE>-object.
      *
@@ -88,7 +78,7 @@ public class PdfImage extends PdfStream {
      * @param name the <CODE>PdfName</CODE> for this image
      * @throws BadPdfFormatException on error
      */
-    
+
     public PdfImage(Image image, String name, PdfIndirectReference maskRef) throws BadPdfFormatException {
         super();
         this.name = new PdfName(name);
@@ -269,17 +259,17 @@ public class PdfImage extends PdfStream {
             }
         }
     }
-    
+
     /**
      * Returns the <CODE>PdfName</CODE> of the image.
      *
      * @return		the name
      */
-    
+
     public PdfName name() {
         return name;
     }
-    
+
     static void transferBytes(InputStream in, OutputStream out, int len) throws IOException {
         byte buffer[] = new byte[TRANSFERSIZE];
         if (len < 0)
@@ -293,7 +283,7 @@ public class PdfImage extends PdfStream {
             len -= size;
         }
     }
-    
+
     protected void importAll(PdfImage dup) {
         name = dup.name;
         compressed = dup.compressed;

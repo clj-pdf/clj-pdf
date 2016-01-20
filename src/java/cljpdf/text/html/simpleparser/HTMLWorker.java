@@ -42,13 +42,21 @@
  *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
  */
 
 package cljpdf.text.html.simpleparser;
+
+import cljpdf.text.*;
+import cljpdf.text.html.HtmlTags;
+import cljpdf.text.html.Markup;
+import cljpdf.text.pdf.PdfPTable;
+import cljpdf.text.pdf.draw.LineSeparator;
+import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import cljpdf.text.xml.simpleparser.SimpleXMLParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,37 +65,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.StringTokenizer;
-
-import cljpdf.text.html.simpleparser.ALink;
-import cljpdf.text.html.simpleparser.ChainedProperties;
-import cljpdf.text.html.simpleparser.FactoryProperties;
-import cljpdf.text.html.simpleparser.HTMLWorker;
-import cljpdf.text.html.simpleparser.ImageProvider;
-import cljpdf.text.html.simpleparser.Img;
-import cljpdf.text.html.simpleparser.IncCell;
-import cljpdf.text.html.simpleparser.IncTable;
-import cljpdf.text.html.simpleparser.StyleSheet;
-
-import cljpdf.text.Chunk;
-import cljpdf.text.DocListener;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementTags;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.FontProvider;
-import cljpdf.text.HeaderFooter;
-import cljpdf.text.Image;
-import cljpdf.text.ListItem;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
-import cljpdf.text.TextElementArray;
-import cljpdf.text.html.HtmlTags;
-import cljpdf.text.html.Markup;
-import cljpdf.text.pdf.PdfPTable;
-import cljpdf.text.pdf.draw.LineSeparator;
-import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import cljpdf.text.xml.simpleparser.SimpleXMLParser;
 
 public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 
@@ -236,7 +213,7 @@ public class HTMLWorker implements SimpleXMLDocHandler, DocListener {
 				int hrAlign = Element.ALIGN_CENTER;
 				if (align != null) {
 					if (align.equalsIgnoreCase("left"))
-						hrAlign = Element.ALIGN_LEFT; 
+						hrAlign = Element.ALIGN_LEFT;
 					if (align.equalsIgnoreCase("right"))
 						hrAlign = Element.ALIGN_RIGHT;
 				}

@@ -48,26 +48,13 @@
  */
 
 package cljpdf.text.pdf;
+
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfImportedPage;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-
-import cljpdf.text.error_messages.MessageLocalization;
 /**
  * Instance of PdfReader in each output document.
  *
@@ -83,18 +70,18 @@ class PdfReaderInstance {
     PdfWriter writer;
     HashMap visited = new HashMap();
     ArrayList nextRound = new ArrayList();
-    
+
     PdfReaderInstance(PdfReader reader, PdfWriter writer) {
         this.reader = reader;
         this.writer = writer;
         file = reader.getSafeFile();
         myXref = new int[reader.getXrefSize()];
     }
-    
+
     PdfReader getReader() {
         return reader;
     }
-    
+
     PdfImportedPage getImportedPage(int pageNumber) {
         if (!reader.isOpenedWithFullPermissions())
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("pdfreader.not.opened.with.owner.password"));
@@ -108,7 +95,7 @@ class PdfReaderInstance {
         }
         return pageT;
     }
-    
+
     int getNewObjectNumber(int number, int generation) {
         if (myXref[number] == 0) {
             myXref[number] = writer.getIndirectReferenceNumber();
@@ -116,16 +103,16 @@ class PdfReaderInstance {
         }
         return myXref[number];
     }
-    
+
     RandomAccessFileOrArray getReaderFile() {
         return file;
     }
-    
+
     PdfObject getResources(int pageNumber) {
         PdfObject obj = PdfReader.getPdfObjectRelease(reader.getPageNRelease(pageNumber).get(PdfName.RESOURCES));
         return obj;
     }
-    
+
     /**
      * Gets the content stream of a page as a PdfStream object.
      * @param	pageNumber			the page of which you want the stream
@@ -167,7 +154,7 @@ class PdfReaderInstance {
         }
         return stream;
     }
-    
+
     void writeAllVisited() throws IOException {
         while (!nextRound.isEmpty()) {
             ArrayList vec = nextRound;
@@ -182,7 +169,7 @@ class PdfReaderInstance {
             }
         }
     }
-    
+
     void writeAllPages() throws IOException {
         try {
             file.reOpen();

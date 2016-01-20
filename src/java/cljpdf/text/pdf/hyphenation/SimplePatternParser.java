@@ -39,10 +39,10 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
  * details.
- * 
+ *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -50,20 +50,16 @@
 
 package cljpdf.text.pdf.hyphenation;
 
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.html.HtmlTags;
+import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
+import cljpdf.text.xml.simpleparser.SimpleXMLParser;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
-import cljpdf.text.pdf.hyphenation.Hyphen;
-import cljpdf.text.pdf.hyphenation.PatternConsumer;
-import cljpdf.text.pdf.hyphenation.SimplePatternParser;
-
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.html.HtmlTags;
-import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
-import cljpdf.text.xml.simpleparser.SimpleXMLParser;
 
 /** Parses the xml hyphenation pattern.
  *

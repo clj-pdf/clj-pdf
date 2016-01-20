@@ -49,12 +49,12 @@
 
 package cljpdf.text.pdf.events;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import cljpdf.text.pdf.PdfContentByte;
 import cljpdf.text.pdf.PdfPTable;
 import cljpdf.text.pdf.PdfPTableEvent;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * If you want to add more than one page event to a PdfPTable,
@@ -67,8 +67,8 @@ public class PdfPTableEventForwarder implements PdfPTableEvent {
 
 	/** ArrayList containing all the PageEvents that have to be executed. */
 	protected ArrayList events = new ArrayList();
-	
-	/** 
+
+	/**
 	 * Add a page event to the forwarder.
 	 * @param event an event that has to be added to the forwarder.
 	 */

@@ -47,27 +47,14 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.pdf.collection.PdfCollectionItem;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEFStream;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.collection.PdfCollectionItem;
 /** Specifies a file or an URL. The file can be extern or embedded.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -75,18 +62,18 @@ import cljpdf.text.pdf.collection.PdfCollectionItem;
 public class PdfFileSpecification extends PdfDictionary {
     protected PdfWriter writer;
     protected PdfIndirectReference ref;
-    
+
     /** Creates a new instance of PdfFileSpecification. The static methods are preferred. */
     public PdfFileSpecification() {
         super(PdfName.FILESPEC);
     }
-    
+
     /**
      * Creates a file specification of type URL.
      * @param writer the <CODE>PdfWriter</CODE>
      * @param url the URL
      * @return the file specification
-     */    
+     */
     public static PdfFileSpecification url(PdfWriter writer, String url) {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
@@ -105,7 +92,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * it takes precedence over <CODE>filePath</CODE>
      * @throws IOException on error
      * @return the file specification
-     */    
+     */
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[]) throws IOException {
         return fileEmbedded(writer, filePath, fileDisplay, fileStore, PdfStream.BEST_COMPRESSION);
     }
@@ -123,12 +110,12 @@ public class PdfFileSpecification extends PdfDictionary {
      * @throws IOException on error
      * @return the file specification
      * @since	2.1.3
-     */    
+     */
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], int compressionLevel) throws IOException {
         return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compressionLevel);
     }
-    
-    
+
+
     /**
      * Creates a file specification with the file embedded. The file may
      * come from the file system or from a byte array.
@@ -141,11 +128,11 @@ public class PdfFileSpecification extends PdfDictionary {
      * from compression
      * @throws IOException on error
      * @return the file specification
-     */    
+     */
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress) throws IOException {
         return fileEmbedded(writer, filePath, fileDisplay, fileStore, null, null, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
     }
-    
+
     /**
      * Creates a file specification with the file embedded. The file may
      * come from the file system or from a byte array.
@@ -160,11 +147,11 @@ public class PdfFileSpecification extends PdfDictionary {
      * @param fileParameter the optional extra file parameters such as the creation or modification date
      * @throws IOException on error
      * @return the file specification
-     */    
+     */
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], boolean compress, String mimeType, PdfDictionary fileParameter) throws IOException {
     	return fileEmbedded(writer, filePath, fileDisplay, fileStore, mimeType, fileParameter, compress ? PdfStream.BEST_COMPRESSION : PdfStream.NO_COMPRESSION);
     }
-    
+
     /**
      * Creates a file specification with the file embedded. The file may
      * come from the file system or from a byte array.
@@ -179,7 +166,7 @@ public class PdfFileSpecification extends PdfDictionary {
      * @throws IOException on error
      * @return the file specification
      * @since	2.1.3
-     */    
+     */
     public static PdfFileSpecification fileEmbedded(PdfWriter writer, String filePath, String fileDisplay, byte fileStore[], String mimeType, PdfDictionary fileParameter, int compressionLevel) throws IOException {
         PdfFileSpecification fs = new PdfFileSpecification();
         fs.writer = writer;
@@ -245,7 +232,7 @@ public class PdfFileSpecification extends PdfDictionary {
         fs.put(PdfName.EF, f);
         return fs;
     }
-    
+
     /**
      * Creates a file specification for an external file.
      * @param writer the <CODE>PdfWriter</CODE>
@@ -259,41 +246,41 @@ public class PdfFileSpecification extends PdfDictionary {
         fs.setUnicodeFileName(filePath, false);
         return fs;
     }
-    
+
     /**
      * Gets the indirect reference to this file specification.
      * Multiple invocations will retrieve the same value.
      * @throws IOException on error
      * @return the indirect reference
-     */    
+     */
     public PdfIndirectReference getReference() throws IOException {
         if (ref != null)
             return ref;
         ref = writer.addToBody(this).getIndirectReference();
         return ref;
     }
-    
+
     /**
      * Sets the file name (the key /F) string as an hex representation
      * to support multi byte file names. The name must have the slash and
      * backslash escaped according to the file specification rules
      * @param fileName the file name as a byte array
-     */    
+     */
     public void setMultiByteFileName(byte fileName[]) {
         put(PdfName.F, new PdfString(fileName).setHexWriting(true));
     }
-    
+
     /**
      * Adds the unicode file name (the key /UF). This entry was introduced
      * in PDF 1.7. The filename must have the slash and backslash escaped
      * according to the file specification rules.
      * @param filename	the filename
      * @param unicode	if true, the filename is UTF-16BE encoded; otherwise PDFDocEncoding is used;
-     */    
+     */
     public void setUnicodeFileName(String filename, boolean unicode) {
         put(PdfName.UF, new PdfString(filename, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
     }
-    
+
     /**
      * Sets a flag that indicates whether an external file referenced by the file
      * specification is volatile. If the value is true, applications should never
@@ -303,7 +290,7 @@ public class PdfFileSpecification extends PdfDictionary {
     public void setVolatile(boolean volatile_file) {
     	put(PdfName.V, new PdfBoolean(volatile_file));
     }
-    
+
     /**
      * Adds a description for the file that is specified here.
      * @param description	some text
@@ -312,7 +299,7 @@ public class PdfFileSpecification extends PdfDictionary {
     public void addDescription(String description, boolean unicode) {
         put(PdfName.DESC, new PdfString(description, unicode ? PdfObject.TEXT_UNICODE : PdfObject.TEXT_PDFDOCENCODING));
     }
-    
+
     /**
      * Adds the Collection item dictionary.
      */

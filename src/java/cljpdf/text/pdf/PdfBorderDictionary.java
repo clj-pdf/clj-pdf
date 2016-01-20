@@ -50,11 +50,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfDashPattern;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-
 import cljpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -64,18 +59,18 @@ import cljpdf.text.error_messages.MessageLocalization;
  */
 
 public class PdfBorderDictionary extends PdfDictionary {
-    
+
     public static final int STYLE_SOLID = 0;
     public static final int STYLE_DASHED = 1;
     public static final int STYLE_BEVELED = 2;
     public static final int STYLE_INSET = 3;
     public static final int STYLE_UNDERLINE = 4;
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfBorderDictionary</CODE>.
  */
-    
+
     public PdfBorderDictionary(float borderWidth, int borderStyle, PdfDashPattern dashes) {
         put(PdfName.W, new PdfNumber(borderWidth));
         switch (borderStyle) {
@@ -100,7 +95,7 @@ public class PdfBorderDictionary extends PdfDictionary {
                 throw new IllegalArgumentException(MessageLocalization.getComposedMessage("invalid.border.style"));
         }
     }
-    
+
     public PdfBorderDictionary(float borderWidth, int borderStyle) {
         this(borderWidth, borderStyle, null);
     }

@@ -46,23 +46,17 @@
  */
 package cljpdf.text.pdf.events;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import cljpdf.text.Chunk;
 import cljpdf.text.Document;
 import cljpdf.text.Rectangle;
 import cljpdf.text.pdf.PdfPageEventHelper;
 import cljpdf.text.pdf.PdfWriter;
 
+import java.util.*;
+
 /**
  * Class for an index.
- * 
+ *
  * @author Michael Niedermair
  */
 public class IndexEvents extends PdfPageEventHelper {
@@ -74,7 +68,7 @@ public class IndexEvents extends PdfPageEventHelper {
 
     /**
      * All the text that is passed to this event, gets registered in the indexentry.
-     * 
+     *
      * @see cljpdf.text.pdf.PdfPageEventHelper#onGenericTag(
      *      cljpdf.text.pdf.PdfWriter, cljpdf.text.Document,
      *      cljpdf.text.Rectangle, java.lang.String)

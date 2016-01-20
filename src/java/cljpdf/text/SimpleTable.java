@@ -48,22 +48,13 @@
  */
 package cljpdf.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Rectangle;
-import cljpdf.text.SimpleCell;
-import cljpdf.text.Table;
-import cljpdf.text.TextElementArray;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfContentByte;
 import cljpdf.text.pdf.PdfPTable;
 import cljpdf.text.pdf.PdfPTableEvent;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Rectangle that can be used for Cells.
@@ -83,7 +74,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	private float cellpadding;
 	/** the alignment of the table. */
 	private int alignment;
-	
+
 	/**
 	 * A RectangleCell is always constructed without any dimensions.
 	 * Dimensions are defined after creation.
@@ -93,7 +84,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		setBorder(BOX);
 		setBorderWidth(2f);
 	}
-	
+
 	/**
 	 * Adds content to this object.
 	 * @param element
@@ -105,7 +96,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		}
 		content.add(element);
 	}
-	
+
 	/**
 	 * Creates a Table object based on this TableAttributes object.
 	 * @return a cljpdf.text.Table object
@@ -175,7 +166,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		}
 		return table;
 	}
-	
+
 	/**
 	 * Creates a PdfPTable object based on this TableAttributes object.
 	 * @return a cljpdf.text.pdf.PdfPTable object
@@ -254,7 +245,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		}
 		return table;
 	}
-	
+
 	/**
      * @see cljpdf.text.pdf.PdfPTableEvent#tableLayout(cljpdf.text.pdf.PdfPTable, float[][], float[], int, int, cljpdf.text.pdf.PdfContentByte[])
  	 */
@@ -269,7 +260,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 		rect.setBackgroundColor(null);
 		canvases[PdfPTable.LINECANVAS].rectangle(rect);
 	}
-	
+
 	/**
 	 * @return Returns the cellpadding.
 	 */
@@ -294,7 +285,7 @@ public class SimpleTable extends Rectangle implements PdfPTableEvent, TextElemen
 	public void setCellspacing(float cellspacing) {
 		this.cellspacing = cellspacing;
 	}
-	
+
 	/**
 	 * @return Returns the alignment.
 	 */

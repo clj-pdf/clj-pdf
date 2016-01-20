@@ -49,16 +49,10 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import cljpdf.text.pdf.PdfCell;
-
-import cljpdf.text.Cell;
-import cljpdf.text.Element;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Row;
-import cljpdf.text.Table;
 
 /**
  * <CODE>PdfTable</CODE> is an object that contains the graphics and text of a table.
@@ -70,24 +64,24 @@ import cljpdf.text.Table;
  */
 
 public class PdfTable extends Rectangle {
-    
+
 	// membervariables
-    
+
 	/** this is the number of columns in the table. */
 	private int columns;
-    
+
 	/** this is the ArrayList with all the cell of the table header. */
 	private ArrayList headercells;
-    
+
 	/** this is the ArrayList with all the cells in the table. */
 	private ArrayList cells;
-    
+
 	/** Original table used to build this object*/
 	protected Table table;
-	
+
 	/** Cached column widths. */
 	protected float[] positions;
-	
+
 	// constructors
 
 	/**
@@ -99,23 +93,23 @@ public class PdfTable extends Rectangle {
 	 * @param	top		the start position of the top of the table
 	 * @since	a parameter of this method has been removed in iText 2.0.8
 	 */
-    
+
 	PdfTable(Table table, float left, float right, float top) {
 		// constructs a Rectangle (the bottom value will be changed afterwards)
 		super(left, top, right, top);
 		this.table = table;
         table.complete();
-        
+
 		// copying the attributes from class Table
         cloneNonPositionParameters(table);
 
 		this.columns = table.getColumns();
 		positions = table.getWidths(left, right - left);
-        
+
 		// initialization of some parameters
 		setLeft(positions[0]);
 		setRight(positions[positions.length - 1]);
-		
+
 		headercells = new ArrayList();
 		cells = new ArrayList();
 
@@ -125,21 +119,21 @@ public class PdfTable extends Rectangle {
 	// methods
 
 	/**
-	 * Updates the table row additions in the underlying table object and deletes all table rows, 
+	 * Updates the table row additions in the underlying table object and deletes all table rows,
 	 * in order to preserve memory and detect future row additions.
 	 * <p><b>Pre-requisite</b>: the object must have been built with the parameter <code>supportUpdateRowAdditions</code> equals to true.
 	 */
-	
+
 	void updateRowAdditions() {
         table.complete();
 		updateRowAdditionsInternal();
 		table.deleteAllRows();
 	}
-	
+
 	/**
 	 * Updates the table row additions in the underlying table object
 	 */
-	
+
 	private void updateRowAdditionsInternal() {
 		// correct table : fill empty cells/ parse table in table
 		Row row;
@@ -156,7 +150,7 @@ public class PdfTable extends Rectangle {
 		for (int i = 0; i < rows; i++) {
 			offsets[i] = getBottom();
 		}
-        
+
 		// loop over all the rows
 		for (Iterator rowIterator = table.iterator(); rowIterator.hasNext(); ) {
 			groupChange = false;
@@ -194,7 +188,7 @@ public class PdfTable extends Rectangle {
 			rowNumber++;
 			if( groupChange ) groupNumber++;
 		}
-        
+
 		// loop over all the cells
 		int n = newCells.size();
 		for (int i = 0; i < n; i++) {
@@ -213,76 +207,76 @@ public class PdfTable extends Rectangle {
 	/**
 	 * Get the number of rows
 	 */
-	
+
 	int rows() {
-		return cells.isEmpty() ? 0 : ((PdfCell)cells.get(cells.size()-1)).rownumber()+1; 
+		return cells.isEmpty() ? 0 : ((PdfCell)cells.get(cells.size()-1)).rownumber()+1;
 	}
 
 	/** @see cljpdf.text.Element#type() */
 	public int type() {
 		return Element.TABLE;
 	}
-    
+
 	/**
 	 * Returns the arraylist with the cells of the table header.
 	 *
 	 * @return	an <CODE>ArrayList</CODE>
 	 */
-    
+
 	ArrayList getHeaderCells() {
 		return headercells;
 	}
-    
+
 	/**
 	 * Checks if there is a table header.
 	 *
 	 * @return	an <CODE>ArrayList</CODE>
 	 */
-    
+
 	boolean hasHeader() {
 		return !headercells.isEmpty();
 	}
-    
+
 	/**
 	 * Returns the arraylist with the cells of the table.
 	 *
 	 * @return	an <CODE>ArrayList</CODE>
 	 */
-    
+
 	ArrayList getCells() {
 		return cells;
 	}
-    
+
 	/**
 	 * Returns the number of columns of the table.
 	 *
 	 * @return	the number of columns
 	 */
-    
+
 	int columns() {
 		return columns;
 	}
-    
+
 	/**
 	 * Returns the cellpadding of the table.
 	 *
 	 * @return	the cellpadding
 	 */
-    
+
 	final float cellpadding() {
 		return table.getPadding();
 	}
-    
+
 	/**
 	 * Returns the cellspacing of the table.
 	 *
 	 * @return	the cellspacing
 	 */
-    
+
 	final float cellspacing() {
 		return table.getSpacing();
 	}
-	
+
 	/**
 	 * Checks if this <CODE>Table</CODE> has to fit a page.
 	 *
@@ -298,7 +292,7 @@ public class PdfTable extends Rectangle {
 	 *
 	 * @return  true if the cells may not be split
 	 */
-	
+
 	public final boolean hasToFitPageCells() {
 		return table.isCellsFitPage();
 	}

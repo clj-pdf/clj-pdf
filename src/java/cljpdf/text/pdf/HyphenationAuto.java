@@ -47,9 +47,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.HyphenationEvent;
-
 import cljpdf.text.pdf.hyphenation.Hyphenation;
 import cljpdf.text.pdf.hyphenation.Hyphenator;
 
@@ -62,29 +59,29 @@ import cljpdf.text.pdf.hyphenation.Hyphenator;
 public class HyphenationAuto implements HyphenationEvent {
 
     /** The hyphenator engine.
-     */    
+     */
     protected Hyphenator hyphenator;
     /** The second part of the hyphenated word.
-     */    
+     */
     protected String post;
-    
+
     /** Creates a new hyphenation instance usable in <CODE>Chunk</CODE>.
      * @param lang the language ("en" for English, for example)
      * @param country the country ("GB" for Great-Britain or "none" for no country, for example)
      * @param leftMin the minimum number of letters before the hyphen
      * @param rightMin the minimum number of letters after the hyphen
-     */    
+     */
     public HyphenationAuto(String lang, String country, int leftMin, int rightMin) {
         hyphenator = new Hyphenator(lang, country, leftMin, rightMin);
     }
 
     /** Gets the hyphen symbol.
      * @return the hyphen symbol
-     */    
+     */
     public String getHyphenSymbol() {
         return "-";
     }
-    
+
     /** Hyphenates a word and returns the first part of it. To get
      * the second part of the hyphenated word call <CODE>getHyphenatedWordPost()</CODE>.
      * @param word the word to hyphenate
@@ -93,7 +90,7 @@ public class HyphenationAuto implements HyphenationEvent {
      * @param remainingWidth the width available to fit this word in
      * @return the first part of the hyphenated word including
      * the hyphen symbol, if any
-     */    
+     */
     public String getHyphenatedWordPre(String word, BaseFont font, float fontSize, float remainingWidth) {
         post = word;
         String hyphen = getHyphenSymbol();
@@ -116,13 +113,13 @@ public class HyphenationAuto implements HyphenationEvent {
         post = hyphenation.getPostHyphenText(k);
         return hyphenation.getPreHyphenText(k) + hyphen;
     }
-    
+
     /** Gets the second part of the hyphenated word. Must be called
      * after <CODE>getHyphenatedWordPre()</CODE>.
      * @return the second part of the hyphenated word
-     */    
+     */
     public String getHyphenatedWordPost() {
         return post;
     }
-    
+
 }

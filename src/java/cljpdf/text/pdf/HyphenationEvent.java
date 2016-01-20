@@ -47,8 +47,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.BaseFont;
-
 /** Called by <code>Chunk</code> to hyphenate a word.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -57,9 +55,9 @@ public interface HyphenationEvent {
 
     /** Gets the hyphen symbol.
      * @return the hyphen symbol
-     */    
+     */
     public String getHyphenSymbol();
-    
+
     /** Hyphenates a word and returns the first part of it. To get
      * the second part of the hyphenated word call <CODE>getHyphenatedWordPost()</CODE>.
      * @param word the word to hyphenate
@@ -68,13 +66,13 @@ public interface HyphenationEvent {
      * @param remainingWidth the width available to fit this word in
      * @return the first part of the hyphenated word including
      * the hyphen symbol, if any
-     */    
+     */
     public String getHyphenatedWordPre(String word, BaseFont font, float fontSize, float remainingWidth);
-    
+
     /** Gets the second part of the hyphenated word. Must be called
      * after <CODE>getHyphenatedWordPre()</CODE>.
      * @return the second part of the hyphenated word
-     */    
+     */
     public String getHyphenatedWordPost();
 }
 

@@ -52,10 +52,6 @@ package cljpdf.text;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementListener;
-
 /**
  * Wrapper that allows to add properties to 'basic building block' objects.
  * Before iText 1.5 every 'basic building block' implemented the MarkupAttributes interface.
@@ -71,21 +67,21 @@ public class MarkedObject implements Element {
 
 	/** Contains extra markupAttributes */
 	protected Properties markupAttributes = new Properties();
-	    
+
 	/**
 	 * This constructor is for internal use only.
 	 */
 	protected MarkedObject() {
 		element = null;
 	}
-	
+
 	/**
 	 * Creates a MarkedObject.
 	 */
 	public MarkedObject(Element element) {
 		this.element = element;
 	}
-	
+
     /**
      * Gets all the chunks in this element.
      *
@@ -110,7 +106,7 @@ public class MarkedObject implements Element {
             return false;
         }
 	}
-	
+
     /**
      * Gets the type of the text element.
      *
@@ -119,7 +115,7 @@ public class MarkedObject implements Element {
 	public int type() {
 		return MARKED;
 	}
-	
+
 	/**
 	 * @see cljpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -143,7 +139,7 @@ public class MarkedObject implements Element {
 	public Properties getMarkupAttributes() {
 		return markupAttributes;
 	}
-	
+
 	/**
 	 * Adds one markup attribute.
 	 */

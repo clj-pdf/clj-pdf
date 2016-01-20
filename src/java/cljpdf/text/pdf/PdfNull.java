@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfObject;
-
 /**
  * <CODE>PdfNull</CODE> is the Null object represented by the keyword <VAR>null</VAR>.
  * <P>
@@ -62,17 +59,17 @@ import cljpdf.text.pdf.PdfObject;
  */
 
 public class PdfNull extends PdfObject {
-    
+
     // CLASS CONSTANTS
-    
+
     /** An instance of the <CODE>PdfNull</CODE>-object. */
     public static final PdfNull	PDFNULL = new PdfNull();
-    
+
     /** The content of the <CODE>PdfNull</CODE>-object. */
     private static final String CONTENT = "null";
-    
+
     // CONSTRUCTOR
-    
+
     /**
      * Constructs a <CODE>PdfNull</CODE>-object.
      * <P>
@@ -81,9 +78,9 @@ public class PdfNull extends PdfObject {
     public PdfNull() {
         super(NULL, CONTENT);
     }
-    
+
     // CLASS METHOD
-    
+
     public String toString() {
     	return "null";
     }

@@ -48,11 +48,8 @@
  */
 
 package cljpdf.text.pdf;
-import java.awt.Color;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfNumber;
+import java.awt.*;
 /**
  * A <CODE>PdfColor</CODE> defines a Color (it's a <CODE>PdfArray</CODE> containing 3 values).
  *
@@ -60,9 +57,9 @@ import cljpdf.text.pdf.PdfNumber;
  */
 
 class PdfColor extends PdfArray {
-    
+
     // constructors
-    
+
 /**
  * Constructs a new <CODE>PdfColor</CODE>.
  *
@@ -70,13 +67,13 @@ class PdfColor extends PdfArray {
  * @param		green		a value between 0 and 255
  * @param		blue		a value between 0 and 255
  */
-    
+
     PdfColor(int red, int green, int blue) {
         super(new PdfNumber((double)(red & 0xFF) / 0xFF));
         add(new PdfNumber((double)(green & 0xFF) / 0xFF));
         add(new PdfNumber((double)(blue & 0xFF) / 0xFF));
     }
-    
+
     PdfColor(Color color) {
         this(color.getRed(), color.getGreen(), color.getBlue());
     }

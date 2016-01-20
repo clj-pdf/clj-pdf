@@ -48,7 +48,6 @@
  */
 
 package cljpdf.text.pdf;
-import cljpdf.text.pdf.PdfWriter;
 
 import cljpdf.text.Document;
 import cljpdf.text.Paragraph;
@@ -63,7 +62,7 @@ import cljpdf.text.Rectangle;
  */
 
 public interface PdfPageEvent {
-    
+
 /**
  * Called when the document is opened.
  *
@@ -71,7 +70,7 @@ public interface PdfPageEvent {
  * @param document the document
  */
     public void onOpenDocument(PdfWriter writer, Document document);
-    
+
 /**
  * Called when a page is initialized.
  * <P>
@@ -83,7 +82,7 @@ public interface PdfPageEvent {
  * @param document the document
  */
     public void onStartPage(PdfWriter writer, Document document);
-    
+
 /**
  * Called when a page is finished, just before being written to the document.
  *
@@ -91,7 +90,7 @@ public interface PdfPageEvent {
  * @param document the document
  */
     public void onEndPage(PdfWriter writer, Document document);
-    
+
 /**
  * Called when the document is closed.
  * <P>
@@ -102,7 +101,7 @@ public interface PdfPageEvent {
  * @param document the document
  */
     public void onCloseDocument(PdfWriter writer, Document document);
-    
+
 /**
  * Called when a Paragraph is written.
  * <P>
@@ -115,7 +114,7 @@ public interface PdfPageEvent {
  * @param paragraphPosition the position the paragraph will be written to
  */
     public void onParagraph(PdfWriter writer, Document document, float paragraphPosition);
-    
+
 /**
  * Called when a Paragraph is written.
  * <P>
@@ -126,7 +125,7 @@ public interface PdfPageEvent {
  * @param paragraphPosition the position of the end of the paragraph
  */
     public void onParagraphEnd(PdfWriter writer,Document document,float paragraphPosition);
-    
+
 /**
  * Called when a Chapter is written.
  * <P>
@@ -139,7 +138,7 @@ public interface PdfPageEvent {
  * @param title             the title of the Chapter
  */
     public void onChapter(PdfWriter writer,Document document,float paragraphPosition, Paragraph title);
-    
+
 /**
  * Called when the end of a Chapter is reached.
  * <P>
@@ -150,7 +149,7 @@ public interface PdfPageEvent {
  * @param paragraphPosition the position the chapter will be written to
  */
     public void onChapterEnd(PdfWriter writer,Document document,float paragraphPosition);
-    
+
 /**
  * Called when a Section is written.
  * <P>
@@ -164,7 +163,7 @@ public interface PdfPageEvent {
  * @param title             the title of the section
  */
     public void onSection(PdfWriter writer,Document document,float paragraphPosition, int depth, Paragraph title);
-    
+
 /**
  * Called when the end of a Section is reached.
  * <P>
@@ -175,7 +174,7 @@ public interface PdfPageEvent {
  * @param paragraphPosition the position the section will be written to
  */
     public void onSectionEnd(PdfWriter writer,Document document,float paragraphPosition);
-    
+
 /**
  * Called when a <CODE>Chunk</CODE> with a generic tag is written.
  * <P>

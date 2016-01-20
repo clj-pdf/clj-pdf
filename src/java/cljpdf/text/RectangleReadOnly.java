@@ -49,15 +49,9 @@
 
 package cljpdf.text;
 
-import java.awt.Color;
-
-import cljpdf.text.Cell;
-import cljpdf.text.Element;
-import cljpdf.text.HeaderFooter;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Table;
-
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
 
 /**
  * A <CODE>RectangleReadOnly</CODE> is the representation of a geometric figure.
@@ -67,7 +61,7 @@ import cljpdf.text.error_messages.MessageLocalization;
  * They also support borders that vary in width/color on each side using
  * methods like {@link #setBorderWidthLeft(float)}or
  * {@link #setBorderColorLeft(java.awt.Color)}.
- * 
+ *
  * @see Element
  * @see Table
  * @see Cell
@@ -81,7 +75,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object.
-	 * 
+	 *
 	 * @param llx	lower left x
 	 * @param lly	lower left y
 	 * @param urx	upper right x
@@ -94,7 +88,7 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object starting from the origin
 	 * (0, 0).
-	 * 
+	 *
 	 * @param urx	upper right x
 	 * @param ury	upper right y
 	 */
@@ -104,7 +98,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Constructs a <CODE>RectangleReadOnly</CODE> -object.
-	 * 
+	 *
 	 * @param rect	another <CODE>Rectangle</CODE>
 	 */
 	public RectangleReadOnly(Rectangle rect) {
@@ -113,17 +107,17 @@ public class RectangleReadOnly extends Rectangle {
 	}
 
 	/**
-	 * Throws an error because of the read only nature of this object. 
+	 * Throws an error because of the read only nature of this object.
 	 */
     private void throwReadOnlyError() {
         throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("rectanglereadonly.this.rectangle.is.read.only"));
     }
-    
+
 	// OVERWRITE METHODS SETTING THE DIMENSIONS:
 
 	/**
 	 * Sets the lower left x-coordinate.
-	 * 
+	 *
 	 * @param llx	the new value
 	 */
 	public void setLeft(float llx) {
@@ -132,7 +126,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the upper right x-coordinate.
-	 * 
+	 *
 	 * @param urx	the new value
 	 */
 
@@ -142,7 +136,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the upper right y-coordinate.
-	 * 
+	 *
 	 * @param ury	the new value
 	 */
 	public void setTop(float ury) {
@@ -151,7 +145,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the lower left y-coordinate.
-	 * 
+	 *
 	 * @param lly	the new value
 	 */
 	public void setBottom(float lly) {
@@ -170,7 +164,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the backgroundcolor of the rectangle.
-	 * 
+	 *
 	 * @param value	the new value
 	 */
 	public void setBackgroundColor(Color value) {
@@ -179,20 +173,20 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the grayscale of the rectangle.
-	 * 
+	 *
 	 * @param value	the new value
 	 */
 	public void setGrayFill(float value) {
 		throwReadOnlyError();
 	}
-	
+
 	// OVERWRITE METHODS SETTING THE BORDER:
 
 	/**
 	 * Enables/Disables the border on the specified sides.
 	 * The border is specified as an integer bitwise combination of
 	 * the constants: <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>.
-	 * 
+	 *
 	 * @see #enableBorderSide(int)
 	 * @see #disableBorderSide(int)
 	 * @param border	the new value
@@ -200,10 +194,10 @@ public class RectangleReadOnly extends Rectangle {
 	public void setBorder(int border) {
 		throwReadOnlyError();
 	}
-	
+
 	/**
 	 * Sets a parameter indicating if the rectangle has variable borders
-	 * 
+	 *
 	 * @param useVariableBorders	indication if the rectangle has variable borders
 	 */
 	public void setUseVariableBorders(boolean useVariableBorders) {
@@ -212,7 +206,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Enables the border on the specified side.
-	 * 
+	 *
 	 * @param side	the side to enable.
 	 * One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
 	 */
@@ -222,7 +216,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Disables the border on the specified side.
-	 * 
+	 *
 	 * @param side	the side to disable.
 	 * One of <CODE>LEFT, RIGHT, TOP, BOTTOM</CODE>
 	 */
@@ -234,7 +228,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the borderwidth of the table.
-	 * 
+	 *
 	 * @param borderWidth	the new value
 	 */
 
@@ -244,7 +238,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the width of the left border
-	 * 
+	 *
 	 * @param borderWidthLeft	a width
 	 */
 	public void setBorderWidthLeft(float borderWidthLeft) {
@@ -253,7 +247,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the width of the right border
-	 * 
+	 *
 	 * @param borderWidthRight	a width
 	 */
 	public void setBorderWidthRight(float borderWidthRight) {
@@ -262,7 +256,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the width of the top border
-	 * 
+	 *
 	 * @param borderWidthTop	a width
 	 */
 	public void setBorderWidthTop(float borderWidthTop) {
@@ -271,7 +265,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the width of the bottom border
-	 * 
+	 *
 	 * @param borderWidthBottom	a width
 	 */
 	public void setBorderWidthBottom(float borderWidthBottom) {
@@ -282,17 +276,17 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the color of the border.
-	 * 
+	 *
 	 * @param borderColor	a <CODE>Color</CODE>
 	 */
 
 	public void setBorderColor(Color borderColor) {
 		throwReadOnlyError();
 	}
-	
+
 	/**
 	 * Sets the color of the left border.
-	 * 
+	 *
 	 * @param borderColorLeft	a <CODE>Color</CODE>
 	 */
 	public void setBorderColorLeft(Color borderColorLeft) {
@@ -301,7 +295,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the color of the right border
-	 * 
+	 *
 	 * @param borderColorRight	a <CODE>Color</CODE>
 	 */
 	public void setBorderColorRight(Color borderColorRight) {
@@ -310,7 +304,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the color of the top border.
-	 * 
+	 *
 	 * @param borderColorTop	a <CODE>Color</CODE>
 	 */
 	public void setBorderColorTop(Color borderColorTop) {
@@ -319,7 +313,7 @@ public class RectangleReadOnly extends Rectangle {
 
 	/**
 	 * Sets the color of the bottom border.
-	 * 
+	 *
 	 * @param borderColorBottom	a <CODE>Color</CODE>
 	 */
 	public void setBorderColorBottom(Color borderColorBottom) {
@@ -331,7 +325,7 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Copies each of the parameters, except the position, from a
      * <CODE>Rectangle</CODE> object
-	 * 
+	 *
 	 * @param rect	<CODE>Rectangle</CODE> to copy from
 	 */
 	public void cloneNonPositionParameters(Rectangle rect) {
@@ -341,13 +335,13 @@ public class RectangleReadOnly extends Rectangle {
 	/**
 	 * Copies each of the parameters, except the position, from a
      * <CODE>Rectangle</CODE> object if the value is set there.
-	 * 
+	 *
 	 * @param rect	<CODE>Rectangle</CODE> to copy from
 	 */
 	public void softCloneNonPositionParameters(Rectangle rect) {
 		throwReadOnlyError();
 	}
-	
+
 	/**
 	 * @return	String version of the most important rectangle properties
 	 * @see java.lang.Object#toString()

@@ -52,29 +52,13 @@
 
 package cljpdf.text;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Cell;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementListener;
-import cljpdf.text.ElementTags;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.LargeElement;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Row;
-import cljpdf.text.SimpleCell;
-import cljpdf.text.SimpleTable;
-import cljpdf.text.Table;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfPCell;
 import cljpdf.text.pdf.PdfPTable;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A <CODE>Table</CODE> is a <CODE>Rectangle</CODE> that contains <CODE>Cell</CODE>s,
@@ -167,77 +151,77 @@ import cljpdf.text.pdf.PdfPTable;
  */
 
 public class Table extends Rectangle implements LargeElement {
-    
+
     // membervariables
-    
+
     /** This is the number of columns in the <CODE>Table</CODE>. */
     private int columns;
-    
+
     /** This is the list of <CODE>Row</CODE>s. */
     private ArrayList rows = new ArrayList();
-    
+
     /** The current Position in the table. */
     private Point curPosition = new Point(0, 0);
-    
+
     /** This Empty Cell contains the DEFAULT layout of each Cell added with the method addCell(String content). */
     private Cell defaultCell = new Cell(true);
-    
+
     /** This is the number of the last row of the table headers. */
     private int lastHeaderRow = -1;
-    
+
     /** This is the horizontal alignment. */
     private int alignment = Element.ALIGN_CENTER;
-    
+
     /** This is cellpadding. */
     private float cellpadding;
-    
+
     /** This is cellspacing. */
     private float cellspacing;
-    
+
     /** This is the width of the table (in percent of the available space). */
     private float width = 80;
-    
+
     /** Is the width a percentage (false) or an absolute width (true)? */
     private boolean locked = false;
-    
+
     /** This is an array containing the widths (in percentages) of every column. */
     private float[] widths;
-    
+
     /** Boolean to track if a table was inserted (to avoid unnecessary computations afterwards) */
     private boolean mTableInserted = false;
-    
+
     /**
      * Boolean to automatically fill empty cells before a table is rendered
      *  (takes CPU so may be set to false in case of certainty)
      */
     protected boolean autoFillEmptyCells = false;
-    
+
     /** If true this table may not be split over two pages. */
     boolean tableFitsPage = false;
-    
+
     /** If true cells may not be split over two pages. */
     boolean cellsFitPage = false;
-    
+
     /** This is the offset of the table. */
     float offset = Float.NaN;
-    
+
     /** if you want to generate tables the old way, set this value to false. */
     protected boolean convert2pdfptable = false;
-    
+
     /**
      * Indicates if this is the first time the section was added.
      * @since	iText 2.0.8
      */
     protected boolean notAddedYet = true;
-    
+
     /**
      * Indicates if the PdfPTable is complete once added to the document.
      * @since	iText 2.0.8
      */
     protected boolean complete = true;
-    
+
     // constructors
-    
+
     /**
      * Constructs a <CODE>Table</CODE> with a certain number of columns.
      *
@@ -247,7 +231,7 @@ public class Table extends Rectangle implements LargeElement {
     public Table(int columns) throws BadElementException {
         this(columns, 1);
     }
-    
+
     /**
      * Constructs a <CODE>Table</CODE> with a certain number of columns
      * and a certain number of <CODE>Row</CODE>s.
@@ -262,19 +246,19 @@ public class Table extends Rectangle implements LargeElement {
         setBorder(BOX);
         setBorderWidth(1);
         defaultCell.setBorder(BOX);
-        
+
         // a table should have at least 1 column
         if (columns <= 0) {
             throw new BadElementException(MessageLocalization.getComposedMessage("a.table.should.have.at.least.1.column"));
         }
         this.columns = columns;
-        
+
         // a certain number of rows are created
         for (int i = 0; i < rows; i++) {
             this.rows.add(new Row(columns));
         }
         curPosition = new Point(0, 0);
-        
+
         // the DEFAULT widths are calculated
         widths = new float[columns];
         float width = 100f / columns;
@@ -282,7 +266,7 @@ public class Table extends Rectangle implements LargeElement {
             widths[i] = width;
         }
     }
-    
+
     /**
      * Copy constructor (shallow copy).
      */
@@ -305,9 +289,9 @@ public class Table extends Rectangle implements LargeElement {
     	this.offset = t.offset;
     	this.convert2pdfptable = t.convert2pdfptable;
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Processes the element by adding it (or the different parts) to an
      * <CODE>ElementListener</CODE>.
@@ -323,7 +307,7 @@ public class Table extends Rectangle implements LargeElement {
             return false;
         }
     }
-    
+
     /**
      * Gets the type of the text element.
      *
@@ -332,13 +316,13 @@ public class Table extends Rectangle implements LargeElement {
     public int type() {
         return Element.TABLE;
     }
-    
+
     /**
      * Gets all the chunks in this element.
      *
      * @return  an <CODE>ArrayList</CODE>
      */
-    
+
     public ArrayList getChunks() {
         return new ArrayList();
     }
@@ -350,7 +334,7 @@ public class Table extends Rectangle implements LargeElement {
 	public boolean isNestable() {
 		return true;
 	}
-    
+
     // getters and setters
 
 	/**
@@ -361,7 +345,7 @@ public class Table extends Rectangle implements LargeElement {
     public int getColumns() {
         return columns;
     }
-    
+
     /**
      * Gets the number of rows in this <CODE>Table</CODE>.
      *
@@ -370,7 +354,7 @@ public class Table extends Rectangle implements LargeElement {
     public int size() {
         return rows.size();
     }
-    
+
     /**
      * Gets the dimension of this table
      *
@@ -379,7 +363,7 @@ public class Table extends Rectangle implements LargeElement {
     public Dimension getDimension() {
         return new Dimension(columns, size());
     }
-    
+
     /**
      * Gets the default layout of the Table.
      * @return a cell with all the defaults
@@ -388,7 +372,7 @@ public class Table extends Rectangle implements LargeElement {
     public Cell getDefaultCell() {
         return defaultCell;
     }
-    
+
     /**
      * Sets the default layout of the Table to
      * the provided Cell
@@ -401,13 +385,13 @@ public class Table extends Rectangle implements LargeElement {
 
 	/**
      * Gets the last number of the rows that contain headers.
-     *  
+     *
      * @return a rownumber
      */
     public int getLastHeaderRow() {
         return this.lastHeaderRow;
     }
-    
+
     /**
      * Sets the horizontal alignment.
      *
@@ -416,7 +400,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setLastHeaderRow(int value) {
         lastHeaderRow = value;
     }
-    
+
     /**
      * Marks the last row of the table headers.
      *
@@ -435,7 +419,7 @@ public class Table extends Rectangle implements LargeElement {
     public int getAlignment() {
         return alignment;
     }
-    
+
     /**
      * Sets the horizontal alignment.
      *
@@ -444,7 +428,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setAlignment(int value) {
         alignment = value;
     }
-    
+
     /**
      * Sets the alignment of this paragraph.
      *
@@ -470,7 +454,7 @@ public class Table extends Rectangle implements LargeElement {
     public float getPadding() {
         return cellpadding;
     }
-    
+
     /**
      * Sets the cellpadding.
      *
@@ -488,7 +472,7 @@ public class Table extends Rectangle implements LargeElement {
     public float getSpacing() {
         return cellspacing;
     }
-    
+
     /**
      * Sets the cellspacing.
      *
@@ -497,7 +481,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setSpacing(float value) {
         cellspacing = value;
     }
-    
+
     /**
      * Enables/disables automatic insertion of empty cells before table is rendered. (default = false)
      * As some people may want to create a table, fill only a couple of the cells and don't bother with
@@ -518,7 +502,7 @@ public class Table extends Rectangle implements LargeElement {
     public float getWidth() {
         return width;
     }
-    
+
     /**
      * Sets the width of this table (in percentage of the available space).
      *
@@ -527,7 +511,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setWidth(float width) {
         this.width = width;
     }
-    
+
     /**
 	 * @return the locked
 	 */
@@ -550,7 +534,7 @@ public class Table extends Rectangle implements LargeElement {
     public float[] getProportionalWidths() {
         return widths;
     }
-    
+
     /**
      * Sets the widths of the different columns (percentages).
      * <P>
@@ -573,13 +557,13 @@ public class Table extends Rectangle implements LargeElement {
         if (widths.length != columns) {
             throw new BadElementException(MessageLocalization.getComposedMessage("wrong.number.of.columns"));
         }
-        
+
         // The sum of all values is 100%
         float hundredPercent = 0;
         for (int i = 0; i < columns; i++) {
             hundredPercent += widths[i];
         }
-        
+
         // The different percentages are calculated
         float width;
         this.widths[columns - 1] = 100;
@@ -589,7 +573,7 @@ public class Table extends Rectangle implements LargeElement {
             this.widths[columns - 1] -= width;
         }
     }
-    
+
     /**
      * Sets the widths of the different columns (percentages).
      * <P>
@@ -606,7 +590,7 @@ public class Table extends Rectangle implements LargeElement {
             tb[k] = widths[k];
         setWidths(tb);
     }
-    
+
     /**
      * Checks if this <CODE>Table</CODE> has to fit a page.
      *
@@ -615,7 +599,7 @@ public class Table extends Rectangle implements LargeElement {
     public boolean isTableFitsPage() {
         return tableFitsPage;
     }
-    
+
     /**
      * Allows you to control when a page break occurs.
      * <P>
@@ -628,7 +612,7 @@ public class Table extends Rectangle implements LargeElement {
         this.tableFitsPage = fitPage;
         if (fitPage) setCellsFitPage(true);
     }
-    
+
     /**
      * Checks if the cells of this <CODE>Table</CODE> have to fit a page.
      *
@@ -637,7 +621,7 @@ public class Table extends Rectangle implements LargeElement {
     public boolean isCellsFitPage() {
         return cellsFitPage;
     }
-    
+
     /**
      * Allows you to control when a page break occurs.
      * <P>
@@ -649,7 +633,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setCellsFitPage(boolean fitPage) {
         this.cellsFitPage = fitPage;
     }
-    
+
     /**
      * Sets the offset of this table.
      *
@@ -663,7 +647,7 @@ public class Table extends Rectangle implements LargeElement {
     public void setOffset(float offset) {
         this.offset = offset;
     }
-    
+
     /**
      * Gets the offset of this table.
      *
@@ -672,7 +656,7 @@ public class Table extends Rectangle implements LargeElement {
     public float getOffset() {
         return offset;
     }
-    
+
 	/**
 	 * Method to check if the Table should be converted to a PdfPTable or not.
 	 * @return false if the table should be handled the old fashioned way.
@@ -687,9 +671,9 @@ public class Table extends Rectangle implements LargeElement {
 	public void setConvert2pdfptable(boolean convert2pdfptable) {
 		this.convert2pdfptable = convert2pdfptable;
 	}
-    
+
     // methods to add content to the table
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain row and column.
      *
@@ -701,7 +685,7 @@ public class Table extends Rectangle implements LargeElement {
     public void addCell(Cell aCell, int row, int column) throws BadElementException {
         addCell(aCell, new Point(row,column));
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE> at a certain location.
      *
@@ -713,18 +697,18 @@ public class Table extends Rectangle implements LargeElement {
         if (aCell == null) throw new NullPointerException(MessageLocalization.getComposedMessage("addcell.cell.has.null.value"));
         if (aLocation == null) throw new NullPointerException(MessageLocalization.getComposedMessage("addcell.point.has.null.value"));
         if (aCell.isTable()) insertTable((Table)aCell.getElements().next(), aLocation);
-        
+
         if (aLocation.x < 0) throw new BadElementException(MessageLocalization.getComposedMessage("row.coordinate.of.location.must.be.gt.eq.0"));
         if ((aLocation.y <= 0) && (aLocation.y > columns)) throw new BadElementException(MessageLocalization.getComposedMessage("column.coordinate.of.location.must.be.gt.eq.0.and.lt.nr.of.columns"));
-        if (!isValidLocation(aCell, aLocation)) throw new BadElementException(MessageLocalization.getComposedMessage("adding.a.cell.at.the.location.1.2.with.a.colspan.of.3.and.a.rowspan.of.4.is.illegal.beyond.boundaries.overlapping", 
+        if (!isValidLocation(aCell, aLocation)) throw new BadElementException(MessageLocalization.getComposedMessage("adding.a.cell.at.the.location.1.2.with.a.colspan.of.3.and.a.rowspan.of.4.is.illegal.beyond.boundaries.overlapping",
                 String.valueOf(aLocation.x), String.valueOf(aLocation.y), String.valueOf(aCell.getColspan()), String.valueOf(aCell.getRowspan())));
-        
+
         if (aCell.getBorder() == UNDEFINED) aCell.setBorder(defaultCell.getBorder());
         aCell.fill();
         placeCell(rows, aCell, aLocation);
         setCurrentLocationToNextValidPosition(aLocation);
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
      *
@@ -738,7 +722,7 @@ public class Table extends Rectangle implements LargeElement {
             // don't add the cell
         }
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
      * <P>
@@ -751,7 +735,7 @@ public class Table extends Rectangle implements LargeElement {
     public void addCell(Phrase content) throws BadElementException {
         addCell(content, curPosition);
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
      * <P>
@@ -774,7 +758,7 @@ public class Table extends Rectangle implements LargeElement {
         cell.setRowspan(defaultCell.getRowspan());
         addCell(cell, location);
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
      * <P>
@@ -784,11 +768,11 @@ public class Table extends Rectangle implements LargeElement {
      * @param       content         a <CODE>String</CODE>
      * @throws      BadElementException this should never happen
      */
-    
+
     public void addCell(String content) throws BadElementException {
         addCell(new Phrase(content), curPosition);
     }
-    
+
     /**
      * Adds a <CODE>Cell</CODE> to the <CODE>Table</CODE>.
      * <P>
@@ -802,7 +786,7 @@ public class Table extends Rectangle implements LargeElement {
     public void addCell(String content, Point location) throws BadElementException {
         addCell(new Phrase(content), location);
     }
-    
+
     /**
      * To put a table within the existing table at the current position
      * generateTable will of course re-arrange the widths of the columns.
@@ -813,7 +797,7 @@ public class Table extends Rectangle implements LargeElement {
         if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
         insertTable(aTable, curPosition);
     }
-    
+
     /**
      * To put a table within the existing table at the given position
      * generateTable will of course re-arrange the widths of the columns.
@@ -826,7 +810,7 @@ public class Table extends Rectangle implements LargeElement {
         if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
         insertTable(aTable, new Point(row, column));
     }
-    
+
     /**
      * To put a table within the existing table at the given position
      * generateTable will of course re-arrange the widths of the columns.
@@ -835,16 +819,16 @@ public class Table extends Rectangle implements LargeElement {
      * @param   aLocation   a <CODE>Point</CODE>
      */
     public void insertTable(Table aTable, Point aLocation) {
-        
+
         if (aTable == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.table.has.null.value"));
         if (aLocation == null) throw new NullPointerException(MessageLocalization.getComposedMessage("inserttable.point.has.null.value"));
         mTableInserted = true;
         aTable.complete();
-        
+
         if (aLocation.y > columns) {
         	throw new IllegalArgumentException(MessageLocalization.getComposedMessage("inserttable.wrong.columnposition.1.of.location.max.eq.2", String.valueOf(aLocation.y), String.valueOf(columns)));
         }
-        
+
         int rowCount = aLocation.x + 1 - rows.size();
         int i = 0;
         if ( rowCount > 0 ) {   //create new rows ?
@@ -852,12 +836,12 @@ public class Table extends Rectangle implements LargeElement {
                 rows.add(new Row(columns));
             }
         }
-        
+
         ((Row) rows.get(aLocation.x)).setElement(aTable,aLocation.y);
-        
+
         setCurrentLocationToNextValidPosition(aLocation);
     }
-    
+
     /**
      * Gives you the possibility to add columns.
      *
@@ -865,7 +849,7 @@ public class Table extends Rectangle implements LargeElement {
      */
     public void addColumns(int aColumns) {
         ArrayList newRows = new ArrayList(rows.size());
-        
+
         int newColumns = columns + aColumns;
         Row row;
         for (int i = 0; i < rows.size(); i++) {
@@ -888,7 +872,7 @@ public class Table extends Rectangle implements LargeElement {
         widths = newWidths;
         rows = newRows;
     }
-    
+
     /**
      * Deletes a column in this table.
      *
@@ -928,7 +912,7 @@ public class Table extends Rectangle implements LargeElement {
         curPosition.setLocation(curPosition.x-1, curPosition.y);
         return true;
     }
-    
+
     /**
      * Deletes all rows in this table.
 	 * (contributed by dperezcar@fcc.es)
@@ -939,7 +923,7 @@ public class Table extends Rectangle implements LargeElement {
         curPosition.setLocation(0, 0);
         lastHeaderRow = -1;
     }
-    
+
     /**
      * Deletes the last row in this table.
      *
@@ -948,7 +932,7 @@ public class Table extends Rectangle implements LargeElement {
     public boolean deleteLastRow() {
         return deleteRow(rows.size() - 1);
 	}
-    
+
     /**
      * Will fill empty cells with valid blank <CODE>Cell</CODE>s
      */
@@ -961,13 +945,13 @@ public class Table extends Rectangle implements LargeElement {
             fillEmptyMatrixCells();
         }
     }
-    
+
     // private helper classes
-    
+
     /**
      * returns the element at the position row, column
      *          (Cast to Cell or Table)
-     * 
+     *
      * @param row
      * @param column
      * @return  dimension
@@ -976,7 +960,7 @@ public class Table extends Rectangle implements LargeElement {
     public Object getElement(int row, int column) {
         return ((Row) rows.get(row)).getCell(column);
     }
-    
+
     /**
      * Integrates all added tables and recalculates column widths.
      */
@@ -990,9 +974,9 @@ public class Table extends Rectangle implements LargeElement {
         boolean isTable=false;
         int lTotalRows  = 0, lTotalColumns      = 0;
         int lNewMaxRows = 0, lNewMaxColumns     = 0;
-        
+
         Table lDummyTable = null;
-        
+
         // first we'll add new columns when needed
         // check one column at a time, find maximum needed nr of cols
         // Search internal tables and find one with max columns
@@ -1062,7 +1046,7 @@ public class Table extends Rectangle implements LargeElement {
             lTotalColumns += lNewMaxColumns;
             lDummyWidths [j] = lNewMaxColumns;
         }
-        
+
         // next we'll add new rows when needed
         for (i=0; i < rows.size(); i++) {
             lNewMaxRows = 1;    // holds value in how many rows the current one will be split
@@ -1078,7 +1062,7 @@ public class Table extends Rectangle implements LargeElement {
             lTotalRows += lNewMaxRows;
             lDummyHeights [i] = lNewMaxRows;
         }
-        
+
         if ( (lTotalColumns != columns) || (lTotalRows != rows.size()) || isTable)    // NO ADJUSTMENT
         {
             // ** WIDTH
@@ -1101,7 +1085,7 @@ public class Table extends Rectangle implements LargeElement {
                     lDummy++;
                 }
             }
-            
+
             // ** FILL OUR NEW TABLE
             // generate new table
             // set new widths
@@ -1119,17 +1103,17 @@ public class Table extends Rectangle implements LargeElement {
                     if ( Table.class.isInstance(((Row) rows.get(i)).getCell(j)) )       // copy values from embedded table
                     {
                         lDummyTable = (Table) ((Row) rows.get(i)).getCell(j);
-                        
+
                         // Work out where columns in table table correspond to columns in current table
                         int colMap[] = new int[lDummyTable.widths.length+1];
                         int cb=0, ct=0;
-                        
+
                         for( ; cb<lDummyTable.widths.length;cb++) {
                             colMap[cb] = lDummyColumn+ct;
-                            
+
                             float wb;
                             wb = lDummyTable.widths[cb];
-                            
+
                             float wt=0;
                             while( ct<lDummyWidths[j]) {
                                 wt+=lDummyColumnWidths[j][ct++];
@@ -1137,23 +1121,23 @@ public class Table extends Rectangle implements LargeElement {
                             }
                         }
                         colMap[cb] = lDummyColumn+ct;
-                        
+
                         // need to change this to work out how many cols to span
                         for (int k=0; k < lDummyTable.getDimension().height; k++) {
                             for (int l=0; l < lDummyTable.getDimension().width; l++) {
                                 lDummyElement = lDummyTable.getElement(k,l);
                                 if (lDummyElement != null) {
                                     int col=lDummyColumn+l;
-                                    
+
                                     if ( Cell.class.isInstance(lDummyElement) ) {
                                         Cell lDummyC = (Cell)lDummyElement;
                                         // Find col to add cell in and set col span
                                         col = colMap[l];
                                         int ot = colMap[l+lDummyC.getColspan()];
-                                        
+
                                         lDummyC.setColspan(ot-col);
                                     }
-                                    
+
                                     ((Row) newRows.get(k + lDummyRow)).addElement(lDummyElement,col);  // use addElement to set reserved status ok in row
                                 }
                             }
@@ -1162,13 +1146,13 @@ public class Table extends Rectangle implements LargeElement {
                     else        // copy others values
                     {
                         Object aElement = getElement(i,j);
-                        
+
                         if ( Cell.class.isInstance(aElement) ) {
-                            
+
                             // adjust spans for cell
                             ((Cell) aElement).setRowspan(((Cell) ((Row) rows.get(i)).getCell(j)).getRowspan() + lDummyHeights[i] - 1);
                             ((Cell) aElement).setColspan(((Cell) ((Row) rows.get(i)).getCell(j)).getColspan() + lDummyWidths[j] - 1);
-                            
+
                             // most likely this cell covers a larger area because of the row/cols splits : define not-to-be-filled cells
                             placeCell(newRows,((Cell) aElement), new Point(lDummyRow,lDummyColumn));
                         }
@@ -1177,14 +1161,14 @@ public class Table extends Rectangle implements LargeElement {
                 }
                 lDummyRow += lDummyHeights[i];
             }
-            
+
             // Set our new matrix
             columns     = lTotalColumns;
             rows = newRows;
             this.widths = lNewWidths;
         }
     }
-    
+
     /**
      * adds new<CODE>Cell</CODE>'s to empty/null spaces.
      */
@@ -1202,7 +1186,7 @@ public class Table extends Rectangle implements LargeElement {
             throw new ExceptionConverter(bee);
         }
     }
-    
+
     /**
      * check if <CODE>Cell</CODE> 'fits' the table.
      * <P>
@@ -1220,7 +1204,7 @@ public class Table extends Rectangle implements LargeElement {
             if ((aLocation.y + aCell.getColspan()) > columns) {
                 return false;
             }
-            
+
             int difx = ((rows.size() - aLocation.x) >  aCell.getRowspan()) ? aCell.getRowspan() : rows.size() - aLocation.x;
             int dify = ((columns - aLocation.y) >  aCell.getColspan()) ? aCell.getColspan() : columns - aLocation.y;
             // no other content at cells targeted by rowspan/colspan
@@ -1237,17 +1221,17 @@ public class Table extends Rectangle implements LargeElement {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Sets the unset cell properties to be the table defaults.
      *
      * @param aCell The cell to set to table defaults as necessary.
      */
     private void assumeTableDefaults(Cell aCell) {
-        
+
         if (aCell.getBorder() == Rectangle.UNDEFINED) {
             aCell.setBorder(defaultCell.getBorder());
         }
@@ -1267,7 +1251,7 @@ public class Table extends Rectangle implements LargeElement {
             aCell.setVerticalAlignment(defaultCell.getVerticalAlignment());
         }
     }
-    
+
     /**
      * Inserts a Cell in a cell-array and reserves cells defined by row-/colspan.
      *
@@ -1286,20 +1270,20 @@ public class Table extends Rectangle implements LargeElement {
                 someRows.add(row);
             }
         }
-        
+
         // reserve cell in rows below
         for (i = aPosition.x + 1; i < (aPosition.x  + aCell.getRowspan()); i++) {
             if ( !((Row) someRows.get(i)).reserve(aPosition.y, aCell.getColspan())) {
-                
+
                 // should be impossible to come here :-)
                 throw new RuntimeException(MessageLocalization.getComposedMessage("addcell.error.in.reserve"));
             }
         }
         row = (Row) someRows.get(aPosition.x);
         row.addElement(aCell, aPosition.y);
-        
+
     }
-    
+
     /**
      *  Sets current col/row to valid(empty) pos after addCell/Table
      * @param aLocation a location in the Table
@@ -1323,9 +1307,9 @@ public class Table extends Rectangle implements LargeElement {
         );
         curPosition = new Point(i, j);
     }
-    
+
     // public helper methods
-    
+
     /**
      * Gets an array with the positions of the borders between every column.
      * <P>
@@ -1369,7 +1353,7 @@ public class Table extends Rectangle implements LargeElement {
         w[columns] = w[0] + totalWidth;
         return w;
     }
-    
+
     /**
      * Gets an <CODE>Iterator</CODE> of all the <CODE>Row</CODE>s.
      *
@@ -1458,12 +1442,12 @@ public class Table extends Rectangle implements LargeElement {
 	public void setNotAddedYet(boolean notAddedYet) {
 		this.notAddedYet = notAddedYet;
 	}
-	
+
 	/**
 	 * @since	iText 2.0.8
 	 * @see cljpdf.text.LargeElement#flushContent()
 	 */
-	public void flushContent() {		
+	public void flushContent() {
 		this.setNotAddedYet(false);
         ArrayList headerrows = new ArrayList();
         for (int i = 0; i < getLastHeaderRow() + 1; i++) {
@@ -1487,7 +1471,7 @@ public class Table extends Rectangle implements LargeElement {
 	public void setComplete(boolean complete) {
 		this.complete = complete;
 	}
-    
+
     /**
      * Gets the default layout of the Table.
      * @return a cell with all the defaults
@@ -1497,7 +1481,7 @@ public class Table extends Rectangle implements LargeElement {
     public Cell getDefaultLayout() {
         return getDefaultCell();
     }
-    
+
     /**
      * Sets the default layout of the Table to
      * the provided Cell

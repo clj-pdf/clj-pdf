@@ -49,14 +49,10 @@
 
 package cljpdf.text;
 
-import java.net.URL;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfTemplate;
+
+import java.net.URL;
 
 /**
  * PdfTemplate that has to be inserted into the document
@@ -68,11 +64,11 @@ import cljpdf.text.pdf.PdfTemplate;
  */
 
 public class ImgTemplate extends Image {
-    
+
     ImgTemplate(Image image) {
         super(image);
     }
-    
+
     /** Creates an Image from a PdfTemplate.
      *
      * @param template the PdfTemplate
@@ -93,5 +89,5 @@ public class ImgTemplate extends Image {
         plainWidth = getWidth();
         plainHeight = getHeight();
     }
-	
+
 }

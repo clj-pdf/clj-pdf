@@ -49,15 +49,13 @@
 
 package cljpdf.text.pdf.draw;
 
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.draw.DrawInterface;
-
 import cljpdf.text.Chunk;
 import cljpdf.text.DocumentException;
 import cljpdf.text.Element;
 import cljpdf.text.ElementListener;
 import cljpdf.text.pdf.PdfContentByte;
+
+import java.util.ArrayList;
 
 /**
  * Helper class implementing the DrawInterface. Can be used to add
@@ -73,12 +71,12 @@ public class VerticalPositionMark implements DrawInterface, Element {
 
     /** The offset for the line. */
     protected float offset = 0;
-	
+
 	/**
 	 * Creates a vertical position mark that won't draw anything unless
 	 * you define a DrawInterface.
 	 */
-	public VerticalPositionMark() {	
+	public VerticalPositionMark() {
 	}
 
 	/**
@@ -91,7 +89,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 		this.drawInterface = drawInterface;
 		this.offset = offset;
 	}
-	
+
 	/**
 	 * @see cljpdf.text.pdf.draw.DrawInterface#draw(cljpdf.text.pdf.PdfContentByte, float, float, float, float, float)
 	 */
@@ -100,7 +98,7 @@ public class VerticalPositionMark implements DrawInterface, Element {
 			drawInterface.draw(canvas, llx, lly, urx, ury, y + offset);
 		}
 	}
-	
+
     /**
      * @see cljpdf.text.Element#process(cljpdf.text.ElementListener)
      */

@@ -49,19 +49,9 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Color;
-
-import cljpdf.text.pdf.CMYKColor;
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.GrayColor;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFunction;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
 
 /**
  * A <CODE>PdfSpotColor</CODE> defines a ColorSpace
@@ -70,26 +60,26 @@ import cljpdf.text.error_messages.MessageLocalization;
  */
 
 public class PdfSpotColor{
-    
+
 /**	The color name */
     public PdfName name;
-    
+
 /** The alternative color space */
     public Color altcs;
     // constructors
-    
+
     /**
      * Constructs a new <CODE>PdfSpotColor</CODE>.
      *
      * @param		name		a String value
      * @param		altcs		an alternative colorspace value
      */
-    
+
     public PdfSpotColor(String name, Color altcs) {
         this.name = new PdfName(name);
         this.altcs = altcs;
     }
-    
+
     /**
      * Gets the alternative ColorSpace.
      * @return a Color
@@ -97,7 +87,7 @@ public class PdfSpotColor{
     public Color getAlternativeCS() {
         return altcs;
     }
-    
+
     protected PdfObject getSpotObject(PdfWriter writer) {
         PdfArray array = new PdfArray(PdfName.SEPARATION);
         array.add(name);

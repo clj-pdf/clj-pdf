@@ -49,27 +49,17 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocWriter;
+import cljpdf.text.Document;
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-
-import cljpdf.text.pdf.OutputStreamCounter;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfWriter;
-
-import cljpdf.text.DocWriter;
-import cljpdf.text.Document;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * <CODE>PdfStream</CODE> is the Pdf stream object.
@@ -93,7 +83,7 @@ import cljpdf.text.error_messages.MessageLocalization;
  */
 
 public class PdfStream extends PdfDictionary {
-    
+
     // membervariables
 
 	/**
@@ -116,8 +106,8 @@ public class PdfStream extends PdfDictionary {
 	 * @since	2.1.3
 	 */
 	public static final int BEST_COMPRESSION = 9;
-	
-	
+
+
 /** is the stream compressed? */
     protected boolean compressed = false;
     /**
@@ -125,26 +115,26 @@ public class PdfStream extends PdfDictionary {
      * @since	2.1.3
      */
     protected int compressionLevel = NO_COMPRESSION;
-    
+
     protected ByteArrayOutputStream streamBytes = null;
     protected InputStream inputStream;
     protected PdfIndirectReference ref;
     protected int inputStreamLength = -1;
     protected PdfWriter writer;
     protected int rawLength;
-        
+
     static final byte STARTSTREAM[] = DocWriter.getISOBytes("stream\n");
     static final byte ENDSTREAM[] = DocWriter.getISOBytes("\nendstream");
     static final int SIZESTREAM = STARTSTREAM.length + ENDSTREAM.length;
 
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  *
  * @param		bytes			content of the new <CODE>PdfObject</CODE> as an array of <CODE>byte</CODE>.
  */
- 
+
     public PdfStream(byte[] bytes) {
         super();
         type = STREAM;
@@ -152,7 +142,7 @@ public class PdfStream extends PdfDictionary {
         rawLength = bytes.length;
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
     }
-  
+
     /**
      * Creates an efficient stream. No temporary array is ever created. The <CODE>InputStream</CODE>
      * is totally consumed but is not closed. The general usage is:
@@ -167,7 +157,7 @@ public class PdfStream extends PdfDictionary {
      * </pre>
      * @param inputStream the data to write to this stream
      * @param writer the <CODE>PdfWriter</CODE> for this stream
-     */    
+     */
     public PdfStream(InputStream inputStream, PdfWriter writer) {
         super();
         type = STREAM;
@@ -176,16 +166,16 @@ public class PdfStream extends PdfDictionary {
         ref = writer.getPdfIndirectReference();
         put(PdfName.LENGTH, ref);
     }
-  
+
 /**
  * Constructs a <CODE>PdfStream</CODE>-object.
  */
-    
+
     protected PdfStream() {
         super();
         type = STREAM;
     }
-    
+
     /**
      * Writes the stream length to the <CODE>PdfWriter</CODE>.
      * <p>
@@ -201,7 +191,7 @@ public class PdfStream extends PdfDictionary {
             throw new IOException(MessageLocalization.getComposedMessage("writelength.can.only.be.called.after.output.of.the.stream.body"));
         writer.addToBody(new PdfNumber(inputStreamLength), ref, false);
     }
-    
+
     /**
      * Gets the raw length of the stream.
      * @return the raw length of the stream
@@ -209,14 +199,14 @@ public class PdfStream extends PdfDictionary {
     public int getRawLength() {
         return rawLength;
     }
-    
+
     /**
      * Compresses the stream.
      */
     public void flateCompress() {
     	flateCompress(DEFAULT_COMPRESSION);
     }
-    
+
     /**
      * Compresses the stream.
 	 * @param compressionLevel the compression level (0 = best speed, 9 = best compression, -1 is default)
@@ -287,18 +277,18 @@ public class PdfStream extends PdfDictionary {
 //        else
 //            return bytes.length + dicBytes.length + SIZESTREAM;
 //    }
-    
+
     protected void superToPdf(PdfWriter writer, OutputStream os) throws IOException {
         super.toPdf(writer, os);
     }
-    
+
     /**
      * @see cljpdf.text.pdf.PdfDictionary#toPdf(cljpdf.text.pdf.PdfWriter, java.io.OutputStream)
      */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (inputStream != null && compressed)
             put(PdfName.FILTER, PdfName.FLATEDECODE);
-      
+
         PdfObject nn = get(PdfName.LENGTH);
         superToPdf(writer, os);
         os.write(STARTSTREAM);
@@ -306,13 +296,13 @@ public class PdfStream extends PdfDictionary {
             rawLength = 0;
             DeflaterOutputStream def = null;
             OutputStreamCounter osc = new OutputStreamCounter(os);
-            OutputStream fout = osc;            
+            OutputStream fout = osc;
             Deflater deflater = null;
             if (compressed) {
                 deflater = new Deflater(compressionLevel);
                 fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
             }
-            
+
             byte buf[] = new byte[4192];
             while (true) {
                 int n = inputStream.read(buf);
@@ -337,19 +327,19 @@ public class PdfStream extends PdfDictionary {
         }
         os.write(ENDSTREAM);
     }
-    
+
     /**
      * Writes the data content to an <CODE>OutputStream</CODE>.
      * @param os the destination to write to
      * @throws IOException on error
-     */    
+     */
     public void writeContent(OutputStream os) throws IOException {
         if (streamBytes != null)
             streamBytes.writeTo(os);
         else if (bytes != null)
             os.write(bytes);
     }
-    
+
     /**
      * @see cljpdf.text.pdf.PdfObject#toString()
      */

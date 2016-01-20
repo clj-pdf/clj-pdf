@@ -51,16 +51,8 @@ package cljpdf.text.pdf;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfResources;
-
 class PageResources {
-    
+
     protected PdfDictionary fontDictionary = new PdfDictionary();
     protected PdfDictionary xObjectDictionary = new PdfDictionary();
     protected PdfDictionary colorDictionary = new PdfDictionary();
@@ -75,7 +67,7 @@ class PageResources {
 
     PageResources() {
     }
-    
+
     void setOriginalResources(PdfDictionary resources, int newNamePtr[]) {
         if (newNamePtr != null)
             namePtr = newNamePtr;
@@ -99,7 +91,7 @@ class PageResources {
             }
         }
     }
-    
+
     PdfName translateName(PdfName name) {
         PdfName translated = name;
         if (forbiddenNames != null) {
@@ -115,7 +107,7 @@ class PageResources {
         }
         return translated;
     }
-    
+
     PdfName addFont(PdfName name, PdfIndirectReference reference) {
         name = translateName(name);
         fontDictionary.put(name, reference);
@@ -154,7 +146,7 @@ class PageResources {
         shadingDictionary.put(name, reference);
         return name;
     }
-    
+
     PdfName addPattern(PdfName name, PdfIndirectReference reference) {
         name = translateName(name);
         patternDictionary.put(name, reference);
@@ -187,7 +179,7 @@ class PageResources {
         resources.add(PdfName.PROPERTIES, propertyDictionary);
         return resources;
     }
-    
+
     boolean hasResources() {
         return (fontDictionary.size() > 0
             || xObjectDictionary.size() > 0

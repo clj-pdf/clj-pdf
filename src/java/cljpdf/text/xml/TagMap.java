@@ -49,22 +49,17 @@
 
 package cljpdf.text.xml;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import cljpdf.text.ExceptionConverter;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
-import cljpdf.text.xml.TagMap;
-import cljpdf.text.xml.XmlPeer;
-
-import cljpdf.text.ExceptionConverter;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -75,43 +70,43 @@ public class TagMap extends HashMap {
     private static final long serialVersionUID = -6809383366554350820L;
 
 	class AttributeHandler extends DefaultHandler {
-        
+
 /** This is a tag */
         public static final String TAG = "tag";
-        
+
 /** This is a tag */
         public static final String ATTRIBUTE = "attribute";
-        
+
 /** This is an attribute */
         public static final String NAME = "name";
-        
+
 /** This is an attribute */
         public static final String ALIAS = "alias";
-        
+
 /** This is an attribute */
         public static final String VALUE = "value";
-        
+
 /** This is an attribute */
         public static final String CONTENT = "content";
-        
+
 /** This is the tagmap using the AttributeHandler */
         private HashMap tagMap;
-        
+
 /** This is the current peer. */
         private XmlPeer currentPeer;
-        
+
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
  *
  * @param	tagMap  A Hashmap containing XmlPeer-objects
  */
-        
+
         public AttributeHandler(HashMap tagMap) {
             super();
             this.tagMap = tagMap;
         }
-        
+
 /**
  * This method gets called when a start tag is encountered.
  *
@@ -120,7 +115,7 @@ public class TagMap extends HashMap {
  * @param	tag 		the name of the tag that is encountered
  * @param	attrs		the list of attributes
  */
-        
+
         public void startElement(String uri, String lname, String tag, Attributes attrs) {
             String name = attrs.getValue(NAME);
             String alias = attrs.getValue(ALIAS);
@@ -143,7 +138,7 @@ public class TagMap extends HashMap {
                 currentPeer.setContent(value);
             }
         }
-        
+
 /**
  * This method gets called when ignorable white space encountered.
  *
@@ -151,11 +146,11 @@ public class TagMap extends HashMap {
  * @param	start	the start position in the array
  * @param	length	the number of characters to read from the array
  */
-        
+
         public void ignorableWhitespace(char[] ch, int start, int length) {
             // do nothing
         }
-        
+
 /**
  * This method gets called when characters are encountered.
  *
@@ -163,11 +158,11 @@ public class TagMap extends HashMap {
  * @param	start	the start position in the array
  * @param	length	the number of characters to read from the array
  */
-        
+
         public void characters(char[] ch, int start, int length) {
             // do nothing
         }
-        
+
 /**
  * This method gets called when an end tag is encountered.
  *
@@ -175,13 +170,13 @@ public class TagMap extends HashMap {
  * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	tag		the name of the tag that ends
  */
-        
+
         public void endElement(String uri, String lname, String tag) {
             if (TAG.equals(tag))
                 tagMap.put(currentPeer.getAlias(), currentPeer);
         }
     }
-    
+
     /**
      * Constructs a TagMap
      * @param tagfile the path to an XML file with the tagmap

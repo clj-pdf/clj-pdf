@@ -1,23 +1,15 @@
 package cljpdf.text.pdf.collection;
 
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.pdf.*;
+
 import java.util.Calendar;
 
-import cljpdf.text.pdf.collection.PdfCollectionField;
-import cljpdf.text.pdf.collection.PdfCollectionSchema;
-
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PdfDate;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
-
 public class PdfCollectionItem extends PdfDictionary {
-	
+
 	/** The PdfCollectionSchema with the names and types of the items. */
 	PdfCollectionSchema schema;
-	
+
 	/**
 	 * Constructs a Collection Item that can be added to a PdfFileSpecification.
 	 */
@@ -25,7 +17,7 @@ public class PdfCollectionItem extends PdfDictionary {
 		super(PdfName.COLLECTIONITEM);
 		this.schema = schema;
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
@@ -35,7 +27,7 @@ public class PdfCollectionItem extends PdfDictionary {
 		PdfCollectionField field = (PdfCollectionField)schema.get(fieldname);
 		put(fieldname, field.getValue(value));
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param value
@@ -47,7 +39,7 @@ public class PdfCollectionItem extends PdfDictionary {
 			put(fieldname, value);
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param d
@@ -59,7 +51,7 @@ public class PdfCollectionItem extends PdfDictionary {
 			put(fieldname, d);
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param n
@@ -71,7 +63,7 @@ public class PdfCollectionItem extends PdfDictionary {
 			put(fieldname, n);
 		}
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param c
@@ -79,7 +71,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, Calendar c) {
 		addItem(key, new PdfDate(c));
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param i
@@ -87,7 +79,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, int i) {
 		addItem(key, new PdfNumber(i));
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param f
@@ -95,7 +87,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, float f) {
 		addItem(key, new PdfNumber(f));
 	}
-	
+
 	/**
 	 * Sets the value of the collection item.
 	 * @param d
@@ -103,7 +95,7 @@ public class PdfCollectionItem extends PdfDictionary {
 	public void addItem(String key, double d) {
 		addItem(key, new PdfNumber(d));
 	}
-	
+
 	/**
 	 * Adds a prefix for the Collection item.
 	 * You can only use this method after you have set the value of the item.

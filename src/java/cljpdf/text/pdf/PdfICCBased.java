@@ -46,15 +46,10 @@
  */
 package cljpdf.text.pdf;
 
-import java.awt.color.ICC_Profile;
-
-import cljpdf.text.pdf.PdfException;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfStream;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.color.ICC_Profile;
 
 /**
  * A <CODE>PdfICCBased</CODE> defines a ColorSpace
@@ -71,7 +66,7 @@ public class PdfICCBased extends PdfStream {
     public PdfICCBased(ICC_Profile profile) {
     	this(profile, DEFAULT_COMPRESSION);
     }
-    
+
     /**
      * Creates an ICC stream.
      *

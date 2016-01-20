@@ -46,31 +46,23 @@
  */
 package cljpdf.text.pdf.codec;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Image;
 import cljpdf.text.ImgRaw;
 import cljpdf.text.Utilities;
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfString;
+import cljpdf.text.pdf.*;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 /** Reads gif images of all types. All the images in a gif are read in the constructors
  * and can be retrieved with other methods.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class GifImage {
-    
+
     protected DataInputStream in;
     protected int width;            // full image width
     protected int height;           // full image height
@@ -119,7 +111,7 @@ public class GifImage {
     /** Reads gif images from an URL.
      * @param url the URL
      * @throws IOException on error
-     */    
+     */
     public GifImage(URL url) throws IOException {
         fromUrl = url;
         InputStream is = null;
@@ -133,19 +125,19 @@ public class GifImage {
             }
         }
     }
-    
+
     /** Reads gif images from a file.
      * @param file the file
      * @throws IOException on error
-     */    
+     */
     public GifImage(String file) throws IOException {
         this(Utilities.toURL(file));
     }
-    
+
     /** Reads gif images from a byte array.
      * @param data the byte array
      * @throws IOException on error
-     */    
+     */
     public GifImage(byte data[]) throws IOException {
         fromData = data;
         InputStream is = null;
@@ -159,51 +151,51 @@ public class GifImage {
             }
         }
     }
-    
+
     /** Reads gif images from a stream. The stream is not closed.
      * @param is the stream
      * @throws IOException on error
-     */    
+     */
     public GifImage(InputStream is) throws IOException {
         process(is);
     }
-    
+
     /** Gets the number of frames the gif has.
      * @return the number of frames the gif has
-     */    
+     */
     public int getFrameCount() {
         return frames.size();
     }
-    
+
     /** Gets the image from a frame. The first frame is 1.
      * @param frame the frame to get the image from
      * @return the image
-     */    
+     */
     public Image getImage(int frame) {
         GifFrame gf = (GifFrame)frames.get(frame - 1);
         return gf.image;
     }
-    
+
     /** Gets the [x,y] position of the frame in reference to the
      * logical screen.
      * @param frame the frame
      * @return the [x,y] position of the frame
-     */    
+     */
     public int[] getFramePosition(int frame) {
         GifFrame gf = (GifFrame)frames.get(frame - 1);
         return new int[]{gf.ix, gf.iy};
-        
+
     }
-    
+
     /** Gets the logical screen. The images may be smaller and placed
      * in some position in this screen to playback some animation.
      * No image will be be bigger that this.
      * @return the logical screen dimensions as [x,y]
-     */    
+     */
     public int[] getLogicalScreen() {
         return new int[]{width, height};
     }
-    
+
     void process(InputStream is) throws IOException {
         in = new DataInputStream(new BufferedInputStream(is));
         readHeader();
@@ -211,7 +203,7 @@ public class GifImage {
         if (frames.isEmpty())
             throw new IOException(MessageLocalization.getComposedMessage("the.file.does.not.contain.any.valid.image"));
     }
-    
+
     /**
      * Reads GIF file header information.
      */
@@ -222,7 +214,7 @@ public class GifImage {
         if (!id.startsWith("GIF8")) {
             throw new IOException(MessageLocalization.getComposedMessage("gif.signature.nor.found"));
         }
-        
+
         readLSD();
         if (gctFlag) {
             m_global_table = readColorTable(m_gbpc);
@@ -233,11 +225,11 @@ public class GifImage {
      * Reads Logical Screen Descriptor
      */
     protected void readLSD() throws IOException {
-        
+
         // logical screen size
         width = readShort();
         height = readShort();
-        
+
         // packed fields
         int packed = in.read();
         gctFlag = (packed & 0x80) != 0;      // 1   : global color table flag
@@ -281,8 +273,8 @@ public class GifImage {
         in.readFully(table, 0, nbytes);
         return table;
     }
- 
-    
+
+
     static protected int newBpc(int bpc) {
         switch (bpc) {
             case 1:
@@ -296,36 +288,36 @@ public class GifImage {
         }
         return bpc;
     }
-    
+
     protected void readContents() throws IOException {
         // read GIF file content blocks
         boolean done = false;
         while (!done) {
             int code = in.read();
             switch (code) {
-                
+
                 case 0x2C:    // image separator
                     readImage();
                     break;
-                    
+
                 case 0x21:    // extension
                     code = in.read();
                     switch (code) {
-                        
+
                         case 0xf9:    // graphics control extension
                             readGraphicControlExt();
                             break;
-                            
+
                         case 0xff:    // application extension
                             readBlock();
                             skip();        // don't care
                             break;
-                            
+
                         default:    // uninteresting extension
                             skip();
                     }
                     break;
-                    
+
                 default:
                     done = true;
                     break;
@@ -341,7 +333,7 @@ public class GifImage {
         iy = readShort();
         iw = readShort();
         ih = readShort();
-        
+
         int packed = in.read();
         lctFlag = (packed & 0x80) != 0;     // 1 - local color table flag
         interlace = (packed & 0x40) != 0;   // 2 - interlace flag
@@ -367,7 +359,7 @@ public class GifImage {
         boolean skipZero = decodeImageData();   // decode pixel data
         if (!skipZero)
             skip();
-        
+
         Image img = null;
         try {
             img = new ImgRaw(iw, ih, 1, m_bpc, m_out);
@@ -395,34 +387,34 @@ public class GifImage {
         gf.ix = ix;
         gf.iy = iy;
         frames.add(gf);   // add image to frame list
-        
+
         //resetFrame();
-        
+
     }
-    
+
     protected boolean decodeImageData() throws IOException {
         int NullCode = -1;
         int npix = iw * ih;
         int available, clear, code_mask, code_size, end_of_information, in_code, old_code,
         bits, code, count, i, datum, data_size, first, top, bi;
         boolean skipZero = false;
-        
+
         if (prefix == null)
             prefix = new short[MaxStackSize];
         if (suffix == null)
             suffix = new byte[MaxStackSize];
         if (pixelStack == null)
             pixelStack = new byte[MaxStackSize+1];
-        
+
         m_line_stride = (iw * m_bpc + 7) / 8;
         m_out = new byte[m_line_stride * ih];
         int pass = 1;
         int inc = interlace ? 8 : 1;
         int line = 0;
         int xpos = 0;
-        
+
         //  Initialize GIF data stream decoder.
-        
+
         data_size = in.read();
         clear = 1 << data_size;
         end_of_information = clear + 1;
@@ -434,11 +426,11 @@ public class GifImage {
             prefix[code] = 0;
             suffix[code] = (byte) code;
         }
-        
+
         //  Decode GIF pixel stream.
-        
+
         datum = bits = count = first = top = bi = 0;
-        
+
         for (i = 0; i < npix; ) {
             if (top == 0) {
                 if (bits < code_size) {
@@ -458,15 +450,15 @@ public class GifImage {
                     count--;
                     continue;
                 }
-                
+
                 //  Get the next code.
-                
+
                 code = datum & code_mask;
                 datum >>= code_size;
                 bits -= code_size;
-                
+
                 //  Interpret the code
-                
+
                 if ((code > available) || (code == end_of_information))
                     break;
                 if (code == clear) {
@@ -493,9 +485,9 @@ public class GifImage {
                     code = prefix[code];
                 }
                 first = suffix[code] & 0xff;
-                
+
                 //  Add a new string to the string table,
-                
+
                 if (available >= MaxStackSize)
                     break;
                 pixelStack[top++] = (byte) first;
@@ -508,12 +500,12 @@ public class GifImage {
                 }
                 old_code = in_code;
             }
-            
+
             //  Pop a pixel off the pixel stack.
-            
+
             top--;
             i++;
-            
+
             setPixel(xpos, line, pixelStack[top]);
             ++xpos;
             if (xpos >= iw) {
@@ -550,8 +542,8 @@ public class GifImage {
         }
         return skipZero;
     }
-    
-    
+
+
     protected void setPixel(int x, int y, int v) {
         if (m_bpc == 8) {
             int pos = x + iw * y;
@@ -563,7 +555,7 @@ public class GifImage {
             m_out[pos] |= vout;
         }
     }
-    
+
     /**
      * Resets frame state for reading next image.
      */
@@ -587,7 +579,7 @@ public class GifImage {
         transIndex = in.read();        // transparent color index
         in.read();                     // block terminator
     }
-    
+
     /**
      * Skips variable length blocks up to and including
      * next zero length block.

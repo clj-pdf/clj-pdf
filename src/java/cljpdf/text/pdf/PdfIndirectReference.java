@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfIndirectObject;
-import cljpdf.text.pdf.PdfObject;
-
 /**
  * <CODE>PdfIndirectReference</CODE> contains a reference to a <CODE>PdfIndirectObject</CODE>.
  * <P>
@@ -67,21 +64,21 @@ import cljpdf.text.pdf.PdfObject;
  */
 
 public class PdfIndirectReference extends PdfObject {
-    
+
     // membervariables
-    
+
 /** the object number */
     protected int number;
-    
+
 /** the generation number */
     protected int generation = 0;
-    
+
     // constructors
-    
+
     protected PdfIndirectReference() {
         super(0);
     }
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
@@ -89,46 +86,46 @@ public class PdfIndirectReference extends PdfObject {
  * @param		number			the object number.
  * @param		generation		the generation number.
  */
-    
+
     PdfIndirectReference(int type, int number, int generation) {
         super(0, new StringBuffer().append(number).append(" ").append(generation).append(" R").toString());
         this.number = number;
         this.generation = generation;
     }
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
  * @param		type			the type of the <CODE>PdfObject</CODE> that is referenced to
  * @param		number			the object number.
  */
-    
+
     PdfIndirectReference(int type, int number) {
         this(type, number, 0);
     }
-    
+
     // methods
-    
+
 /**
  * Returns the number of the object.
  *
  * @return		a number.
  */
-    
+
     public int getNumber() {
         return number;
     }
-    
+
 /**
  * Returns the generation of the object.
  *
  * @return		a number.
  */
-    
+
     public int getGeneration() {
         return generation;
     }
-    
+
     public String toString() {
     	return new StringBuffer().append(number).append(" ").append(generation).append(" R").toString();
     }

@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.PdfSpotColor;
-
 /**
  *
  * @author  psoares
@@ -70,11 +67,11 @@ public class SpotColor extends ExtendedColor {
         this.spot = spot;
         this.tint = tint;
     }
-    
+
     public PdfSpotColor getPdfSpotColor() {
         return spot;
     }
-    
+
     public float getTint() {
         return tint;
     }
@@ -82,7 +79,7 @@ public class SpotColor extends ExtendedColor {
     public boolean equals(Object obj) {
         return this == obj;
     }
-    
+
     public int hashCode() {
         return spot.hashCode() ^ Float.floatToIntBits(tint);
     }

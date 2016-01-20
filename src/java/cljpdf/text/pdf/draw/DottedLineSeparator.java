@@ -49,21 +49,19 @@
 
 package cljpdf.text.pdf.draw;
 
-import cljpdf.text.pdf.draw.LineSeparator;
-
 import cljpdf.text.pdf.PdfContentByte;
 
 /**
  * Element that draws a dotted line from left to right.
  * Can be added directly to a document or column.
  * Can also be used to create a separator chunk.
- * @since	2.1.2 
+ * @since	2.1.2
  */
 public class DottedLineSeparator extends LineSeparator {
 
 	/** the gap between the dots. */
 	protected float gap = 5;
-	
+
 	/**
 	 * @see cljpdf.text.pdf.draw.DrawInterface#draw(cljpdf.text.pdf.PdfContentByte, float, float, float, float, float)
 	 */

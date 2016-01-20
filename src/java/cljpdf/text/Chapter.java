@@ -52,10 +52,6 @@ package cljpdf.text;
 
 import java.util.ArrayList;
 
-import cljpdf.text.Element;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Section;
-
 /**
  * A <CODE>Chapter</CODE> is a special <CODE>Section</CODE>.
  * <P>
@@ -79,10 +75,10 @@ import cljpdf.text.Section;
  */
 
 public class Chapter extends Section {
-    
+
     // constant
 	private static final long serialVersionUID = 1791000695779357361L;
-	
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 * @param	number		the Chapter number
@@ -93,21 +89,21 @@ public class Chapter extends Section {
         numbers.add(new Integer(number));
         triggerNewPage = true;
     }
-	
+
 	/**
 	 * Constructs a new <CODE>Chapter</CODE>.
 	 *
 	 * @param	title		the Chapter title (as a <CODE>Paragraph</CODE>)
 	 * @param	number		the Chapter number
      */
-    
+
     public Chapter(Paragraph title, int number) {
         super(title, 1);
         numbers = new ArrayList();
         numbers.add(new Integer(number));
         triggerNewPage = true;
     }
-    
+
     /**
      * Constructs a new <CODE>Chapter</CODE>.
      *
@@ -117,9 +113,9 @@ public class Chapter extends Section {
     public Chapter(String title, int number) {
         this(new Paragraph(title), number);
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Gets the type of the text element.
      *

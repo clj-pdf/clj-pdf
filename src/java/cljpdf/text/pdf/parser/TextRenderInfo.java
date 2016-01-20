@@ -46,17 +46,13 @@
  */
 package cljpdf.text.pdf.parser;
 
-import cljpdf.text.pdf.parser.GraphicsState;
-import cljpdf.text.pdf.parser.Matrix;
-import cljpdf.text.pdf.parser.PdfContentStreamProcessor;
-
 import cljpdf.text.pdf.DocumentFont;
 
 /**
  * Provides information and calculations needed by render listeners
  * to display/evaluate text render operations.
  * <br><br>
- * This is passed between the {@link PdfContentStreamProcessor} and 
+ * This is passed between the {@link PdfContentStreamProcessor} and
  * {@link RenderListener} objects as text rendering operations are
  * discovered
  */
@@ -64,7 +60,7 @@ public class TextRenderInfo {
     private final String text;
     private final Matrix textToUserSpaceTransformMatrix;
     private final GraphicsState gs;
-    
+
     /**
      * Creates a new TextRenderInfo object
      * @param text the text that should be displayed
@@ -76,43 +72,43 @@ public class TextRenderInfo {
         this.textToUserSpaceTransformMatrix = textMatrix.multiply(gs.ctm);
         this.gs = gs;
     }
-    
+
     /**
      * @return the text to render
      */
-    public String getText(){ 
-        return text; 
+    public String getText(){
+        return text;
     }
 
     /**
      * @return the unscaled (i.e. in Text space) width of the text
      */
-    public float getUnscaledWidth(){ 
-        return getStringWidth(text); 
+    public float getUnscaledWidth(){
+        return getStringWidth(text);
     }
-    
+
     /**
      * @return a vector in User space representing the start point of the text
      */
-    public Vector getStartPoint(){ 
-        return new Vector(0, 0, 1).cross(textToUserSpaceTransformMatrix); 
+    public Vector getStartPoint(){
+        return new Vector(0, 0, 1).cross(textToUserSpaceTransformMatrix);
     }
-    
+
     /**
-     * @return a vector in User space representing the end point of the text (i.e. the 
+     * @return a vector in User space representing the end point of the text (i.e. the
      * starting point of the text plus the width of the text, transformed by the applicable transformation matrices)
      */
-    public Vector getEndPoint(){ 
-        return new Vector(getUnscaledWidth(), 0, 1).cross(textToUserSpaceTransformMatrix); 
+    public Vector getEndPoint(){
+        return new Vector(getUnscaledWidth(), 0, 1).cross(textToUserSpaceTransformMatrix);
     }
-    
+
     /**
      * @return The width, in user space units, of a single space character in the current font
      */
     public float getSingleSpaceWidth(){
         return new Vector(getUnscaledFontSpaceWidth(), 0, 1).cross(textToUserSpaceTransformMatrix).subtract(getStartPoint()).length();
     }
-    
+
     /**
      * Calculates the width of a space character.  If the font does not define
      * a width for a standard space character \u0020, we also attempt to use
@@ -125,7 +121,7 @@ public class TextRenderInfo {
             charToUse = '\u00A0';
         return getStringWidth(String.valueOf(charToUse));
     }
-    
+
     /**
      * Gets the width of a String in text space units
      * @param string    the string that needs measuring
@@ -140,7 +136,7 @@ public class TextRenderInfo {
             float wordSpacing = chars[i] == 32 ? gs.wordSpacing : 0f;
             totalWidth += (w * gs.fontSize + gs.characterSpacing + wordSpacing) * gs.horizontalScaling;
         }
-        
+
         return totalWidth;
-    }    
+    }
 }

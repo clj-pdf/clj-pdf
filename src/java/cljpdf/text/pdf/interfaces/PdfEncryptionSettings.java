@@ -49,9 +49,9 @@
 
 package cljpdf.text.pdf.interfaces;
 
-import java.security.cert.Certificate;
-
 import cljpdf.text.DocumentException;
+
+import java.security.cert.Certificate;
 
 /**
  * Encryption settings are described in section 3.5 (more specifically
@@ -64,7 +64,7 @@ import cljpdf.text.DocumentException;
 
 public interface PdfEncryptionSettings {
 
-    
+
     /**
      * Sets the encryption options for this document. The userPassword and the
      * ownerPassword can be null or have zero length. In this case the ownerPassword

@@ -46,23 +46,19 @@
  */
 package cljpdf.text;
 
-import cljpdf.text.Chunk;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-
 import cljpdf.text.factories.RomanNumberFactory;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use roman-letters.
- * 
+ *
  * @see cljpdf.text.List
  */
 
 public class RomanList extends List {
 
 // constructors
-	
+
 	/**
 	 * Initialization
 	 */
@@ -72,7 +68,7 @@ public class RomanList extends List {
 
 	/**
 	 * Initialization
-	 * 
+	 *
 	 * @param symbolIndent	indent
 	 */
 	public RomanList(int symbolIndent) {
@@ -80,8 +76,8 @@ public class RomanList extends List {
 	}
 
 	/**
-	 * Initialization 
-	 * @param	lowercase		roman-char in lowercase   
+	 * Initialization
+	 * @param	lowercase		roman-char in lowercase
 	 * @param 	symbolIndent	indent
 	 */
 	public RomanList(boolean lowercase, int symbolIndent) {
@@ -90,7 +86,7 @@ public class RomanList extends List {
 	}
 
 // overridden method
-	
+
 	/**
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *

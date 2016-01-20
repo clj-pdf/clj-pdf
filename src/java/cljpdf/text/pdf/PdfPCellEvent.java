@@ -46,9 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfPCell;
-
 import cljpdf.text.Rectangle;
 
 /** An event called for a single cell.
@@ -72,6 +69,6 @@ public interface PdfPCellEvent {
      * @param cell the cell
      * @param position the coordinates of the cell
      * @param canvases an array of <CODE>PdfContentByte</CODE>
-     */    
+     */
     public void cellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases);
 }

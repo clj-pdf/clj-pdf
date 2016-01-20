@@ -46,20 +46,11 @@
  */
 package cljpdf.text.pdf.parser;
 
+import cljpdf.text.pdf.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ListIterator;
-
-import cljpdf.text.pdf.parser.PdfContentStreamProcessor;
-
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Extracts text from a PDF file.
@@ -69,10 +60,10 @@ public class PdfTextExtractor {
 
 	/** The PdfReader that holds the PDF file. */
     private final PdfReader reader;
-    
+
     /** The {@link TextProvidingRenderListener} that will receive render notifications and provide resultant text */
     private final TextProvidingRenderListener renderListener;
-    
+
     /**
      * Creates a new Text Extractor object, using a {@link SimpleTextExtractingPdfContentRenderListener} as the render listener
      * @param reader	the reader with the PDF
@@ -90,7 +81,7 @@ public class PdfTextExtractor {
         this.reader = reader;
         this.renderListener = renderListener;
     }
-    
+
     /**
      * Gets the content bytes of a page.
      * @param pageNum	the page number of page you want get the content stream from
@@ -104,11 +95,11 @@ public class PdfTextExtractor {
             final PdfObject contentObject = pageDictionary.get(PdfName.CONTENTS);
             final byte[] contentBytes = getContentBytesFromContentObject(contentObject);
             return contentBytes;
-        } finally {    
+        } finally {
             f.close();
         }
     }
-    
+
     /**
      * Gets the content bytes from a content object, which may be a reference
      * a stream or an array.
@@ -147,8 +138,8 @@ public class PdfTextExtractor {
               throw new IllegalStateException(msg);
           }
           return result;
-        }    
-    
+        }
+
     /**
      * Gets the text from a page.
      * @param page	the page number of the page
@@ -158,10 +149,10 @@ public class PdfTextExtractor {
     public String getTextFromPage(int page) throws IOException {
         PdfDictionary pageDic = reader.getPageN(page);
         PdfDictionary resourcesDic = pageDic.getAsDict(PdfName.RESOURCES);
-        
+
         renderListener.reset();
         PdfContentStreamProcessor processor = new PdfContentStreamProcessor(renderListener);
-        processor.processContent(getContentBytesForPage(page), resourcesDic);        
+        processor.processContent(getContentBytesForPage(page), resourcesDic);
         return renderListener.getResultantText();
     }
 }

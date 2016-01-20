@@ -49,11 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfRectangle;
-
 import cljpdf.text.Rectangle;
 
 /**

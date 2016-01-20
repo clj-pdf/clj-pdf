@@ -49,16 +49,11 @@
 
 package cljpdf.text;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-import cljpdf.text.Utilities;
-
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * An <CODE>Jpeg2000</CODE> is the representation of a graphic element (JPEG)
@@ -69,9 +64,9 @@ import cljpdf.text.error_messages.MessageLocalization;
  */
 
 public class Jpeg2000 extends Image {
-    
+
     // public static final membervariables
-    
+
     public static final int JP2_JP = 0x6a502020;
     public static final int JP2_IHDR = 0x69686472;
     public static final int JPIP_JPIP = 0x6a706970;
@@ -88,9 +83,9 @@ public class Jpeg2000 extends Image {
     InputStream inp;
     int boxLength;
     int boxType;
-    
+
     // Constructors
-    
+
     Jpeg2000(Image image) {
         super(image);
     }
@@ -106,7 +101,7 @@ public class Jpeg2000 extends Image {
         super(url);
         processParameters();
     }
-    
+
     /**
      * Constructs a <CODE>Jpeg2000</CODE>-object from memory.
      *
@@ -114,14 +109,14 @@ public class Jpeg2000 extends Image {
      * @throws BadElementException
      * @throws IOException
      */
-    
+
     public Jpeg2000(byte[] img) throws BadElementException, IOException {
         super((URL)null);
         rawData = img;
         originalData = img;
         processParameters();
     }
-    
+
     /**
      * Constructs a <CODE>Jpeg2000</CODE>-object from memory.
      *
@@ -131,13 +126,13 @@ public class Jpeg2000 extends Image {
      * @throws BadElementException
      * @throws IOException
      */
-    
+
     public Jpeg2000(byte[] img, float width, float height) throws BadElementException, IOException {
         this(img);
         scaledWidth = width;
         scaledHeight = height;
     }
-    
+
     private int cio_read(int n) throws IOException {
         int v = 0;
         for (int i = n - 1; i >= 0; i--) {
@@ -145,7 +140,7 @@ public class Jpeg2000 extends Image {
         }
         return v;
     }
-    
+
     public void jp2_read_boxhdr() throws IOException {
         boxLength = cio_read(4);
         boxType = cio_read(4);
@@ -154,14 +149,14 @@ public class Jpeg2000 extends Image {
                 throw new IOException(MessageLocalization.getComposedMessage("cannot.handle.box.sizes.higher.than.2.32"));
             }
             boxLength = cio_read(4);
-            if (boxLength == 0) 
+            if (boxLength == 0)
                 throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
         else if (boxLength == 0) {
             throw new IOException(MessageLocalization.getComposedMessage("unsupported.box.size.eq.eq.0"));
         }
     }
-    
+
     /**
      * This method checks if the image is a valid JPEG and processes some parameters.
      * @throws IOException

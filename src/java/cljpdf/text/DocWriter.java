@@ -49,21 +49,13 @@
 
 package cljpdf.text;
 
+import cljpdf.text.pdf.OutputStreamCounter;
+
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Properties;
-
-import cljpdf.text.DocListener;
-import cljpdf.text.Document;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.HeaderFooter;
-import cljpdf.text.Rectangle;
-
-import cljpdf.text.pdf.OutputStreamCounter;
 
 /**
  * An abstract <CODE>Writer</CODE> class for documents.
@@ -123,12 +115,12 @@ public abstract class DocWriter implements DocListener {
 
 /** Do we have to pause all writing actions? */
     protected boolean pause = false;
-    
+
 /** Closes the stream on document close */
     protected boolean closeStream = true;
 
     // constructor
-    
+
     protected DocWriter()  {
     }
 
@@ -151,7 +143,7 @@ public abstract class DocWriter implements DocListener {
  * <P>
  * This method should be overridden in the specific <CODE>DocWriter<CODE> classes
  * derived from this abstract class.
- * 
+ *
  * @param element A high level object to add
  * @return  <CODE>false</CODE>
  * @throws  DocumentException when a document isn't open yet, or has been closed
@@ -327,13 +319,13 @@ public abstract class DocWriter implements DocListener {
     public void pause() {
         pause = true;
     }
-    
+
     /**
      * Checks if writing is paused.
      *
      * @return		<CODE>true</CODE> if writing temporarily has to be paused, <CODE>false</CODE> otherwise.
      */
-    
+
     public boolean isPaused() {
         return pause;
     }
@@ -469,7 +461,7 @@ public abstract class DocWriter implements DocListener {
     public boolean isCloseStream() {
         return closeStream;
     }
-    
+
     /** Sets the close state of the stream after document close
      * @param closeStream true if the stream is closed on document close
      *
@@ -477,14 +469,14 @@ public abstract class DocWriter implements DocListener {
     public void setCloseStream(boolean closeStream) {
         this.closeStream = closeStream;
     }
-    
+
     /**
      * @see cljpdf.text.DocListener#setMarginMirroring(boolean)
      */
     public boolean setMarginMirroring(boolean MarginMirroring) {
         return false;
     }
-    
+
     /**
      * @see cljpdf.text.DocListener#setMarginMirroring(boolean)
      * @since	2.1.6
@@ -492,5 +484,5 @@ public abstract class DocWriter implements DocListener {
     public boolean setMarginMirroringTopBottom(boolean MarginMirroring) {
         return false;
     }
-    
+
 }

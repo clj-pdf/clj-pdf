@@ -98,7 +98,7 @@
  *  Compiled with Watcom C 10.6                                     *
  *                                                                  *
  ********************************************************************/
- 
+
 /********************************************************************
  *                                                                  *
  *  Further modifications, 4/21/98, by Rod Smith                    *
@@ -115,7 +115,7 @@
  *                                                                  *
  *  1/31/2005, by Paulo Soares                                      *
  *                                                                  *
- *  This code was integrated into iText.                            * 
+ *  This code was integrated into iText.                            *
  *  Note that the itoa function mentioned in the comment by Rod     *
  *  Smith is no longer in the code because Java has native support  *
  *  in PrintWriter to convert integers to strings                   *
@@ -134,22 +134,15 @@
  *                                                                  *
  *  9/14/2006, by Xavier Le Vourch                                  *
  *                                                                  *
- *  expand import clauses (import java.io.*)                        *                                           
+ *  expand import clauses (import java.io.*)                        *
  *  the removal of an exception in readString was restored on 9/16  *
  *                                                                  *
  ********************************************************************/
 package cljpdf.text.pdf;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
-import cljpdf.text.pdf.Pfm2afm;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.*;
 
 /**
  * Converts a PFM file into an AFM file.
@@ -157,19 +150,19 @@ import cljpdf.text.error_messages.MessageLocalization;
 public final class Pfm2afm {
     private RandomAccessFileOrArray in;
     private PrintWriter out;
-    
+
     /** Creates a new instance of Pfm2afm */
     private Pfm2afm(RandomAccessFileOrArray in, OutputStream out) throws IOException {
         this.in = in;
         this.out = new PrintWriter(new OutputStreamWriter(out, "ISO-8859-1"));
     }
-    
+
     /**
      * Converts a PFM file into an AFM file.
      * @param in the PFM file
      * @param out the AFM file
      * @throws IOException on error
-     */    
+     */
     public static void convert(RandomAccessFileOrArray in, OutputStream out) throws IOException {
         Pfm2afm p = new Pfm2afm(in, out);
         p.openpfm();
@@ -179,7 +172,7 @@ public final class Pfm2afm {
         p.puttrailer();
         p.out.flush();
     }
-    
+
     public static void main(String[] args) {
         try {
             RandomAccessFileOrArray in = new RandomAccessFileOrArray(args[0]);
@@ -192,7 +185,7 @@ public final class Pfm2afm {
             e.printStackTrace();
         }
     }
-    
+
     private String readString(int n) throws IOException {
         byte b[] = new byte[n];
         in.readFully(b);
@@ -203,7 +196,7 @@ public final class Pfm2afm {
         }
         return new String(b, 0, k, "ISO-8859-1");
     }
-    
+
     private String readString() throws IOException {
         StringBuffer buf = new StringBuffer();
         while (true) {
@@ -214,12 +207,12 @@ public final class Pfm2afm {
         }
         return buf.toString();
     }
-    
+
     private void outval(int n) {
         out.print(' ');
         out.print(n);
     }
-    
+
     /*
      *  Output a character entry
      */
@@ -234,7 +227,7 @@ public final class Pfm2afm {
         }
         out.print(" ;\n");
     }
-    
+
     private void openpfm() throws IOException {
         in.seek(0);
         vers = in.readShortLE();
@@ -281,7 +274,7 @@ public final class Pfm2afm {
         ascender = in.readShortLE();
         descender = in.readShortLE();
     }
-    
+
     private void putheader() throws IOException {
         out.print("StartFontMetrics 2.0\n");
         if (copyright.length() > 0)
@@ -313,7 +306,7 @@ public final class Pfm2afm {
             out.print("Light");
         else if (fname.toLowerCase().indexOf("black") >= 0)
             out.print("Black");
-        else 
+        else
             out.print("Medium");
 
         out.print("\nItalicAngle ");
@@ -347,7 +340,7 @@ public final class Pfm2afm {
         out.print("\nFontBBox");
         if (isMono)
             outval(-20);      /* Just guess at left bounds */
-        else 
+        else
             outval(-100);
         outval(-(descender+5));  /* Descender is given as positive value */
         outval(maxwidth+10);
@@ -366,7 +359,7 @@ public final class Pfm2afm {
         outval(ascender);
         out.print('\n');
     }
-    
+
     private void putchartab() throws IOException {
         int count = lastchar - firstchar + 1;
         int ctabs[] = new int[count];
@@ -414,9 +407,9 @@ public final class Pfm2afm {
         }
         /* Put out the trailer */
         out.print("EndCharMetrics\n");
-        
+
     }
-    
+
     private void putkerntab() throws IOException {
         if (kernpairs == 0)
             return;
@@ -448,7 +441,7 @@ public final class Pfm2afm {
         /* Put out trailer */
         out.print("EndKernPairs\nEndKernData\n");
     }
-    
+
 
     private void  puttrailer() {
         out.print("EndFontMetrics\n");
@@ -499,7 +492,7 @@ public final class Pfm2afm {
     private short  ascender;        /* Ascender */
     private short  descender;       /* Descender (positive) */
 
-    
+
     private boolean isMono;
 /**
  * Translate table from 1004 to psstd.  1004 is an extension of the
@@ -523,7 +516,7 @@ public final class Pfm2afm {
         0,   0,   0,   0,   0,   0,   241, 0,   0,   0,   0,   0,   0,   0,   0,   0,   // E0
         0,   0,   0,   0,   0,   0,   0,   0,   249, 0,   0,   0,   0,   0,   0,   0    // F0
     };
-    
+
 /**
  *  Character class.  This is a minor attempt to overcome the problem that
  *  in the pfm file, all unused characters are given the width of space.
@@ -547,7 +540,7 @@ public final class Pfm2afm {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,   /* e0 */
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1   /* f0 */
     };
-    
+
 /**
  *  Windows character names.  Give a name to the used locations
  *  for when the all flag is specified.

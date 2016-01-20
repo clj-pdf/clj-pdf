@@ -49,34 +49,25 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
-
-import cljpdf.text.pdf.PRTokeniser;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
-
-import cljpdf.text.error_messages.MessageLocalization;
 /**
  * Parses the page or template content.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfContentParser {
-    
+
     /**
      * Commands have this type.
-     */    
+     */
     public static final int COMMAND_TYPE = 200;
     /**
      * Holds value of property tokeniser.
      */
-    private PRTokeniser tokeniser;    
-    
+    private PRTokeniser tokeniser;
+
     /**
      * Creates a new instance of PdfContentParser
      * @param tokeniser the tokeniser with the content
@@ -84,7 +75,7 @@ public class PdfContentParser {
     public PdfContentParser(PRTokeniser tokeniser) {
         this.tokeniser = tokeniser;
     }
-    
+
     /**
      * Parses a single command from the content. Each command is output as an array of arguments
      * having the command itself as the last element. The returned array will be empty if the
@@ -93,7 +84,7 @@ public class PdfContentParser {
      * <CODE>null</CODE> will create a new <CODE>ArrayList</CODE>
      * @return the same <CODE>ArrayList</CODE> given as argument or a new one
      * @throws IOException on error
-     */    
+     */
     public ArrayList parse(ArrayList ls) throws IOException {
         if (ls == null)
             ls = new ArrayList();
@@ -107,7 +98,7 @@ public class PdfContentParser {
         }
         return ls;
     }
-    
+
     /**
      * Gets the tokeniser.
      * @return the tokeniser.
@@ -115,7 +106,7 @@ public class PdfContentParser {
     public PRTokeniser getTokeniser() {
         return this.tokeniser;
     }
-    
+
     /**
      * Sets the tokeniser.
      * @param tokeniser the tokeniser
@@ -123,12 +114,12 @@ public class PdfContentParser {
     public void setTokeniser(PRTokeniser tokeniser) {
         this.tokeniser = tokeniser;
     }
-    
+
     /**
      * Reads a dictionary. The tokeniser must be positioned past the "&lt;&lt;" token.
      * @return the dictionary
      * @throws IOException on error
-     */    
+     */
     public PdfDictionary readDictionary() throws IOException {
         PdfDictionary dic = new PdfDictionary();
         while (true) {
@@ -149,12 +140,12 @@ public class PdfContentParser {
         }
         return dic;
     }
-    
+
     /**
      * Reads an array. The tokeniser must be positioned past the "[" token.
      * @return an array
      * @throws IOException on error
-     */    
+     */
     public PdfArray readArray() throws IOException {
         PdfArray array = new PdfArray();
         while (true) {
@@ -168,12 +159,12 @@ public class PdfContentParser {
         }
         return array;
     }
-    
+
     /**
      * Reads a pdf object.
      * @return the pdf object
      * @throws IOException on error
-     */    
+     */
     public PdfObject readPRObject() throws IOException {
         if (!nextValidToken())
             return null;
@@ -198,12 +189,12 @@ public class PdfContentParser {
                 return new PdfLiteral(-type, tokeniser.getStringValue());
         }
     }
-    
+
     /**
      * Reads the next token skipping over the comments.
      * @return <CODE>true</CODE> if a token was read, <CODE>false</CODE> if the end of content was reached
      * @throws IOException on error
-     */    
+     */
     public boolean nextValidToken() throws IOException {
         while (tokeniser.nextToken()) {
             if (tokeniser.getTokenType() == PRTokeniser.TK_COMMENT)

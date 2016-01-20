@@ -46,35 +46,26 @@
  */
 package cljpdf.text.pdf;
 
-import java.io.IOException;
-
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFunction;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.ExceptionConverter;
+
+import java.io.IOException;
 /** Implements PDF functions.
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfFunction {
-    
+
     protected PdfWriter writer;
-    
+
     protected PdfIndirectReference reference;
-    
+
     protected PdfDictionary dictionary;
-    
+
     /** Creates new PdfFunction */
     protected PdfFunction(PdfWriter writer) {
         this.writer = writer;
     }
-    
+
     PdfIndirectReference getReference() {
         try {
             if (reference == null) {
@@ -86,7 +77,7 @@ public class PdfFunction {
         }
         return reference;
     }
-        
+
     public static PdfFunction type0(PdfWriter writer, float domain[], float range[], int size[],
         int bitsPerSample, int order, float encode[], float decode[], byte stream[]) {
         PdfFunction func = new PdfFunction(writer);
@@ -136,7 +127,7 @@ public class PdfFunction {
         func.dictionary.put(PdfName.ENCODE, new PdfArray(encode));
         return func;
     }
-    
+
     public static PdfFunction type4(PdfWriter writer, float domain[], float range[], String postscript) {
         byte b[] = new byte[postscript.length()];
         for (int k = 0; k < b.length; ++k)

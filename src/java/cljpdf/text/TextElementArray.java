@@ -49,15 +49,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Anchor;
-import cljpdf.text.Cell;
-import cljpdf.text.Chapter;
-import cljpdf.text.Element;
-import cljpdf.text.ListItem;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Section;
-
 /**
  * Interface for a text element to which other objects can be added.
  *
@@ -71,7 +62,7 @@ import cljpdf.text.Section;
  */
 
 public interface TextElementArray extends Element {
-    
+
   /**
    * Adds an object to the <CODE>TextElementArray</CODE>.
    *

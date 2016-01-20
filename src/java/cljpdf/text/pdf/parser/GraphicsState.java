@@ -46,9 +46,6 @@
  */
 package cljpdf.text.pdf.parser;
 
-import cljpdf.text.pdf.parser.GraphicsState;
-import cljpdf.text.pdf.parser.Matrix;
-
 import cljpdf.text.pdf.CMapAwareDocumentFont;
 
 /**
@@ -76,7 +73,7 @@ public class GraphicsState {
     float rise;
     /** The current knockout value. */
     boolean knockout;
-    
+
     /**
      * Constructs a new Graphics State object with the default values.
      */
@@ -92,7 +89,7 @@ public class GraphicsState {
         rise = 0;
         knockout = true;
     }
-    
+
     /**
      * Copy constructor.
      * @param source	another GraphicsState object

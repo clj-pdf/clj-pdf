@@ -46,28 +46,17 @@
  */
 
 package cljpdf.text.pdf;
-import java.util.HashMap;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.DocumentFont;
-import cljpdf.text.pdf.FontDetails;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfAppearance;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfWriter;
 
 import cljpdf.text.Rectangle;
+
+import java.util.HashMap;
 
 /**
  * Implements the appearance stream to be used with form fields..
  */
 
 public class PdfAppearance extends PdfTemplate {
-    
+
     public static final HashMap stdFieldFontNames = new HashMap();
     static {
         stdFieldFontNames.put("Courier-BoldOblique", new PdfName("CoBO"));
@@ -96,31 +85,31 @@ public class PdfAppearance extends PdfTemplate {
         stdFieldFontNames.put("HYSMyeongJoStd-Medium", new PdfName("HySm"));
         stdFieldFontNames.put("KozMinPro-Regular", new PdfName("KaMi"));
     }
-    
+
     /**
      *Creates a <CODE>PdfAppearance</CODE>.
      */
-    
+
     PdfAppearance() {
         super();
         separator = ' ';
     }
-    
+
     PdfAppearance(PdfIndirectReference iref) {
         thisReference = iref;
     }
-    
+
     /**
      * Creates new PdfTemplate
      *
      * @param wr the <CODE>PdfWriter</CODE>
      */
-    
+
     PdfAppearance(PdfWriter wr) {
         super(wr);
         separator = ' ';
     }
-    
+
     /**
      * Creates a new appearance to be used with form fields.
      *
@@ -132,7 +121,7 @@ public class PdfAppearance extends PdfTemplate {
     public static PdfAppearance createAppearance(PdfWriter writer, float width, float height) {
         return createAppearance(writer, width, height, null);
     }
-    
+
     static PdfAppearance createAppearance(PdfWriter writer, float width, float height, PdfName forcedName) {
         PdfAppearance template = new PdfAppearance(writer);
         template.setWidth(width);

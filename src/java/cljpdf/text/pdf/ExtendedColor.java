@@ -49,15 +49,13 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Color;
-
-import cljpdf.text.pdf.ExtendedColor;
+import java.awt.*;
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)
  */
 public abstract class ExtendedColor extends Color{
-    
+
 	private static final long serialVersionUID = 2722660170712380080L;
 	/** a type of extended color. */
     public static final int TYPE_RGB = 0;
@@ -71,7 +69,7 @@ public abstract class ExtendedColor extends Color{
     public static final int TYPE_PATTERN = 4;
     /** a type of extended color. */
     public static final int TYPE_SHADING = 5;
-    
+
     protected int type;
 
     /**
@@ -82,7 +80,7 @@ public abstract class ExtendedColor extends Color{
         super(0, 0, 0);
         this.type = type;
     }
-    
+
     /**
      * Constructs an extended color of a certain type and a certain color.
      * @param type
@@ -94,7 +92,7 @@ public abstract class ExtendedColor extends Color{
         super(normalize(red), normalize(green), normalize(blue));
         this.type = type;
     }
-    
+
     /**
      * Gets the type of this color.
      * @return one of the types (see constants)
@@ -102,7 +100,7 @@ public abstract class ExtendedColor extends Color{
     public int getType() {
         return type;
     }
-    
+
     /**
      * Gets the type of a given color.
      * @param color

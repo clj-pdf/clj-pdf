@@ -46,8 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfDictionary;
-
 /**
  * This class represents the /OCProperties entry in the document catalog
  * and holds the optional content properties dictionary, which contains
@@ -57,5 +55,5 @@ import cljpdf.text.pdf.PdfDictionary;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfOCProperties extends PdfDictionary {
-    
+
 }

@@ -49,22 +49,6 @@
  */
 
 package cljpdf.text.pdf.codec.wmf;
-import java.awt.Color;
-import java.awt.Point;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.codec.wmf.InputMeta;
-import cljpdf.text.pdf.codec.wmf.MetaBrush;
-import cljpdf.text.pdf.codec.wmf.MetaFont;
-import cljpdf.text.pdf.codec.wmf.MetaObject;
-import cljpdf.text.pdf.codec.wmf.MetaPen;
-import cljpdf.text.pdf.codec.wmf.MetaState;
 
 import cljpdf.text.DocumentException;
 import cljpdf.text.Image;
@@ -73,8 +57,12 @@ import cljpdf.text.pdf.BaseFont;
 import cljpdf.text.pdf.PdfContentByte;
 import cljpdf.text.pdf.codec.BmpImage;
 
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+
 public class MetaDo {
-    
+
     public static final int META_SETBKCOLOR            = 0x0201;
     public static final int META_SETBKMODE             = 0x0102;
     public static final int META_SETMAPMODE            = 0x0103;
@@ -157,7 +145,7 @@ public class MetaDo {
         this.cb = cb;
         this.in = new InputMeta(in);
     }
-    
+
     public void readAll() throws IOException, DocumentException{
         if (in.readInt() != 0x9AC6CDD7) {
             throw new DocumentException(MessageLocalization.getComposedMessage("not.a.placeable.windows.metafile"));
@@ -177,7 +165,7 @@ public class MetaDo {
         in.readInt();
         in.readWord();
         in.skip(18);
-        
+
         int tsize;
         int function;
         cb.setLineCap(1);
@@ -583,7 +571,7 @@ public class MetaDo {
         }
         state.cleanup(cb);
     }
-    
+
     public void outputText(int x, int y, int flag, int x1, int y1, int x2, int y2, String text) {
         MetaFont font = state.getCurrentFont();
         float refX = state.transformX(x);
@@ -635,7 +623,7 @@ public class MetaDo {
         }
         cb.restoreState();
     }
-    
+
     public boolean isNullStrokeFill(boolean isRectangle) {
         MetaPen pen = state.getCurrentPen();
         MetaBrush brush = state.getCurrentBrush();
@@ -679,14 +667,14 @@ public class MetaDo {
             }
         }
     }
-    
+
     static float getArc(float xCenter, float yCenter, float xDot, float yDot) {
         double s = Math.atan2(yDot - yCenter, xDot - xCenter);
         if (s < 0)
             s += Math.PI * 2;
         return (float)(s / Math.PI * 180);
     }
-    
+
     public static byte[] wrapBMP(Image image) throws IOException {
         if (image.getOriginalType() != Image.ORIGINAL_BMP)
             throw new IOException(MessageLocalization.getComposedMessage("only.bmp.can.be.wrapped.in.wmf"));
@@ -768,7 +756,7 @@ public class MetaDo {
         os.write(v & 0xff);
         os.write((v >>> 8) & 0xff);
     }
-    
+
     public static void writeDWord(OutputStream os, int v) throws IOException {
         writeWord(os, v & 0xffff);
         writeWord(os, (v >>> 16) & 0xffff);

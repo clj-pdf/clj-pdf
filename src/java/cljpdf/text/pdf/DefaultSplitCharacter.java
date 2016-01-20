@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.DefaultSplitCharacter;
-import cljpdf.text.pdf.PdfChunk;
-
 import cljpdf.text.SplitCharacter;
 
 /**
@@ -61,18 +58,18 @@ import cljpdf.text.SplitCharacter;
  * @since	2.1.2
  */
 public class DefaultSplitCharacter implements SplitCharacter {
-	
+
 	/**
 	 * An instance of the default SplitCharacter.
 	 */
 	public static final SplitCharacter DEFAULT = new DefaultSplitCharacter();
-	
+
 	/**
 	 * Checks if a character can be used to split a <CODE>PdfString</CODE>.
 	 * <P>
 	 * for the moment every character less than or equal to SPACE, the character '-'
 	 * and some specific unicode ranges are 'splitCharacters'.
-	 * 
+	 *
 	 * @param start start position in the array
 	 * @param current current position in the array
 	 * @param end end position in the array

@@ -1,15 +1,9 @@
 package cljpdf.text.pdf.collection;
 
-import cljpdf.text.pdf.collection.PdfTargetDictionary;
-
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
+import cljpdf.text.pdf.*;
 
 public class PdfTargetDictionary extends PdfDictionary {
-	
+
 	/**
 	 * Creates dictionary referring to a target document that is the parent of the current document.
 	 * @param nested	null if this is the actual target, another target if this is only an intermediate target.
@@ -20,7 +14,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 		if (nested != null)
 			setAdditionalPath(nested);
 	}
-	
+
 	/**
 	 * Creates a dictionary referring to a target document.
 	 * @param child	if false, this refers to the parent document; if true, this refers to a child document, and you'll have to specify where to find the child using the other methods of this class
@@ -34,7 +28,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 			put(PdfName.R, PdfName.P);
 		}
 	}
-	
+
 	/**
 	 * If this dictionary refers to a child that is a document level attachment,
 	 * you need to specify the name that was used to attach the document.
@@ -43,7 +37,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	public void setEmbeddedFileName(String target) {
 		put(PdfName.N, new PdfString(target, null));
 	}
-	
+
 	/**
 	 * If this dictionary refers to a child that is a file attachment added to a page,
 	 * you need to specify the name of the page (or use setFileAttachmentPage to specify the page number).
@@ -53,7 +47,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	public void setFileAttachmentPagename(String name) {
 		put(PdfName.P, new PdfString(name, null));
 	}
-	
+
 	/**
 	 * If this dictionary refers to a child that is a file attachment added to a page,
 	 * you need to specify the page number (or use setFileAttachmentPagename to specify a named destination).
@@ -63,7 +57,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	public void setFileAttachmentPage(int page) {
 		put(PdfName.P, new PdfNumber(page));
 	}
-	
+
 	/**
 	 * If this dictionary refers to a child that is a file attachment added to a page,
 	 * you need to specify the page with setFileAttachmentPage or setFileAttachmentPageName,
@@ -73,7 +67,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	public void setFileAttachmentName(String name) {
 		put(PdfName.A, new PdfString(name, PdfObject.TEXT_UNICODE));
 	}
-	
+
 	/**
 	 * If this dictionary refers to a child that is a file attachment added to a page,
 	 * you need to specify the page with setFileAttachmentPage or setFileAttachmentPageName,
@@ -83,7 +77,7 @@ public class PdfTargetDictionary extends PdfDictionary {
 	public void setFileAttachmentIndex(int annotation) {
 		put(PdfName.A, new PdfNumber(annotation));
 	}
-	
+
 	/**
 	 * If this dictionary refers to an intermediate target, you can
 	 * add the next target in the sequence.

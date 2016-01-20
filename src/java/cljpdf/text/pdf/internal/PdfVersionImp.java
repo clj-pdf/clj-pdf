@@ -49,15 +49,11 @@
 
 package cljpdf.text.pdf.internal;
 
-import java.io.IOException;
-
 import cljpdf.text.DocWriter;
-import cljpdf.text.pdf.OutputStreamCounter;
-import cljpdf.text.pdf.PdfDeveloperExtension;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfWriter;
+import cljpdf.text.pdf.*;
 import cljpdf.text.pdf.interfaces.PdfVersion;
+
+import java.io.IOException;
 
 /**
  * Stores the PDF version information,
@@ -66,14 +62,14 @@ import cljpdf.text.pdf.interfaces.PdfVersion;
  */
 
 public class PdfVersionImp implements PdfVersion {
-    
+
     /** Contains different strings that are part of the header. */
     public static final byte[][] HEADER = {
     	DocWriter.getISOBytes("\n"),
     	DocWriter.getISOBytes("%PDF-"),
     	DocWriter.getISOBytes("\n%\u00e2\u00e3\u00cf\u00d3\n")
     };
-    
+
 	/** Indicates if the header was already written. */
 	protected boolean headerWasWritten = false;
 	/** Indicates if we are working in append mode. */
@@ -87,7 +83,7 @@ public class PdfVersionImp implements PdfVersion {
 	 * @since	2.1.6
 	 */
 	protected PdfDictionary extensions = null;
-	
+
 	/**
 	 * @see cljpdf.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
 	 */
@@ -99,7 +95,7 @@ public class PdfVersionImp implements PdfVersion {
 			this.header_version = version;
 		}
 	}
-	
+
 	/**
 	 * @see cljpdf.text.pdf.interfaces.PdfVersion#setAtLeastPdfVersion(char)
 	 */
@@ -108,7 +104,7 @@ public class PdfVersionImp implements PdfVersion {
 			setPdfVersion(version);
 		}
 	}
-	
+
 	/**
 	 * @see cljpdf.text.pdf.interfaces.PdfVersion#setPdfVersion(cljpdf.text.pdf.PdfName)
 	 */
@@ -117,17 +113,17 @@ public class PdfVersionImp implements PdfVersion {
 			this.catalog_version = version;
 		}
 	}
-	
+
 	/**
 	 * Sets the append mode.
 	 */
 	public void setAppendmode(boolean appendmode) {
 		this.appendmode = appendmode;
 	}
-	
+
 	/**
 	 * Writes the header to the OutputStreamCounter.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void writeHeader(OutputStreamCounter os) throws IOException {
 		if (appendmode) {
@@ -140,7 +136,7 @@ public class PdfVersionImp implements PdfVersion {
 			headerWasWritten = true;
 		}
 	}
-	
+
 	/**
 	 * Returns the PDF version as a name.
 	 * @param version	the version character.
@@ -163,7 +159,7 @@ public class PdfVersionImp implements PdfVersion {
 			return PdfWriter.PDF_VERSION_1_4;
 		}
 	}
-	
+
 	/**
 	 * Returns the version as a byte[].
 	 * @param version the version character

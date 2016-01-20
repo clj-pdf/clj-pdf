@@ -30,15 +30,13 @@
  */
 package cljpdf.text.pdf.fonts.cmaps;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import cljpdf.text.pdf.fonts.cmaps.CodespaceRange;
-
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * This class represents a CMap file.
@@ -59,20 +57,20 @@ public class CMap
     {
         //default constructor
     }
-    
+
     /**
      * This will tell if this cmap has any one byte mappings.
-     * 
+     *
      * @return true If there are any one byte mappings, false otherwise.
      */
     public boolean hasOneByteMappings()
     {
         return !singleByteMappings.isEmpty();
     }
-    
+
     /**
      * This will tell if this cmap has any two byte mappings.
-     * 
+     *
      * @return true If there are any two byte mappings, false otherwise.
      */
     public boolean hasTwoByteMappings()
@@ -96,7 +94,7 @@ public class CMap
         Integer key = null;
         if( length == 1 )
         {
-            
+
             key = new Integer( code[offset] & 0xff );
             result = (String)singleByteMappings.get( key );
         }

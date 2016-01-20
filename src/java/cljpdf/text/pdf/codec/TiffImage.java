@@ -45,6 +45,13 @@
  * http://www.lowagie.com/iText/
  */
 package cljpdf.text.pdf.codec;
+
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.Image;
+import cljpdf.text.Jpeg;
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.pdf.*;
+
 import java.awt.color.ICC_Profile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,33 +59,15 @@ import java.util.zip.DataFormatException;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.Inflater;
 
-import cljpdf.text.pdf.codec.CCITTG4Encoder;
-import cljpdf.text.pdf.codec.TIFFConstants;
-import cljpdf.text.pdf.codec.TIFFDirectory;
-import cljpdf.text.pdf.codec.TIFFFaxDecoder;
-import cljpdf.text.pdf.codec.TIFFField;
-import cljpdf.text.pdf.codec.TIFFLZWDecoder;
-
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Image;
-import cljpdf.text.Jpeg;
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-
 /** Reads TIFF images
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class TiffImage {
-    
+
     /** Gets the number of pages the TIFF document has.
      * @param s the file source
      * @return the number of pages
-     */    
+     */
     public static int getNumberOfPages(RandomAccessFileOrArray s) {
         try {
             return TIFFDirectory.getNumDirectories(s);
@@ -105,16 +94,16 @@ public class TiffImage {
         }
         return dpi;
     }
-    
+
     /** Reads a page from a TIFF image. Direct mode is not used.
      * @param s the file source
      * @param page the page to get. The first page is 1
      * @return the <CODE>Image</CODE>
-     */    
+     */
     public static Image getTiffImage(RandomAccessFileOrArray s, int page) {
         return getTiffImage(s, page, false);
     }
-    
+
     /** Reads a page from a TIFF image.
      * @param s the file source
      * @param page the page to get. The first page is 1
@@ -122,7 +111,7 @@ public class TiffImage {
      * by direct byte copying. It's faster but may not work
      * every time
      * @return the <CODE>Image</CODE>
-     */    
+     */
     public static Image getTiffImage(RandomAccessFileOrArray s, int page, boolean direct) {
         if (page < 1)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
@@ -289,7 +278,7 @@ public class TiffImage {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     protected static Image getTiffImageColor(TIFFDirectory dir, RandomAccessFileOrArray s) {
         try {
             int compression = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_COMPRESSION);
@@ -387,8 +376,8 @@ public class TiffImage {
                         throw new RuntimeException(MessageLocalization.getComposedMessage("1.bit.samples.are.not.supported.for.horizontal.differencing.predictor", bitsPerSample));
                     }
                 }
-                lzwDecoder = new TIFFLZWDecoder(w, predictor, 
-                                                samplePerPixel); 
+                lzwDecoder = new TIFFLZWDecoder(w, predictor,
+                                                samplePerPixel);
             }
             int rowsLeft = h;
             ByteArrayOutputStream stream = null;
@@ -403,8 +392,8 @@ public class TiffImage {
                     zip = new DeflaterOutputStream(stream);
             }
             if (compression == TIFFConstants.COMPRESSION_OJPEG) {
-                
-                // Assume that the TIFFTAG_JPEGIFBYTECOUNT tag is optional, since it's obsolete and 
+
+                // Assume that the TIFFTAG_JPEGIFBYTECOUNT tag is optional, since it's obsolete and
                 // is often missing
 
                 if ((!dir.isTagPresent(TIFFConstants.TIFFTAG_JPEGIFOFFSET))) {
@@ -417,7 +406,7 @@ public class TiffImage {
                     jpegLength = (int)dir.getFieldAsLong(TIFFConstants.TIFFTAG_JPEGIFBYTECOUNT) +
                         (int)size[0];
                 }
-                
+
                 byte[] jpeg = new byte[Math.min(jpegLength, s.length() - jpegOffset)];
 
                 int posFilePointer = s.getFilePointer();
@@ -425,7 +414,7 @@ public class TiffImage {
                 s.seek(posFilePointer);
                 s.readFully(jpeg);
                 img = new Jpeg(jpeg);
-            } 
+            }
             else if (compression == TIFFConstants.COMPRESSION_JPEG) {
                 if (size.length > 1)
                     throw new IOException(MessageLocalization.getComposedMessage("compression.jpeg.is.only.supported.with.a.single.strip.this.image.has.1.strips", size.length));
@@ -433,7 +422,7 @@ public class TiffImage {
                 s.seek(offset[0]);
                 s.readFully(jpeg);
                 img = new Jpeg(jpeg);
-            } 
+            }
             else {
                 for (int k = 0; k < offset.length; ++k) {
                     byte im[] = new byte[(int)size[k]];
@@ -469,7 +458,7 @@ public class TiffImage {
                     rowsLeft -= rowsStrip;
                 }
                 if (bitsPerSample == 1 && samplePerPixel == 1) {
-                    img = Image.getInstance(w, h, false, Image.CCITTG4, 
+                    img = Image.getInstance(w, h, false, Image.CCITTG4,
                         photometric == TIFFConstants.PHOTOMETRIC_MINISBLACK ? Image.CCITT_BLACKIS1 : 0, g4.close());
                 }
                 else {
@@ -523,7 +512,7 @@ public class TiffImage {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     static long[] getArrayLongShort(TIFFDirectory dir, int tag) {
         TIFFField field = dir.getField(tag);
         if (field == null)
@@ -539,12 +528,12 @@ public class TiffImage {
         }
         return offset;
     }
-    
+
     // Uncompress packbits compressed image data.
     public static void decodePackbits(byte data[], byte[] dst) {
         int srcCount = 0, dstCount = 0;
         byte repeat, b;
-        
+
         try {
             while (dstCount < dst.length) {
                 b = data[srcCount++];

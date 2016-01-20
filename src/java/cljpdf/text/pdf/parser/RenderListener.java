@@ -46,8 +46,6 @@
  */
 package cljpdf.text.pdf.parser;
 
-import cljpdf.text.pdf.parser.PdfContentStreamProcessor;
-
 /**
  * Callback interface for render operations during {@link PdfContentStreamProcessor} execution
  * @since    2.1.6

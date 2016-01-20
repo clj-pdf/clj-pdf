@@ -50,14 +50,10 @@
 
 package cljpdf.text;
 
-import java.net.URL;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.codec.TIFFFaxDecoder;
+
+import java.net.URL;
 
 /**
  * CCITT Image data that has to be inserted into the document

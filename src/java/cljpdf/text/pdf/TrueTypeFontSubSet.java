@@ -49,18 +49,14 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocumentException;
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-
-import cljpdf.text.DocumentException;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.error_messages.MessageLocalization;
 
 /** Subsets a True Type font by removing the unneeded glyphs from
  * the font.
@@ -85,8 +81,8 @@ class TrueTypeFontSubSet {
     static final int MORE_COMPONENTS = 32;
     static final int WE_HAVE_AN_X_AND_Y_SCALE = 64;
     static final int WE_HAVE_A_TWO_BY_TWO = 128;
-    
-    
+
+
     /** Contains the location of the several tables. The key is the name of
      * the table and the value is an <CODE>int[3]</CODE> where position 0
      * is the checksum, position 1 is the offset from the start of the file
@@ -130,12 +126,12 @@ class TrueTypeFontSubSet {
         this.directoryOffset = directoryOffset;
         glyphsInList = new ArrayList(glyphsUsed.keySet());
     }
-    
+
     /** Does the actual work of subsetting the font.
      * @throws IOException on error
      * @throws DocumentException on error
      * @return the subset font
-     */    
+     */
     byte[] process() throws IOException, DocumentException {
         try {
             rf.reOpen();
@@ -156,7 +152,7 @@ class TrueTypeFontSubSet {
             }
         }
     }
-    
+
     protected void assembleFont() throws IOException {
         int tableLocation[];
         int fullFontSize = 0;
@@ -237,7 +233,7 @@ class TrueTypeFontSubSet {
             }
         }
     }
-    
+
     protected void createTableDirectory() throws IOException, DocumentException {
         tableDirectory = new HashMap();
         rf.seek(directoryOffset);
@@ -255,7 +251,7 @@ class TrueTypeFontSubSet {
             tableDirectory.put(tag, tableLocation);
         }
     }
-    
+
     protected void readLoca() throws IOException, DocumentException {
         int tableLocation[];
         tableLocation = (int[])tableDirectory.get("head");
@@ -280,7 +276,7 @@ class TrueTypeFontSubSet {
                 locaTable[k] = rf.readInt();
         }
     }
-    
+
     protected void createNewGlyphTables() throws IOException {
         newLocaTable = new int[locaTable.length];
         int activeGlyphs[] = new int[glyphsInList.size()];
@@ -312,7 +308,7 @@ class TrueTypeFontSubSet {
             }
         }
     }
-    
+
     protected void locaTobytes() {
         if (locaShortTable)
             locaTableRealSize = newLocaTable.length * 2;
@@ -327,9 +323,9 @@ class TrueTypeFontSubSet {
             else
                 writeFontInt(newLocaTable[k]);
         }
-        
+
     }
-    
+
     protected void flatGlyphs() throws IOException, DocumentException {
         int tableLocation[];
         tableLocation = (int[])tableDirectory.get("glyf");
@@ -379,7 +375,7 @@ class TrueTypeFontSubSet {
             rf.skipBytes(skip);
         }
     }
-    
+
     /** Reads a <CODE>String</CODE> from the font file as bytes using the Cp1252
      *  encoding.
      * @param length the length of bytes to read
@@ -396,7 +392,7 @@ class TrueTypeFontSubSet {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     protected void writeFontShort(int n) {
         outFont[fontPtr++] = (byte)(n >> 8);
         outFont[fontPtr++] = (byte)(n);
@@ -414,7 +410,7 @@ class TrueTypeFontSubSet {
         System.arraycopy(b, 0, outFont, fontPtr, b.length);
         fontPtr += b.length;
     }
-    
+
     protected int calculateChecksum(byte b[]) {
         int len = b.length / 4;
         int v0 = 0;

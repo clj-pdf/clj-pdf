@@ -48,22 +48,14 @@
  */
 package cljpdf.text;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Cell;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Rectangle;
-import cljpdf.text.SimpleCell;
-import cljpdf.text.TextElementArray;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.PdfContentByte;
 import cljpdf.text.pdf.PdfPCell;
 import cljpdf.text.pdf.PdfPCellEvent;
 import cljpdf.text.pdf.PdfPTable;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Rectangle that can be used for Cells.
@@ -76,7 +68,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 	public static final boolean ROW = true;
 	/** the CellAttributes object represents a cell. */
 	public static final boolean CELL = false;
-	
+
 	// member variables
 	/** the content of the Cell. */
 	private ArrayList content = new ArrayList();
@@ -121,7 +113,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
      * this only has an effect when rendered to PDF.
      */
     protected boolean useBorderPadding;
-	
+
 	/**
 	 * A CellAttributes object is always constructed without any dimensions.
 	 * Dimensions are defined after creation.
@@ -132,7 +124,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		cellgroup = row;
 		setBorder(BOX);
 	}
-	
+
 	/**
 	 * Adds content to this object.
 	 * @param element
@@ -168,7 +160,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 			throw new BadElementException(MessageLocalization.getComposedMessage("you.can.t.add.an.element.of.type.1.to.a.simplecell", element.getClass().getName()));
 		}
 	}
-	
+
 	/**
 	 * Creates a Cell with these attributes.
 	 * @param rowAttributes
@@ -192,7 +184,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		}
 		return cell;
 	}
-	
+
 	/**
 	 * Creates a PdfPCell with these attributes.
 	 * @param rowAttributes
@@ -235,16 +227,16 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		float sp_bottom = spacing_bottom;
 		if (Float.isNaN(sp_bottom)) sp_bottom = 0f;
 		p = padding_left;
-		if (Float.isNaN(p)) p = 0f; 
+		if (Float.isNaN(p)) p = 0f;
 		cell.setPaddingLeft(p + sp_left);
 		p = padding_right;
-		if (Float.isNaN(p)) p = 0f; 
+		if (Float.isNaN(p)) p = 0f;
 		cell.setPaddingRight(p + sp_right);
 		p = padding_top;
-		if (Float.isNaN(p)) p = 0f; 
+		if (Float.isNaN(p)) p = 0f;
 		cell.setPaddingTop(p + sp_top);
 		p = padding_bottom;
-		if (Float.isNaN(p)) p = 0f; 
+		if (Float.isNaN(p)) p = 0f;
 		cell.setPaddingBottom(p + sp_bottom);
 		Element element;
 		for (Iterator i = content.iterator(); i.hasNext(); ) {
@@ -272,8 +264,8 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		rect.setBackgroundColor(null);
 		canvases[PdfPTable.LINECANVAS].rectangle(rect);
 	}
-	
-	/** Sets the padding parameters if they are undefined. 
+
+	/** Sets the padding parameters if they are undefined.
 	 * @param padding
 	 */
 	public void setPadding(float padding) {
@@ -290,7 +282,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 			setPadding_bottom(padding);
 		}
 	}
-	
+
 	/**
 	 * @return Returns the colspan.
 	 */
@@ -375,7 +367,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 	public float getSpacing_bottom() {
 		return spacing_bottom;
 	}
-	
+
 	/**
 	 * @param spacing The spacing to set.
 	 */
@@ -385,35 +377,35 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 		this.spacing_top = spacing;
 		this.spacing_bottom = spacing;
 	}
-	
+
 	/**
 	 * @param spacing The spacing to set.
 	 */
 	public void setSpacing_left(float spacing) {
 		this.spacing_left = spacing;
 	}
-	
+
 	/**
 	 * @param spacing The spacing to set.
 	 */
 	public void setSpacing_right(float spacing) {
 		this.spacing_right = spacing;
 	}
-	
+
 	/**
 	 * @param spacing The spacing to set.
 	 */
 	public void setSpacing_top(float spacing) {
 		this.spacing_top = spacing;
 	}
-	
+
 	/**
 	 * @param spacing The spacing to set.
 	 */
 	public void setSpacing_bottom(float spacing) {
 		this.spacing_bottom = spacing;
 	}
-	
+
 	/**
 	 * @return Returns the cellgroup.
 	 */
@@ -510,7 +502,7 @@ public class SimpleCell extends Rectangle implements PdfPCellEvent, TextElementA
 	public void setUseDescender(boolean useDescender) {
 		this.useDescender = useDescender;
 	}
-	
+
 	/**
 	 * @return Returns the content.
 	 */

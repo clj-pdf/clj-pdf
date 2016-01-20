@@ -50,13 +50,9 @@
 
 package cljpdf.text;
 
-import java.net.URL;
-
-import cljpdf.text.BadElementException;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.net.URL;
 
 /**
  * Raw Image data that has to be inserted into the document
@@ -82,7 +78,7 @@ public class ImgRaw extends Image {
  * @param data the image data
  * @throws BadElementException on error
  */
-    
+
     public ImgRaw(int width, int height, int components, int bpc, byte[] data) throws BadElementException{
         super((URL)null);
         type = IMGRAW;

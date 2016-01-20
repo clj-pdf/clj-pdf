@@ -46,11 +46,9 @@
  */
 package cljpdf.text.pdf.parser;
 
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.parser.PdfContentStreamProcessor;
-
 import cljpdf.text.pdf.PdfLiteral;
+
+import java.util.ArrayList;
 
 /**
  * Interface implemented by a series of content operators

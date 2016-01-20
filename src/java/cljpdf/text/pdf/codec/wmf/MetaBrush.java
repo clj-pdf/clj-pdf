@@ -48,11 +48,9 @@
  */
 
 package cljpdf.text.pdf.codec.wmf;
-import java.awt.Color;
-import java.io.IOException;
 
-import cljpdf.text.pdf.codec.wmf.InputMeta;
-import cljpdf.text.pdf.codec.wmf.MetaObject;
+import java.awt.*;
+import java.io.IOException;
 
 public class MetaBrush extends MetaObject {
 
@@ -81,15 +79,15 @@ public class MetaBrush extends MetaObject {
         color = in.readColor();
         hatch = in.readWord();
     }
-    
+
     public int getStyle() {
         return style;
     }
-    
+
     public int getHatch() {
         return hatch;
     }
-    
+
     public Color getColor() {
         return color;
     }

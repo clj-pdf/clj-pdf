@@ -49,15 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfStructureElement;
-import cljpdf.text.pdf.PdfStructureTreeRoot;
-
 import cljpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -66,18 +57,18 @@ import cljpdf.text.error_messages.MessageLocalization;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfStructureElement extends PdfDictionary {
-    
+
     /**
      * Holds value of property kids.
      */
     private PdfStructureElement parent;
     private PdfStructureTreeRoot top;
-    
+
     /**
      * Holds value of property reference.
      */
     private PdfIndirectReference reference;
-    
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
@@ -89,18 +80,18 @@ public class PdfStructureElement extends PdfDictionary {
         this.parent = parent;
         put(PdfName.P, parent.reference);
     }
-    
+
     /**
      * Creates a new instance of PdfStructureElement.
      * @param parent the parent of this node
      * @param structureType the type of structure. It may be a standard type or a user type mapped by the role map
-     */    
+     */
     public PdfStructureElement(PdfStructureTreeRoot parent, PdfName structureType) {
         top = parent;
         init(parent, structureType);
         put(PdfName.P, parent.getReference());
     }
-    
+
     private void init(PdfDictionary parent, PdfName structureType) {
         PdfObject kido = parent.get(PdfName.K);
         PdfArray kids = null;
@@ -116,26 +107,26 @@ public class PdfStructureElement extends PdfDictionary {
         put(PdfName.S, structureType);
         reference = top.getWriter().getPdfIndirectReference();
     }
-    
+
     /**
      * Gets the parent of this node.
      * @return the parent of this node
-     */    
+     */
     public PdfDictionary getParent() {
         return parent;
     }
-    
+
     void setPageMark(int page, int mark) {
         if (mark >= 0)
             put(PdfName.K, new PdfNumber(mark));
         top.setPageMark(page, reference);
     }
-    
+
     /**
      * Gets the reference this object will be written to.
      * @return the reference this object will be written to
      * @since	2.1.6 method removed in 2.1.5, but restored in 2.1.6
-     */    
+     */
     public PdfIndirectReference getReference() {
         return this.reference;
     }

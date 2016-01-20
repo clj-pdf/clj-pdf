@@ -49,8 +49,6 @@
 
 package cljpdf.text.exceptions;
 
-import cljpdf.text.exceptions.InvalidPdfException;
-
 /**
  * Typed exception used when opening an existing PDF document.
  * Gets thrown when the document isn't a valid PDF document according to iText,

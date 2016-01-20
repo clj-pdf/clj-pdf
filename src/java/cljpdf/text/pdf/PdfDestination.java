@@ -51,13 +51,6 @@ package cljpdf.text.pdf;
 
 import java.util.StringTokenizer;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfNumber;
-
 /**
  * A <CODE>PdfColor</CODE> defines a Color (it's a <CODE>PdfArray</CODE> containing 3 values).
  *
@@ -65,40 +58,40 @@ import cljpdf.text.pdf.PdfNumber;
  */
 
 public class PdfDestination extends PdfArray {
-    
+
     // public static final member-variables
-    
+
 /** This is a possible destination type */
     public static final int XYZ = 0;
-    
+
 /** This is a possible destination type */
     public static final int FIT = 1;
-    
+
 /** This is a possible destination type */
     public static final int FITH = 2;
-    
+
 /** This is a possible destination type */
     public static final int FITV = 3;
-    
+
 /** This is a possible destination type */
     public static final int FITR = 4;
-    
+
 /** This is a possible destination type */
     public static final int FITB = 5;
-    
+
 /** This is a possible destination type */
     public static final int FITBH = 6;
-    
+
 /** This is a possible destination type */
     public static final int FITBV = 7;
-    
+
     // member variables
-    
+
 /** Is the indirect reference to a page already added? */
     private boolean status = false;
-    
+
     // constructors
-    
+
 /**
  * Constructs a new <CODE>PdfDestination</CODE>.
  * <P>
@@ -108,7 +101,7 @@ public class PdfDestination extends PdfArray {
  *
  * @param		type		The destination type
  */
-    
+
     public PdfDestination(int type) {
         super();
         if (type == FITB) {
@@ -118,7 +111,7 @@ public class PdfDestination extends PdfArray {
             add(PdfName.FIT);
         }
     }
-    
+
 /**
  * Constructs a new <CODE>PdfDestination</CODE>.
  * <P>
@@ -133,7 +126,7 @@ public class PdfDestination extends PdfArray {
  * @param		type		the destination type
  * @param		parameter	a parameter to combined with the destination type
  */
-    
+
     public PdfDestination(int type, float parameter) {
         super(new PdfNumber(parameter));
         switch(type) {
@@ -150,7 +143,7 @@ public class PdfDestination extends PdfArray {
                 addFirst(PdfName.FITBV);
         }
     }
-    
+
 /** Constructs a new <CODE>PdfDestination</CODE>.
  * <P>
  * Display the page, with the coordinates (left, top) positioned
@@ -162,7 +155,7 @@ public class PdfDestination extends PdfArray {
  * @param top the top value. Negative to place a null
  * @param zoom The zoom factor. A value of 0 keeps the current value
  */
-    
+
     public PdfDestination(int type, float left, float top, float zoom) {
         super(PdfName.XYZ);
         if (left < 0)
@@ -175,7 +168,7 @@ public class PdfDestination extends PdfArray {
             add(new PdfNumber(top));
         add(new PdfNumber(zoom));
     }
-    
+
 /** Constructs a new <CODE>PdfDestination</CODE>.
  * <P>
  * Display the page, with its contents magnified just enough
@@ -191,7 +184,7 @@ public class PdfDestination extends PdfArray {
  * @param top a parameter
  * @since iText0.38
  */
-    
+
     public PdfDestination(int type, float left, float bottom, float right, float top) {
         super(PdfName.FITR);
         add(new PdfNumber(left));
@@ -199,7 +192,7 @@ public class PdfDestination extends PdfArray {
         add(new PdfNumber(right));
         add(new PdfNumber(top));
     }
-    
+
     /**
      * Creates a PdfDestination based on a String.
      * Valid Strings are for instance the values returned by SimpleNamedDestination:
@@ -217,7 +210,7 @@ public class PdfDestination extends PdfArray {
     		add(new PdfNumber(tokens.nextToken()));
     	}
     }
-    
+
     // methods
 
 /**
@@ -225,17 +218,17 @@ public class PdfDestination extends PdfArray {
  *
  * @return	<CODE>true</CODE> or <CODE>false</CODE>
  */
-    
+
     public boolean hasPage() {
         return status;
     }
-    
+
 /** Adds the indirect reference of the destination page.
  *
  * @param page	an indirect reference
  * @return true if the page reference was added
  */
-    
+
     public boolean addPage(PdfIndirectReference page) {
         if (!status) {
             addFirst(page);

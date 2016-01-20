@@ -49,9 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.CMYKColor;
-import cljpdf.text.pdf.ExtendedColor;
-
 /**
  *
  * @author  Paulo Soares (psoares@consiste.pt)
@@ -89,7 +86,7 @@ public class CMYKColor extends ExtendedColor {
         yellow = normalize(floatYellow);
         black = normalize(floatBlack);
     }
-    
+
     /**
      * @return the cyan value
      */
@@ -124,9 +121,9 @@ public class CMYKColor extends ExtendedColor {
         CMYKColor c2 = (CMYKColor)obj;
         return (cyan == c2.cyan && magenta == c2.magenta && yellow == c2.yellow && black == c2.black);
     }
-    
+
     public int hashCode() {
-        return Float.floatToIntBits(cyan) ^ Float.floatToIntBits(magenta) ^ Float.floatToIntBits(yellow) ^ Float.floatToIntBits(black); 
+        return Float.floatToIntBits(cyan) ^ Float.floatToIntBits(magenta) ^ Float.floatToIntBits(yellow) ^ Float.floatToIntBits(black);
     }
-    
+
 }

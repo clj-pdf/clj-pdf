@@ -49,8 +49,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Element;
-
 /**
  * Interface implemented by Element objects that can potentially consume
  * a lot of memory. Objects implementing the LargeElement interface can
@@ -61,7 +59,7 @@ import cljpdf.text.Element;
  */
 
 public interface LargeElement extends Element {
-	
+
 	/**
 	 * If you invoke setComplete(false), you indicate that the content
 	 * of the object isn't complete yet; it can be added to the document
@@ -72,14 +70,14 @@ public interface LargeElement extends Element {
 	 * 						adding the object to the document.
 	 */
 	public void setComplete(boolean complete);
-	
+
 	/**
 	 * Indicates if the element is complete or not.
 	 * @since	iText 2.0.8
 	 * @return	indicates if the element is complete according to the user.
 	 */
 	public boolean isComplete();
-	
+
 	/**
 	 * Flushes the content that has been added.
 	 */

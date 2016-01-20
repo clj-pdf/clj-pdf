@@ -49,13 +49,11 @@
 
 package cljpdf.text.pdf.internal;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.NoSuchElementException;
-
-import cljpdf.text.pdf.internal.PolylineShape;
-
-import cljpdf.text.error_messages.MessageLocalization;
 /**
  * PathIterator for PolylineShape.
  * This class was originally written by wil - amristar.com.au
@@ -68,13 +66,13 @@ public class PolylineShapeIterator implements PathIterator {
 	protected AffineTransform affine;
 	/** the index of the current segment in the iterator. */
 	protected int index;
-	
+
 	/** Creates a PolylineShapeIterator. */
 	PolylineShapeIterator(PolylineShape l, AffineTransform at) {
 		this.poly = l;
 		this.affine = at;
 	}
-	
+
 	/**
 	 * Returns the coordinates and type of the current path segment in
 	 * the iteration. The return value is the path segment type:
@@ -105,7 +103,7 @@ public class PolylineShapeIterator implements PathIterator {
 		}
 		return type;
 	}
-	
+
 	/**
 	 * Returns the coordinates and type of the current path segment in
 	 * the iteration. The return value is the path segment type:

@@ -49,23 +49,21 @@
 
 package cljpdf.text.html;
 
-import java.awt.Color;
+import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.StringTokenizer;
-
-import cljpdf.text.html.WebColors;
-
-import cljpdf.text.error_messages.MessageLocalization;
 
 /**
  * This class is a HashMap that contains the names of colors as a key and the
  * corresponding Color as value. (Source: Wikipedia
  * http://en.wikipedia.org/wiki/Web_colors )
- * 
+ *
  * @author blowagie
  */
 public class WebColors extends HashMap {
-    
+
 	private static final long serialVersionUID = 3542523100813372896L;
 	/** HashMap containing all the names and corresponding color values. */
 	public static final WebColors NAMES = new WebColors();
@@ -215,7 +213,7 @@ public class WebColors extends HashMap {
 
 	/**
 	 * Gives you a Color based on a name.
-	 * 
+	 *
 	 * @param name
 	 *            a name such as black, violet, cornflowerblue or #RGB or #RRGGBB
      *            or rgb(R,G,B)

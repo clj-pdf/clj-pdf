@@ -49,23 +49,12 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocumentException;
+import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.cert.Certificate;
 import java.util.List;
-
-import cljpdf.text.pdf.PdfCopyFormsImp;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.SequenceList;
-
-import cljpdf.text.DocWriter;
-import cljpdf.text.DocumentException;
-import cljpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
 
 /**
  * Allows you to add one (or more) existing PDF document(s) to
@@ -75,28 +64,28 @@ import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
  */
 public class PdfCopyForms
 	implements PdfViewerPreferences {
-    
+
 	/** The class with the actual implementations. */
     private PdfCopyFormsImp fc;
-    
+
     /**
      * Creates a new instance.
      * @param os the output stream
      * @throws DocumentException on error
-     */    
+     */
     public PdfCopyForms(OutputStream os) throws DocumentException {
         fc = new PdfCopyFormsImp(os);
     }
-    
+
     /**
      * Concatenates a PDF document.
      * @param reader the PDF document
      * @throws DocumentException on error
-     */    
+     */
     public void addDocument(PdfReader reader) throws DocumentException, IOException {
         fc.addDocument(reader);
     }
-    
+
     /**
      * Concatenates a PDF document selecting the pages to keep. The pages are described as a
      * <CODE>List</CODE> of <CODE>Integer</CODE>. The page ordering can be changed but
@@ -104,7 +93,7 @@ public class PdfCopyForms
      * @param reader the PDF document
      * @param pagesToKeep the pages to keep
      * @throws DocumentException on error
-     */    
+     */
     public void addDocument(PdfReader reader, List pagesToKeep) throws DocumentException, IOException {
         fc.addDocument(reader, pagesToKeep);
     }
@@ -116,7 +105,7 @@ public class PdfCopyForms
      * @param reader the PDF document
      * @param ranges the comma separated ranges as described in {@link SequenceList}
      * @throws DocumentException on error
-     */    
+     */
     public void addDocument(PdfReader reader, String ranges) throws DocumentException, IOException {
         fc.addDocument(reader, SequenceList.expand(ranges, reader.getNumberOfPages()));
     }
@@ -129,10 +118,10 @@ public class PdfCopyForms
     public void copyDocumentFields(PdfReader reader) throws DocumentException{
         fc.copyDocumentFields(reader);
     }
- 
+
     /**
      * Closes the output document.
-     */    
+     */
     public void close() {
         fc.close();
     }
@@ -140,7 +129,7 @@ public class PdfCopyForms
     /**
      * Opens the document. This is usually not needed as addDocument() will do it
      * automatically.
-     */    
+     */
     public void open() {
         fc.openDoc();
     }
@@ -148,7 +137,7 @@ public class PdfCopyForms
     /**
      * Adds JavaScript to the global document
      * @param js the JavaScript
-     */    
+     */
     public void addJavaScript(String js) {
         fc.addJavaScript(js, !PdfEncodings.isPdfDocEncoding(js));
     }
@@ -157,14 +146,14 @@ public class PdfCopyForms
      * Sets the bookmarks. The list structure is defined in
      * <CODE>SimpleBookmark#</CODE>.
      * @param outlines the bookmarks or <CODE>null</CODE> to remove any
-     */    
+     */
     public void setOutlines(List outlines) {
         fc.setOutlines(outlines);
     }
-    
+
     /** Gets the underlying PdfWriter.
      * @return the underlying PdfWriter
-     */    
+     */
     public PdfWriter getWriter() {
         return fc;
     }
@@ -176,7 +165,7 @@ public class PdfCopyForms
     public boolean isFullCompression() {
         return fc.isFullCompression();
     }
-    
+
     /**
      * Sets the document's compression to the new 1.5 mode with object streams and xref
      * streams. It can be set at any time but once set it can't be unset.
@@ -191,7 +180,7 @@ public class PdfCopyForms
 	 * @see cljpdf.text.pdf.interfaces.PdfViewerPreferences#addViewerPreference(cljpdf.text.pdf.PdfName, cljpdf.text.pdf.PdfObject)
 	 */
 	public void addViewerPreference(PdfName key, PdfObject value) {
-		fc.addViewerPreference(key, value);	
+		fc.addViewerPreference(key, value);
 	}
 
 	/**
@@ -199,5 +188,5 @@ public class PdfCopyForms
 	 */
 	public void setViewerPreferences(int preferences) {
 		fc.setViewerPreferences(preferences);
-	}    
+	}
 }

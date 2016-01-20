@@ -46,24 +46,20 @@
  */
 package cljpdf.text.xml.xmp;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import cljpdf.text.ExceptionConverter;
+import cljpdf.text.xml.XmlDomWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import cljpdf.text.xml.xmp.XmpWriter;
-
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.xml.XmlDomWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Reads an XMP stream into an org.w3c.dom.Document objects.
@@ -74,13 +70,13 @@ import cljpdf.text.xml.XmlDomWriter;
 public class XmpReader {
 
     private Document domDocument;
-    
+
     /**
      * Constructs an XMP reader
      * @param	bytes	the XMP content
-     * @throws ExceptionConverter 
-     * @throws IOException 
-     * @throws SAXException 
+     * @throws ExceptionConverter
+     * @throws IOException
+     * @throws SAXException
      */
 	public XmpReader(byte[] bytes) throws SAXException, IOException {
 		try {
@@ -93,7 +89,7 @@ public class XmpReader {
 			throw new ExceptionConverter(e);
 		}
 	}
-	
+
 	/**
 	 * Replaces the content of a tag.
 	 * @param	namespaceURI	the URI of the namespace
@@ -112,8 +108,8 @@ public class XmpReader {
 			setNodeText(domDocument, node, value);
 		}
 		return true;
-	}    
-	
+	}
+
 	/**
 	 * Adds a tag.
 	 * @param	namespaceURI	the URI of the namespace
@@ -144,7 +140,7 @@ public class XmpReader {
 		}
 		return false;
 	}
-	
+
     /**
      * Sets the text of this node. All the child's node are deleted and a new
      * child text node is created.
@@ -162,7 +158,7 @@ public class XmpReader {
         n.appendChild(domDocument.createTextNode(value));
         return true;
     }
-	
+
     /**
      * Writes the document to a byte array.
      */

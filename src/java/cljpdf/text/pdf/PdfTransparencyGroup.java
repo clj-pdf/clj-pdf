@@ -46,16 +46,12 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-
 /** The transparency group dictionary.
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfTransparencyGroup extends PdfDictionary {
-    
+
     /**
      * Constructs a transparencyGroup.
      */
@@ -63,7 +59,7 @@ public class PdfTransparencyGroup extends PdfDictionary {
         super();
         put(PdfName.S, PdfName.TRANSPARENCY);
     }
- 
+
     /**
      * Determining the initial backdrop against which its stack is composited.
      * @param isolated
@@ -74,7 +70,7 @@ public class PdfTransparencyGroup extends PdfDictionary {
         else
             remove(PdfName.I);
     }
-    
+
     /**
      * Determining whether the objects within the stack are composited with one another or only with the group's backdrop.
      * @param knockout

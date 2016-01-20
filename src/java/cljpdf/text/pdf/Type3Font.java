@@ -47,31 +47,16 @@
 
 package cljpdf.text.pdf;
 
-import java.util.HashMap;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.GlyphList;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.Type3Glyph;
-
 import cljpdf.text.DocumentException;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.util.HashMap;
 
 /**
  * A class to support Type3 fonts.
  */
 public class Type3Font extends BaseFont {
-    
+
 	private boolean[] usedSlot;
     private IntHashtable widths3 = new IntHashtable();
     private HashMap char2glyph = new HashMap();
@@ -79,18 +64,18 @@ public class Type3Font extends BaseFont {
     private float llx = Float.NaN, lly, urx, ury;
     private PageResources pageResources = new PageResources();
     private boolean colorized;
-    
+
     /**
      * Creates a Type3 font.
      * @param writer the writer
      * @param chars an array of chars corresponding to the glyphs used (not used, present for compatibility only)
      * @param colorized if <CODE>true</CODE> the font may specify color, if <CODE>false</CODE> no color commands are allowed
      * and only images as masks can be used
-     */    
+     */
     public Type3Font(PdfWriter writer, char[] chars, boolean colorized) {
         this(writer, colorized);
     }
-    
+
     /**
      * Creates a Type3 font. This implementation assumes that the /FontMatrix is
      * [0.001 0 0 0.001 0 0] or a 1000-unit glyph coordinate system.
@@ -117,14 +102,14 @@ public class Type3Font extends BaseFont {
      * @param writer the writer
      * @param colorized if <CODE>true</CODE> the font may specify color, if <CODE>false</CODE> no color commands are allowed
      * and only images as masks can be used
-     */    
+     */
     public Type3Font(PdfWriter writer, boolean colorized) {
         this.writer = writer;
         this.colorized = colorized;
         fontType = FONT_TYPE_T3;
         usedSlot = new boolean[256];
     }
-    
+
     /**
      * Defines a glyph. If the character was already defined it will return the same content
      * @param c the character to match this glyph.
@@ -138,7 +123,7 @@ public class Type3Font extends BaseFont {
      * @param ury the Y upper right corner of the glyph bounding box. If the <CODE>colorize</CODE> option is
      * <CODE>true</CODE> the value is ignored
      * @return a content where the glyph can be defined
-     */    
+     */
     public PdfContentByte defineGlyph(char c, float wx, float llx, float lly, float urx, float ury) {
         if (c == 0 || c > 255)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.char.1.doesn.t.belong.in.this.type3.font", (int)c));
@@ -166,70 +151,70 @@ public class Type3Font extends BaseFont {
         char2glyph.put(ck, glyph);
         return glyph;
     }
-    
+
     public String[][] getFamilyFontName() {
         return getFullFontName();
     }
-    
+
     public float getFontDescriptor(int key, float fontSize) {
         return 0;
     }
-    
+
     public String[][] getFullFontName() {
         return new String[][]{{"", "", "", ""}};
     }
-    
+
     /**
      * @since 2.0.8
-     */    
+     */
     public String[][] getAllNameEntries() {
         return new String[][]{{"4", "", "", "", ""}};
     }
-    
+
     public int getKerning(int char1, int char2) {
         return 0;
     }
-    
+
     public String getPostscriptFontName() {
         return "";
     }
-    
+
     protected int[] getRawCharBBox(int c, String name) {
         return null;
     }
-    
+
     int getRawWidth(int c, String name) {
         return 0;
     }
-    
+
     public boolean hasKernPairs() {
         return false;
     }
-    
+
     public boolean setKerning(int char1, int char2, int kern) {
         return false;
     }
-    
+
     public void setPostscriptFontName(String name) {
     }
-    
+
     void writeFont(PdfWriter writer, PdfIndirectReference ref, Object[] params) throws cljpdf.text.DocumentException, java.io.IOException {
         if (this.writer != writer)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("type3.font.used.with.the.wrong.pdfwriter"));
-        
+
         // Get first & lastchar ...
         int firstChar = 0;
         while( firstChar < usedSlot.length && !usedSlot[firstChar] ) firstChar++;
-        
+
         if ( firstChar == usedSlot.length ) {
         	throw new DocumentException(MessageLocalization.getComposedMessage("no.glyphs.defined.for.type3.font"));
         }
         int lastChar = usedSlot.length - 1;
         while( lastChar >= firstChar && !usedSlot[lastChar] ) lastChar--;
-        
+
         int[] widths = new int[lastChar - firstChar + 1];
         int[] invOrd = new int[lastChar - firstChar + 1];
-        
+
         int invOrdIndx = 0, w = 0;
         for( int u = firstChar; u<=lastChar; u++, w++ ) {
             if ( usedSlot[u] ) {
@@ -277,7 +262,7 @@ public class Type3Font extends BaseFont {
             font.put(PdfName.RESOURCES, writer.addToBody(pageResources.getResources()).getIndirectReference());
         writer.addToBody(font, ref);
     }
-    
+
     /**
      * Always returns null, because you can't get the FontStream of a Type3 font.
    	 * @return	null
@@ -286,8 +271,8 @@ public class Type3Font extends BaseFont {
     public PdfStream getFullFontStream() {
     	return null;
     }
-    
-    
+
+
     byte[] convertToBytes(String text) {
         char[] cc = text.toCharArray();
         byte[] b = new byte[cc.length];
@@ -303,19 +288,19 @@ public class Type3Font extends BaseFont {
         System.arraycopy(b, 0, b2, 0, p);
         return b2;
     }
-    
+
     byte[] convertToBytes(int char1) {
         if (charExists(char1))
             return new byte[]{(byte)char1};
         else return new byte[0];
     }
-    
+
     public int getWidth(int char1) {
         if (!widths3.containsKey(char1))
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.char.1.is.not.defined.in.a.type3.font", char1));
         return widths3.get(char1);
     }
-    
+
     public int getWidth(String text) {
         char[] c = text.toCharArray();
         int total = 0;
@@ -323,11 +308,11 @@ public class Type3Font extends BaseFont {
             total += getWidth(c[k]);
         return total;
     }
-    
+
     public int[] getCharBBox(int c) {
         return null;
     }
-    
+
     public boolean charExists(int c) {
         if (c > 0 && c < 256) {
             return usedSlot[c];
@@ -335,9 +320,9 @@ public class Type3Font extends BaseFont {
             return false;
         }
     }
-    
+
     public boolean setCharAdvance(int c, int advance) {
         return false;
     }
-    
+
 }

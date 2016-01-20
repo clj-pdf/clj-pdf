@@ -55,16 +55,6 @@ import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import cljpdf.text.pdf.OutputStreamCounter;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * Extends PdfStream and should be used to create Streams for Embedded Files
  * (file attachments).
@@ -96,23 +86,23 @@ public class PdfEFStream extends PdfStream {
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         if (inputStream != null && compressed)
             put(PdfName.FILTER, PdfName.FLATEDECODE);
-        
+
         PdfObject nn = get(PdfName.LENGTH);
-                
+
         superToPdf(writer, os);
 
         os.write(STARTSTREAM);
         if (inputStream != null) {
             rawLength = 0;
             DeflaterOutputStream def = null;
-            OutputStreamCounter osc = new OutputStreamCounter(os);            
-            OutputStream fout = osc;            
+            OutputStreamCounter osc = new OutputStreamCounter(os);
+            OutputStream fout = osc;
             Deflater deflater = null;
             if (compressed) {
                 deflater = new Deflater(compressionLevel);
                 fout = def = new DeflaterOutputStream(fout, deflater, 0x8000);
             }
-            
+
             byte buf[] = new byte[4192];
             while (true) {
                 int n = inputStream.read(buf);
@@ -124,11 +114,11 @@ public class PdfEFStream extends PdfStream {
             if (def != null) {
                 def.finish();
                 deflater.end();
-            }            
+            }
             inputStreamLength = osc.getCounter();
         }
         else {
-        	os.write(bytes);            
+        	os.write(bytes);
         }
         os.write(ENDSTREAM);
     }

@@ -42,7 +42,7 @@
  *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -50,9 +50,9 @@
 
 package cljpdf.text.html.simpleparser;
 
-import java.util.HashMap;
-
 import cljpdf.text.html.Markup;
+
+import java.util.HashMap;
 
 public class StyleSheet {
 

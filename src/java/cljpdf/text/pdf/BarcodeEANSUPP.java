@@ -45,14 +45,11 @@
  * http://www.lowagie.com/iText/
  */
 package cljpdf.text.pdf;
-import java.awt.Color;
-
-import cljpdf.text.pdf.Barcode;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfContentByte;
 
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
 
 /** This class takes 2 barcodes, an EAN/UPC and a supplemental
  * and creates a single barcode with both combined in the
@@ -67,14 +64,14 @@ import cljpdf.text.error_messages.MessageLocalization;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class BarcodeEANSUPP extends Barcode{
-    
+
     /** The barcode with the EAN/UPC.
-     */    
+     */
     protected Barcode ean;
     /** The barcode with the supplemental.
-     */    
+     */
     protected Barcode supp;
-    
+
     /** Creates new combined barcode.
      * @param ean the EAN/UPC barcode
      * @param supp the supplemental barcode
@@ -84,7 +81,7 @@ public class BarcodeEANSUPP extends Barcode{
         this.ean = ean;
         this.supp = supp;
     }
-    
+
     /** Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
      * @return the size the barcode occupies.
@@ -94,7 +91,7 @@ public class BarcodeEANSUPP extends Barcode{
         rect.setRight(rect.getWidth() + supp.getBarcodeSize().getWidth() + n);
         return rect;
     }
-    
+
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
@@ -146,14 +143,14 @@ public class BarcodeEANSUPP extends Barcode{
         cb.restoreState();
         return getBarcodeSize();
     }
-    
+
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         throw new UnsupportedOperationException(MessageLocalization.getComposedMessage("the.two.barcodes.must.be.composed.externally"));
-    }    
+    }
 }

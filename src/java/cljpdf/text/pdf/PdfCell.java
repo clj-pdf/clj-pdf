@@ -49,24 +49,10 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.*;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfChunk;
-import cljpdf.text.pdf.PdfLine;
-import cljpdf.text.pdf.PdfTable;
-
-import cljpdf.text.Anchor;
-import cljpdf.text.Cell;
-import cljpdf.text.Chunk;
-import cljpdf.text.Element;
-import cljpdf.text.Image;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.Rectangle;
 
 /**
  * A <CODE>PdfCell</CODE> is the PDF translation of a <CODE>Cell</CODE>.
@@ -89,7 +75,7 @@ import cljpdf.text.Rectangle;
 public class PdfCell extends Rectangle {
 
     // membervariables
-    
+
     /**
      * These are the PdfLines in the Cell.
      */
@@ -163,7 +149,7 @@ public class PdfCell extends Rectangle {
     private PdfLine lastLine;
 
     // constructors
-    
+
     /**
      * Constructs a <CODE>PdfCell</CODE>-object.
      *
@@ -431,7 +417,7 @@ public class PdfCell extends Rectangle {
     public float getBottom() {
         return super.getBottom(cellspacing);
     }
-    
+
     // methods
 
     private void addLine(PdfLine line) {
@@ -577,7 +563,7 @@ public class PdfCell extends Rectangle {
         if (getTop() < bottom) {
             return result;
         }
-        
+
         // we loop over the lines
         int size = lines.size();
         boolean aboveBottom = true;
@@ -723,9 +709,9 @@ public class PdfCell extends Rectangle {
         }
         return remainingLinesHeight() + cellspacing + 2 * cellpadding + result;
     }
-    
+
     // methods to retrieve membervariables
-    
+
     /**
      * Gets the leading of a cell.
      *

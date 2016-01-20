@@ -47,25 +47,23 @@
 
 package cljpdf.text.html.simpleparser;
 
-import java.util.ArrayList;
-
-import cljpdf.text.html.simpleparser.ChainedProperties;
-
 import cljpdf.text.Element;
 import cljpdf.text.ElementListener;
 import cljpdf.text.Phrase;
 import cljpdf.text.TextElementArray;
 import cljpdf.text.html.Markup;
 import cljpdf.text.pdf.PdfPCell;
+
+import java.util.ArrayList;
 /**
  *
  * @author  psoares
  */
 public class IncCell implements TextElementArray {
-    
+
     private ArrayList chunks = new ArrayList();
     private PdfPCell cell;
-    
+
     /** Creates a new instance of IncCell */
     public IncCell(String tag, ChainedProperties props) {
         cell = new PdfPCell((Phrase)null);
@@ -105,30 +103,30 @@ public class IncCell implements TextElementArray {
         value = props.getProperty("bgcolor");
         cell.setBackgroundColor(Markup.decodeColor(value));
     }
-    
+
     public boolean add(Object o) {
         if (!(o instanceof Element))
             return false;
         cell.addElement((Element)o);
         return true;
     }
-    
+
     public ArrayList getChunks() {
         return chunks;
     }
-    
+
     public boolean process(ElementListener listener) {
         return true;
     }
-    
+
     public int type() {
         return Element.RECTANGLE;
     }
-    
+
     public PdfPCell getCell() {
         return cell;
-    }  
-    
+    }
+
 	/**
 	 * @see cljpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -143,5 +141,5 @@ public class IncCell implements TextElementArray {
 	 */
 	public boolean isNestable() {
 		return true;
-	}  
+	}
 }

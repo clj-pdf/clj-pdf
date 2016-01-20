@@ -49,22 +49,13 @@
 
 package cljpdf.text.pdf;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfPage;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.Document;
 import cljpdf.text.DocumentException;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * <CODE>PdfPages</CODE> is the PDF Pages-object.
@@ -78,23 +69,23 @@ import cljpdf.text.error_messages.MessageLocalization;
  */
 
 public class PdfPages {
-    
+
     private ArrayList pages = new ArrayList();
     private ArrayList parents = new ArrayList();
     private int leafSize = 10;
     private PdfWriter writer;
     private PdfIndirectReference topParent;
-    
+
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfPages</CODE>-object.
  */
-    
+
     PdfPages(PdfWriter writer) {
         this.writer = writer;
     }
-    
+
     void addPage(PdfDictionary page) {
         try {
             if ((pages.size() % leafSize) == 0)
@@ -109,7 +100,7 @@ public class PdfPages {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     PdfIndirectReference addPageRef(PdfIndirectReference pageRef) {
         try {
             if ((pages.size() % leafSize) == 0)
@@ -121,7 +112,7 @@ public class PdfPages {
             throw new ExceptionConverter(e);
         }
     }
-    
+
     // returns the top parent to include in the catalog
     PdfIndirectReference writePageTree() throws IOException {
         if (pages.isEmpty())
@@ -172,11 +163,11 @@ public class PdfPages {
             nextParents = new ArrayList();
         }
     }
-    
+
     PdfIndirectReference getTopParent() {
         return topParent;
     }
-    
+
     void setLinearMode(PdfIndirectReference topParent) {
         if (parents.size() > 1)
             throw new RuntimeException(MessageLocalization.getComposedMessage("linear.page.mode.can.only.be.called.with.a.single.parent"));

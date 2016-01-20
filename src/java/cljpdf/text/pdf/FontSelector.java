@@ -46,18 +46,16 @@
  */
 package cljpdf.text.pdf;
 
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.BaseFont;
-
 import cljpdf.text.Chunk;
 import cljpdf.text.Font;
 import cljpdf.text.Phrase;
 import cljpdf.text.Utilities;
 import cljpdf.text.error_messages.MessageLocalization;
 
+import java.util.ArrayList;
+
 /** Selects the appropriate fonts that contain the glyphs needed to
- * render text correctly. The fonts are checked in order until the 
+ * render text correctly. The fonts are checked in order until the
  * character is found.
  * <p>
  * The built in fonts "Symbol" and "ZapfDingbats", if used, have a special encoding
@@ -65,13 +63,13 @@ import cljpdf.text.error_messages.MessageLocalization;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class FontSelector {
-    
+
     protected ArrayList fonts = new ArrayList();
 
     /**
      * Adds a <CODE>Font</CODE> to be searched for valid characters.
      * @param font the <CODE>Font</CODE>
-     */    
+     */
     public void addFont(Font font) {
         if (font.getBaseFont() != null) {
             fonts.add(font);
@@ -81,13 +79,13 @@ public class FontSelector {
         Font f2 = new Font(bf, font.getSize(), font.getCalculatedStyle(), font.getColor());
         fonts.add(f2);
     }
-    
+
     /**
      * Process the text so that it will render with a combination of fonts
      * if needed.
      * @param text the text
      * @return a <CODE>Phrase</CODE> with one or more chunks
-     */    
+     */
     public Phrase process(String text) {
         int fsize = fonts.size();
         if (fsize == 0)

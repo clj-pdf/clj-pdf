@@ -48,23 +48,16 @@ package cljpdf.text.pdf;
 
 import java.io.IOException;
 
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfPSXObject;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * Implements the PostScript XObject.
  */
 public class PdfPSXObject extends PdfTemplate {
-    
+
     /** Creates a new instance of PdfPSXObject */
     protected PdfPSXObject() {
         super();
     }
-    
+
     /**
      * Constructs a PSXObject
      * @param wr
@@ -81,7 +74,7 @@ public class PdfPSXObject extends PdfTemplate {
      * @since	2.1.3	(replacing the method without param compressionLevel)
      * @throws IOException
      */
-    
+
     PdfStream getFormXObject(int compressionLevel) throws IOException {
         PdfStream s = new PdfStream(content.toByteArray());
         s.put(PdfName.TYPE, PdfName.XOBJECT);
@@ -89,13 +82,13 @@ public class PdfPSXObject extends PdfTemplate {
         s.flateCompress(compressionLevel);
         return s;
     }
-        
+
     /**
      * Gets a duplicate of this <CODE>PdfPSXObject</CODE>. All
      * the members are copied by reference but the buffer stays different.
      * @return a copy of this <CODE>PdfPSXObject</CODE>
      */
-    
+
     public PdfContentByte getDuplicate() {
         PdfPSXObject tpl = new PdfPSXObject();
         tpl.writer = writer;

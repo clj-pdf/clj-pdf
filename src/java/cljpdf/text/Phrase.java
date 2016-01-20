@@ -49,24 +49,12 @@
 
 package cljpdf.text;
 
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.pdf.HyphenationEvent;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import cljpdf.text.Anchor;
-import cljpdf.text.Chunk;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementListener;
-import cljpdf.text.Font;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-import cljpdf.text.RtfElementInterface;
-import cljpdf.text.SpecialSymbol;
-import cljpdf.text.TextElementArray;
-
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.HyphenationEvent;
 
 /**
  * A <CODE>Phrase</CODE> is a series of <CODE>Chunk</CODE>s.
@@ -96,31 +84,31 @@ import cljpdf.text.pdf.HyphenationEvent;
  */
 
 public class Phrase extends ArrayList implements TextElementArray {
-    
+
     // constants
 	private static final long serialVersionUID = 2643594602455068231L;
 
 	// membervariables
 	/** This is the leading of this phrase. */
     protected float leading = Float.NaN;
-    
+
     /** This is the font of this phrase. */
     protected Font font;
-    
+
     /** Null, unless the Phrase has to be hyphenated.
      * @since	2.1.2
      */
     protected HyphenationEvent hyphenation = null;
-    
+
     // constructors
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> without specifying a leading.
      */
     public Phrase() {
         this(16);
     }
-    
+
     /**
      * Copy constructor for <CODE>Phrase</CODE>.
      */
@@ -141,7 +129,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         this.leading = leading;
         font = new Font();
     }
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> with a certain <CODE>Chunk</CODE>.
      *
@@ -166,7 +154,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         font = chunk.getFont();
         setHyphenation(chunk.getHyphenation());
     }
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE>.
      *
@@ -175,7 +163,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(String string) {
         this(Float.NaN, string, new Font());
     }
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> with a certain <CODE>String</CODE> and a certain <CODE>Font</CODE>.
      *
@@ -185,7 +173,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(String string, Font font) {
         this(Float.NaN, string, font);
     }
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> with a certain leading and a certain <CODE>String</CODE>.
      *
@@ -195,7 +183,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public Phrase(float leading, String string) {
         this(leading, string, new Font());
     }
-    
+
     /**
      * Constructs a <CODE>Phrase</CODE> with a certain leading, a certain <CODE>String</CODE>
      * and a certain <CODE>Font</CODE>.
@@ -212,9 +200,9 @@ public class Phrase extends ArrayList implements TextElementArray {
             super.add(new Chunk(string, font));
         }
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Processes the element by adding it (or the different parts) to an
      * <CODE>ElementListener</CODE>.
@@ -233,21 +221,21 @@ public class Phrase extends ArrayList implements TextElementArray {
             return false;
         }
     }
-    
+
     /**
      * Gets the type of the text element.
      *
      * @return	a type
-     */    
+     */
     public int type() {
         return Element.PHRASE;
     }
-    
+
     /**
      * Gets all the chunks in this element.
      *
      * @return	an <CODE>ArrayList</CODE>
-     */ 
+     */
     public ArrayList getChunks() {
         ArrayList tmp = new ArrayList();
         for (Iterator i = iterator(); i.hasNext(); ) {
@@ -255,7 +243,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         return tmp;
     }
-	
+
 	/**
 	 * @see cljpdf.text.Element#isContent()
 	 * @since	iText 2.0.8
@@ -271,9 +259,9 @@ public class Phrase extends ArrayList implements TextElementArray {
 	public boolean isNestable() {
 		return true;
 	}
-    
+
     // overriding some of the ArrayList-methods
-    
+
     /**
      * Adds a <CODE>Chunk</CODE>, an <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
      * to this <CODE>Phrase</CODE>.
@@ -300,7 +288,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             element.type() == Element.ANCHOR ||
             element.type() == Element.ANNOTATION ||
             element.type() == Element.TABLE || // line added by David Freels
-            element.type() == Element.YMARK || 
+            element.type() == Element.YMARK ||
             element.type() == Element.MARKED) {
                 super.add(index, element);
             }
@@ -312,7 +300,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
-    
+
     /**
      * Adds a <CODE>Chunk</CODE>, <CODE>Anchor</CODE> or another <CODE>Phrase</CODE>
      * to this <CODE>Phrase</CODE>.
@@ -366,7 +354,7 @@ public class Phrase extends ArrayList implements TextElementArray {
             throw new ClassCastException(MessageLocalization.getComposedMessage("insertion.of.illegal.element.1", cce.getMessage()));
         }
     }
-    
+
     /**
      * Adds a collection of <CODE>Chunk</CODE>s
      * to this <CODE>Phrase</CODE>.
@@ -381,7 +369,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         return true;
     }
-    
+
     /**
      * Adds a Chunk.
      * <p>
@@ -418,7 +406,7 @@ public class Phrase extends ArrayList implements TextElementArray {
         }
         return super.add(newChunk);
     }
-    
+
     /**
      * Adds a <CODE>Object</CODE> to the <CODE>Paragraph</CODE>.
      *
@@ -427,19 +415,19 @@ public class Phrase extends ArrayList implements TextElementArray {
     protected void addSpecial(Object object) {
         super.add(object);
     }
-    
+
     // other methods that change the member variables
-    
+
     /**
      * Sets the leading of this phrase.
      *
      * @param	leading		the new leading
      */
-    
+
     public void setLeading(float leading) {
         this.leading = leading;
     }
-    
+
     /**
      * Sets the main font of this phrase.
      * @param font	the new font
@@ -447,7 +435,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public void setFont(Font font) {
     	this.font = font;
     }
-    
+
     // methods to retrieve information
 
 	/**
@@ -466,7 +454,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Checks you if the leading of this phrase is defined.
      *
      * @return	true if the leading is defined
-     */ 
+     */
     public boolean hasLeading() {
         if (Float.isNaN(leading)) {
             return false;
@@ -478,7 +466,7 @@ public class Phrase extends ArrayList implements TextElementArray {
      * Gets the font of the first <CODE>Chunk</CODE> that appears in this <CODE>Phrase</CODE>.
      *
      * @return	a <CODE>Font</CODE>
-     */  
+     */
     public Font getFont() {
         return font;
     }
@@ -494,7 +482,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     	}
     	return buf.toString();
     }
-    
+
     /**
      * Checks is this <CODE>Phrase</CODE> contains no or 1 empty <CODE>Chunk</CODE>.
      *
@@ -515,7 +503,7 @@ public class Phrase extends ArrayList implements TextElementArray {
                     return false;
         }
     }
-    
+
     /**
      * Getter for the hyphenation settings.
      * @return	a HyphenationEvent
@@ -533,17 +521,17 @@ public class Phrase extends ArrayList implements TextElementArray {
 	public void setHyphenation(HyphenationEvent hyphenation) {
 		this.hyphenation = hyphenation;
 	}
-	
+
     // kept for historical reasons; people should use FontSelector
     // eligible for deprecation, but the methods are mentioned in the book p277.
-    
+
     /**
      * Constructs a Phrase that can be used in the static getInstance() method.
      * @param	dummy	a dummy parameter
      */
     private Phrase(boolean dummy) {
     }
-    
+
     /**
      * Gets a special kind of Phrase that changes some characters into corresponding symbols.
      * @param string
@@ -552,7 +540,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public static final Phrase getInstance(String string) {
     	return getInstance(16, string, new Font());
     }
-    
+
     /**
      * Gets a special kind of Phrase that changes some characters into corresponding symbols.
      * @param leading
@@ -562,7 +550,7 @@ public class Phrase extends ArrayList implements TextElementArray {
     public static final Phrase getInstance(int leading, String string) {
     	return getInstance(leading, string, new Font());
     }
-    
+
     /**
      * Gets a special kind of Phrase that changes some characters into corresponding symbols.
      * @param leading

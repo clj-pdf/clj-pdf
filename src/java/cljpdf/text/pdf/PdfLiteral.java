@@ -49,25 +49,21 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.OutputStreamCounter;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * a Literal
  */
 
 public class PdfLiteral extends PdfObject {
-    
+
     /**
      * Holds value of property position.
      */
     private int position;
-        
+
     public PdfLiteral(String text) {
         super(0, text);
     }
-    
+
     public PdfLiteral(byte b[]) {
         super(0, b);
     }
@@ -81,17 +77,17 @@ public class PdfLiteral extends PdfObject {
     public PdfLiteral(int type, String text) {
         super(type, text);
     }
-    
+
     public PdfLiteral(int type, byte b[]) {
         super(type, b);
     }
-    
+
     public void toPdf(PdfWriter writer, java.io.OutputStream os) throws java.io.IOException {
         if (os instanceof OutputStreamCounter)
             position = ((OutputStreamCounter)os).getCounter();
         super.toPdf(writer, os);
     }
-    
+
     /**
      * Getter for property position.
      * @return Value of property position.
@@ -99,7 +95,7 @@ public class PdfLiteral extends PdfObject {
     public int getPosition() {
         return this.position;
     }
-    
+
     /**
      * Getter for property posLength.
      * @return Value of property posLength.
@@ -110,5 +106,5 @@ public class PdfLiteral extends PdfObject {
         else
             return 0;
     }
-    
+
 }

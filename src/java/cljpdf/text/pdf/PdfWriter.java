@@ -49,103 +49,23 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Color;
-import java.awt.color.ICC_Profile;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.ColorDetails;
-import cljpdf.text.pdf.DocumentFont;
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.FontDetails;
-import cljpdf.text.pdf.OutputStreamCounter;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfAcroForm;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfContents;
-import cljpdf.text.pdf.PdfDestination;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfDocument;
-import cljpdf.text.pdf.PdfException;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfICCBased;
-import cljpdf.text.pdf.PdfImage;
-import cljpdf.text.pdf.PdfImportedPage;
-import cljpdf.text.pdf.PdfIndirectObject;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLayer;
-import cljpdf.text.pdf.PdfLayerMembership;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfOCG;
-import cljpdf.text.pdf.PdfOCProperties;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfOutline;
-import cljpdf.text.pdf.PdfPage;
-import cljpdf.text.pdf.PdfPageEvent;
-import cljpdf.text.pdf.PdfPageLabels;
-import cljpdf.text.pdf.PdfPages;
-import cljpdf.text.pdf.PdfPatternPainter;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfReaderInstance;
-import cljpdf.text.pdf.PdfShading;
-import cljpdf.text.pdf.PdfShadingPattern;
-import cljpdf.text.pdf.PdfSpotColor;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfStructureTreeRoot;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfTransition;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.PdfXConformanceException;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-import cljpdf.text.pdf.SimpleBookmark;
-import cljpdf.text.pdf.SpotColor;
-
-import cljpdf.text.DocListener;
-import cljpdf.text.DocWriter;
-import cljpdf.text.Document;
-import cljpdf.text.DocumentException;
-import cljpdf.text.ExceptionConverter;
+import cljpdf.text.*;
 import cljpdf.text.Image;
-import cljpdf.text.ImgJBIG2;
-import cljpdf.text.ImgWMF;
 import cljpdf.text.Rectangle;
-import cljpdf.text.Table;
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.collection.PdfCollection;
 import cljpdf.text.pdf.events.PdfPageEventForwarder;
-import cljpdf.text.pdf.interfaces.PdfAnnotations;
-import cljpdf.text.pdf.interfaces.PdfDocumentActions;
-import cljpdf.text.pdf.interfaces.PdfEncryptionSettings;
-import cljpdf.text.pdf.interfaces.PdfPageActions;
-import cljpdf.text.pdf.interfaces.PdfRunDirection;
-import cljpdf.text.pdf.interfaces.PdfVersion;
-import cljpdf.text.pdf.interfaces.PdfViewerPreferences;
-import cljpdf.text.pdf.interfaces.PdfXConformance;
+import cljpdf.text.pdf.interfaces.*;
 import cljpdf.text.pdf.internal.PdfVersionImp;
 import cljpdf.text.pdf.internal.PdfXConformanceImp;
 import cljpdf.text.xml.xmp.XmpWriter;
 
-import java.security.cert.Certificate;
+import java.awt.*;
+import java.awt.color.ICC_Profile;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.*;
 
 /**
  * A <CODE>DocWriter</CODE> class for PDF.
@@ -156,7 +76,7 @@ import java.security.cert.Certificate;
  */
 
 public class PdfWriter extends DocWriter implements
-	PdfViewerPreferences,	
+	PdfViewerPreferences,
 	PdfVersion,
 	PdfDocumentActions,
 	PdfPageActions,
@@ -169,7 +89,7 @@ public class PdfWriter extends DocWriter implements
 	 * @since	iText 2.1.6
 	 */
 	public static final int GENERATION_MAX = 65535;
-	
+
 // INNER CLASSES
 
     /**
@@ -348,7 +268,7 @@ public class PdfWriter extends DocWriter implements
             }
             int p = streamObjects.size();
             int idx = numObj++;
-            obj.toPdf(writer, streamObjects);            
+            obj.toPdf(writer, streamObjects);
             streamObjects.append(' ');
             index.append(nObj).append(' ').append(p).append(' ');
             return new PdfWriter.PdfBody.PdfCrossReference(2, nObj, currentObjNum, idx);
@@ -547,9 +467,9 @@ public class PdfWriter extends DocWriter implements
                 xr.put(PdfName.INDEX, idx);
                 if (prevxref > 0)
                     xr.put(PdfName.PREV, new PdfNumber(prevxref));
-                
+
                 PdfIndirectObject indirect = new PdfIndirectObject(refNumber, xr, writer);
-                indirect.writeTo(writer.getOs());                
+                indirect.writeTo(writer.getOs());
             }
             else {
                 os.write(getISOBytes("xref\n"));
@@ -739,7 +659,7 @@ public class PdfWriter extends DocWriter implements
     		throw new DocumentException(MessageLocalization.getComposedMessage("you.can.t.set.the.initial.leading.if.the.document.is.already.open"));
     	pdf.setLeading(leading);
     }
-    
+
 //	the PdfDirectContentByte instances
 
 /*
@@ -1230,7 +1150,7 @@ public class PdfWriter extends DocWriter implements
                 if (xmpMetadata != null) {
                 	PdfStream xmp = new PdfStream(xmpMetadata);
                 	xmp.put(PdfName.TYPE, PdfName.METADATA);
-                	xmp.put(PdfName.SUBTYPE, PdfName.XML);                    
+                	xmp.put(PdfName.SUBTYPE, PdfName.XML);
                 	catalog.put(PdfName.METADATA, body.add(xmp).getIndirectReference());
                 }
                 // [C10] make pdfx conformant
@@ -1254,7 +1174,7 @@ public class PdfWriter extends DocWriter implements
                 PdfIndirectReference encryption = null;
                 PdfObject fileID = null;
                 body.flushObjStm();
-                
+
                 // write the cross-reference table of the body
                 body.writeCrossReferenceTable(os, indirectCatalog.getIndirectReference(),
                     infoObj.getIndirectReference(), encryption,  fileID, prevxref);
@@ -1442,7 +1362,7 @@ public class PdfWriter extends DocWriter implements
 	public void addDeveloperExtension(PdfDeveloperExtension de) {
 		pdf_version.addDeveloperExtension(de);
 	}
-	
+
 	/**
 	 * Returns the version information.
 	 */
@@ -1560,7 +1480,7 @@ public class PdfWriter extends DocWriter implements
     		addNamedDestination((String)entry.getKey(), page + page_offset, destination);
     	}
     }
-    
+
     /**
      * Adds one named destination.
      * @param	name	the name for the destination
@@ -1572,7 +1492,7 @@ public class PdfWriter extends DocWriter implements
     	dest.addPage(getPageReference(page));
     	pdf.localDestination(name, dest);
     }
-    
+
      /**
       * Use this method to add a JavaScript action at the document level.
       * When the document opens, all this JavaScript runs.

@@ -49,20 +49,17 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.pdf.fonts.FontsResourceAnchor;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfEncodings;
-
-import cljpdf.text.pdf.fonts.FontsResourceAnchor;
-
 public class GlyphList {
     private static HashMap unicode2names = new HashMap();
     private static HashMap names2unicode = new HashMap();
-        
+
     static {
         InputStream is = null;
         try {
@@ -115,11 +112,11 @@ public class GlyphList {
             }
         }
     }
-    
+
     public static int[] nameToUnicode(String name) {
         return (int[])names2unicode.get(name);
     }
-    
+
     public static String unicodeToName(int num) {
         return (String)unicode2names.get(new Integer(num));
     }

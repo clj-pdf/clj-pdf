@@ -49,10 +49,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Cell;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Table;
-
 /**
  * Signals an attempt to create an <CODE>Element</CODE> that hasn't got the right form.
  *
@@ -62,7 +58,7 @@ import cljpdf.text.Table;
  */
 
 public class BadElementException extends DocumentException {
-    
+
     private static final long serialVersionUID = -799006030723822254L;
 
 	// constructors
@@ -73,14 +69,14 @@ public class BadElementException extends DocumentException {
     public BadElementException(Exception ex) {
         super(ex);
     }
-    
+
     /**
      * Constructs a <CODE>BadElementException</CODE> without a message.
      */
     BadElementException() {
         super();
     }
-    
+
     /**
      * Constructs a <code>BadElementException</code> with a message.
      * @param		message			a message describing the exception

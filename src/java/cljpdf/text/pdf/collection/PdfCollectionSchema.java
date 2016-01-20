@@ -1,7 +1,5 @@
 package cljpdf.text.pdf.collection;
 
-import cljpdf.text.pdf.collection.PdfCollectionField;
-
 import cljpdf.text.pdf.PdfDictionary;
 import cljpdf.text.pdf.PdfName;
 
@@ -12,7 +10,7 @@ public class PdfCollectionSchema extends PdfDictionary {
 	public PdfCollectionSchema() {
 		super(PdfName.COLLECTIONSCHEMA);
 	}
-	
+
 	/**
 	 * Adds a Collection field to the Schema.
 	 * @param name	the name of the collection field

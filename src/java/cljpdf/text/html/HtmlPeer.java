@@ -49,12 +49,11 @@
 
 package cljpdf.text.html;
 
-import java.util.Properties;
-
-import org.xml.sax.Attributes;
-
 import cljpdf.text.ElementTags;
 import cljpdf.text.xml.XmlPeer;
+import org.xml.sax.Attributes;
+
+import java.util.Properties;
 
 /**
  * This interface is implemented by the peer of all the iText objects.
@@ -64,7 +63,7 @@ public class HtmlPeer extends XmlPeer {
 
 	/**
 	 * Creates a XmlPeer.
-	 * 
+	 *
 	 * @param name
 	 *            the iText name of the tag
 	 * @param alias
@@ -77,7 +76,7 @@ public class HtmlPeer extends XmlPeer {
 
 	/**
 	 * Sets an alias for an attribute.
-	 * 
+	 *
 	 * @param name
 	 *            the iText tagname
 	 * @param alias

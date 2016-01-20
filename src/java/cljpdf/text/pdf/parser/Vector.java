@@ -46,8 +46,6 @@
  */
 package cljpdf.text.pdf.parser;
 
-import cljpdf.text.pdf.parser.Matrix;
-
 /**
  * Represents a vector (i.e. a point in space).  This class is completely
  * unrelated to the {@link java.util.Vector} class in the standard JRE.
@@ -64,7 +62,7 @@ public class Vector {
     public static final int I2 = 1;
     /** index of the Z coordinate */
     public static final int I3 = 2;
-    
+
     /** the values inside the vector */
     private final float[] vals = new float[]{
             0,0,0
@@ -81,7 +79,7 @@ public class Vector {
         vals[I2] = y;
         vals[I3] = z;
     }
-    
+
     /**
      * Gets the value from a coordinate of the vector
      * @param index the index of the value to get (I1, I2 or I3)
@@ -90,21 +88,21 @@ public class Vector {
     public float get(int index){
         return vals[index];
     }
-    
+
     /**
      * Computes the cross product of this vector and the specified matrix
      * @param by the matrix to cross this vector with
      * @return the result of the cross product
      */
     public Vector cross(Matrix by){
-        
+
         float x = vals[I1]*by.get(Matrix.I11) + vals[I2]*by.get(Matrix.I21) + vals[I3]*by.get(Matrix.I31);
         float y = vals[I1]*by.get(Matrix.I12) + vals[I2]*by.get(Matrix.I22) + vals[I3]*by.get(Matrix.I32);
         float z = vals[I1]*by.get(Matrix.I13) + vals[I2]*by.get(Matrix.I23) + vals[I3]*by.get(Matrix.I33);
-        
+
         return new Vector(x, y, z);
     }
-    
+
     /**
      * Computes the difference between this vector and the specified vector
      * @param v the vector to subtract from this one
@@ -114,10 +112,10 @@ public class Vector {
         float x = vals[I1] - v.vals[I1];
         float y = vals[I2] - v.vals[I2];
         float z = vals[I3] - v.vals[I3];
-        
+
         return new Vector(x, y, z);
     }
-    
+
     /**
      * Computes the cross product of this vector and the specified vector
      * @param with the vector to cross this vector with
@@ -127,10 +125,10 @@ public class Vector {
         float x = vals[I2]*with.vals[I3] - vals[I3]*with.vals[I2];
         float y = vals[I3]*with.vals[I1] - vals[I1]*with.vals[I3];
         float z = vals[I1]*with.vals[I2] - vals[I2]*with.vals[I1];
-        
+
         return new Vector(x, y, z);
     }
-    
+
     /**
      * Computes the dot product of this vector with the specified vector
      * @param with the vector to dot product this vector with
@@ -139,38 +137,38 @@ public class Vector {
     public float dot(Vector with){
         return vals[I1]*with.vals[I1] + vals[I2]*with.vals[I2] + vals[I3]*with.vals[I3];
     }
-    
+
     /**
      * Computes the length of this vector
-     * 
-     * <b>Note:</b> If you are working with raw vectors from PDF, be careful - 
+     *
+     * <b>Note:</b> If you are working with raw vectors from PDF, be careful -
      * the Z axis will generally be set to 1.  If you want to compute the
      * length of a vector, subtract it from the origin first (this will set
      * the Z axis to 0).
-     * 
-     * For example: 
+     *
+     * For example:
      * <code>aVector.subtract(originVector).length();</code>
-     *  
+     *
      * @return the length of this vector
      */
     public float length(){
         return (float)Math.sqrt(lengthSquared());
     }
-    
+
     /**
      * Computes the length squared of this vector.
-     * 
+     *
      * The square of the length is less expensive to compute, and is often
      * useful without taking the square root.
      * <br><br>
      * <b>Note:</b> See the important note under {@link Vector#length()}
-     * 
+     *
      * @return the square of the length of the vector
      */
     public float lengthSquared(){
         return vals[I1]*vals[I1] + vals[I2]*vals[I2] + vals[I3]*vals[I3];
     }
-    
+
     /**
      * @see java.lang.Object#toString()
      */

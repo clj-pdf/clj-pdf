@@ -30,7 +30,7 @@
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE 
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -49,9 +49,6 @@
 
 package cljpdf.text.xml.xmp;
 
-import cljpdf.text.xml.xmp.XmpArray;
-import cljpdf.text.xml.xmp.XmpSchema;
-
 /**
  * An implementation of an XmpSchema.
  */
@@ -62,7 +59,7 @@ public class XmpBasicSchema extends XmpSchema {
 	public static final String DEFAULT_XPATH_ID = "xmp";
 	/** default namespace uri*/
 	public static final String DEFAULT_XPATH_URI = "http://ns.adobe.com/xap/1.0/";
-	
+
 	/** An unordered array specifying properties that were edited outside the authoring application. Each item should contain a single namespace and XPath separated by one ASCII space (U+0020). */
 	public static final String ADVISORY = "xmp:Advisory";
 	/** The base URL for relative URLs in the document content. If this document contains Internet links, and those links are relative, they are relative to this base URL. This property provides a standard way for embedded relative URLs to be interpreted by tools. Web authoring tools should set the value based on their notion of where URLs will be interpreted. */
@@ -82,11 +79,11 @@ public class XmpBasicSchema extends XmpSchema {
 	/** An alternative array of thumbnail images for a file, which can differ in characteristics such as size or image encoding. */
 	public static final String THUMBNAILS = "xmp:Thumbnails";
 
-	
+
 	public XmpBasicSchema() {
 		super("xmlns:" + DEFAULT_XPATH_ID + "=\"" + DEFAULT_XPATH_URI + "\"");
 	}
-	
+
 	/**
 	 * Adds the creatortool.
 	 * @param creator
@@ -94,7 +91,7 @@ public class XmpBasicSchema extends XmpSchema {
 	public void addCreatorTool(String creator) {
 		setProperty(CREATORTOOL, creator);
 	}
-	
+
 	/**
 	 * Adds the creation date.
 	 * @param date
@@ -102,7 +99,7 @@ public class XmpBasicSchema extends XmpSchema {
 	public void addCreateDate(String date) {
 		setProperty(CREATEDATE, date);
 	}
-	
+
 	/**
 	 * Adds the modification date.
 	 * @param date

@@ -46,29 +46,11 @@
  */
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocWriter;
+
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import cljpdf.text.pdf.AcroFields;
-import cljpdf.text.pdf.FdfReader;
-import cljpdf.text.pdf.FdfWriter;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfDocument;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
-import cljpdf.text.DocWriter;
+import java.util.*;
 
 /** Writes an FDF form.
  * @author Paulo Soares (psoares@consiste.pt)
@@ -79,20 +61,20 @@ public class FdfWriter {
 
     /** The PDF file associated with the FDF. */
     private String file;
-    
-    /** Creates a new FdfWriter. */    
+
+    /** Creates a new FdfWriter. */
     public FdfWriter() {
     }
 
     /** Writes the content to a stream.
      * @param os the stream
      * @throws IOException on error
-     */    
+     */
     public void writeTo(OutputStream os) throws IOException {
         Wrt wrt = new Wrt(os, this);
         wrt.writeTo();
     }
-    
+
     boolean setField(String field, PdfObject value) {
         HashMap map = fields;
         StringTokenizer tk = new StringTokenizer(field, ".");
@@ -123,7 +105,7 @@ public class FdfWriter {
             }
         }
     }
-    
+
     void iterateFields(HashMap values, HashMap map, String name) {
         for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry) it.next();
@@ -135,12 +117,12 @@ public class FdfWriter {
                 values.put((name + "." + s).substring(1), obj);
         }
     }
-    
+
     /** Removes the field value.
      * @param field the field name
      * @return <CODE>true</CODE> if the field was found and removed,
      * <CODE>false</CODE> otherwise
-     */    
+     */
     public boolean removeField(String field) {
         HashMap map = fields;
         StringTokenizer tk = new StringTokenizer(field, ".");
@@ -176,21 +158,21 @@ public class FdfWriter {
         }
         return true;
     }
-    
+
     /** Gets all the fields. The map is keyed by the fully qualified
      * field name and the values are <CODE>PdfObject</CODE>.
      * @return a map with all the fields
-     */    
+     */
     public HashMap getFields() {
         HashMap values = new HashMap();
         iterateFields(values, fields, "");
         return values;
     }
-    
+
     /** Gets the field value.
      * @param field the field name
      * @return the field value or <CODE>null</CODE> if not found
-     */    
+     */
     public String getField(String field) {
         HashMap map = fields;
         StringTokenizer tk = new StringTokenizer(field, ".");
@@ -219,31 +201,31 @@ public class FdfWriter {
             }
         }
     }
-    
+
     /** Sets the field value as a name.
      * @param field the fully qualified field name
      * @param value the value
      * @return <CODE>true</CODE> if the value was inserted,
      * <CODE>false</CODE> if the name is incompatible with
      * an existing field
-     */    
+     */
     public boolean setFieldAsName(String field, String value) {
         return setField(field, new PdfName(value));
     }
-    
+
     /** Sets the field value as a string.
      * @param field the fully qualified field name
      * @param value the value
      * @return <CODE>true</CODE> if the value was inserted,
      * <CODE>false</CODE> if the name is incompatible with
      * an existing field
-     */    
+     */
     public boolean setFieldAsString(String field, String value) {
         return setField(field, new PdfString(value, PdfObject.TEXT_UNICODE));
     }
-    
+
     /**
-     * Sets the field value as a <CODE>PDFAction</CODE>. 
+     * Sets the field value as a <CODE>PDFAction</CODE>.
      * For example, this method allows setting a form submit button action using {@link PdfAction#createSubmitForm(String, Object[], int)}.
      * This method creates an <CODE>A</CODE> entry for the specified field in the underlying FDF file.
      * Method contributed by Philippe Laflamme (plaflamme)
@@ -257,10 +239,10 @@ public class FdfWriter {
     public boolean setFieldAsAction(String field, PdfAction action) {
     	return setField(field, action);
     }
-    
+
     /** Sets all the fields from this <CODE>FdfReader</CODE>
      * @param fdf the <CODE>FdfReader</CODE>
-     */    
+     */
     public void setFields(FdfReader fdf) {
         HashMap map = fdf.getFields();
         for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
@@ -277,17 +259,17 @@ public class FdfWriter {
             }
         }
     }
-    
+
     /** Sets all the fields from this <CODE>PdfReader</CODE>
      * @param pdf the <CODE>PdfReader</CODE>
-     */    
+     */
     public void setFields(PdfReader pdf) {
         setFields(pdf.getAcroFields());
     }
-    
+
     /** Sets all the fields from this <CODE>AcroFields</CODE>
      * @param af the <CODE>AcroFields</CODE>
-     */    
+     */
     public void setFields(AcroFields af) {
         for (Iterator it = af.getFields().entrySet().iterator(); it.hasNext();) {
             Map.Entry entry = (Map.Entry)it.next();
@@ -303,14 +285,14 @@ public class FdfWriter {
             setField(fn, v);
         }
     }
-    
+
     /** Gets the PDF file name associated with the FDF.
      * @return the PDF file name associated with the FDF
      */
     public String getFile() {
         return this.file;
     }
-    
+
     /** Sets the PDF file name associated with the FDF.
      * @param file the PDF file name associated with the FDF
      *
@@ -318,17 +300,17 @@ public class FdfWriter {
     public void setFile(String file) {
         this.file = file;
     }
-    
+
     static class Wrt extends PdfWriter {
         private FdfWriter fdf;
-       
+
         Wrt(OutputStream os, FdfWriter fdf) throws IOException {
             super(new PdfDocument(), os);
             this.fdf = fdf;
             this.os.write(HEADER_FDF);
             body = new PdfBody(this);
         }
-        
+
         void writeTo() throws IOException {
             PdfDictionary dic = new PdfDictionary();
             dic.put(PdfName.FIELDS, calculate(fdf.fields));
@@ -344,8 +326,8 @@ public class FdfWriter {
             os.write(getISOBytes("\n%%EOF\n"));
             os.close();
         }
-        
-        
+
+
         PdfArray calculate(HashMap map) throws IOException {
             PdfArray ar = new PdfArray();
             for (Iterator it = map.entrySet().iterator(); it.hasNext();) {

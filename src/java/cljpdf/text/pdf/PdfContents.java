@@ -49,28 +49,21 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocWriter;
+import cljpdf.text.Document;
+import cljpdf.text.Rectangle;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfStream;
-
-import cljpdf.text.DocWriter;
-import cljpdf.text.Document;
-import cljpdf.text.Rectangle;
 
 /**
  * <CODE>PdfContents</CODE> is a <CODE>PdfStream</CODE> containing the contents (text + graphics) of a <CODE>PdfPage</CODE>.
  */
 
 class PdfContents extends PdfStream {
-    
+
     static final byte SAVESTATE[] = DocWriter.getISOBytes("q\n");
     static final byte RESTORESTATE[] = DocWriter.getISOBytes("Q\n");
     static final byte ROTATE90[] = DocWriter.getISOBytes("0 1 -1 0 ");
@@ -78,7 +71,7 @@ class PdfContents extends PdfStream {
     static final byte ROTATE270[] = DocWriter.getISOBytes("0 -1 1 0 ");
     static final byte ROTATEFINAL[] = DocWriter.getISOBytes(" cm\n");
     // constructor
-    
+
 /**
  * Constructs a <CODE>PdfContents</CODE>-object, containing text and general graphics.
  *
@@ -88,7 +81,7 @@ class PdfContents extends PdfStream {
  * @param secondContent the direct content that is over all others
  * @throws BadPdfFormatException on error
  */
-    
+
     PdfContents(PdfContentByte under, PdfContentByte content, PdfContentByte text, PdfContentByte secondContent, Rectangle page) throws BadPdfFormatException {
         super();
         try {

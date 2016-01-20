@@ -48,12 +48,6 @@ package cljpdf.text.pdf;
 
 import java.io.IOException;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfMediaClipData;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfString;
-
 /**
  * A Rendition dictionary (pdf spec 1.5)
  */

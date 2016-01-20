@@ -49,11 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * Beginning with BaseVersion 1.7, the extensions dictionary lets developers
  * designate that a given document contains extensions to PDF. The presence
@@ -73,14 +68,14 @@ public class PdfDeveloperExtension {
 	/** An instance of this class for Adobe 1.7 Extension level 3. */
 	public static final PdfDeveloperExtension ADOBE_1_7_EXTENSIONLEVEL3 =
 		new PdfDeveloperExtension(PdfName.ADBE, PdfWriter.PDF_VERSION_1_7, 3);
-	
+
 	/** The prefix used in the Extensions dictionary added to the Catalog. */
 	protected PdfName prefix;
 	/** The base version. */
 	protected PdfName baseversion;
 	/** The extension level within the baseversion. */
 	protected int extensionLevel;
-	
+
 	/**
 	 * Creates a PdfDeveloperExtension object.
 	 * @param prefix	the prefix referring to the developer
@@ -116,7 +111,7 @@ public class PdfDeveloperExtension {
 	public int getExtensionLevel() {
 		return extensionLevel;
 	}
-	
+
 	/**
 	 * Generations the developer extension dictionary corresponding
 	 * with the prefix.

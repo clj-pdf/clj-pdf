@@ -48,18 +48,15 @@
  */
 
 package cljpdf.text.pdf.codec.wmf;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import cljpdf.text.pdf.codec.wmf.InputMeta;
-import cljpdf.text.pdf.codec.wmf.MetaObject;
-import cljpdf.text.pdf.codec.wmf.MetaState;
 
 import cljpdf.text.Document;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Font;
 import cljpdf.text.FontFactory;
 import cljpdf.text.pdf.BaseFont;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class MetaFont extends MetaObject {
     static final String fontNames[] = {
@@ -84,7 +81,7 @@ public class MetaFont extends MetaObject {
     static final int FF_MODERN = 3;
     static final int FF_SCRIPT = 4;
     static final int FF_DECORATIVE = 5;
-    static final int BOLDTHRESHOLD = 600;    
+    static final int BOLDTHRESHOLD = 600;
     static final int nameSize = 32;
     static final int ETO_OPAQUE = 2;
     static final int ETO_CLIPPED = 4;
@@ -133,7 +130,7 @@ public class MetaFont extends MetaObject {
         }
         faceName = faceName.toLowerCase();
     }
-    
+
     public BaseFont getFont() {
         if (font != null)
             return font;
@@ -194,22 +191,22 @@ public class MetaFont extends MetaObject {
         catch (Exception e) {
             throw new ExceptionConverter(e);
         }
-        
+
         return font;
     }
-    
+
     public float getAngle() {
         return angle;
     }
-    
+
     public boolean isUnderline() {
         return underline;
     }
-    
+
     public boolean isStrikeout() {
         return strikeout;
     }
-    
+
     public float getFontSize(MetaState state) {
         return Math.abs(state.transformY(height) - state.transformY(0)) * Document.wmfFontCorrection;
     }

@@ -46,8 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.BidiOrder;
-
 /**
  * Shape arabic characters. This code was inspired by an LGPL'ed C library:
  * Pango ( see http://www.pango.com/ ). Note that the code of this is the
@@ -57,7 +55,7 @@ import cljpdf.text.pdf.BidiOrder;
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class ArabicLigaturizer {
-    
+
     static boolean isVowel(char s) {
         return ((s >= 0x064B) && (s <= 0x0655)) || (s == 0x0670);
     }
@@ -110,11 +108,11 @@ public class ArabicLigaturizer {
         }
         return 1;
     }
-    
+
     static int ligature(char newchar, charstruct oldchar) {
     /* 0 == no ligature possible; 1 == vowel; 2 == two chars; 3 == Lam+Alef */
         int retval = 0;
-        
+
         if (oldchar.basechar == 0)
             return 0;
         if (isVowel(newchar)) {
@@ -191,7 +189,7 @@ public class ArabicLigaturizer {
         if (oldchar.vowel != 0) {  /* if we already joined a vowel, we can't join a Hamza */
             return 0;
         }
-        
+
         switch (oldchar.basechar) {
             case LAM:
                 switch (newchar) {
@@ -225,12 +223,12 @@ public class ArabicLigaturizer {
         }
         return retval;
     }
-    
+
     static void copycstostring(StringBuffer string, charstruct s, int level) {
     /* s is a shaped charstruct; i is the index into the string */
         if (s.basechar == 0)
             return;
-        
+
         string.append(s.basechar);
         s.lignum--;
         if (s.mark1 != 0) {
@@ -267,7 +265,7 @@ public class ArabicLigaturizer {
         int olen = len = string.length();
         int j = 0, si = 1;
         char lapresult;
-        
+
         while (si < olen) {
             lapresult = 0;
             if ((level & ar_composedtashkeel) != 0) {
@@ -305,7 +303,7 @@ public class ArabicLigaturizer {
                         break;
                 }
             }
-            
+
             if ((level & ar_lig) != 0) {
                 switch (string.charAt(j)) {
                     case 0xFEDF:       /* LAM initial */
@@ -375,7 +373,7 @@ public class ArabicLigaturizer {
                                 break;        /* KHAH medial */
                         }
                         break;
-                        
+
                     case 0xFEE8:       /* NOON medial */
                         switch (string.charAt(si)) {
                             case 0xFEAE:
@@ -402,7 +400,7 @@ public class ArabicLigaturizer {
                                 break;        /* MEEM medial */
                         }
                         break;
-                        
+
                     case 0xFED3:       /* FEH initial */
                         switch (string.charAt(si)) {
                             case 0xFEF2:
@@ -410,7 +408,7 @@ public class ArabicLigaturizer {
                                 break;        /* YEH final */
                         }
                         break;
-                        
+
                     default:
                         break;
                 }                   /* end switch string[si] */
@@ -433,7 +431,7 @@ public class ArabicLigaturizer {
     static boolean connects_to_left(charstruct a) {
         return a.numshapes > 2;
     }
-    
+
     static void shape(char text[], StringBuffer string, int level) {
   /* string is assumed to be empty and big enough.
    * text is the original text.
@@ -445,14 +443,14 @@ public class ArabicLigaturizer {
         int join;
         int which;
         char nextletter;
-        
+
         int p = 0;                     /* initialize for output */
         charstruct oldchar = new charstruct();
         charstruct curchar = new charstruct();
         while (p < text.length) {
             nextletter = text[p++];
             //nextletter = unshape (nextletter);
-            
+
             join = ligature(nextletter, curchar);
             if (join == 0) {                       /* shape curchar */
                 int nc = shapecount(nextletter);
@@ -466,14 +464,14 @@ public class ArabicLigaturizer {
                 if (connects_to_left(oldchar)) {
                     which++;
                 }
-                
+
                 which = which % (curchar.numshapes);
                 curchar.basechar = charshape(curchar.basechar, which);
-                
+
                 /* get rid of oldchar */
                 copycstostring(string, oldchar, level);
                 oldchar = curchar;    /* new values in oldchar */
-                
+
                 /* init new curchar */
                 curchar = new charstruct();
                 curchar.basechar = nextletter;
@@ -489,7 +487,7 @@ public class ArabicLigaturizer {
             //        }
             //      p = g_utf8_next_char (p);
         }
-        
+
         /* Handle last char */
         if (connects_to_left(oldchar))
             which = 1;
@@ -497,7 +495,7 @@ public class ArabicLigaturizer {
             which = 0;
         which = which % (curchar.numshapes);
         curchar.basechar = charshape(curchar.basechar, which);
-        
+
         /* get rid of oldchar */
         copycstostring(string, oldchar, level);
         copycstostring(string, curchar, level);
@@ -524,15 +522,15 @@ public class ArabicLigaturizer {
                 case DIGIT_TYPE_AN:
                     digitBase = '\u0660';  // Arabic-Indic digits
                     break;
-                    
+
                 case DIGIT_TYPE_AN_EXTENDED:
                     digitBase = '\u06f0';  // Eastern Arabic-Indic digits (Persian and Urdu)
                     break;
-                    
+
                 default:
                     break;
             }
-            
+
             switch (options & DIGITS_MASK) {
                 case DIGITS_EN2AN: {
                     int digitDelta = digitBase - '\u0030';
@@ -544,7 +542,7 @@ public class ArabicLigaturizer {
                     }
                 }
                 break;
-                
+
                 case DIGITS_AN2EN: {
                     char digitTop = (char)(digitBase + 9);
                     int digitDelta = '\u0030' - digitBase;
@@ -556,24 +554,24 @@ public class ArabicLigaturizer {
                     }
                 }
                 break;
-                
+
                 case DIGITS_EN2AN_INIT_LR:
                     shapeToArabicDigitsWithContext(text, 0, length, digitBase, false);
                     break;
-                    
+
                 case DIGITS_EN2AN_INIT_AL:
                     shapeToArabicDigitsWithContext(text, 0, length, digitBase, true);
                     break;
-                    
+
                 default:
                     break;
             }
         }
     }
-    
+
     static void shapeToArabicDigitsWithContext(char[] dest, int start, int length, char digitBase,  boolean lastStrongWasAL) {
         digitBase -= '0'; // move common adjustment out of loop
- 
+
         int limit = start + length;
         for(int i = start; i < limit; ++i) {
             char ch = dest[i];
@@ -713,12 +711,12 @@ public class ArabicLigaturizer {
          * Digit shaping option: Replace European digits (U+0030...U+0039) by Arabic-Indic digits.
          */
         public static final int DIGITS_EN2AN = 0x20;
-        
+
         /**
          * Digit shaping option: Replace Arabic-Indic digits by European digits (U+0030...U+0039).
          */
         public static final int DIGITS_AN2EN = 0x40;
-        
+
         /**
          * Digit shaping option:
          * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
@@ -729,7 +727,7 @@ public class ArabicLigaturizer {
          * Compare to DIGITS_ALEN2AN_INIT_AL.
          */
         public static final int DIGITS_EN2AN_INIT_LR = 0x60;
-        
+
         /**
          * Digit shaping option:
          * Replace European digits (U+0030...U+0039) by Arabic-Indic digits
@@ -740,20 +738,20 @@ public class ArabicLigaturizer {
          * Compare to DIGITS_ALEN2AN_INT_LR.
          */
         public static final int DIGITS_EN2AN_INIT_AL = 0x80;
-        
+
         /** Not a valid option value. */
         private static final int DIGITS_RESERVED = 0xa0;
-        
+
         /**
          * Bit mask for digit shaping options.
          */
         public static final int DIGITS_MASK = 0xe0;
-        
+
         /**
          * Digit type option: Use Arabic-Indic digits (U+0660...U+0669).
          */
         public static final int DIGIT_TYPE_AN = 0;
-        
+
         /**
          * Digit type option: Use Eastern (Extended) Arabic-Indic digits (U+06f0...U+06f9).
          */

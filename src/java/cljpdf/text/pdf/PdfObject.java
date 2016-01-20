@@ -48,21 +48,9 @@
  */
 
 package cljpdf.text.pdf;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
 
 /**
  * <CODE>PdfObject</CODE> is the abstract superclass of all PDF objects.
@@ -180,7 +168,7 @@ public abstract class PdfObject {
     /**
      * Writes the PDF representation of this <CODE>PdfObject</CODE> as an
      * array of <CODE>byte</CODE>s to the writer.
-     * 
+     *
      * @param writer for backwards compatibility
      * @param os     The <CODE>OutputStream</CODE> to write the bytes to.
      * @throws IOException
@@ -204,7 +192,7 @@ public abstract class PdfObject {
 
     /**
      * Gets the presentation of this object in a byte array
-     * 
+     *
      * @return a byte array
      */
     public byte[] getBytes() {
@@ -213,10 +201,10 @@ public abstract class PdfObject {
 
     /**
      * Whether this object can be contained in an object stream.
-     * 
+     *
      * PdfObjects of type STREAM OR INDIRECT can not be contained in an
      * object stream.
-     * 
+     *
      * @return <CODE>true</CODE> if this object can be in an object stream.
      *   Otherwise <CODE>false</CODE>
      */
@@ -283,7 +271,7 @@ public abstract class PdfObject {
 
     /**
      * Returns the type of this <CODE>PdfObject</CODE>.
-     * 
+     *
      * May be either of:
      * - <VAR>NULL</VAR>: A <CODE>PdfNull</CODE>
      * - <VAR>BOOLEAN</VAR>: A <CODE>PdfBoolean</CODE>
@@ -384,7 +372,7 @@ public abstract class PdfObject {
     /**
      * Checks if this <CODE>PdfObject</CODE> is of the type
      * <CODE>PdfIndirectObject</CODE>.
-     * 
+     *
      * @return <CODE>true</CODE> if this is an indirect object,
      *   otherwise <CODE>false</CODE>
      */
@@ -394,7 +382,7 @@ public abstract class PdfObject {
 
     /**
      * Get the indirect reference
-     * 
+     *
      * @return A <CODE>PdfIndirectReference</CODE>
      */
     public PRIndirectReference getIndRef() {
@@ -403,7 +391,7 @@ public abstract class PdfObject {
 
     /**
      * Set the indirect reference
-     * 
+     *
      * @param indRef New value as a <CODE>PdfIndirectReference</CODE>
      */
     public void setIndRef(PRIndirectReference indRef) {

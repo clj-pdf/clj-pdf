@@ -39,7 +39,7 @@
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Library general Public License for more
  * details.
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -47,9 +47,7 @@
 
 package cljpdf.text;
 
-import java.awt.Color;
-
-import cljpdf.text.Font;
+import java.awt.*;
 
 /**
  * These two methods are used by FactoryProperties (for HTMLWorker).

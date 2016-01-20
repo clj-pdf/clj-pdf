@@ -52,15 +52,6 @@ package cljpdf.text.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * A <CODE>PdfString</CODE>-class is the PDF-equivalent of a
  * JAVA-<CODE>String</CODE>-object.
@@ -80,32 +71,32 @@ import cljpdf.text.pdf.PdfWriter;
  * @see BadPdfFormatException
  */
 public class PdfString extends PdfObject {
-    
+
     // CLASS VARIABLES
-    
+
     /** The value of this object. */
     protected String value = NOTHING;
-    
+
     protected String originalValue = null;
-    
+
     /** The encoding. */
     protected String encoding = TEXT_PDFDOCENCODING;
-    
+
     protected int objNum = 0;
-    
+
     protected int objGen = 0;
-    
+
     protected boolean hexWriting = false;
 
     // CONSTRUCTORS
-    
+
     /**
      * Constructs an empty <CODE>PdfString</CODE>-object.
      */
     public PdfString() {
         super(STRING);
     }
-    
+
     /**
      * Constructs a <CODE>PdfString</CODE>-object containing a string in the
      * standard encoding <CODE>TEXT_PDFDOCENCODING</CODE>.
@@ -116,7 +107,7 @@ public class PdfString extends PdfObject {
         super(STRING);
         this.value = value;
     }
-    
+
     /**
      * Constructs a <CODE>PdfString</CODE>-object containing a string in the
      * specified encoding.
@@ -129,7 +120,7 @@ public class PdfString extends PdfObject {
         this.value = value;
         this.encoding = encoding;
     }
-    
+
     /**
      * Constructs a <CODE>PdfString</CODE>-object.
      *
@@ -140,20 +131,20 @@ public class PdfString extends PdfObject {
         value = PdfEncodings.convertToString(bytes, null);
         encoding = NOTHING;
     }
-    
+
     // methods overriding some methods in PdfObject
-    
+
     /**
      * Writes the PDF representation of this <CODE>PdfString</CODE> as an array
      * of <CODE>byte</CODE> to the specified <CODE>OutputStream</CODE>.
-     * 
+     *
      * @param writer for backwards compatibility
      * @param os The <CODE>OutputStream</CODE> to write the bytes to.
      */
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        byte b[] = getBytes();        
+        byte b[] = getBytes();
         if (writer != null)
-                    
+
         if (hexWriting) {
             ByteBuffer buf = new ByteBuffer();
             buf.append('<');
@@ -166,7 +157,7 @@ public class PdfString extends PdfObject {
         else
             os.write(PdfContentByte.escapeString(b));
     }
-    
+
     /**
      * Returns the <CODE>String</CODE> value of this <CODE>PdfString</CODE>-object.
      *
@@ -175,7 +166,7 @@ public class PdfString extends PdfObject {
     public String toString() {
         return value;
     }
-    
+
     public byte[] getBytes() {
         if (bytes == null) {
             if (encoding != null && encoding.equals(TEXT_UNICODE) && PdfEncodings.isPdfDocEncoding(value))
@@ -185,9 +176,9 @@ public class PdfString extends PdfObject {
         }
         return bytes;
     }
-    
+
     // other methods
-    
+
     /**
      * Returns the Unicode <CODE>String</CODE> value of this
      * <CODE>PdfString</CODE>-object.
@@ -203,7 +194,7 @@ public class PdfString extends PdfObject {
         else
             return PdfEncodings.convertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
     }
-    
+
     /**
      * Gets the encoding of this string.
      *
@@ -212,23 +203,23 @@ public class PdfString extends PdfObject {
     public String getEncoding() {
         return encoding;
     }
-    
+
     void setObjNum(int objNum, int objGen) {
         this.objNum = objNum;
         this.objGen = objGen;
     }
-   
+
     public byte[] getOriginalBytes() {
         if (originalValue == null)
             return getBytes();
         return PdfEncodings.convertToBytes(originalValue, null);
     }
-    
+
     public PdfString setHexWriting(boolean hexWriting) {
         this.hexWriting = hexWriting;
         return this;
     }
-    
+
     public boolean isHexWriting() {
         return hexWriting;
     }

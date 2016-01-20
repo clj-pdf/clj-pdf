@@ -47,9 +47,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.PdfShadingPattern;
-
 /** Implements a shading pattern as a <code>Color</code>.
  *
  * @author Paulo Soares (psoares@consiste.pt)
@@ -75,13 +72,13 @@ public class ShadingColor extends ExtendedColor {
     public PdfShadingPattern getPdfShadingPattern() {
         return shadingPattern;
     }
-    
+
     public boolean equals(Object obj) {
         return this == obj;
     }
-    
+
     public int hashCode() {
         return shadingPattern.hashCode();
     }
-    
+
 }

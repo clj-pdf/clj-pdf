@@ -48,16 +48,15 @@
  */
 package cljpdf.text.pdf;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.image.MemoryImageSource;
-import java.util.Arrays;
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
-
 import cljpdf.text.BadElementException;
 import cljpdf.text.Image;
 import cljpdf.text.pdf.codec.CCITTG4Encoder;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Hashtable;
 
 /**
  * A DataMatrix 2D barcode generator.
@@ -162,7 +161,7 @@ public class BarcodeDatamatrix {
     private int width;
     private int ws;
     private int options;
-    
+
     /**
      * Creates an instance of this class.
      */
@@ -232,7 +231,7 @@ public class BarcodeDatamatrix {
     private static boolean isDigit(int c) {
         return c >= '0' && c <= '9';
     }
-    
+
     private static int asciiEncodation(byte[] text, int textOffset, int textLength, byte[] data, int dataOffset, int dataLength) {
         int ptrIn, ptrOut, c;
         ptrIn = textOffset;
@@ -621,7 +620,7 @@ public class BarcodeDatamatrix {
                     data[ptrOut++] = (byte)(((eci - 16383) % 254) + 1);
                 }
                 break;
-            case 's': 
+            case 's':
                 if (order != 1)
                     return -1;
                 if (ptrIn + 9 > textSize)
@@ -683,7 +682,7 @@ public class BarcodeDatamatrix {
         byte[] t = text.getBytes("iso-8859-1");
         return generate(t, 0, t.length);
     }
-    
+
     /**
      * Creates a barcode.
      * @param text the text
@@ -752,21 +751,21 @@ public class BarcodeDatamatrix {
      * before calling this method is required.
      * @return the barcode <CODE>Image</CODE>
      * @throws BadElementException on error
-     */    
+     */
     public Image createImage() throws BadElementException {
         if (image == null)
             return null;
         byte g4[] = CCITTG4Encoder.compress(image, width + 2 * ws, height + 2 * ws);
         return Image.getInstance(width + 2 * ws, height + 2 * ws, false, Image.CCITTG4, 0, g4, null);
     }
-    
+
     /**
      * Creates a <CODE>java.awt.Image</CODE>. A successful call to the method <CODE>generate()</CODE>
      * before calling this method is required.
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         if (image == null)
             return null;
@@ -790,7 +789,7 @@ public class BarcodeDatamatrix {
         java.awt.Image img = canvas.createImage(new MemoryImageSource(w, h, pix, 0, w));
         return img;
     }
-    
+
     private static class DmParams {
         DmParams(int height, int width, int heightSection, int widthSection, int dataSize, int dataBlock, int errorBlock) {
             this.height = height;
@@ -974,7 +973,7 @@ public class BarcodeDatamatrix {
     public void setOptions(int options) {
         this.options = options;
     }
-    
+
     static class Placement {
         private int nrow;
         private int ncol;
@@ -983,7 +982,7 @@ public class BarcodeDatamatrix {
 
         private Placement() {
         }
-        
+
         static short[] doPlacement(int nrow, int ncol) {
             Integer key = new Integer(nrow * 1000 + ncol);
             short[] pc = (short[])cache.get(key);
@@ -1005,7 +1004,7 @@ public class BarcodeDatamatrix {
             array[row*ncol+col] = (short)(8*chr + bit);
         }
         /* "utah" places the 8 bits of a utah-shaped symbol character in ECC200 */
-        private void utah(int row, int col, int chr) { 
+        private void utah(int row, int col, int chr) {
             module(row-2,col-2,chr,0);
             module(row-2,col-1,chr,1);
             module(row-1,col-2,chr,2);
@@ -1016,7 +1015,7 @@ public class BarcodeDatamatrix {
             module(row,col,chr,7);
         }
         /* "cornerN" places 8 bits of the four special corner cases in ECC200 */
-        private void corner1(int chr) { 
+        private void corner1(int chr) {
             module(nrow-1,0,chr,0);
             module(nrow-1,1,chr,1);
             module(nrow-1,2,chr,2);
@@ -1036,7 +1035,7 @@ public class BarcodeDatamatrix {
             module(0,ncol-1,chr,6);
             module(1,ncol-1,chr,7);
         }
-        private void corner3(int chr){ 
+        private void corner3(int chr){
             module(nrow-3,0,chr,0);
             module(nrow-2,0,chr,1);
             module(nrow-1,0,chr,2);
@@ -1092,7 +1091,7 @@ public class BarcodeDatamatrix {
             }
         }
     }
-    
+
     static class ReedSolomon {
 
         private static final int log[] = {

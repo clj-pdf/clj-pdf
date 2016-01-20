@@ -49,31 +49,23 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfLiteral;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfTemplate;
-
 /**
  * <CODE>PdfFormObject</CODE> is a type of XObject containing a template-object.
  */
 
 public class PdfFormXObject extends PdfStream {
-    
+
     // public static final variables
-    
+
 /** This is a PdfNumber representing 0. */
     public static final PdfNumber ZERO = new PdfNumber(0);
-    
+
 /** This is a PdfNumber representing 1. */
     public static final PdfNumber ONE = new PdfNumber(1);
-    
+
 /** This is the 1 - matrix. */
     public static final PdfLiteral MATRIX = new PdfLiteral("[1 0 0 1 0 0]");
-    
+
 /**
  * Constructs a <CODE>PdfFormXObject</CODE>-object.
  *
@@ -81,7 +73,7 @@ public class PdfFormXObject extends PdfStream {
  * @param	compressionLevel	the compression level for the stream
  * @since	2.1.3 (Replacing the existing constructor with param compressionLevel)
  */
-    
+
     PdfFormXObject(PdfTemplate template, int compressionLevel) // throws BadPdfFormatException
     {
         super();
@@ -103,5 +95,5 @@ public class PdfFormXObject extends PdfStream {
         put(PdfName.LENGTH, new PdfNumber(bytes.length));
         flateCompress(compressionLevel);
     }
-    
+
 }

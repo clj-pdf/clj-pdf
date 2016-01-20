@@ -49,22 +49,18 @@
 
 package cljpdf.text.xml;
 
-import java.util.HashMap;
-import java.util.Properties;
-
+import cljpdf.text.DocListener;
 import org.xml.sax.Attributes;
 
-import cljpdf.text.xml.SAXiTextHandler;
-import cljpdf.text.xml.XmlPeer;
-
-import cljpdf.text.DocListener;
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
  */
 
 public class SAXmyHandler extends SAXiTextHandler {
-    
+
 /**
  * Constructs a new SAXiTextHandler that will translate all the events
  * triggered by the parser to actions on the <CODE>Document</CODE>-object.
@@ -72,20 +68,20 @@ public class SAXmyHandler extends SAXiTextHandler {
  * @param	document	this is the document on which events must be triggered
  * @param myTags a user defined tagmap
  */
-    
+
     public SAXmyHandler(DocListener document, HashMap myTags) {
         super(document, myTags);
     }
-    
+
 /**
  * This method gets called when a start tag is encountered.
- * 
+ *
 	 * @param   uri 		the Uniform Resource Identifier
 	 * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
  * @param	name		the name of the tag that is encountered
  * @param	attrs		the list of attributes
  */
-    
+
     public void startElement(String uri, String lname, String name, Attributes attrs) {
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);
@@ -102,7 +98,7 @@ public class SAXmyHandler extends SAXiTextHandler {
             handleStartingTags(name, attributes);
         }
     }
-    
+
     /**
  	 * This method gets called when an end tag is encountered.
  	 *
@@ -110,7 +106,7 @@ public class SAXmyHandler extends SAXiTextHandler {
 	 * @param   lname 		the local name (without prefix), or the empty string if Namespace processing is not being performed.
 	 * @param	name		the name of the tag that ends
 	 */
-    
+
     public void endElement(String uri, String lname, String name) {
         if (myTags.containsKey(name)) {
             XmlPeer peer = (XmlPeer) myTags.get(name);

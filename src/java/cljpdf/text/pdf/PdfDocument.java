@@ -49,86 +49,21 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.ColumnText;
-import cljpdf.text.pdf.MultiColumnText;
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfAcroForm;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfCell;
-import cljpdf.text.pdf.PdfChunk;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfContents;
-import cljpdf.text.pdf.PdfDate;
-import cljpdf.text.pdf.PdfDestination;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfException;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfFont;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfLine;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNameTree;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfOutline;
-import cljpdf.text.pdf.PdfPCell;
-import cljpdf.text.pdf.PdfPTable;
-import cljpdf.text.pdf.PdfPage;
-import cljpdf.text.pdf.PdfPageEvent;
-import cljpdf.text.pdf.PdfPageLabels;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfTable;
-import cljpdf.text.pdf.PdfTextArray;
-import cljpdf.text.pdf.PdfTransition;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.PdfXConformanceException;
-
-import cljpdf.text.Anchor;
-import cljpdf.text.Annotation;
-import cljpdf.text.BadElementException;
-import cljpdf.text.Chunk;
-import cljpdf.text.Document;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
+import cljpdf.text.*;
 import cljpdf.text.Font;
-import cljpdf.text.HeaderFooter;
 import cljpdf.text.Image;
 import cljpdf.text.List;
-import cljpdf.text.ListItem;
-import cljpdf.text.MarkedObject;
-import cljpdf.text.MarkedSection;
-import cljpdf.text.Meta;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
 import cljpdf.text.Rectangle;
-import cljpdf.text.Section;
-import cljpdf.text.SimpleTable;
-import cljpdf.text.Table;
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.collection.PdfCollection;
 import cljpdf.text.pdf.draw.DrawInterface;
 import cljpdf.text.pdf.internal.PdfAnnotationsImp;
 import cljpdf.text.pdf.internal.PdfViewerPreferencesImp;
 
+import java.awt.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * <CODE>PdfDocument</CODE> is the class that is used by <CODE>PdfWriter</CODE>
@@ -409,7 +344,7 @@ public class PdfDocument extends Document {
     public float getLeading() {
     	return leading;
     }
-    
+
     /**
      * Setter for the current leading.
      * @param	leading the current leading
@@ -953,7 +888,7 @@ public class PdfDocument extends Document {
             	PdfStream xmp = new PdfStream(xmpMetadata);
             	xmp.put(PdfName.TYPE, PdfName.METADATA);
             	xmp.put(PdfName.SUBTYPE, PdfName.XML);
-            	
+
             	page.put(PdfName.METADATA, writer.addToBody(xmp).getIndirectReference());
             }
 
@@ -1072,7 +1007,7 @@ public class PdfDocument extends Document {
         }
         return super.setMarginMirroring(MarginMirroring);
     }
-    
+
     /**
      * @see cljpdf.text.DocListener#setMarginMirroring(boolean)
      * @since	2.1.6

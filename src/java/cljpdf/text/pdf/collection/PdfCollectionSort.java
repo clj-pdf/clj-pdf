@@ -1,14 +1,10 @@
 package cljpdf.text.pdf.collection;
 
 import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
+import cljpdf.text.pdf.*;
 
 public class PdfCollectionSort extends PdfDictionary {
-	
+
 	/**
 	 * Constructs a PDF Collection Sort Dictionary.
 	 * @param key	the key of the field that will be used to sort entries
@@ -17,7 +13,7 @@ public class PdfCollectionSort extends PdfDictionary {
 		super(PdfName.COLLECTIONSORT);
 		put(PdfName.S, new PdfName(key));
 	}
-	
+
 	/**
 	 * Constructs a PDF Collection Sort Dictionary.
 	 * @param keys	the keys of the fields that will be used to sort entries
@@ -30,7 +26,7 @@ public class PdfCollectionSort extends PdfDictionary {
 		}
 		put(PdfName.S, array);
 	}
-	
+
 	/**
 	 * Defines the sort order of the field (ascending or descending).
 	 * @param ascending	true is the default, use false for descending order
@@ -44,7 +40,7 @@ public class PdfCollectionSort extends PdfDictionary {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.have.to.define.a.boolean.array.for.this.collection.sort.dictionary"));
 		}
 	}
-	
+
 	/**
 	 * Defines the sort order of the field (ascending or descending).
 	 * @param ascending	an array with every element corresponding with a name of a field.
@@ -65,6 +61,6 @@ public class PdfCollectionSort extends PdfDictionary {
 			throw new IllegalArgumentException(MessageLocalization.getComposedMessage("you.need.a.single.boolean.for.this.collection.sort.dictionary"));
 		}
 	}
-	
-	
+
+
 }

@@ -48,25 +48,21 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.DocumentException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfStamper;
-import cljpdf.text.pdf.PdfWriter;
-
-import cljpdf.text.DocumentException;
 
 /** This class takes any PDF and returns exactly the same but
  * encrypted. All the content, links, outlines, etc, are kept.
  * It is also possible to change the info dictionary.
  */
 public final class PdfEncryptor {
-    
+
     private PdfEncryptor(){
     }
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -83,10 +79,10 @@ public final class PdfEncryptor {
      * @throws DocumentException on error
      * @throws IOException on error */
     public static void encrypt(PdfReader reader, OutputStream os, byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.close();
     }
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -107,11 +103,11 @@ public final class PdfEncryptor {
      * @throws IOException on error
      */
     public static void encrypt(PdfReader reader, OutputStream os, byte userPassword[], byte ownerPassword[], int permissions, boolean strength128Bits, HashMap newInfo) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.setMoreInfo(newInfo);
         stamper.close();
     }
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -128,10 +124,10 @@ public final class PdfEncryptor {
      * @throws DocumentException on error
      * @throws IOException on error */
     public static void encrypt(PdfReader reader, OutputStream os, boolean strength, String userPassword, String ownerPassword, int permissions) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.close();
     }
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -152,12 +148,12 @@ public final class PdfEncryptor {
      * @throws IOException on error
      */
     public static void encrypt(PdfReader reader, OutputStream os, boolean strength, String userPassword, String ownerPassword, int permissions, HashMap newInfo) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.setMoreInfo(newInfo);
         stamper.close();
     }
 
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -179,11 +175,11 @@ public final class PdfEncryptor {
      * @throws IOException on error
      */
     public static void encrypt(PdfReader reader, OutputStream os, int type, String userPassword, String ownerPassword, int permissions, HashMap newInfo) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.setMoreInfo(newInfo);
         stamper.close();
     }
-    
+
     /** Entry point to encrypt a PDF document. The encryption parameters are the same as in
      * <code>PdfWriter</code>. The userPassword and the
      *  ownerPassword can be null or have zero length. In this case the ownerPassword
@@ -203,10 +199,10 @@ public final class PdfEncryptor {
      * @throws IOException on error
      */
     public static void encrypt(PdfReader reader, OutputStream os, int type, String userPassword, String ownerPassword, int permissions) throws DocumentException, IOException {
-        PdfStamper stamper = new PdfStamper(reader, os);        
+        PdfStamper stamper = new PdfStamper(reader, os);
         stamper.close();
     }
-    
+
     /**
      * Give you a verbose analysis of the permissions.
      * @param permissions the permissions value of a PDF file
@@ -224,7 +220,7 @@ public final class PdfEncryptor {
         if ((PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING) buf.append(" Degraded printing");
         return buf.toString();
     }
-    
+
     /**
      * Tells you if printing is allowed.
      * @param permissions the permissions value of a PDF file
@@ -235,7 +231,7 @@ public final class PdfEncryptor {
     public static boolean isPrintingAllowed(int permissions) {
         return (PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING;
     }
-    
+
     /**
      * Tells you if modifying content is allowed.
      * @param permissions the permissions value of a PDF file
@@ -245,8 +241,8 @@ public final class PdfEncryptor {
      */
     public static boolean isModifyContentsAllowed(int permissions) {
         return (PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS;
-    } 
-    
+    }
+
     /**
      * Tells you if copying is allowed.
      * @param permissions the permissions value of a PDF file
@@ -257,7 +253,7 @@ public final class PdfEncryptor {
     public static boolean isCopyAllowed(int permissions) {
         return (PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY;
     }
-    
+
     /**
      * Tells you if modifying annotations is allowed.
      * @param permissions the permissions value of a PDF file
@@ -268,7 +264,7 @@ public final class PdfEncryptor {
     public static boolean isModifyAnnotationsAllowed(int permissions) {
         return (PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS;
     }
-    
+
     /**
      * Tells you if filling in fields is allowed.
      * @param permissions the permissions value of a PDF file
@@ -279,7 +275,7 @@ public final class PdfEncryptor {
     public static boolean isFillInAllowed(int permissions) {
         return (PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN;
     }
-    
+
     /**
      * Tells you if repurposing for screenreaders is allowed.
      * @param permissions the permissions value of a PDF file
@@ -290,7 +286,7 @@ public final class PdfEncryptor {
     public static boolean isScreenReadersAllowed(int permissions) {
         return (PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS;
     }
-    
+
     /**
      * Tells you if document assembly is allowed.
      * @param permissions the permissions value of a PDF file
@@ -301,7 +297,7 @@ public final class PdfEncryptor {
     public static boolean isAssemblyAllowed(int permissions) {
         return (PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY;
     }
-    
+
     /**
      * Tells you if degraded printing is allowed.
      * @param permissions the permissions value of a PDF file

@@ -49,7 +49,11 @@
 
 package cljpdf.text;
 
-import java.awt.Graphics2D;
+import cljpdf.text.error_messages.MessageLocalization;
+import cljpdf.text.pdf.*;
+import cljpdf.text.pdf.codec.*;
+
+import java.awt.*;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -58,48 +62,10 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import cljpdf.text.Annotation;
-import cljpdf.text.BadElementException;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ExceptionConverter;
-import cljpdf.text.Image;
-import cljpdf.text.ImgCCITT;
-import cljpdf.text.ImgJBIG2;
-import cljpdf.text.ImgRaw;
-import cljpdf.text.ImgTemplate;
-import cljpdf.text.ImgWMF;
-import cljpdf.text.Jpeg;
-import cljpdf.text.Jpeg2000;
-import cljpdf.text.Rectangle;
-import cljpdf.text.Utilities;
-
-import cljpdf.text.error_messages.MessageLocalization;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfOCG;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.RandomAccessFileOrArray;
-import cljpdf.text.pdf.codec.BmpImage;
-import cljpdf.text.pdf.codec.CCITTG4Encoder;
-import cljpdf.text.pdf.codec.GifImage;
-import cljpdf.text.pdf.codec.JBIG2Image;
-import cljpdf.text.pdf.codec.PngImage;
-import cljpdf.text.pdf.codec.TiffImage;
-
 /**
  * An <CODE>Image</CODE> is the representation of a graphic element (JPEG, PNG
  * or GIF) that has to be inserted into the document
- * 
+ *
  * @see Element
  * @see Rectangle
  */
@@ -182,7 +148,7 @@ public abstract class Image extends Rectangle {
 	 * @since	2.1.5
 	 */
 	public static final int ORIGINAL_JBIG2 = 9;
-	
+
     // member variables
 
 	/** The image type. */
@@ -196,7 +162,7 @@ public abstract class Image extends Rectangle {
 
 	/** The bits per component of the raw image. It also flags a CCITT image. */
 	protected int bpc = 1;
-	
+
 	/** The template to be treated as an image. */
 	protected PdfTemplate template[] = new PdfTemplate[1];
 
@@ -223,7 +189,7 @@ public abstract class Image extends Rectangle {
 
 	/** This is the original height of the image taking rotation into account. */
 	protected float scaledHeight;
-	
+
     /**
      * The compression level of the content streams.
      * @since	2.1.3
@@ -234,10 +200,10 @@ public abstract class Image extends Rectangle {
 	protected Long mySerialId = getSerialId();
 
 	// image from file or URL
-	
+
 	/**
 	 * Constructs an <CODE>Image</CODE> -object, using an <VAR>url </VAR>.
-	 * 
+	 *
 	 * @param url
 	 *            the <CODE>URL</CODE> where the image can be found.
 	 */
@@ -250,7 +216,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets an instance of an Image.
-	 * 
+	 *
 	 * @param url
 	 *            an URL
 	 * @return an Image
@@ -347,7 +313,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets an instance of an Image.
-	 * 
+	 *
 	 * @param filename
 	 *            a filename
 	 * @return an object of type <CODE>Gif</CODE>,<CODE>Jpeg</CODE> or
@@ -360,10 +326,10 @@ public abstract class Image extends Rectangle {
 			throws BadElementException, MalformedURLException, IOException {
 		return getInstance(Utilities.toURL(filename));
 	}
-    
+
 	/**
 	 * gets an instance of an Image
-	 * 
+	 *
 	 * @param imgb
 	 *            raw image date
 	 * @return an Image object
@@ -435,7 +401,7 @@ public abstract class Image extends Rectangle {
 						number_of_pages = (is.read() << 24) | (is.read() << 16) | (is.read() << 8) | is.read();
 					}
 					is.close();
-					// a jbig2 file with a file header.  the header is the only way we know here.                                                           
+					// a jbig2 file with a file header.  the header is the only way we know here.
 					// embedded jbig2s don't have a header, have to create them by explicit use of Jbig2Image?
 					// nkerr, 2008-12-05  see also the getInstance(URL)
 					RandomAccessFileOrArray ra = null;
@@ -461,7 +427,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets an instance of an Image in raw mode.
-	 * 
+	 *
 	 * @param width
 	 *            the width of the image in pixels
 	 * @param height
@@ -493,11 +459,11 @@ public abstract class Image extends Rectangle {
 		Image img = new ImgJBIG2(width, height, data, globals);
 		return img;
 	}
-	
+
 	/**
 	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
 	 * data bytes are already compressed.
-	 * 
+	 *
 	 * @param width
 	 *            the exact width of the image
 	 * @param height
@@ -528,7 +494,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Creates an Image with CCITT G3 or G4 compression. It assumes that the
 	 * data bytes are already compressed.
-	 * 
+	 *
 	 * @param width
 	 *            the exact width of the image
 	 * @param height
@@ -565,7 +531,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets an instance of an Image in raw mode.
-	 * 
+	 *
 	 * @param width
 	 *            the width of the image in pixels
 	 * @param height
@@ -599,10 +565,10 @@ public abstract class Image extends Rectangle {
 	}
 
 	// images from a PdfTemplate
-	
+
 	/**
 	 * gets an instance of an Image
-	 * 
+	 *
 	 * @param template
 	 *            a PdfTemplate that has to be wrapped in an Image object
 	 * @return an Image object
@@ -612,12 +578,12 @@ public abstract class Image extends Rectangle {
 			throws BadElementException {
 		return new ImgTemplate(template);
 	}
-    
+
     // images from a java.awt.Image
-    
+
 	/**
 	 * Gets an instance of an Image from a java.awt.Image.
-	 * 
+	 *
 	 * @param image
 	 *            the <CODE>java.awt.Image</CODE> to convert
 	 * @param color
@@ -633,14 +599,14 @@ public abstract class Image extends Rectangle {
 	 */
 	public static Image getInstance(java.awt.Image image, java.awt.Color color,
 			boolean forceBW) throws BadElementException, IOException {
-		
+
 		if(image instanceof BufferedImage){
 			BufferedImage bi = (BufferedImage) image;
 			if(bi.getType()==BufferedImage.TYPE_BYTE_BINARY) {
 				forceBW=true;
 			}
 		}
-		
+
 		java.awt.image.PixelGrabber pg = new java.awt.image.PixelGrabber(image,
 				0, 0, -1, -1, true);
 		try {
@@ -788,7 +754,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets an instance of an Image from a java.awt.Image.
-	 * 
+	 *
 	 * @param image
 	 *            the <CODE>java.awt.Image</CODE> to convert
 	 * @param color
@@ -804,11 +770,11 @@ public abstract class Image extends Rectangle {
 			throws BadElementException, IOException {
 		return Image.getInstance(image, color, false);
 	}
-	
+
 	/**
 	 * Gets an instance of a Image from a java.awt.Image.
 	 * The image is added as a JPEG with a user defined quality.
-	 * 
+	 *
 	 * @param writer
 	 *            the <CODE>PdfWriter</CODE> object to which the image will be added
 	 * @param awtImage
@@ -823,7 +789,7 @@ public abstract class Image extends Rectangle {
 	public static Image getInstance(PdfWriter writer, java.awt.Image awtImage, float quality) throws BadElementException, IOException {
 		return getInstance(new PdfContentByte(writer), awtImage, quality);
 	}
-	
+
     /**
      * Gets an instance of a Image from a java.awt.Image.
      * The image is added as a JPEG with a user defined quality.
@@ -860,14 +826,14 @@ public abstract class Image extends Rectangle {
     }
 
     // image from indirect reference
-    
+
     /**
      * Holds value of property directReference.
      * An image is embedded into a PDF as an Image XObject.
      * This object is referenced by a PdfIndirectReference object.
      */
     private PdfIndirectReference directReference;
-    
+
     /**
      * Getter for property directReference.
      * @return Value of property directReference.
@@ -875,7 +841,7 @@ public abstract class Image extends Rectangle {
     public PdfIndirectReference getDirectReference() {
         return this.directReference;
     }
-    
+
     /**
      * Setter for property directReference.
      * @param directReference New value of property directReference.
@@ -883,13 +849,13 @@ public abstract class Image extends Rectangle {
     public void setDirectReference(PdfIndirectReference directReference) {
         this.directReference = directReference;
     }
-    
+
     /**
      * Reuses an existing image.
      * @param ref the reference to the image dictionary
      * @throws BadElementException on error
      * @return the image
-     */    
+     */
     public static Image getInstance(PRIndirectReference ref) throws BadElementException {
         PdfDictionary dic = (PdfDictionary)PdfReader.getPdfObjectRelease(ref);
         int width = ((PdfNumber)PdfReader.getPdfObjectRelease(dic.get(PdfName.WIDTH))).intValue();
@@ -914,10 +880,10 @@ public abstract class Image extends Rectangle {
     }
 
     // copy constructor
-    
+
 	/**
 	 * Constructs an <CODE>Image</CODE> -object, using an <VAR>url </VAR>.
-	 * 
+	 *
 	 * @param image
 	 *            another Image object.
 	 */
@@ -939,7 +905,7 @@ public abstract class Image extends Rectangle {
 		this.mySerialId = image.mySerialId;
 
         this.directReference = image.directReference;
-        
+
 		this.rotationRadians = image.rotationRadians;
         this.initialRotation = image.initialRotation;
         this.indentationLeft = image.indentationLeft;
@@ -957,7 +923,7 @@ public abstract class Image extends Rectangle {
 		this.dpiX = image.dpiX;
 		this.dpiY = image.dpiY;
 		this.XYRatio = image.XYRatio;
-		
+
 		this.colorspace = image.colorspace;
 		this.invert = image.invert;
 		this.profile = image.profile;
@@ -970,7 +936,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * gets an instance of an Image
-	 * 
+	 *
 	 * @param image
 	 *            an Image object
 	 * @return a new Image object
@@ -989,10 +955,10 @@ public abstract class Image extends Rectangle {
 	}
 
 	// implementation of the Element interface
-	
+
 	/**
 	 * Returns the type.
-	 * 
+	 *
 	 * @return a type
 	 */
 
@@ -1013,7 +979,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Returns <CODE>true</CODE> if the image is a <CODE>Jpeg</CODE>
 	 * -object.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 
@@ -1024,7 +990,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Returns <CODE>true</CODE> if the image is a <CODE>ImgRaw</CODE>
 	 * -object.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 
@@ -1035,20 +1001,20 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Returns <CODE>true</CODE> if the image is an <CODE>ImgTemplate</CODE>
 	 * -object.
-	 * 
+	 *
 	 * @return a <CODE>boolean</CODE>
 	 */
 
 	public boolean isImgTemplate() {
 		return type == IMGTEMPLATE;
 	}
-	
+
 	// getters and setters
 
 	/**
 	 * Gets the <CODE>String</CODE> -representation of the reference to the
 	 * image.
-	 * 
+	 *
 	 * @return a <CODE>String</CODE>
 	 */
 
@@ -1058,7 +1024,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the url of the image
-	 * 
+	 *
 	 * @param url
 	 *            the url of the image
 	 */
@@ -1071,7 +1037,7 @@ public abstract class Image extends Rectangle {
 	 * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>RawImage
 	 * </CODE>.
-	 * 
+	 *
 	 * @return the raw data
 	 */
 	public byte[] getRawData() {
@@ -1083,7 +1049,7 @@ public abstract class Image extends Rectangle {
 	 * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>RawImage
 	 * </CODE>.
-	 * 
+	 *
 	 * @return a bpc value
 	 */
 	public int getBpc() {
@@ -1095,7 +1061,7 @@ public abstract class Image extends Rectangle {
 	 * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>ImgTemplate
 	 * </CODE>.
-	 * 
+	 *
 	 * @return the template
 	 */
 	public PdfTemplate getTemplateData() {
@@ -1104,7 +1070,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets data from a PdfTemplate
-	 * 
+	 *
 	 * @param template
 	 *            the template with the content
 	 */
@@ -1114,7 +1080,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the alignment for the image.
-	 * 
+	 *
 	 * @return a value
 	 */
 	public int getAlignment() {
@@ -1123,7 +1089,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the alignment for the image.
-	 * 
+	 *
 	 * @param alignment
 	 *            the alignment
 	 */
@@ -1134,7 +1100,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the alternative text for the image.
-	 * 
+	 *
 	 * @return a <CODE>String</CODE>
 	 */
 
@@ -1144,7 +1110,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the alternative information for the image.
-	 * 
+	 *
 	 * @param alt
 	 *            the alternative information
 	 */
@@ -1155,7 +1121,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the absolute position of the <CODE>Image</CODE>.
-	 * 
+	 *
 	 * @param absoluteX
 	 * @param absoluteY
 	 */
@@ -1168,7 +1134,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Checks if the <CODE>Images</CODE> has to be added at an absolute X
 	 * position.
-	 * 
+	 *
 	 * @return a boolean
 	 */
 	public boolean hasAbsoluteX() {
@@ -1177,7 +1143,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns the absolute X position.
-	 * 
+	 *
 	 * @return a position
 	 */
 	public float getAbsoluteX() {
@@ -1187,7 +1153,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Checks if the <CODE>Images</CODE> has to be added at an absolute
 	 * position.
-	 * 
+	 *
 	 * @return a boolean
 	 */
 	public boolean hasAbsoluteY() {
@@ -1196,7 +1162,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns the absolute Y position.
-	 * 
+	 *
 	 * @return a position
 	 */
 	public float getAbsoluteY() {
@@ -1207,7 +1173,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the scaled width of the image.
-	 * 
+	 *
 	 * @return a value
 	 */
 	public float getScaledWidth() {
@@ -1216,7 +1182,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the scaled height of the image.
-	 * 
+	 *
 	 * @return a value
 	 */
 	public float getScaledHeight() {
@@ -1225,7 +1191,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the plain width of the image.
-	 * 
+	 *
 	 * @return a value
 	 */
 	public float getPlainWidth() {
@@ -1234,16 +1200,16 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the plain height of the image.
-	 * 
+	 *
 	 * @return a value
 	 */
 	public float getPlainHeight() {
 		return plainHeight;
 	}
-	
+
 	/**
 	 * Scale the image to an absolute width and an absolute height.
-	 * 
+	 *
 	 * @param newWidth
 	 *            the new width
 	 * @param newHeight
@@ -1260,7 +1226,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Scale the image to an absolute width.
-	 * 
+	 *
 	 * @param newWidth
 	 *            the new width
 	 */
@@ -1274,7 +1240,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Scale the image to an absolute height.
-	 * 
+	 *
 	 * @param newHeight
 	 *            the new height
 	 */
@@ -1288,7 +1254,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Scale the image to a certain percentage.
-	 * 
+	 *
 	 * @param percent
 	 *            the scaling percentage
 	 */
@@ -1298,7 +1264,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Scale the width and height of an image to a certain percentage.
-	 * 
+	 *
 	 * @param percentX
 	 *            the scaling percentage of the width
 	 * @param percentY
@@ -1315,7 +1281,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Scales the image so that it fits a certain width and height.
-	 * 
+	 *
 	 * @param fitWidth
 	 *            the width to fit
 	 * @param fitHeight
@@ -1331,7 +1297,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns the transformation matrix of the image.
-	 * 
+	 *
 	 * @return an array [AX, AY, BX, BY, CX, CY, DX, DY]
 	 */
 	public float[] matrix() {
@@ -1370,7 +1336,7 @@ public abstract class Image extends Rectangle {
 
 	/** a static that is used for attributing a unique id to each image. */
 	static long serialId = 0;
-	
+
 	/** Creates a new serial id. */
 	static protected synchronized Long getSerialId() {
 		++serialId;
@@ -1379,7 +1345,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns a serial id for the Image (reuse the same image more than once)
-	 * 
+	 *
 	 * @return a serialId
 	 */
 	public Long getMySerialId() {
@@ -1390,7 +1356,7 @@ public abstract class Image extends Rectangle {
 
 	/** This is the rotation of the image in radians. */
 	protected float rotationRadians;
-    
+
     /** Holds value of property initialRotation. */
     private float initialRotation;
 
@@ -1406,10 +1372,10 @@ public abstract class Image extends Rectangle {
 		}
         return rot;
     }
-    
+
 	/**
 	 * Sets the rotation of the image in radians.
-	 * 
+	 *
 	 * @param r
 	 *            rotation in radians
 	 */
@@ -1426,7 +1392,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the rotation of the image in degrees.
-	 * 
+	 *
 	 * @param deg
 	 *            rotation in degrees
 	 */
@@ -1434,7 +1400,7 @@ public abstract class Image extends Rectangle {
 		double d = Math.PI;
 		setRotation(deg / 180 * (float) d);
 	}
-    
+
     /**
      * Getter for property initialRotation.
      * @return Value of property initialRotation.
@@ -1442,7 +1408,7 @@ public abstract class Image extends Rectangle {
     public float getInitialRotation() {
         return this.initialRotation;
     }
-    
+
     /**
      * Some image formats, like TIFF may present the images rotated that have
      * to be compensated.
@@ -1453,7 +1419,7 @@ public abstract class Image extends Rectangle {
         this.initialRotation = initialRotation;
         setRotation(old_rot);
     }
-    
+
     // indentations
 
 	/** the indentation to the left. */
@@ -1470,7 +1436,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the left indentation.
-	 * 
+	 *
 	 * @return the left indentation
 	 */
 	public float getIndentationLeft() {
@@ -1479,7 +1445,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the left indentation.
-	 * 
+	 *
 	 * @param f
 	 */
 	public void setIndentationLeft(float f) {
@@ -1488,7 +1454,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the right indentation.
-	 * 
+	 *
 	 * @return the right indentation
 	 */
 	public float getIndentationRight() {
@@ -1497,7 +1463,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the right indentation.
-	 * 
+	 *
 	 * @param f
 	 */
 	public void setIndentationRight(float f) {
@@ -1506,7 +1472,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the spacing before this image.
-	 * 
+	 *
 	 * @return the spacing
 	 */
 	public float getSpacingBefore() {
@@ -1515,7 +1481,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the spacing before this image.
-	 * 
+	 *
 	 * @param spacing
 	 *            the new spacing
 	 */
@@ -1526,7 +1492,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the spacing before this image.
-	 * 
+	 *
 	 * @return the spacing
 	 */
 	public float getSpacingAfter() {
@@ -1535,7 +1501,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the spacing after this image.
-	 * 
+	 *
 	 * @param spacing
 	 *            the new spacing
 	 */
@@ -1550,10 +1516,10 @@ public abstract class Image extends Rectangle {
 	 * Holds value of property widthPercentage.
 	 */
 	private float widthPercentage = 100;
-	
+
 	/**
 	 * Getter for property widthPercentage.
-	 * 
+	 *
 	 * @return Value of property widthPercentage.
 	 */
 	public float getWidthPercentage() {
@@ -1562,7 +1528,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Setter for property widthPercentage.
-	 * 
+	 *
 	 * @param widthPercentage
 	 *            New value of property widthPercentage.
 	 */
@@ -1574,10 +1540,10 @@ public abstract class Image extends Rectangle {
 
 	/** if the annotation is not null the image will be clickable. */
 	protected Annotation annotation = null;
-	
+
 	/**
 	 * Sets the annotation of this Image.
-	 * 
+	 *
 	 * @param annotation
 	 *            the annotation
 	 */
@@ -1587,7 +1553,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the annotation.
-	 * 
+	 *
 	 * @return the annotation that is linked to this image
 	 */
 	public Annotation getAnnotation() {
@@ -1598,10 +1564,10 @@ public abstract class Image extends Rectangle {
 
     /** Optional Content layer to which we want this Image to belong. */
 	protected PdfOCG layer;
-	
+
 	/**
 	 * Gets the layer this image belongs to.
-	 * 
+	 *
 	 * @return the layer this image belongs to or <code>null</code> for no
 	 *         layer defined
 	 */
@@ -1611,7 +1577,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the layer this image belongs to.
-	 * 
+	 *
 	 * @param layer
 	 *            the layer this image belongs to
 	 */
@@ -1626,7 +1592,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Getter for property interpolation.
-	 * 
+	 *
 	 * @return Value of property interpolation.
 	 */
 	public boolean isInterpolation() {
@@ -1636,14 +1602,14 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Sets the image interpolation. Image interpolation attempts to produce a
 	 * smooth transition between adjacent sample values.
-	 * 
+	 *
 	 * @param interpolation
 	 *            New value of property interpolation.
 	 */
 	public void setInterpolation(boolean interpolation) {
 		this.interpolation = interpolation;
 	}
-	
+
 	// original type and data
 
 	/** Holds value of property originalType. */
@@ -1651,12 +1617,12 @@ public abstract class Image extends Rectangle {
 
 	/** Holds value of property originalData. */
 	protected byte[] originalData;
-	
+
 	/**
 	 * Getter for property originalType.
-	 * 
+	 *
 	 * @return Value of property originalType.
-	 *  
+	 *
 	 */
 	public int getOriginalType() {
 		return this.originalType;
@@ -1664,10 +1630,10 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Setter for property originalType.
-	 * 
+	 *
 	 * @param originalType
 	 *            New value of property originalType.
-	 *  
+	 *
 	 */
 	public void setOriginalType(int originalType) {
 		this.originalType = originalType;
@@ -1675,9 +1641,9 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Getter for property originalData.
-	 * 
+	 *
 	 * @return Value of property originalData.
-	 *  
+	 *
 	 */
 	public byte[] getOriginalData() {
 		return this.originalData;
@@ -1685,25 +1651,25 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Setter for property originalData.
-	 * 
+	 *
 	 * @param originalData
 	 *            New value of property originalData.
-	 *  
+	 *
 	 */
 	public void setOriginalData(byte[] originalData) {
 		this.originalData = originalData;
 	}
 
 	// the following values are only set for specific types of images.
-	
+
 	/** Holds value of property deflated. */
 	protected boolean deflated = false;
 
 	/**
 	 * Getter for property deflated.
-	 * 
+	 *
 	 * @return Value of property deflated.
-	 *  
+	 *
 	 */
 	public boolean isDeflated() {
 		return this.deflated;
@@ -1711,16 +1677,16 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Setter for property deflated.
-	 * 
+	 *
 	 * @param deflated
 	 *            New value of property deflated.
 	 */
 	public void setDeflated(boolean deflated) {
 		this.deflated = deflated;
 	}
-	
+
 	// DPI info
-	
+
 	/** Holds value of property dpiX. */
 	protected int dpiX = 0;
 
@@ -1729,7 +1695,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the dots-per-inch in the X direction. Returns 0 if not available.
-	 * 
+	 *
 	 * @return the dots-per-inch in the X direction
 	 */
 	public int getDpiX() {
@@ -1738,7 +1704,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the dots-per-inch in the Y direction. Returns 0 if not available.
-	 * 
+	 *
 	 * @return the dots-per-inch in the Y direction
 	 */
 	public int getDpiY() {
@@ -1747,7 +1713,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the dots per inch value
-	 * 
+	 *
 	 * @param dpiX
 	 *            dpi for x coordinates
 	 * @param dpiY
@@ -1757,15 +1723,15 @@ public abstract class Image extends Rectangle {
 		this.dpiX = dpiX;
 		this.dpiY = dpiY;
 	}
-	
+
 	// XY Ratio
-	
+
 	/** Holds value of property XYRatio. */
 	private float XYRatio = 0;
 
 	/**
 	 * Gets the X/Y pixel dimensionless aspect ratio.
-	 * 
+	 *
 	 * @return the X/Y pixel dimensionless aspect ratio
 	 */
 	public float getXYRatio() {
@@ -1774,14 +1740,14 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the X/Y pixel dimensionless aspect ratio.
-	 * 
+	 *
 	 * @param XYRatio
 	 *            the X/Y pixel dimensionless aspect ratio
 	 */
 	public void setXYRatio(float XYRatio) {
 		this.XYRatio = XYRatio;
 	}
-	
+
 	// color, colorspaces and transparency
 
 	/** this is the colorspace of a jpeg-image. */
@@ -1791,19 +1757,19 @@ public abstract class Image extends Rectangle {
 	 * Gets the colorspace for the image.
 	 * <P>
 	 * Remark: this only makes sense for Images of the type <CODE>Jpeg</CODE>.
-	 * 
+	 *
 	 * @return a colorspace value
 	 */
 	public int getColorspace() {
 		return colorspace;
 	}
-    
+
 	/** Image color inversion */
 	protected boolean invert = false;
 
 	/**
 	 * Getter for the inverted value
-	 * 
+	 *
 	 * @return true if the image is inverted
 	 */
 	public boolean isInverted() {
@@ -1812,7 +1778,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets inverted true or false
-	 * 
+	 *
 	 * @param invert
 	 *            true or false
 	 */
@@ -1825,7 +1791,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Tags this image with an ICC profile.
-	 * 
+	 *
 	 * @param profile
 	 *            the profile
 	 */
@@ -1835,7 +1801,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Checks is the image has an ICC profile.
-	 * 
+	 *
 	 * @return the ICC profile or <CODE>null</CODE>
 	 */
 	public boolean hasICCProfile() {
@@ -1844,7 +1810,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the images ICC profile.
-	 * 
+	 *
 	 * @return the ICC profile
 	 */
 	public ICC_Profile getICCProfile() {
@@ -1853,10 +1819,10 @@ public abstract class Image extends Rectangle {
 
 	/** a dictionary with additional information */
 	private PdfDictionary additional = null;
-	
+
 	/**
 	 * Getter for the dictionary with additional information.
-	 * 
+	 *
 	 * @return a PdfDictionary with additional information.
 	 */
 	public PdfDictionary getAdditional() {
@@ -1865,7 +1831,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the /Colorspace key.
-	 * 
+	 *
 	 * @param additional
 	 *            a PdfDictionary with additional information.
 	 */
@@ -1875,7 +1841,7 @@ public abstract class Image extends Rectangle {
 
     /**
      * Replaces CalRGB and CalGray colorspaces with DeviceRGB and DeviceGray.
-     */    
+     */
     public void simplifyColorspace() {
         if (additional == null)
             return;
@@ -1900,7 +1866,7 @@ public abstract class Image extends Rectangle {
         }
         additional.put(PdfName.COLORSPACE, newValue);
     }
-	
+
 	/**
 	 * Gets a PDF Name from an array or returns the object that was passed.
 	 */
@@ -1918,7 +1884,7 @@ public abstract class Image extends Rectangle {
 
 	/** Is this image a mask? */
 	protected boolean mask = false;
-	
+
 	/** The image that serves as a mask for this image. */
 	protected Image imageMask;
 
@@ -1927,7 +1893,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> is a mask.
-	 * 
+	 *
 	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> is a mask
 	 */
 	public boolean isMask() {
@@ -1936,7 +1902,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Make this <CODE>Image</CODE> a mask.
-	 * 
+	 *
 	 * @throws DocumentException
 	 *             if this <CODE>Image</CODE> can not be a mask
 	 */
@@ -1949,7 +1915,7 @@ public abstract class Image extends Rectangle {
 	/**
 	 * Returns <CODE>true</CODE> if this <CODE>Image</CODE> has the
 	 * requisites to be a mask.
-	 * 
+	 *
 	 * @return <CODE>true</CODE> if this <CODE>Image</CODE> can be a mask
 	 */
 	public boolean isMaskCandidate() {
@@ -1962,7 +1928,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Gets the explicit masking.
-	 * 
+	 *
 	 * @return the explicit masking
 	 */
 	public Image getImageMask() {
@@ -1971,7 +1937,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the explicit masking.
-	 * 
+	 *
 	 * @param mask
 	 *            the mask to be applied
 	 * @throws DocumentException
@@ -1988,9 +1954,9 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Getter for property smask.
-	 * 
+	 *
 	 * @return Value of property smask.
-	 *  
+	 *
 	 */
 	public boolean isSmask() {
 		return this.smask;
@@ -1998,7 +1964,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Setter for property smask.
-	 * 
+	 *
 	 * @param smask
 	 *            New value of property smask.
 	 */
@@ -2011,7 +1977,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Returns the transparency.
-	 * 
+	 *
 	 * @return the transparency values
 	 */
 
@@ -2021,7 +1987,7 @@ public abstract class Image extends Rectangle {
 
 	/**
 	 * Sets the transparency values
-	 * 
+	 *
 	 * @param transparency
 	 *            the transparency values
 	 */

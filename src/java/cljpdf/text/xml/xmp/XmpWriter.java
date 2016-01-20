@@ -30,7 +30,7 @@
  * the MPL, indicate your decision by deleting the provisions above and
  * replace them with the notice and other provisions required by the LGPL.
  * If you do not delete the provisions above, a recipient may use your version
- * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE 
+ * of this file under either the MPL or the GNU LIBRARY GENERAL PUBLIC LICENSE
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the MPL as stated above or under the terms of the GNU
@@ -49,29 +49,18 @@
 
 package cljpdf.text.xml.xmp;
 
+import cljpdf.text.pdf.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
 import java.util.Map;
 
-import cljpdf.text.xml.xmp.DublinCoreSchema;
-import cljpdf.text.xml.xmp.PdfA1Schema;
-import cljpdf.text.xml.xmp.PdfSchema;
-import cljpdf.text.xml.xmp.XmpBasicSchema;
-import cljpdf.text.xml.xmp.XmpSchema;
-
-import cljpdf.text.pdf.PdfDate;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * With this class you can create an Xmp Stream that can be used for adding
  * Metadata to a PDF Dictionary. Remark that this class doesn't cover the
- * complete XMP specification. 
+ * complete XMP specification.
  */
 public class XmpWriter {
 
@@ -83,16 +72,16 @@ public class XmpWriter {
 	public static final String UTF16BE = "UTF-16BE";
 	/** A possible charset for the XMP. */
 	public static final String UTF16LE = "UTF-16LE";
-	
+
 	/** String used to fill the extra space. */
 	public static final String EXTRASPACE = "                                                                                                   \n";
-	
+
 	/** You can add some extra space in the XMP packet; 1 unit in this variable represents 100 spaces and a newline. */
 	protected int extraSpace;
-	
+
 	/** The writer to which you can write bytes for the XMP stream. */
 	protected OutputStreamWriter writer;
-	
+
 	/** The about string that goes into the rdf:Description tags. */
 	protected String about;
 
@@ -101,24 +90,24 @@ public class XmpWriter {
 	 * @since iText 2.1.6
 	 */
 	public static final String XPACKET_PI_BEGIN = "<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n";
-	
+
 	/**
 	 * Processing Instruction required at the end of an XMP stream for XMP streams that can be updated
 	 * @since iText 2.1.6
 	 */
 	public static final String XPACKET_PI_END_W = "<?xpacket end=\"w\"?>";
-	
+
 	/**
 	 * Processing Instruction required at the end of an XMP stream for XMP streams that are read only
 	 * @since iText 2.1.6
 	 */
 	public static final String XPACKET_PI_END_R = "<?xpacket end=\"r\"?>";
-	
+
 	/** The end attribute. */
 	protected char end = 'w';
-	
+
 	/**
-	 * Creates an XmpWriter. 
+	 * Creates an XmpWriter.
 	 * @param os
 	 * @param utfEncoding
 	 * @param extraSpace
@@ -132,7 +121,7 @@ public class XmpWriter {
 		writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n");
 		about = "";
 	}
-	
+
 	/**
 	 * Creates an XmpWriter.
 	 * @param os
@@ -141,19 +130,19 @@ public class XmpWriter {
 	public XmpWriter(OutputStream os) throws IOException {
 		this(os, UTF8, 20);
 	}
-	
+
 	/** Sets the XMP to read-only */
 	public void setReadOnly() {
 		end = 'r';
 	}
-	
+
 	/**
 	 * @param about The about to set.
 	 */
 	public void setAbout(String about) {
 		this.about = about;
 	}
-	
+
 	/**
 	 * Adds an rdf:Description.
 	 * @param xmlns
@@ -169,7 +158,7 @@ public class XmpWriter {
 		writer.write(content);
 		writer.write("</rdf:Description>\n");
 	}
-	
+
 	/**
 	 * Adds an rdf:Description.
 	 * @param s
@@ -184,7 +173,7 @@ public class XmpWriter {
 		writer.write(s.toString());
 		writer.write("</rdf:Description>\n");
 	}
-	
+
 	/**
 	 * Flushes and closes the XmpWriter.
 	 * @throws IOException
@@ -199,7 +188,7 @@ public class XmpWriter {
 		writer.flush();
 		writer.close();
 	}
-    
+
     /**
      * @param os
      * @param info
@@ -257,7 +246,7 @@ public class XmpWriter {
             }
         }
     }
-    
+
     /**
      * @param os
      * @param info

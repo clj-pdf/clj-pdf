@@ -48,21 +48,17 @@
  */
 
 package cljpdf.text.pdf;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
-import cljpdf.text.pdf.PdfEncodings;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfWriter;
-
 public class PRIndirectReference extends PdfIndirectReference {
-    
+
     protected PdfReader reader;
     // membervariables
-    
+
     // constructors
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
@@ -70,27 +66,27 @@ public class PRIndirectReference extends PdfIndirectReference {
  * @param		number			the object number.
  * @param		generation		the generation number.
  */
-    
+
     PRIndirectReference(PdfReader reader, int number, int generation) {
         type = INDIRECT;
         this.number = number;
         this.generation = generation;
         this.reader = reader;
     }
-    
+
 /**
  * Constructs a <CODE>PdfIndirectReference</CODE>.
  *
  * @param		reader			a <CODE>PdfReader</CODE>
  * @param		number			the object number.
  */
-    
+
     PRIndirectReference(PdfReader reader, int number) {
         this(reader, number, 0);
     }
-    
+
     // methods
-    
+
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
         int n = writer.getNewObjectNumber(reader, number, generation);
         os.write(PdfEncodings.convertToBytes(new StringBuffer().append(n).append(" 0 R").toString(), null));
@@ -99,7 +95,7 @@ public class PRIndirectReference extends PdfIndirectReference {
     public PdfReader getReader() {
         return reader;
     }
-    
+
     public void setNumber(int number, int generation) {
         this.number = number;
         this.generation = generation;

@@ -48,23 +48,10 @@
  */
 
 package cljpdf.text.pdf;
-import java.io.IOException;
-
-import cljpdf.text.pdf.PageResources;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfFormXObject;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfOCG;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfTransparencyGroup;
-import cljpdf.text.pdf.PdfWriter;
 
 import cljpdf.text.Rectangle;
+
+import java.io.IOException;
 
 /**
  * Implements the form XObject.
@@ -77,35 +64,35 @@ public class PdfTemplate extends PdfContentByte {
     protected int type;
     /** The indirect reference to this template */
     protected PdfIndirectReference thisReference;
-    
+
     /** The resources used by this template */
     protected PageResources pageResources;
-    
-    
+
+
     /** The bounding box of this template */
     protected Rectangle bBox = new Rectangle(0, 0);
-    
+
     protected PdfArray matrix;
-    
+
     protected PdfTransparencyGroup group;
-    
+
     protected PdfOCG layer;
-    
+
     /**
      *Creates a <CODE>PdfTemplate</CODE>.
      */
-    
+
     protected PdfTemplate() {
         super(null);
         type = TYPE_TEMPLATE;
     }
-    
+
     /**
      * Creates new PdfTemplate
      *
      * @param wr the <CODE>PdfWriter</CODE>
      */
-    
+
     PdfTemplate(PdfWriter wr) {
         super(wr);
         type = TYPE_TEMPLATE;
@@ -113,7 +100,7 @@ public class PdfTemplate extends PdfContentByte {
         pageResources.addDefaultColor(wr.getDefaultColorspace());
         thisReference = writer.getPdfIndirectReference();
     }
-    
+
     /**
      * Creates a new template.
      * <P>
@@ -130,7 +117,7 @@ public class PdfTemplate extends PdfContentByte {
     public static PdfTemplate createTemplate(PdfWriter writer, float width, float height) {
         return createTemplate(writer, width, height, null);
     }
-    
+
     static PdfTemplate createTemplate(PdfWriter writer, float width, float height, PdfName forcedName) {
         PdfTemplate template = new PdfTemplate(writer);
         template.setWidth(width);
@@ -144,23 +131,23 @@ public class PdfTemplate extends PdfContentByte {
      *
      * @param width the bounding width
      */
-    
+
     public void setWidth(float width) {
         bBox.setLeft(0);
         bBox.setRight(width);
     }
-    
+
     /**
      * Sets the bounding height of this template.
      *
      * @param height the bounding height
      */
-    
+
     public void setHeight(float height) {
         bBox.setBottom(0);
         bBox.setTop(height);
     }
-    
+
     /**
      * Gets the bounding width of this template.
      *
@@ -169,33 +156,33 @@ public class PdfTemplate extends PdfContentByte {
     public float getWidth() {
         return bBox.getWidth();
     }
-    
+
     /**
      * Gets the bounding height of this template.
      *
      * @return height the bounding height
      */
-    
+
     public float getHeight() {
         return bBox.getHeight();
     }
-    
+
     public Rectangle getBoundingBox() {
         return bBox;
     }
-    
+
     public void setBoundingBox(Rectangle bBox) {
         this.bBox = bBox;
     }
-    
+
     /**
      * Sets the layer this template belongs to.
      * @param layer the layer this template belongs to
-     */    
+     */
     public void setLayer(PdfOCG layer) {
         this.layer = layer;
     }
-    
+
     /**
      * Gets the layer this template belongs to.
      * @return the layer this template belongs to or <code>null</code> for no layer defined
@@ -217,13 +204,13 @@ public class PdfTemplate extends PdfContentByte {
 	PdfArray getMatrix() {
 		return matrix;
 	}
-    
+
     /**
      * Gets the indirect reference to this template.
      *
      * @return the indirect reference to this template
      */
-    
+
     public PdfIndirectReference getIndirectReference() {
     	// uncomment the null check as soon as we're sure all examples still work
     	if (thisReference == null /* && writer != null */) {
@@ -231,25 +218,25 @@ public class PdfTemplate extends PdfContentByte {
     	}
         return thisReference;
     }
-        
+
     public void beginVariableText() {
         content.append("/Tx BMC ");
     }
-    
+
     public void endVariableText() {
         content.append("EMC ");
     }
-    
+
     /**
      * Constructs the resources used by this template.
      *
      * @return the resources used by this template
      */
-    
+
     PdfObject getResources() {
         return getPageResources().getResources();
     }
-    
+
     /**
      * Gets the stream representing this template.
      *
@@ -260,13 +247,13 @@ public class PdfTemplate extends PdfContentByte {
     PdfStream getFormXObject(int compressionLevel) throws IOException {
         return new PdfFormXObject(this, compressionLevel);
     }
-        
+
     /**
      * Gets a duplicate of this <CODE>PdfTemplate</CODE>. All
      * the members are copied by reference but the buffer stays different.
      * @return a copy of this <CODE>PdfTemplate</CODE>
      */
-    
+
     public PdfContentByte getDuplicate() {
         PdfTemplate tpl = new PdfTemplate();
         tpl.writer = writer;
@@ -282,15 +269,15 @@ public class PdfTemplate extends PdfContentByte {
         tpl.separator = separator;
         return tpl;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     PageResources getPageResources() {
         return pageResources;
     }
-    
+
     /** Getter for property group.
      * @return Value of property group.
      *
@@ -298,7 +285,7 @@ public class PdfTemplate extends PdfContentByte {
     public PdfTransparencyGroup getGroup() {
         return this.group;
     }
-    
+
     /** Setter for property group.
      * @param group New value of property group.
      *
@@ -306,5 +293,5 @@ public class PdfTemplate extends PdfContentByte {
     public void setGroup(PdfTransparencyGroup group) {
         this.group = group;
     }
-    
+
 }

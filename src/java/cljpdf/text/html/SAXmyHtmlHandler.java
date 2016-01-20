@@ -49,22 +49,14 @@
 
 package cljpdf.text.html;
 
-import java.util.HashMap;
-import java.util.Properties;
-
-import org.xml.sax.Attributes;
-
-import cljpdf.text.html.HtmlTagMap;
-import cljpdf.text.html.HtmlTags;
-
-import cljpdf.text.DocListener;
-import cljpdf.text.DocumentException;
-import cljpdf.text.Element;
-import cljpdf.text.ElementTags;
-import cljpdf.text.ExceptionConverter;
+import cljpdf.text.*;
 import cljpdf.text.pdf.BaseFont;
 import cljpdf.text.xml.SAXiTextHandler;
 import cljpdf.text.xml.XmlPeer;
+import org.xml.sax.Attributes;
+
+import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.
@@ -82,7 +74,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
     /**
      * Constructs a new SAXiTextHandler that will translate all the events
      * triggered by the parser to actions on the <CODE>Document</CODE>-object.
-     * 
+     *
      * @param document
      *            this is the document on which events must be triggered
      */
@@ -93,7 +85,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
     /**
      * Constructs a new SAXiTextHandler that will translate all the events
      * triggered by the parser to actions on the <CODE>Document</CODE>-object.
-     * 
+     *
      * @param document
      *            this is the document on which events must be triggered
      * @param bf
@@ -106,7 +98,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
     /**
      * Constructs a new SAXiTextHandler that will translate all the events
      * triggered by the parser to actions on the <CODE>Document</CODE>-object.
-     * 
+     *
      * @param document
      *            this is the document on which events must be triggered
      * @param htmlTags
@@ -119,7 +111,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
 
     /**
      * This method gets called when a start tag is encountered.
-     * 
+     *
      * @param uri
      *            the Uniform Resource Identifier
      * @param lname
@@ -221,7 +213,7 @@ public class SAXmyHtmlHandler extends SAXiTextHandler // SAXmyHandler
 
     /**
      * This method gets called when an end tag is encountered.
-     * 
+     *
      * @param uri
      *            the Uniform Resource Identifier
      * @param lname

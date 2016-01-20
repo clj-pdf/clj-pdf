@@ -44,7 +44,7 @@
  *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -52,14 +52,10 @@
 
 package cljpdf.text.html;
 
-import java.util.HashMap;
-
-import cljpdf.text.html.HtmlPeer;
-import cljpdf.text.html.HtmlTags;
-import cljpdf.text.html.Markup;
-
 import cljpdf.text.ElementTags;
 import cljpdf.text.FontFactory;
+
+import java.util.HashMap;
 
 /**
  * The <CODE>Tags</CODE>-class maps several XHTML-tags to iText-objects.

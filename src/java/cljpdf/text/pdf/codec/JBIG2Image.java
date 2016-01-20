@@ -49,8 +49,6 @@
 
 package cljpdf.text.pdf.codec;
 
-import cljpdf.text.pdf.codec.JBIG2SegmentReader;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Image;
 import cljpdf.text.ImgJBIG2;
@@ -60,7 +58,7 @@ import cljpdf.text.pdf.RandomAccessFileOrArray;
 /**
  * Support for JBIG2 Images.
  * This class assumes that we are always embedding into a pdf.
- * 
+ *
  * @since 2.1.5
  */
 public class JBIG2Image {
@@ -80,7 +78,7 @@ public class JBIG2Image {
 	        return null;
 	    }
 	}
-	
+
 	/**
 	 * returns an Image representing the given page.
 	 * @param ra	the file or array containing the image
@@ -90,7 +88,7 @@ public class JBIG2Image {
 	public static Image getJbig2Image(RandomAccessFileOrArray ra, int page) {
 		if (page < 1)
             throw new IllegalArgumentException(MessageLocalization.getComposedMessage("the.page.number.must.be.gt.eq.1"));
-		
+
 		try {
 			JBIG2SegmentReader sr = new JBIG2SegmentReader(ra);
 			sr.read();
@@ -116,6 +114,6 @@ public class JBIG2Image {
 	        throw new ExceptionConverter(e);
 	    }
     }
-	
-	
+
+
 }

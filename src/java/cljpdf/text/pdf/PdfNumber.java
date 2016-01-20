@@ -49,10 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PdfObject;
-
 import cljpdf.text.error_messages.MessageLocalization;
 
 /**
@@ -69,15 +65,15 @@ import cljpdf.text.error_messages.MessageLocalization;
 public class PdfNumber extends PdfObject {
 
     // CLASS VARIABLES
-    
+
     /**
      * actual value of this <CODE>PdfNumber</CODE>, represented as a
      * <CODE>double</CODE>
      */
     private double value;
-    
+
     // CONSTRUCTORS
-    
+
     /**
      * Constructs a <CODE>PdfNumber</CODE>-object.
      *
@@ -93,7 +89,7 @@ public class PdfNumber extends PdfObject {
             throw new RuntimeException(MessageLocalization.getComposedMessage("1.is.not.a.valid.number.2", content, nfe.toString()));
         }
     }
-    
+
     /**
      * Constructs a new <CODE>PdfNumber</CODE>-object of type integer.
      *
@@ -104,7 +100,7 @@ public class PdfNumber extends PdfObject {
         this.value = value;
         setContent(String.valueOf(value));
     }
-    
+
     /**
      * Constructs a new <CODE>PdfNumber</CODE>-object of type real.
      *
@@ -115,7 +111,7 @@ public class PdfNumber extends PdfObject {
         this.value = value;
         setContent(ByteBuffer.formatDouble(value));
     }
-    
+
     /**
      * Constructs a new <CODE>PdfNumber</CODE>-object of type real.
      *
@@ -124,9 +120,9 @@ public class PdfNumber extends PdfObject {
     public PdfNumber(float value) {
         this((double)value);
     }
-    
+
     // methods returning the value of this object
-    
+
     /**
      * Returns the primitive <CODE>int</CODE> value of this object.
      *
@@ -135,7 +131,7 @@ public class PdfNumber extends PdfObject {
     public int intValue() {
         return (int) value;
     }
-    
+
     /**
      * Returns the primitive <CODE>double</CODE> value of this object.
      *
@@ -144,7 +140,7 @@ public class PdfNumber extends PdfObject {
     public double doubleValue() {
         return value;
     }
-    
+
     /**
      * Returns the primitive <CODE>float</CODE> value of this object.
      *
@@ -153,9 +149,9 @@ public class PdfNumber extends PdfObject {
     public float floatValue() {
         return (float)value;
     }
-    
+
     // other methods
-    
+
     /**
      * Increments the value of the <CODE>PdfNumber</CODE>-object by 1.
      */

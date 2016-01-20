@@ -49,13 +49,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Chunk;
-import cljpdf.text.Element;
-import cljpdf.text.Font;
-import cljpdf.text.List;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Phrase;
-
 /**
  * A <CODE>ListItem</CODE> is a <CODE>Paragraph</CODE>
  * that can be added to a <CODE>List</CODE>.
@@ -104,36 +97,36 @@ import cljpdf.text.Phrase;
  */
 
 public class ListItem extends Paragraph {
-    
+
     // constants
 	private static final long serialVersionUID = 1970670787169329006L;
-	
+
 	// member variables
-	
+
 	/**
 	 * this is the symbol that will precede the listitem.
 	 * @since	5.0	used to be private
 	 */
     protected Chunk symbol;
-    
+
     // constructors
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE>.
      */
     public ListItem() {
         super();
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain leading.
      *
      * @param	leading		the leading
-     */    
+     */
     public ListItem(float leading) {
         super(leading);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>.
      *
@@ -142,7 +135,7 @@ public class ListItem extends Paragraph {
     public ListItem(Chunk chunk) {
         super(chunk);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>.
      *
@@ -151,7 +144,7 @@ public class ListItem extends Paragraph {
     public ListItem(String string) {
         super(string);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
      * and a certain <CODE>Font</CODE>.
@@ -162,7 +155,7 @@ public class ListItem extends Paragraph {
     public ListItem(String string, Font font) {
         super(string, font);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Chunk</CODE>
      * and a certain leading.
@@ -173,7 +166,7 @@ public class ListItem extends Paragraph {
     public ListItem(float leading, Chunk chunk) {
         super(leading, chunk);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>String</CODE>
      * and a certain leading.
@@ -184,7 +177,7 @@ public class ListItem extends Paragraph {
     public ListItem(float leading, String string) {
         super(leading, string);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain leading, <CODE>String</CODE>
      * and <CODE>Font</CODE>.
@@ -196,7 +189,7 @@ public class ListItem extends Paragraph {
     public ListItem(float leading, String string, Font font) {
         super(leading, string, font);
     }
-    
+
     /**
      * Constructs a <CODE>ListItem</CODE> with a certain <CODE>Phrase</CODE>.
      *
@@ -205,9 +198,9 @@ public class ListItem extends Paragraph {
     public ListItem(Phrase phrase) {
         super(phrase);
     }
-    
+
     // implementation of the Element-methods
-    
+
     /**
      * Gets the type of the text element.
      *
@@ -216,9 +209,9 @@ public class ListItem extends Paragraph {
     public int type() {
         return Element.LISTITEM;
     }
-    
+
     // methods
-    
+
     /**
      * Sets the listsymbol.
      *
@@ -232,7 +225,7 @@ public class ListItem extends Paragraph {
     		}
     	}
     }
-    
+
     /**
      * Sets the indentation of this paragraph on the left side.
      *
@@ -246,7 +239,7 @@ public class ListItem extends Paragraph {
     		setIndentationLeft(indentation);
     	}
     }
-    
+
     // methods to retrieve information
 
 	/**

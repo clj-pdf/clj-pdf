@@ -47,12 +47,10 @@
 
 package cljpdf.text.html.simpleparser;
 
-import java.util.HashMap;
-
-import cljpdf.text.html.simpleparser.ChainedProperties;
-
 import cljpdf.text.DocListener;
 import cljpdf.text.Image;
+
+import java.util.HashMap;
 
 /**
  *

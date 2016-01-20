@@ -46,25 +46,19 @@
  */
 package cljpdf.text;
 
-import cljpdf.text.Chunk;
-import cljpdf.text.Font;
-import cljpdf.text.FontFactory;
-import cljpdf.text.List;
-import cljpdf.text.ListItem;
-
 import cljpdf.text.factories.GreekAlphabetFactory;
 
 /**
- * 
+ *
  * A special-version of <CODE>LIST</CODE> which use greek-letters.
- * 
+ *
  * @see cljpdf.text.List
  */
 
 public class GreekList extends List {
 
 // constructors
-	
+
 	/**
 	 * Initialization
 	 */
@@ -74,7 +68,7 @@ public class GreekList extends List {
 	}
 	/**
 	 * Initialization
-	 * 
+	 *
 	 * @param symbolIndent	indent
 	 */
 	public GreekList(int symbolIndent) {
@@ -83,8 +77,8 @@ public class GreekList extends List {
 	}
 
 	/**
-	 * Initialization 
-	 * @param	greeklower		greek-char in lowercase   
+	 * Initialization
+	 * @param	greeklower		greek-char in lowercase
 	 * @param 	symbolIndent	indent
 	 */
 	public GreekList(boolean greeklower, int symbolIndent) {
@@ -94,7 +88,7 @@ public class GreekList extends List {
 	}
 
 // helper method
-	
+
 	/**
 	 * change the font to SYMBOL
 	 */
@@ -104,7 +98,7 @@ public class GreekList extends List {
 	}
 
 // overridden method
-	
+
 	/**
 	 * Adds an <CODE>Object</CODE> to the <CODE>List</CODE>.
 	 *

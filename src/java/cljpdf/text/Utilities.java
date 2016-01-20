@@ -48,6 +48,8 @@
  */
 package cljpdf.text;
 
+import cljpdf.text.pdf.PRTokeniser;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,8 +60,6 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Set;
 
-import cljpdf.text.pdf.PRTokeniser;
-
 /**
  * A collection of convenience methods that were present in many different iText
  * classes.
@@ -69,7 +69,7 @@ public class Utilities {
 
 	/**
 	 * Gets the keys of a Hashtable
-	 * 
+	 *
 	 * @param table
 	 *            a Hashtable
 	 * @return the keyset of a Hashtable (or an empty set if table is null)
@@ -80,7 +80,7 @@ public class Utilities {
 
 	/**
 	 * Utility method to extend an array.
-	 * 
+	 *
 	 * @param original
 	 *            the original array or <CODE>null</CODE>
 	 * @param item
@@ -114,7 +114,7 @@ public class Utilities {
 	 * Unescapes an URL. All the "%xx" are replaced by the 'xx' hex char value.
 	 * @param src the url to unescape
 	 * @return the unescaped value
-	 */    
+	 */
 	public static String unEscapeURL(String src) {
 	    StringBuffer bf = new StringBuffer();
 	    char[] s = src.toCharArray();
@@ -145,7 +145,7 @@ public class Utilities {
 	 * <P>
 	 * This method makes the conversion of this library from the JAVA 2 platform
 	 * to a JDK1.1.x-version easier.
-	 * 
+	 *
 	 * @param filename
 	 *            a given filename
 	 * @return a valid URL
@@ -164,7 +164,7 @@ public class Utilities {
 	 * This method is an alternative for the <CODE>InputStream.skip()</CODE>
 	 * -method that doesn't seem to work properly for big values of <CODE>size
 	 * </CODE>.
-	 * 
+	 *
 	 * @param is
 	 *            the <CODE>InputStream</CODE>
 	 * @param size
@@ -180,7 +180,7 @@ public class Utilities {
 			size -= n;
 		}
 	}
-	
+
 	/**
 	 * Measurement conversion from millimeters to points.
 	 * @param	value	a value in millimeters
@@ -240,7 +240,7 @@ public class Utilities {
 	public static final float inchesToPoints(float value) {
 	    return value * 72f;
 	}
-    
+
     /**
      * Check if the value of a character belongs to a certain interval
      * that indicates it's the higher part of a surrogate pair.

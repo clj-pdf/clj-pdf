@@ -48,13 +48,8 @@ package cljpdf.text.pdf;
 
 import java.io.IOException;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfString;
-
 public class PdfMediaClipData extends PdfDictionary {
-    
+
     PdfMediaClipData(String file, PdfFileSpecification fs, String mimeType) throws IOException {
         put(PdfName.TYPE,new PdfName("MediaClip"));
         put(PdfName.S, new PdfName("MCD"));

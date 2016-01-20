@@ -47,21 +47,14 @@
  * http://www.lowagie.com/iText/
  */
 package cljpdf.text.pdf;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.MemoryImageSource;
-
-import cljpdf.text.pdf.Barcode;
-import cljpdf.text.pdf.Barcode128;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PdfContentByte;
 
 import cljpdf.text.Element;
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 
 /**
  * Implements the code 128 and UCC/EAN-128. Other symbologies are allowed in raw mode.<p>
@@ -87,8 +80,8 @@ import cljpdf.text.error_messages.MessageLocalization;
 public class Barcode128 extends Barcode{
 
     /** The bars to generate the code.
-     */    
-    private static final byte BARS[][] = 
+     */
+    private static final byte BARS[][] =
     {
         {2, 1, 2, 2, 2, 2},
         {2, 2, 2, 1, 2, 2},
@@ -197,9 +190,9 @@ public class Barcode128 extends Barcode{
         {2, 1, 1, 2, 1, 4},
         {2, 1, 1, 2, 3, 2}
     };
-    
+
     /** The stop bars.
-     */    
+     */
     private static final byte BARS_STOP[] = {2, 3, 3, 1, 1, 1, 2};
     /** The charset code change.
      */
@@ -234,7 +227,7 @@ public class Barcode128 extends Barcode{
     public static final char STARTA = '\u00cb';
     public static final char STARTB = '\u00cc';
     public static final char STARTC = '\u00cd';
-    
+
     private static final IntHashtable ais = new IntHashtable();
     /** Creates new Barcode128 */
     public Barcode128() {
@@ -256,7 +249,7 @@ public class Barcode128 extends Barcode{
      * Removes the FNC1 codes in the text.
      * @param code the text to clean
      * @return the cleaned text
-     */    
+     */
     public static String removeFNC1(String code) {
         int len = code.length();
         StringBuffer buf = new StringBuffer(len);
@@ -267,12 +260,12 @@ public class Barcode128 extends Barcode{
         }
         return buf.toString();
     }
-    
+
     /**
      * Gets the human readable text of a sequence of AI.
      * @param code the text
      * @return the human readable text
-     */    
+     */
     public static String getHumanReadableUCCEAN(String code) {
         StringBuffer buf = new StringBuffer();
         String fnc1 = String.valueOf(FNC1);
@@ -318,14 +311,14 @@ public class Barcode128 extends Barcode{
         buf.append(removeFNC1(code));
         return buf.toString();
     }
-    
+
     /** Returns <CODE>true</CODE> if the next <CODE>numDigits</CODE>
      * starting from index <CODE>textIndex</CODE> are numeric skipping any FNC1.
      * @param text the text to check
      * @param textIndex where to check from
      * @param numDigits the number of digits to check
      * @return the check result
-     */    
+     */
     static boolean isNextDigits(String text, int textIndex, int numDigits) {
         int len = text.length();
         while (textIndex < len && numDigits > 0) {
@@ -345,14 +338,14 @@ public class Barcode128 extends Barcode{
         }
         return numDigits == 0;
     }
-    
+
     /** Packs the digits for charset C also considering FNC1. It assumes that all the parameters
      * are valid.
      * @param text the text to pack
      * @param textIndex where to pack from
      * @param numDigits the number of digits to pack. It is always an even number
      * @return the packed digits, two digits per character
-     */    
+     */
     static String getPackedRawDigits(String text, int textIndex, int numDigits) {
         String out = "";
         int start = textIndex;
@@ -369,14 +362,14 @@ public class Barcode128 extends Barcode{
         }
         return (char)(textIndex - start) + out;
     }
-    
+
     /** Converts the human readable text to the characters needed to
      * create a barcode. Some optimization is done to get the shortest code.
      * @param text the text to convert
      * @param ucc <CODE>true</CODE> if it is an UCC/EAN-128. In this case
      * the character FNC1 is added
      * @return the code ready to be fed to getBarsCode128Raw()
-     */    
+     */
     public static String getRawText(String text, boolean ucc) {
         String out = "";
         int tLen = text.length();
@@ -501,12 +494,12 @@ public class Barcode128 extends Barcode{
         }
         return out;
     }
-    
+
     /** Generates the bars. The input has the actual barcodes, not
      * the human readable text.
      * @param text the barcode
      * @return the bars
-     */    
+     */
     public static byte[] getBarsCode128Raw(String text) {
         int idx = text.indexOf('\uffff');
         if (idx >= 0)
@@ -523,7 +516,7 @@ public class Barcode128 extends Barcode{
         System.arraycopy(BARS_STOP, 0, bars, k * 6, 7);
         return bars;
     }
-    
+
     /** Gets the maximum area that the barcode and the text, if
      * any, will occupy. The lower left corner is always (0, 0).
      * @return the size the barcode occupies.
@@ -566,7 +559,7 @@ public class Barcode128 extends Barcode{
         float fullHeight = barHeight + fontY;
         return new Rectangle(fullWidth, fullHeight);
     }
-    
+
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
@@ -684,13 +677,13 @@ public class Barcode128 extends Barcode{
         }
         return getBarcodeSize();
     }
-    
+
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      * @param foreground the color of the bars
      * @param background the color of the background
      * @return the image
-     */    
+     */
     public java.awt.Image createAwtImage(Color foreground, Color background) {
         int f = foreground.getRGB();
         int g = background.getRGB();
@@ -709,7 +702,7 @@ public class Barcode128 extends Barcode{
         int len = bCode.length();
         int fullWidth = (len + 2) * 11 + 2;
         byte bars[] = getBarsCode128Raw(bCode);
-        
+
         boolean print = true;
         int ptr = 0;
         int height = (int)barHeight;
@@ -724,13 +717,13 @@ public class Barcode128 extends Barcode{
                 pix[ptr++] = c;
         }
         for (int k = fullWidth; k < pix.length; k += fullWidth) {
-            System.arraycopy(pix, 0, pix, k, fullWidth); 
+            System.arraycopy(pix, 0, pix, k, fullWidth);
         }
         Image img = canvas.createImage(new MemoryImageSource(fullWidth, height, pix, 0, fullWidth));
-        
+
         return img;
     }
-    
+
     /**
      * Sets the code to generate. If it's an UCC code and starts with '(' it will
      * be split by the AI. This code in UCC mode is valid:
@@ -771,7 +764,7 @@ public class Barcode128 extends Barcode{
         else
             super.setCode(code);
     }
-    
+
     static {
         ais.put(0, 20);
         ais.put(1, 16);

@@ -46,21 +46,12 @@
  */
 package cljpdf.text.pdf;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import cljpdf.text.pdf.DocumentFont;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.pdf.fonts.cmaps.CMap;
 import cljpdf.text.pdf.fonts.cmaps.CMapParser;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 
 /**
@@ -82,7 +73,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
 	 *  as derived by the font's encoding.  Only needed if the ToUnicode CMap is not provided.
 	 */
     private char[] cidbyte2uni;
-    
+
     /**
      * Creates an instance of a CMapAwareFont based on an indirect reference to a font.
      * @param refFont	the indirect reference to a font
@@ -94,12 +85,12 @@ public class CMapAwareDocumentFont extends DocumentFont {
         processToUnicode();
         if (toUnicodeCmap == null)
             processUni2Byte();
-        
+
         spaceWidth = super.getWidth(' ');
         if (spaceWidth == 0){
             spaceWidth = computeAverageWidth();
         }
-        
+
     }
 
     /**
@@ -107,13 +98,13 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * @since 2.1.7
      */
     private void processToUnicode(){
-        
+
         PdfObject toUni = fontDic.get(PdfName.TOUNICODE);
         if (toUni != null){
-            
+
             try {
                 byte[] touni = PdfReader.getStreamBytes((PRStream)PdfReader.getPdfObjectRelease(toUni));
-    
+
                 CMapParser cmapParser = new CMapParser();
                 toUnicodeCmap = cmapParser.parse(new ByteArrayInputStream(touni));
             } catch (IOException e) {
@@ -121,7 +112,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
             }
         }
     }
-    
+
     /**
      * Inverts DocumentFont's uni2byte mapping to obtain a cid-to-unicode mapping based
      * on the font's encoding
@@ -130,11 +121,11 @@ public class CMapAwareDocumentFont extends DocumentFont {
     private void processUni2Byte(){
         IntHashtable uni2byte = getUni2Byte();
         int e[] = uni2byte.toOrderedKeys();
-        
+
         cidbyte2uni = new char[256];
         for (int k = 0; k < e.length; ++k) {
             int n = uni2byte.get(e[k]);
-            
+
             // this is messy, messy - an encoding can have multiple unicode values mapping to the same cid - we are going to arbitrarily choose the first one
             // what we really need to do is to parse the encoding, and handle the differences info ourselves.  This is a huge duplication of code of what is already
             // being done in DocumentFont, so I really hate to go down that path without seriously thinking about a change in the organization of the Font class hierarchy
@@ -142,12 +133,12 @@ public class CMapAwareDocumentFont extends DocumentFont {
                 cidbyte2uni[n] = (char)e[k];
         }
     }
-    
 
-    
+
+
     /**
      * For all widths of all glyphs, compute the average width in normalized 1000 point units.
-     * This is used to give some meaningful width in cases where we need an average font width 
+     * This is used to give some meaningful width in cases where we need an average font width
      * (such as if the width of a space isn't specified by a given font)
      * @return the average width of all non-zero width glyphs in the font
      */
@@ -162,7 +153,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
         }
         return count != 0 ? total/count : 0;
     }
-    
+
     /**
      * @since 2.1.5
      * Override to allow special handling for fonts that don't specify width of space character
@@ -171,10 +162,10 @@ public class CMapAwareDocumentFont extends DocumentFont {
     public int getWidth(int char1) {
         if (char1 == ' ')
             return spaceWidth;
-        
+
         return super.getWidth(char1);
     }
-    
+
     /**
      * Decodes a single CID (represented by one or two bytes) to a unicode String.
      * @param bytes		the bytes making up the character code to convert
@@ -192,7 +183,7 @@ public class CMapAwareDocumentFont extends DocumentFont {
         if (len == 1){
             return new String(cidbyte2uni, 0xff & bytes[offset], 1);
         }
-        
+
         throw new Error("Multi-byte glyphs not implemented yet");
     }
 
@@ -227,6 +218,6 @@ public class CMapAwareDocumentFont extends DocumentFont {
      * @deprecated method name is not indicative of what it does.  Use <code>decode</code> instead.
      */
     public String encode(byte[] bytes, int offset, int len){
-        return decode(bytes, offset, len);    
+        return decode(bytes, offset, len);
     }
 }

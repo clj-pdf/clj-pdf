@@ -46,46 +46,29 @@
  */
 package cljpdf.text.pdf;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNameTree;
-import cljpdf.text.pdf.PdfNull;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfWriter;
-import cljpdf.text.pdf.SimpleNamedDestination;
-
 import cljpdf.text.error_messages.MessageLocalization;
 import cljpdf.text.xml.simpleparser.IanaEncodings;
 import cljpdf.text.xml.simpleparser.SimpleXMLDocHandler;
 import cljpdf.text.xml.simpleparser.SimpleXMLParser;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public final class SimpleNamedDestination implements SimpleXMLDocHandler {
-    
+
     private HashMap xmlNames;
     private HashMap xmlLast;
 
     private SimpleNamedDestination() {
     }
-    
+
     public static HashMap getNamedDestination(PdfReader reader, boolean fromNames) {
         IntHashtable pages = new IntHashtable();
         int numPages = reader.getNumberOfPages();
@@ -109,7 +92,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return names;
     }
-    
+
     /**
      * Exports the destinations to XML. The DTD for this XML is:
      * <p>
@@ -133,7 +116,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         Writer wrt = new BufferedWriter(new OutputStreamWriter(out, jenc));
         exportToXML(names, wrt, encoding, onlyASCII);
     }
-    
+
     /**
      * Exports the destinations to XML.
      * @param names the names
@@ -160,7 +143,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         wrt.write("</Destination>\n");
         wrt.flush();
     }
-    
+
     /**
      * Import the names from XML.
      * @param in the XML source. The stream is not closed
@@ -172,7 +155,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         SimpleXMLParser.parse(names, in);
         return names.xmlNames;
     }
-    
+
     /**
      * Import the names from XML.
      * @param in the XML source. The reader is not closed
@@ -209,7 +192,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return ar;
     }
-    
+
     public static PdfDictionary outputNamedDestinationAsNames(HashMap names, PdfWriter writer) {
         PdfDictionary dic = new PdfDictionary();
         for (Iterator it = names.entrySet().iterator(); it.hasNext();) {
@@ -223,11 +206,11 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
             }
             catch (Exception e) {
                 // empty on purpose
-            }            
+            }
         }
         return dic;
     }
-    
+
     public static PdfDictionary outputNamedDestinationAsStrings(HashMap names, PdfWriter writer) throws IOException {
         HashMap n2 = new HashMap(names);
         for (Iterator it = n2.entrySet().iterator(); it.hasNext();) {
@@ -243,7 +226,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return PdfNameTree.writeTree(n2, writer);
     }
-    
+
     public static String escapeBinaryString(String s) {
         StringBuffer buf = new StringBuffer();
         char cc[] = s.toCharArray();
@@ -262,7 +245,7 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return buf.toString();
     }
-    
+
     public static String unEscapeBinaryString(String s) {
         StringBuffer buf = new StringBuffer();
         char cc[] = s.toCharArray();
@@ -299,10 +282,10 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         }
         return buf.toString();
     }
-    
+
     public void endDocument() {
     }
-    
+
     public void endElement(String tag) {
         if (tag.equals("Destination")) {
             if (xmlLast == null && xmlNames != null)
@@ -319,10 +302,10 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         xmlNames.put(unEscapeBinaryString((String)xmlLast.get("Name")), xmlLast.get("Page"));
         xmlLast = null;
     }
-    
+
     public void startDocument() {
     }
-    
+
     public void startElement(String tag, HashMap h) {
         if (xmlNames == null) {
             if (tag.equals("Destination")) {
@@ -339,12 +322,12 @@ public final class SimpleNamedDestination implements SimpleXMLDocHandler {
         xmlLast = new HashMap(h);
         xmlLast.put("Name", "");
     }
-    
+
     public void text(String str) {
         if (xmlLast == null)
             return;
         String name = (String)xmlLast.get("Name");
         name += str;
         xmlLast.put("Name", name);
-    }    
+    }
 }

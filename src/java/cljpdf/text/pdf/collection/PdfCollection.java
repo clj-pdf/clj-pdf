@@ -1,8 +1,5 @@
 package cljpdf.text.pdf.collection;
 
-import cljpdf.text.pdf.collection.PdfCollectionSchema;
-import cljpdf.text.pdf.collection.PdfCollectionSort;
-
 import cljpdf.text.pdf.PdfDictionary;
 import cljpdf.text.pdf.PdfName;
 import cljpdf.text.pdf.PdfString;
@@ -15,7 +12,7 @@ public class PdfCollection extends PdfDictionary {
 	public static final int TILE = 1;
 	/** A type of PDF Collection */
 	public static final int HIDDEN = 2;
-	
+
 	/**
 	 * Constructs a PDF Collection.
 	 * @param	type	the type of PDF collection.
@@ -33,7 +30,7 @@ public class PdfCollection extends PdfDictionary {
 			put(PdfName.VIEW, PdfName.D);
 		}
 	}
-	
+
 	/**
 	 * Identifies the document that will be initially presented
 	 * in the user interface.
@@ -42,7 +39,7 @@ public class PdfCollection extends PdfDictionary {
 	public void setInitialDocument(String description) {
 		put(PdfName.D, new PdfString(description, null));
 	}
-	
+
 	/**
 	 * Sets the Collection schema dictionary.
 	 * @param schema	an overview of the collection fields
@@ -50,7 +47,7 @@ public class PdfCollection extends PdfDictionary {
 	public void setSchema(PdfCollectionSchema schema) {
 		put(PdfName.SCHEMA, schema);
 	}
-	
+
 	/**
 	 * Gets the Collection schema dictionary.
 	 * @return schema	an overview of the collection fields
@@ -58,7 +55,7 @@ public class PdfCollection extends PdfDictionary {
 	public PdfCollectionSchema getSchema() {
 		return (PdfCollectionSchema)get(PdfName.SCHEMA);
 	}
-	
+
 	/**
 	 * Sets the Collection sort dictionary.
 	 * @param sort	a collection sort dictionary

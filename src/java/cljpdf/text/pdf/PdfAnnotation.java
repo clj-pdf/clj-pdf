@@ -49,38 +49,12 @@
 
 package cljpdf.text.pdf;
 
-import java.awt.Color;
-import java.io.IOException;
-import java.util.HashMap;
-
-import cljpdf.text.pdf.CMYKColor;
-import cljpdf.text.pdf.ExtendedColor;
-import cljpdf.text.pdf.GrayColor;
-import cljpdf.text.pdf.PRIndirectReference;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfBorderArray;
-import cljpdf.text.pdf.PdfBorderDictionary;
-import cljpdf.text.pdf.PdfColor;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDestination;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFileSpecification;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfOCG;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfRectangle;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.Rectangle;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.HashMap;
 /**
  * A <CODE>PdfAnnotation</CODE> is a note that is associated with a page.
  *
@@ -920,7 +894,7 @@ public class PdfAnnotation extends PdfDictionary {
     		annotation.hashMap.putAll(parameters);
     		return annotation;
     	}
-    	
+
     	/**
     	 * Returns a String representation of the link.
     	 * @return	a String representation of the imported link

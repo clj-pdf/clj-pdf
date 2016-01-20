@@ -48,62 +48,52 @@
 
 package cljpdf.text.pdf;
 
-import java.util.ArrayList;
-
-import cljpdf.text.pdf.ArabicLigaturizer;
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.BidiLine;
-import cljpdf.text.pdf.BidiOrder;
-import cljpdf.text.pdf.HyphenationEvent;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PdfChunk;
-import cljpdf.text.pdf.PdfLine;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.Chunk;
 import cljpdf.text.Utilities;
+
+import java.util.ArrayList;
 
 /** Does all the line bidirectional processing with PdfChunk assembly.
  *
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class BidiLine {
-	
+
     protected int runDirection;
     protected int pieceSize = 256;
     protected char text[] = new char[pieceSize];
     protected PdfChunk detailChunks[] = new PdfChunk[pieceSize];
     protected int totalTextLength = 0;
-    
+
     protected byte orderLevels[] = new byte[pieceSize];
     protected int indexChars[] = new int[pieceSize];
-    
+
     protected ArrayList chunks = new ArrayList();
     protected int indexChunk = 0;
     protected int indexChunkChar = 0;
     protected int currentChar = 0;
-    
+
     protected int storedRunDirection;
     protected char storedText[] = new char[0];
     protected PdfChunk storedDetailChunks[] = new PdfChunk[0];
     protected int storedTotalTextLength = 0;
-    
+
     protected byte storedOrderLevels[] = new byte[0];
     protected int storedIndexChars[] = new int[0];
-    
+
     protected int storedIndexChunk = 0;
     protected int storedIndexChunkChar = 0;
     protected int storedCurrentChar = 0;
-    
+
     protected boolean shortStore;
 //    protected ArabicShaping arabic = new ArabicShaping(ArabicShaping.LETTERS_SHAPE | ArabicShaping.LENGTH_GROW_SHRINK | ArabicShaping.TEXT_DIRECTION_LOGICAL);
     protected static final IntHashtable mirrorChars = new IntHashtable();
     protected int arabicOptions;
-    
+
     /** Creates new BidiLine */
     public BidiLine() {
     }
-    
+
     public BidiLine(BidiLine org) {
         runDirection = org.runDirection;
         pieceSize = org.pieceSize;
@@ -134,11 +124,11 @@ public class BidiLine {
         shortStore = org.shortStore;
         arabicOptions = org.arabicOptions;
     }
-    
+
     public boolean isEmpty() {
         return (currentChar >= totalTextLength && indexChunk >= chunks.size());
     }
-    
+
     public void clearChunks() {
         chunks.clear();
         totalTextLength = 0;
@@ -189,7 +179,7 @@ public class BidiLine {
         if (totalTextLength == 0) {
         	return true;
         }
-        
+
         if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL) {
             if (orderLevels.length < totalTextLength) {
                 orderLevels = new byte[pieceSize];
@@ -208,15 +198,15 @@ public class BidiLine {
         totalTextLength = trimRightEx(0, totalTextLength - 1) + 1;
         return true;
     }
-    
+
     public void addChunk(PdfChunk chunk) {
         chunks.add(chunk);
     }
-    
+
     public void addChunks(ArrayList chunks) {
         this.chunks.addAll(chunks);
     }
-    
+
     public void addPiece(char c, PdfChunk chunk) {
         if (totalTextLength >= pieceSize) {
             char tempText[] = text;
@@ -230,7 +220,7 @@ public class BidiLine {
         text[totalTextLength] = c;
         detailChunks[totalTextLength++] = chunk;
     }
-    
+
     public void save() {
         if (indexChunk > 0) {
             if (indexChunk >= chunks.size())
@@ -265,7 +255,7 @@ public class BidiLine {
             System.arraycopy(indexChars, currentChar, storedIndexChars, currentChar, totalTextLength - currentChar);
         }
     }
-    
+
     public void restore() {
         runDirection = storedRunDirection;
         totalTextLength = storedTotalTextLength;
@@ -282,7 +272,7 @@ public class BidiLine {
             System.arraycopy(storedIndexChars, currentChar, indexChars, currentChar, totalTextLength - currentChar);
         }
     }
-    
+
     public void mirrorGlyphs() {
         for (int k = 0; k < totalTextLength; ++k) {
             if ((orderLevels[k] & 1) == 1) {
@@ -292,7 +282,7 @@ public class BidiLine {
             }
         }
     }
-    
+
     public void doArabicShapping() {
         int src = 0;
         int dest = 0;
@@ -333,7 +323,7 @@ public class BidiLine {
                 dest += size;
         }
     }
-       
+
     public PdfLine processLine(float leftX, float width, int alignment, int runDirection, int arabicOptions) {
         this.arabicOptions = arabicOptions;
         save();
@@ -440,12 +430,12 @@ public class BidiLine {
         }
         return new PdfLine(0, originalWidth, originalWidth - getWidth(oldCurrentChar, newCurrentChar), alignment, false, createArrayOfPdfChunks(oldCurrentChar, newCurrentChar), isRTL);
     }
-    
+
     /** Gets the width of a range of characters.
      * @param startIdx the first index to calculate
      * @param lastIdx the last inclusive index to calculate
      * @return the sum of all widths
-     */    
+     */
     public float getWidth(int startIdx, int lastIdx) {
         char c = 0;
         char uniC;
@@ -467,11 +457,11 @@ public class BidiLine {
         }
         return width;
     }
-    
+
     public ArrayList createArrayOfPdfChunks(int startIdx, int endIdx) {
         return createArrayOfPdfChunks(startIdx, endIdx, null);
     }
-    
+
     public ArrayList createArrayOfPdfChunks(int startIdx, int endIdx, PdfChunk extraPdfChunk) {
         boolean bidi = (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL);
         if (bidi)
@@ -515,26 +505,26 @@ public class BidiLine {
             ar.add(extraPdfChunk);
         return ar;
     }
-    
+
     public int[] getWord(int startIdx, int idx) {
         int last = idx;
         int first = idx;
         // forward
         for (; last < totalTextLength; ++last) {
             if (!Character.isLetter(text[last]))
-                break;            
+                break;
         }
         if (last == idx)
             return null;
         // backward
         for (; first >= startIdx; --first) {
             if (!Character.isLetter(text[first]))
-                break;            
+                break;
         }
         ++first;
         return new int[]{first, last};
     }
-    
+
     public int trimRight(int startIdx, int endIdx) {
         int idx = endIdx;
         char c;
@@ -545,7 +535,7 @@ public class BidiLine {
         }
         return idx;
     }
-    
+
     public int trimLeft(int startIdx, int endIdx) {
         int idx = startIdx;
         char c;
@@ -556,7 +546,7 @@ public class BidiLine {
         }
         return idx;
     }
-    
+
     public int trimRightEx(int startIdx, int endIdx) {
         int idx = endIdx;
         char c = 0;
@@ -567,7 +557,7 @@ public class BidiLine {
         }
         return idx;
     }
-    
+
     public int trimLeftEx(int startIdx, int endIdx) {
         int idx = startIdx;
         char c = 0;
@@ -578,7 +568,7 @@ public class BidiLine {
         }
         return idx;
     }
-    
+
     public void reorder(int start, int end) {
         byte maxLevel = orderLevels[start];
         byte minLevel = maxLevel;
@@ -619,7 +609,7 @@ public class BidiLine {
             }
         }
     }
-    
+
     public void flip(int start, int end) {
         int mid = (start + end) / 2;
         --end;
@@ -629,7 +619,7 @@ public class BidiLine {
             indexChars[end] = temp;
         }
     }
-    
+
     public static boolean isWS(char c) {
         return (c <= ' ');
     }

@@ -49,10 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfPage;
-
 /**
  * <CODE>PdfResources</CODE> is the PDF Resources-object.
  * <P>
@@ -69,19 +65,19 @@ import cljpdf.text.pdf.PdfPage;
  */
 
 class PdfResources extends PdfDictionary {
-    
+
     // constructor
-    
+
 /**
  * Constructs a PDF ResourcesDictionary.
  */
-    
+
     PdfResources() {
         super();
     }
-    
+
     // methods
-    
+
     void add(PdfName key, PdfDictionary resource) {
         if (resource.size() == 0)
             return;

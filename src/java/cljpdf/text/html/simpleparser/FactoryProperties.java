@@ -42,7 +42,7 @@
  *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -50,27 +50,19 @@
 
 package cljpdf.text.html.simpleparser;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.StringTokenizer;
-
-import cljpdf.text.html.simpleparser.ChainedProperties;
-
-import cljpdf.text.Chunk;
-import cljpdf.text.Element;
-import cljpdf.text.ElementTags;
+import cljpdf.text.*;
 import cljpdf.text.Font;
-import cljpdf.text.FontFactory;
-import cljpdf.text.FontProvider;
-import cljpdf.text.ListItem;
-import cljpdf.text.Paragraph;
 import cljpdf.text.html.HtmlTags;
 import cljpdf.text.html.Markup;
 import cljpdf.text.pdf.BaseFont;
 import cljpdf.text.pdf.HyphenationAuto;
 import cljpdf.text.pdf.HyphenationEvent;
+
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.StringTokenizer;
 /**
  *
  * @author  psoares

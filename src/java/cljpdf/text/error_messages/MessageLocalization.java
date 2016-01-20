@@ -48,14 +48,10 @@
  */
 package cljpdf.text.error_messages;
 
-import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-
 import cljpdf.text.pdf.BaseFont;
+
+import java.io.*;
+import java.util.HashMap;
 
 /**
  * Localizes error messages. The messages are located in the package

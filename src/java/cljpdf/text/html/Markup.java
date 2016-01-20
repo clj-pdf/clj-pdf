@@ -44,7 +44,7 @@
  *
  * Contributions by:
  * Lubos Strapko
- * 
+ *
  * If you didn't download this code from the following link, you should check if
  * you aren't using an obsolete version:
  * http://www.lowagie.com/iText/
@@ -52,11 +52,9 @@
 
 package cljpdf.text.html;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Properties;
 import java.util.StringTokenizer;
-
-import cljpdf.text.html.WebColors;
 
 /**
  * A class that contains all the possible tagnames and their attributes.
@@ -274,14 +272,14 @@ public class Markup {
 	/** a CSS value for text decoration */
 	public static final String CSS_VALUE_UNDERLINE = "underline";
 
-	/** a default value for font-size 
+	/** a default value for font-size
      * @since 2.1.3
      */
 	public static final float DEFAULT_FONT_SIZE = 12f;
 
 	/**
 	 * Parses a length.
-	 * 
+	 *
 	 * @param string
 	 *            a length in the form of an optional + or -, followed by a
 	 *            number and a unit.
@@ -344,7 +342,7 @@ public class Markup {
 
 	/**
 	 * New method contributed by: Lubos Strapko
-	 * 
+	 *
 	 * @since 2.1.3
 	 */
 	public static float parseLength(String string, float actualFontSize) {
@@ -412,7 +410,7 @@ public class Markup {
 	/**
 	 * Converts a <CODE>Color</CODE> into a HTML representation of this <CODE>
 	 * Color</CODE>.
-	 * 
+	 *
 	 * @param s
 	 *            the <CODE>Color</CODE> that has to be converted.
 	 * @return the HTML representation of this <COLOR>Color </COLOR>
@@ -433,7 +431,7 @@ public class Markup {
 	/**
 	 * This method parses a String with attributes and returns a Properties
 	 * object.
-	 * 
+	 *
 	 * @param string
 	 *            a String of this form: 'key1="value1"; key2="value2";...
 	 *            keyN="valueN" '
@@ -468,7 +466,7 @@ public class Markup {
 
 	/**
 	 * Removes the comments sections of a String.
-	 * 
+	 *
 	 * @param string
 	 *            the original String
 	 * @param startComment

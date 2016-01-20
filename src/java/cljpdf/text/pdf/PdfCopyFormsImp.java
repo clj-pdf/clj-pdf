@@ -49,16 +49,11 @@
 
 package cljpdf.text.pdf;
 
-import java.io.OutputStream;
-import java.util.HashMap;
-
-import cljpdf.text.pdf.AcroFields;
-import cljpdf.text.pdf.IntHashtable;
-import cljpdf.text.pdf.PdfCopyFieldsImp;
-import cljpdf.text.pdf.PdfReader;
-
 import cljpdf.text.DocumentException;
 import cljpdf.text.error_messages.MessageLocalization;
+
+import java.io.OutputStream;
+import java.util.HashMap;
 
 /**
  * Allows you to add one (or more) existing PDF document(s)
@@ -68,14 +63,14 @@ import cljpdf.text.error_messages.MessageLocalization;
 class PdfCopyFormsImp extends PdfCopyFieldsImp {
 
     /**
-   * This sets up the output document 
+   * This sets up the output document
    * @param os The Outputstream pointing to the output document
    * @throws DocumentException
    */
     PdfCopyFormsImp(OutputStream os) throws DocumentException {
         super(os);
     }
-    
+
     /**
      * This method feeds in the source document
      * @param reader The PDF reader containing the source document

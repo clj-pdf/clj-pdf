@@ -46,9 +46,6 @@
  */
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfObject;
-
 /**
  * The interface common to all layer types.
  *
@@ -59,12 +56,12 @@ public interface PdfOCG {
     /**
      * Gets the <CODE>PdfIndirectReference</CODE> that represents this layer.
      * @return the <CODE>PdfIndirectReference</CODE> that represents this layer
-     */    
+     */
     public PdfIndirectReference getRef();
-    
+
     /**
      * Gets the object representing the layer.
      * @return the object representing the layer
-     */    
+     */
     public PdfObject getPdfObject();
 }

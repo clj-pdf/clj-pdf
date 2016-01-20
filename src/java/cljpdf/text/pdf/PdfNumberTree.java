@@ -50,23 +50,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfWriter;
-
 /**
  * Creates a number tree.
  * @author Paulo Soares (psoares@consiste.pt)
  */
 public class PdfNumberTree {
-    
+
     private static final int leafSize = 64;
-    
+
     /**
      * Creates a number tree.
      * @param items the item of the number tree. The key is an <CODE>Integer</CODE>
@@ -74,7 +65,7 @@ public class PdfNumberTree {
      * @param writer the writer
      * @throws IOException on error
      * @return the dictionary with the number tree.
-     */    
+     */
     public static PdfDictionary writeTree(HashMap items, PdfWriter writer) throws IOException {
         if (items.isEmpty())
             return null;
@@ -139,7 +130,7 @@ public class PdfNumberTree {
             top = tt;
         }
     }
-    
+
     private static void iterateItems(PdfDictionary dic, HashMap items) {
         PdfArray nn = (PdfArray)PdfReader.getPdfObjectRelease(dic.get(PdfName.NUMS));
         if (nn != null) {
@@ -155,7 +146,7 @@ public class PdfNumberTree {
             }
         }
     }
-    
+
     public static HashMap readTree(PdfDictionary dic) {
         HashMap items = new HashMap();
         if (dic != null)

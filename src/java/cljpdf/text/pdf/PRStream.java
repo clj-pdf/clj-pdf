@@ -49,34 +49,25 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.Document;
+import cljpdf.text.ExceptionConverter;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfStream;
-import cljpdf.text.pdf.PdfWriter;
-
-import cljpdf.text.Document;
-import cljpdf.text.ExceptionConverter;
-
 public class PRStream extends PdfStream {
-    
+
     protected PdfReader reader;
     protected int offset;
     protected int length;
-    
+
     //added by ujihara for decryption
     protected int objNum = 0;
     protected int objGen = 0;
-    
+
     public PRStream(PRStream stream, PdfDictionary newDic) {
         reader = stream.reader;
         offset = stream.offset;
@@ -137,12 +128,12 @@ public class PRStream extends PdfStream {
             bytes = conts;
         setLength(bytes.length);
     }
-    
+
     /**
      * Sets the data associated with the stream, either compressed or
      * uncompressed. Note that the data will never be compressed if
      * Document.compress is set to false.
-     * 
+     *
      * @param data raw data, decrypted and uncompressed.
      * @param compress true if you want the stream to be compressed.
      * @since	iText 2.1.1
@@ -150,12 +141,12 @@ public class PRStream extends PdfStream {
     public void setData(byte[] data, boolean compress) {
     	setData(data, compress, DEFAULT_COMPRESSION);
     }
-    
+
     /**
      * Sets the data associated with the stream, either compressed or
      * uncompressed. Note that the data will never be compressed if
      * Document.compress is set to false.
-     * 
+     *
      * @param data raw data, decrypted and uncompressed.
      * @param compress true if you want the stream to be compressed.
      * @param compressionLevel	a value between -1 and 9 (ignored if compress == false)
@@ -184,7 +175,7 @@ public class PRStream extends PdfStream {
             bytes = data;
         setLength(bytes.length);
     }
-    
+
     /**Sets the data associated with the stream
      * @param data raw data, decrypted and uncompressed.
      */
@@ -196,41 +187,41 @@ public class PRStream extends PdfStream {
         this.length = length;
         put(PdfName.LENGTH, new PdfNumber(length));
     }
-    
+
     public int getOffset() {
         return offset;
     }
-    
+
     public int getLength() {
         return length;
     }
-    
+
     public PdfReader getReader() {
         return reader;
     }
-    
+
     public byte[] getBytes() {
         return bytes;
     }
-    
+
     public void setObjNum(int objNum, int objGen) {
         this.objNum = objNum;
         this.objGen = objGen;
     }
-    
+
     int getObjNum() {
         return objNum;
     }
-    
+
     int getObjGen() {
         return objGen;
     }
-    
+
     public void toPdf(PdfWriter writer, OutputStream os) throws IOException {
-        byte[] b = PdfReader.getStreamBytesRaw(this);        
+        byte[] b = PdfReader.getStreamBytesRaw(this);
         PdfObject objLen = get(PdfName.LENGTH);
         int nn = b.length;
-        
+
         put(PdfName.LENGTH, new PdfNumber(nn));
         superToPdf(writer, os);
         put(PdfName.LENGTH, objLen);

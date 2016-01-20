@@ -1,12 +1,12 @@
 /*
  * Copyright 1999-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,12 @@
 
 package cljpdf.text.pdf.hyphenation;
 
+import cljpdf.text.pdf.BaseFont;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Hashtable;
-
-import cljpdf.text.pdf.hyphenation.Hyphenation;
-import cljpdf.text.pdf.hyphenation.HyphenationTree;
-
-import cljpdf.text.pdf.BaseFont;
 
 /**
  * This class is the main entry point to the hyphenation package.
@@ -33,7 +30,7 @@ import cljpdf.text.pdf.BaseFont;
  * @author Carlos Villegas <cav@uniscope.co.jp>
  */
 public class Hyphenator {
-    
+
     /** TODO: Don't use statics */
     private static Hashtable hyphenTrees = new Hashtable();
 
@@ -41,9 +38,9 @@ public class Hyphenator {
     private int remainCharCount = 2;
     private int pushCharCount = 2;
     private static final String defaultHyphLocation = "com/lowagie/text/pdf/hyphenation/hyph/";
-   
+
     /** Holds value of property hyphenDir. */
-    private static String hyphenDir = "";    
+    private static String hyphenDir = "";
 
     /**
      * @param lang
@@ -231,12 +228,12 @@ public class Hyphenator {
     public static String getHyphenDir() {
         return hyphenDir;
     }
-    
+
     /** Setter for property hyphenDir.
      * @param _hyphenDir New value of property hyphenDir.
      */
     public static void setHyphenDir(String _hyphenDir) {
         hyphenDir = _hyphenDir;
     }
-    
+
 }

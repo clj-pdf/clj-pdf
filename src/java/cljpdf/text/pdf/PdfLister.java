@@ -54,15 +54,6 @@
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Iterator;
-
-import cljpdf.text.pdf.PRStream;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfImportedPage;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfReader;
-import cljpdf.text.pdf.PdfReaderInstance;
 /**
  * List a PDF file in human-readable form (for debugging reasons mostly)
  * @author Mark Thompson

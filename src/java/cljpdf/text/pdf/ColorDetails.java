@@ -49,12 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-import cljpdf.text.pdf.PdfSpotColor;
-import cljpdf.text.pdf.PdfWriter;
-
 /** Each spotcolor in the document will have an instance of this class
  *
  * @author Phillip Pan (phillip@formstar.com)

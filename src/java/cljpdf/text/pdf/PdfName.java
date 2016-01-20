@@ -49,18 +49,12 @@
 
 package cljpdf.text.pdf;
 
+import cljpdf.text.error_messages.MessageLocalization;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
-
-import cljpdf.text.pdf.BadPdfFormatException;
-import cljpdf.text.pdf.ByteBuffer;
-import cljpdf.text.pdf.PRTokeniser;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfObject;
-
-import cljpdf.text.error_messages.MessageLocalization;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <CODE>PdfName</CODE> is an object that can be used as a name in a PDF-file.
@@ -1068,7 +1062,7 @@ public class PdfName extends PdfObject implements Comparable{
      * @since 2.1.6
      */
     public static final PdfName OSCILLATING = new PdfName("Oscillating");
-    
+
     /** A name */
     public static final PdfName OUTLINES = new PdfName("Outlines");
     /** A name */
@@ -1516,7 +1510,7 @@ public class PdfName extends PdfObject implements Comparable{
     /** A name */
     public static final PdfName TK = new PdfName("TK");
     /** A name */
-    public static final PdfName TM = new PdfName("TM"); 
+    public static final PdfName TM = new PdfName("TM");
     /**
      * A name
      * @since 2.1.6

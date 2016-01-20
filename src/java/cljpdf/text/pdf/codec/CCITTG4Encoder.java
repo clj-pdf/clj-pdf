@@ -48,8 +48,6 @@
  */
 package cljpdf.text.pdf.codec;
 
-import cljpdf.text.pdf.codec.CCITTG4Encoder;
-
 import cljpdf.text.pdf.ByteBuffer;
 
 /**
@@ -65,23 +63,23 @@ public class CCITTG4Encoder {
     private byte[] dataBp;
     private int offsetData;
     private int sizeData;
-    
+
     /**
      * Creates a new encoder.
      * @param width the line width
-     */    
+     */
     public CCITTG4Encoder(int width) {
         rowpixels = width;
         rowbytes = (rowpixels + 7) / 8;
         refline = new byte[rowbytes];
     }
-    
+
     /**
      * Encodes a number of lines.
      * @param data the data to be encoded
      * @param offset the offset into the data
      * @param size the size of the data to be encoded
-     */    
+     */
     public void fax4Encode(byte[] data, int offset, int size) {
         dataBp = data;
         offsetData = offset;
@@ -93,7 +91,7 @@ public class CCITTG4Encoder {
             sizeData -= rowbytes;
         }
     }
-    
+
 
     /**
      * Encodes a full image.
@@ -101,18 +99,18 @@ public class CCITTG4Encoder {
      * @param width the image width
      * @param height the image height
      * @return the encoded image
-     */    
+     */
     public static byte[] compress(byte[] data, int width, int height) {
         CCITTG4Encoder g4 = new CCITTG4Encoder(width);
         g4.fax4Encode(data, 0, g4.rowbytes * height);
         return g4.close();
     }
-    
+
     /**
      * Encodes a number of lines.
      * @param data the data to be encoded
      * @param height the number of lines to encode
-     */    
+     */
     public void fax4Encode(byte[] data, int height) {
         fax4Encode(data, 0, rowbytes * height);
     }
@@ -120,10 +118,10 @@ public class CCITTG4Encoder {
     private void putcode(int[] table) {
         putBits(table[CODE], table[LENGTH]);
     }
-    
+
     private void putspan(int span, int[][] tab) {
         int code, length;
-        
+
         while (span >= 2624) {
             int[] te = tab[63 + (2560>>6)];
             code = te[CODE];
@@ -142,7 +140,7 @@ public class CCITTG4Encoder {
         length = tab[span][LENGTH];
         putBits(code, length);
     }
-    
+
     private void putBits(int bits, int length) {
         while (length > bit) {
             data |= bits >> (length - bit);
@@ -159,13 +157,13 @@ public class CCITTG4Encoder {
             bit = 8;
         }
     }
-    
+
     private void Fax3Encode2DRow() {
         int a0 = 0;
         int a1 = (pixel(dataBp, offsetData, 0) != 0 ? 0 : finddiff(dataBp, offsetData, 0, rowpixels, 0));
         int b1 = (pixel(refline, 0, 0) != 0 ? 0 : finddiff(refline, 0, 0, rowpixels, 0));
         int a2, b2;
-        
+
         for (;;) {
             b2 = finddiff2(refline, 0, b1, rowpixels, pixel(refline, 0,b1));
             if (b2 >= a1) {
@@ -196,7 +194,7 @@ public class CCITTG4Encoder {
             b1 = finddiff(refline, 0, b1, rowpixels, pixel(dataBp, offsetData,a0));
         }
     }
-    
+
     private void Fax4PostEncode() {
         putBits(EOL, 12);
         putBits(EOL, 12);
@@ -206,26 +204,26 @@ public class CCITTG4Encoder {
             bit = 8;
         }
     }
-    
+
     /**
      * Closes the encoder and returns the encoded data.
      * @return the encoded data
-     */    
+     */
     public byte[] close() {
         Fax4PostEncode();
         return outBuf.toByteArray();
     }
-    
+
     private int pixel(byte[] data, int offset, int bit) {
         if (bit >= rowpixels)
             return 0;
         return ((data[offset + (bit >> 3)] & 0xff) >> (7-((bit)&7))) & 1;
     }
-    
+
     private static int find1span(byte[] bp, int offset, int bs, int be) {
         int bits = be - bs;
         int n, span;
-        
+
         int pos = offset + (bs >> 3);
         /*
          * Check partial byte on lhs.
@@ -261,11 +259,11 @@ public class CCITTG4Encoder {
         }
         return span;
     }
-    
+
     private static int find0span(byte[] bp, int offset, int bs, int be) {
         int bits = be - bs;
         int n, span;
-        
+
         int pos = offset + (bs >> 3);
         /*
          * Check partial byte on lhs.
@@ -301,15 +299,15 @@ public class CCITTG4Encoder {
         }
         return span;
     }
-    
+
     private static int finddiff(byte[] bp, int offset, int bs, int be, int color) {
         return bs + (color != 0 ? find1span(bp, offset, bs, be) : find0span(bp, offset, bs, be));
     }
-    
+
     private static int finddiff2(byte[] bp, int offset, int bs, int be, int color) {
         return bs < be ? finddiff(bp, offset, bs, be, color) : be;
     }
-    
+
     private static byte zeroruns[] = {
         8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,	/* 0x00 - 0x0f */
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,	/* 0x10 - 0x1f */
@@ -328,7 +326,7 @@ public class CCITTG4Encoder {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0xe0 - 0xef */
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0	/* 0xf0 - 0xff */
     };
-    
+
     private static byte oneruns[] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x00 - 0x0f */
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,	/* 0x10 - 0x1f */
@@ -583,7 +581,7 @@ public class CCITTG4Encoder {
         { 11, 0x1, G3CODE_INVALID },	/* 0000 0000 001 */
         { 12, 0x0, G3CODE_INVALID }	/* 0000 0000 0000 */
     };
-    
+
     private int[] horizcode =
         { 3, 0x1, 0 };		/* 001 */
     private int[] passcode =

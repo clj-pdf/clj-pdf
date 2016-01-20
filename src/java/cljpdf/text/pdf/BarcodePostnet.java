@@ -45,15 +45,11 @@
  * http://www.lowagie.com/iText/
  */
 package cljpdf.text.pdf;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.MemoryImageSource;
-
-import cljpdf.text.pdf.Barcode;
-import cljpdf.text.pdf.PdfContentByte;
 
 import cljpdf.text.Rectangle;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 
 /** Implements the Postnet and Planet barcodes. The default parameters are:
  * <pre>
@@ -69,8 +65,8 @@ import cljpdf.text.Rectangle;
 public class BarcodePostnet extends Barcode{
 
     /** The bars for each character.
-     */    
-	private static final byte BARS[][] = 
+     */
+	private static final byte BARS[][] =
     {
         {1,1,0,0,0},
         {0,0,0,1,1},
@@ -83,7 +79,7 @@ public class BarcodePostnet extends Barcode{
         {1,0,0,1,0},
         {1,0,1,0,0}
     };
-    
+
     /** Creates new BarcodePostnet */
     public BarcodePostnet() {
         n = 72f / 22f; // distance between bars
@@ -92,11 +88,11 @@ public class BarcodePostnet extends Barcode{
         size = 0.05f * 72f; // height of the short bars
         codeType = POSTNET; // type of code
     }
-    
+
     /** Creates the bars for Postnet.
      * @param text the code to be created without checksum
      * @return the bars
-     */    
+     */
     public static byte[] getBarsPostnet(String text) {
         int total = 0;
         for (int k = text.length() - 1; k >= 0; --k) {
@@ -122,7 +118,7 @@ public class BarcodePostnet extends Barcode{
         float width = ((code.length() + 1) * 5 + 1) * n + x;
         return new Rectangle(width, barHeight);
     }
-    
+
     /** Places the barcode in a <CODE>PdfContentByte</CODE>. The
      * barcode is always placed at coordinates (0, 0). Use the
      * translation matrix to move it elsewhere.<p>
@@ -177,7 +173,7 @@ public class BarcodePostnet extends Barcode{
         cb.fill();
         return getBarcodeSize();
     }
-    
+
     /** Creates a <CODE>java.awt.Image</CODE>. This image only
      * contains the bars without any text.
      * @param foreground the color of the bars
@@ -231,7 +227,7 @@ public class BarcodePostnet extends Barcode{
         for (int k = limit + width; k < pix.length; k += width)
             System.arraycopy(pix, limit, pix, k, width);
         Image img = canvas.createImage(new MemoryImageSource(width, barTall, pix, 0, width));
-        
+
         return img;
     }
 }

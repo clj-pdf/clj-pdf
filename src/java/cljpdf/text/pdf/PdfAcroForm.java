@@ -49,28 +49,11 @@
 
 package cljpdf.text.pdf;
 
-import java.util.HashMap;
-import java.util.Iterator;
-
-import cljpdf.text.pdf.BaseFont;
-import cljpdf.text.pdf.PdfAction;
-import cljpdf.text.pdf.PdfAnnotation;
-import cljpdf.text.pdf.PdfAppearance;
-import cljpdf.text.pdf.PdfArray;
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfBorderDictionary;
-import cljpdf.text.pdf.PdfContentByte;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfFormField;
-import cljpdf.text.pdf.PdfIndirectReference;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfString;
-import cljpdf.text.pdf.PdfTemplate;
-import cljpdf.text.pdf.PdfWriter;
-
 import cljpdf.text.ExceptionConverter;
 import cljpdf.text.Rectangle;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Each PDF document can contain maximum 1 AcroForm.
@@ -93,14 +76,14 @@ public class PdfAcroForm extends PdfDictionary {
     /** Contains the signature flags. */
     private int sigFlags = 0;
 
-    /** Creates new PdfAcroForm 
+    /** Creates new PdfAcroForm
      * @param writer
      */
     public PdfAcroForm(PdfWriter writer) {
         super();
         this.writer = writer;
     }
-    
+
     public void setNeedAppearances(boolean value) {
     	put(PdfName.NEEDAPPEARANCES, new PdfBoolean(value));
     }
@@ -704,7 +687,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param ury
      * @return a PdfFormField
      */
-    public PdfFormField addSignature(String name, 
+    public PdfFormField addSignature(String name,
                     float llx, float lly, float urx, float ury) {
         PdfFormField signature = PdfFormField.createSignature(writer);
         setSignatureParams(signature, name, llx, lly, urx, ury);
@@ -712,7 +695,7 @@ public class PdfAcroForm extends PdfDictionary {
         addFormField(signature);
         return signature;
     }
-    
+
     /**
      * @param field
      * @param name
@@ -738,7 +721,7 @@ public class PdfAcroForm extends PdfDictionary {
      * @param urx
      * @param ury
      */
-    public void drawSignatureAppearences(PdfFormField field, 
+    public void drawSignatureAppearences(PdfFormField field,
                     float llx, float lly, float urx, float ury) {
         PdfAppearance tp = PdfAppearance.createAppearance(writer, urx - llx, ury - lly);
         tp.setGrayFill(1.0f);

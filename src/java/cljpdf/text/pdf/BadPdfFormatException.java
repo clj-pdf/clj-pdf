@@ -49,13 +49,6 @@
 
 package cljpdf.text.pdf;
 
-import cljpdf.text.pdf.PdfBoolean;
-import cljpdf.text.pdf.PdfDictionary;
-import cljpdf.text.pdf.PdfException;
-import cljpdf.text.pdf.PdfName;
-import cljpdf.text.pdf.PdfNumber;
-import cljpdf.text.pdf.PdfString;
-
 /**
  * Signals that a bad PDF format has been used to construct a <CODE>PdfObject</CODE>.
  *
@@ -68,25 +61,25 @@ import cljpdf.text.pdf.PdfString;
  */
 
 public class BadPdfFormatException extends PdfException {
-    
+
     // constructors
-    
+
 private static final long serialVersionUID = 1802317735708833538L;
 
 /**
  * Constructs a <CODE>BadPdfFormatException</CODE> without a message.
  */
-    
+
     BadPdfFormatException() {
         super();
     }
-    
+
 /**
  * Constructs a <code>BadPdfFormatException</code> with a message.
  *
  * @param		message			a message describing the exception
  */
-    
+
     BadPdfFormatException(String message) {
         super(message);
     }

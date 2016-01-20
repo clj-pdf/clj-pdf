@@ -47,10 +47,6 @@
 
 package cljpdf.text;
 
-import cljpdf.text.Chapter;
-import cljpdf.text.Paragraph;
-import cljpdf.text.Section;
-
 import cljpdf.text.error_messages.MessageLocalization;
 /**
  * Chapter with auto numbering.
@@ -67,7 +63,7 @@ public class ChapterAutoNumber extends Chapter {
      * @since	2.1.4
      */
     protected boolean numberSet = false;
-    
+
     /**
      * Create a new object.
      *
@@ -79,7 +75,7 @@ public class ChapterAutoNumber extends Chapter {
 
     /**
      * Create a new object.
-     * 
+     *
      * @param title	    the Chapter title (as a <CODE>String</CODE>)
      */
     public ChapterAutoNumber(final String title) {
@@ -111,7 +107,7 @@ public class ChapterAutoNumber extends Chapter {
     	}
         return addSection(title, 2);
     }
-    
+
     /**
      * Changes the Chapter number.
      * @param	number	the new chapter number
