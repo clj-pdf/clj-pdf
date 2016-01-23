@@ -6,10 +6,11 @@
             :url          "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo}
 
-  :dependencies [[dom4j "1.6.1"]
-                 [org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.jfree/jfreechart "1.0.19"]
-                 [org.apache.xmlgraphics/batik-gvt "1.7"]
+                 [org.apache.xmlgraphics/batik-bridge "1.8"]
+                 [org.apache.xmlgraphics/batik-anim "1.8"]
+                 [org.apache.xmlgraphics/xmlgraphics-commons "2.1"]
                  [org.swinglabs/pdf-renderer "1.0.5"]]
   :resource-paths ["src/java"]
   :source-paths ["src/clj"]
