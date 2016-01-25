@@ -23,4 +23,5 @@
                                       [midje-readme "1.0.8"]]
                        :plugins      [[lein-marginalia "0.7.1"]
                                       [lein-midje "3.0.0"]
-                                      [midje-readme "1.0.2"]]}})
+                                      [midje-readme "1.0.2"]
+                                      [lein-cloverage "1.0.6"]]}})
