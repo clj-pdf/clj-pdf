@@ -546,7 +546,7 @@
               (string? img-data)
               (Image/getInstance ^String img-data)
 
-              ((instance? java.net.URL img-data))
+              (instance? java.net.URL img-data)
               (Image/getInstance ^java.net.URL img-data)
 
               :else
