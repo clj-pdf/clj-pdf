@@ -6,7 +6,7 @@
             :url          "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo}
 
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.jfree/jfreechart "1.0.19"]
                  [org.apache.xmlgraphics/batik-bridge "1.8"]
                  [org.apache.xmlgraphics/batik-anim "1.8"]
