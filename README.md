@@ -927,7 +927,7 @@ metadata:
 [:table {:header [{:backdrop-color [100 100 100]}
                   [:paragraph {:style :bold :size 15} "FOO"]
                   [:paragraph {:size 20} "BAR"]]
-         :CellSpacing 20}
+         :spacing 20}
   ["foo" "bar"]]
 
 ;; the widths will be: a width of 50% for the first column,
@@ -941,7 +941,7 @@ metadata:
 
 [:table {:cell-border false
          :header [{:backdrop-color [100 100 100]} "Row 1" "Row 2" "Row 3"]
-         :cellSpacing 20}
+         :spacing 20}
   ["foo"
     [:cell
       [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]}
@@ -1233,7 +1233,7 @@ creating a pdf:
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-   [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
+   [:table {:header [{:background-color [100 100 100]} "FOO"] :spacing 20}
     ["foo"
      [:cell
       [:phrase
