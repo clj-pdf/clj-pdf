@@ -483,7 +483,7 @@
                   :else             [:pdf-cell content])]
     (.addCell tbl ^PdfPCell (make-section meta element))))
 
-(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width-percent]
+(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width width-percent]
                   :as meta}
                   widths
                   & rows]
@@ -494,6 +494,7 @@
   (let [^int cols (or num-cols (apply max (map count rows)))
         tbl (new PdfPTable cols)]
 
+    (when width (.setTotalWidth tbl (float width)))
     (when width-percent (.setWidthPercentage tbl (float width-percent)))
 
     (if bounding-box
@@ -765,6 +766,11 @@
           (.setHeader doc
             (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
 
+(defn table-footer-event [{:keys [table x y]}]
+  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
+    (onEndPage [writer doc]
+      (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))))
+
 (defn- setup-doc [{:keys [left-margin
                          right-margin
                          top-margin
@@ -790,20 +796,34 @@
         height         (.. doc getPageSize getHeight)
         output-stream  (if (string? out) (new FileOutputStream ^String out) out)
         temp-stream    (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
-        footer         (when (not= footer false)
-                         (if (string? footer)
-                           {:text footer :align :right :start-page 1}
-                           (merge {:align :right :start-page 1} footer)))
-        page-numbers? (not= false (:page-numbers footer))]
+        page-numbers? (not= false (:page-numbers footer))
+        table-footer  (if (:table footer) footer)
+        footer        (when (and (not= footer false) (not table-footer))
+                        (if (string? footer)
+                          {:text footer :align :right :start-page 1}
+                          (merge {:align :right :start-page 1} footer)))]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
     (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)
           pdf-writer (PdfWriter/getInstance doc output-stream-to-use)]
+      (when table-footer
+        (when-not (= :pdf-table (-> table-footer :table first))
+          (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
+        (let [table-footer (-> table-footer
+                               (update-in [:table] make-section)
+                               (update-in [:x] #(or % 36))
+                               (update-in [:y] #(or % 64)))]
+          (.setMargins doc
+                       (float (or left-margin (.left doc)))
+                       (float (or right-margin (.left doc)))
+                       (float (or top-margin (.bottom doc)))
+                       (float (+ (-> table-footer :table (.getTotalHeight)) (or bottom-margin (.bottom doc)))))
+          (.setPageEvent pdf-writer (table-footer-event table-footer))))
       (when-not pages
         (doseq [page-event page-events]
           (.setPageEvent pdf-writer page-event))
-        (if footer
+        (if (or footer page-numbers?)
           (.setFooter doc
             (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font {:size 10})) page-numbers?)
               (.setBorder 0)
