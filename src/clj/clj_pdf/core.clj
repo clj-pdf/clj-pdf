@@ -762,20 +762,40 @@
                   (or item [:paragraph item])))))
 
 (defn- add-header [header ^Document doc]
-  (if header
-    (.setHeader doc
-                (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
+  (when header
+    (.setHeader doc (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
 
-(defn table-footer-event [{:keys [table x y]}]
+(defn table-footer-header-event [{:keys [table x y]}]
   (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
     (onEndPage [writer doc]
       (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))))
 
 (defn set-header-footer-table-width [table doc page-numbers?]
-  (let [width #(or % (- (.right doc) (.left doc) (if page-numbers? 20 0)))]
+  (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
     (if (map? (second table))
-      (update-in table [1 :width] width)
-      (concat [(first table)] [{:width width}] (rest table)))))
+      (update-in table [1 :width] #(or % default-width))
+      (concat [(first table)] [{:width default-width}] (rest table)))))
+
+(defn table-header-footer [content doc page-numbers? top-margin pdf-writer footer?]
+  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) make-section)
+        table-height (.getTotalHeight table)
+        content      (-> content
+                         (assoc-in [:table] table)
+                         (update-in [:x] #(or % (if footer? 36 (.left doc))))
+                         (update-in [:y] #(or % (if footer? 64 (- (.top doc) (or top-margin 0))))))]
+    (.setPageEvent pdf-writer (table-footer-header-event content))
+    table-height))
+
+(defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
+  (.setMargins doc
+               (float (or left-margin (.left doc)))
+               (float (or right-margin (.left doc)))
+               (float (if header-table-height
+                        (+ header-table-height (or top-margin (.bottom doc)))
+                        (or top-margin (.bottom doc))))
+               (float (if footer-table-height
+                        (+ footer-table-height (or bottom-margin (.bottom doc)))
+                        (or bottom-margin (.bottom doc))))))
 
 (defn- setup-doc [{:keys [left-margin
                           right-margin
@@ -803,6 +823,8 @@
         output-stream (if (string? out) (new FileOutputStream ^String out) out)
         temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
         page-numbers? (not= false (:page-numbers footer))
+        table-header  (if (:table header) header)
+        header        (when-not table-header header)
         table-footer  (if (:table footer) footer)
         footer        (when (and (not= footer false) (not table-footer))
                         (if (string? footer)
@@ -812,21 +834,17 @@
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages, then the document has to be post processed
     (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)
-          pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)]
-      (when table-footer
-        (when-not (= :pdf-table (-> table-footer :table first))
-          (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-        (let [table-footer (-> table-footer
-                               (update-in [:table]
-                                          #(-> % (set-header-footer-table-width doc page-numbers?) make-section))
-                               (update-in [:x] #(or % 36))
-                               (update-in [:y] #(or % 64)))]
-          (.setMargins doc
-                       (float (or left-margin (.left doc)))
-                       (float (or right-margin (.left doc)))
-                       (float (or top-margin (.bottom doc)))
-                       (float (+ (-> table-footer :table (.getTotalHeight)) (or bottom-margin (.bottom doc)))))
-          (.setPageEvent pdf-writer (table-footer-event table-footer))))
+          pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
+          header-table-height  (when table-header
+                                 (when-not (= :pdf-table (-> table-header :table first))
+                                   (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
+                                 (table-header-footer table-header doc page-numbers? top-margin pdf-writer false))
+          footer-table-height  (when table-footer
+                                 (when-not (= :pdf-table (-> table-footer :table first))
+                                   (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
+                                 (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true))]
+
+      (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
       (when-not pages
         (doseq [page-event page-events]
           (.setPageEvent pdf-writer page-event))
@@ -879,26 +897,29 @@
         :left (+ 50 font-width)
         :center (- (/ page-width 2) (/ font-width 2))))))
 
-(defn- write-total-pages [^Document doc width {:keys [footer footer-separator]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
-  (let [reader    (new PdfReader (.toByteArray temp-stream))
-        stamper   (new PdfStamper reader output-stream)
-        num-pages (.getNumberOfPages reader)
-        base-font (BaseFont/createFont)
-        footer    (when (not= footer false)
-                    (if (string? footer)
-                      {:text footer :align :right :start-page 1}
-                      (merge {:align :right :start-page 1} footer)))]
-    (when footer
-      (dotimes [i num-pages]
-        (if (>= i (dec (or (:start-page footer) 1)))
-          (doto (.getOverContent stamper (inc i))
-            (.beginText)
-            (.setFontAndSize base-font 10)
-            (.setTextMatrix
-              (align-footer width base-font footer) (float 20))
-            (.showText (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages))
-            (.endText)))))
-    (.close stamper)))
+(defn- write-total-pages [width {:keys [total-pages footer]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
+  (when (or total-pages (:table footer))
+    (let [reader    (new PdfReader (.toByteArray temp-stream))
+          stamper   (new PdfStamper reader output-stream)
+          num-pages (.getNumberOfPages reader)
+          base-font (BaseFont/createFont)
+          footer    (when (not= footer false)
+                      (if (string? footer)
+                        {:text footer :align :right :start-page 1}
+                        (merge {:align :right :start-page 1} footer)))]
+      (when footer
+        (dotimes [i num-pages]
+          (if (>= i (dec (or (:start-page footer) 1)))
+            (doto (.getOverContent stamper (inc i))
+              (.beginText)
+              (.setFontAndSize base-font 10)
+              (.setTextMatrix
+                (align-footer width base-font footer) (float 20))
+              (.showText (if total-pages
+                           (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages)
+                           (str (:text footer) " " (inc i))))
+              (.endText)))))
+      (.close stamper))))
 
 (defn- preprocess-item [item]
   (cond
@@ -931,7 +952,10 @@
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
   (register-fonts doc-meta)
-  (let [[^Document doc
+  (let [doc-meta (-> doc-meta
+                     (assoc :total-pages (:pages doc-meta))
+                     (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table)))))
+        [^Document doc
          width height
          ^ByteArrayOutputStream temp-stream
          ^OutputStream output-stream
@@ -939,8 +963,10 @@
     (doseq [item content]
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
-    (when (and (not (:pages doc-meta)) (not (empty? (:page-events doc-meta)))) (write-pages temp-stream output-stream))
-    (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
+    (when (and (not (:pages doc-meta))
+               (not (empty? (:page-events doc-meta))))
+      (write-pages temp-stream output-stream))
+    (write-total-pages width doc-meta temp-stream output-stream)))
 
 (defn- to-pdf [input-reader r out]
   (let [doc-meta (input-reader r)
@@ -957,7 +983,7 @@
           (recur))
         (do
           (.close doc)
-          (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream)))))))
+          (write-total-pages width doc-meta temp-stream output-stream))))))
 
 (defn- seq-to-doc [items out]
   (let [doc-meta (first items)
@@ -970,7 +996,7 @@
     (doseq [item (rest items)]
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
-    (when (:pages doc-meta) (write-total-pages doc width doc-meta temp-stream output-stream))))
+    (write-total-pages width doc-meta temp-stream output-stream)))
 
 (defn- stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
