@@ -308,6 +308,22 @@ All fields in the metadata section are optional:
 }
 ```
 
+The `:header` and `:footer` keys can also point to a `:table` element. The `:table` key
+must point to a `:pdf-table` type element:
+
+```clojure
+{:header {:table
+          [:pdf-table
+          {:border false}
+          [20 15 60]
+          ["This is a table header" "second column" "third column"]]}
+ :footer {:table {:table
+          [:pdf-table
+          {:border false}
+          [20 15 60]
+          ["This is a table header" "second column" "third column"]]}}
+```
+
 available page sizes:
 
 ```clojure
@@ -967,6 +983,7 @@ metadata:
 * :bounding-box `[width height]`
 * :horizontal-align :left, :rigth, :center, :justified
 * :title string
+* :width number
 * :width-percent number (0-100)
 
 ```clojure

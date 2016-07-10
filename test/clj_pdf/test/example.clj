@@ -22,7 +22,7 @@
         (rot g2d -30 (draw-tree g2d (* length 0.75) (- depth 1)))
         (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1)))))))
 
-(pdf
+#_(pdf
   [{:title         "Test doc"
     :header        "page header"
     :subject       "Some subject"
@@ -178,3 +178,32 @@
       </svg>"]]
 
   "example.pdf")
+
+#_(pdf
+  [{:title         "Test doc"
+    :header        {:table
+                    [:pdf-table
+                     {:align :left
+                      :border false}
+                     [20 15 60]
+                     ["This is a table header" "second column" "third column"]]}
+    :subject       "Some subject"
+    :creator       "Jane Doe"
+    :doc-header    ["inspired by" "William Shakespeare"]
+
+    :right-margin  50
+    :author        "John Doe"
+    :size          "a4"
+    :pages true
+    :footer        {:table
+                    [:pdf-table
+                     {                                      ;:width 20
+                      :bounding-box [50 100]
+                      :horizontal-align :right
+                      :spacing-before 100}
+                     [10 20 15]
+                     ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
+                     [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
+                     [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]}}
+   [:paragraph "this is a test"]]
+  "footer-header.pdf")

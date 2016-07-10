@@ -20,8 +20,8 @@
   :profiles {:dev     {:global-vars  {*warn-on-reflection* true}
                        :dependencies [[midje "1.8.3"]
                                       [environ "1.0.1"]
-                                      [midje-readme "1.0.8"]]
+                                      #_[midje-readme "1.0.8"]]
                        :plugins      [[lein-marginalia "0.7.1"]
-                                      [lein-midje "3.0.0"]
-                                      [midje-readme "1.0.2"]
+                                      #_[lein-midje "3.0.0"]
+                                      #_[midje-readme "1.0.2"]
                                       [lein-cloverage "1.0.6"]]}})
