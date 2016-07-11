@@ -1018,6 +1018,23 @@
           (seq? in) (seq-to-doc in out)
           :else (write-doc in out))))
 
+(defn merge
+  "usage: takes an output that can be a file name or an output stream followed by one or more documents
+   that can be input streams, urls, filenames, or byte arrays." 
+  [out & pdfs]
+  (let [doc (Document.)
+        wrt (PdfWriter/getInstance doc out)
+        cb (do (.open doc) (.getDirectContent wrt))]
+    (doseq [pdf pdfs]
+      (let [rdr (PdfReader. pdf)]
+        (dotimes [i (.getNumberOfPages rdr)]
+          (.newPage doc)
+          (.addTemplate cb (.getImportedPage wrt rdr (inc i)) 0 0))
+        (.close rdr)))
+    (.flush out)
+    (.close doc)
+    (.close out)))
+  
 ;;;templating
 (defmacro template [t]
   `(fn [~'items]
