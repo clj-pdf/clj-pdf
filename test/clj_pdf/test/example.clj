@@ -195,15 +195,9 @@
     :author        "John Doe"
     :size          "a4"
     :pages true
-    :footer        {:table
-                    [:pdf-table
-                     {                                      ;:width 20
-                      :bounding-box [50 100]
-                      :horizontal-align :right
-                      :spacing-before 100}
-                     [10 20 15]
-                     ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
-                     [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
-                     [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]}}
+    :footer        "a nice footer"}
    [:paragraph "this is a test"]]
-  "footer-header.pdf")
+  "footer-header1.pdf")
+
+#_(collate (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
+         "footer-header1.pdf" "footer-header.pdf")

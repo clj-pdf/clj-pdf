@@ -110,6 +110,25 @@ and the resulting PDF output
 <br/>
 <img src="https://raw.github.com/yogthos/clj-pdf/master/example.png" hspace="20" alt="example"/>
 
+Multiple documents can be combined into a single PDF using the `clj-pdf.core/collate` function.
+The function accepts an output stream followed by two or more documents. The documents can be one
+of InputStream, file name, URL, or a byte array.
+
+```clojure
+(def doc1 (java.io.ByteArrayOutputStream.))
+(def doc2 (java.io.ByteArrayOutputStream.))
+(def doc3 (java.io.ByteArrayOutputStream.))
+
+(pdf [{} "first document"] doc1)
+(pdf [{} "second document"] doc2)
+(pdf [{} "third document"] doc2)
+
+(collate (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
+         (.toByteArray doc1)
+         (.toByteArray doc1)
+         (.toByteArray doc1))
+```
+
 Sequences containing elements will be expanded into the document:
 
 ```clojure

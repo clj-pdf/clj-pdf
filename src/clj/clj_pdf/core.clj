@@ -1018,9 +1018,9 @@
           (seq? in) (seq-to-doc in out)
           :else (write-doc in out))))
 
-(defn merge
+(defn collate
   "usage: takes an output that can be a file name or an output stream followed by one or more documents
-   that can be input streams, urls, filenames, or byte arrays." 
+   that can be input streams, urls, filenames, or byte arrays."
   [out & pdfs]
   (let [doc (Document.)
         wrt (PdfWriter/getInstance doc out)
@@ -1034,7 +1034,7 @@
     (.flush out)
     (.close doc)
     (.close out)))
-  
+
 ;;;templating
 (defmacro template [t]
   `(fn [~'items]
