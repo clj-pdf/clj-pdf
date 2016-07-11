@@ -321,7 +321,7 @@ must point to a `:pdf-table` type element:
           [:pdf-table
           {:border false}
           [20 15 60]
-          ["This is a table header" "second column" "third column"]]}}
+          ["This is a table footer" "second column" "third column"]]}}
 ```
 
 available page sizes:
