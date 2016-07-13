@@ -331,7 +331,9 @@ The `:header` and `:footer` keys can also point to a `:table` element. The `:tab
 must point to a `:pdf-table` type element:
 
 ```clojure
-{:header {:table
+{:header {:x 20
+          :y 50
+          :table
           [:pdf-table
           {:border false}
           [20 15 60]
@@ -342,6 +344,8 @@ must point to a `:pdf-table` type element:
           [20 15 60]
           ["This is a table footer" "second column" "third column"]]}}
 ```
+
+The `:x` and `:y` keys can be used on the header and footer when using the `:table` key to specify the x/y offset on the page explicitly.
 
 available page sizes:
 
