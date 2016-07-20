@@ -1,4 +1,4 @@
-# `clj-pdf` [![Build Status](https://travis-ci.org/yogthos/clj-pdf.svg?branch=master)](http://travis-ci.org/yogthos/clj-pdf) [![Coverage Status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master)
+# `clj-pdf` [![Build Status](https://travis-ci.org/yogthos/clj-pdf.svg?branch=master)](http://travis-ci.org/yogthos/clj-pdf) [![Coverage Status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![Downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
 
 
 A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
