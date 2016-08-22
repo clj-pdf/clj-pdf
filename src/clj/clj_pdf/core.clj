@@ -286,6 +286,7 @@
                      rowspan
                      border
                      align
+                     valign
                      set-border
                      border-color
                      border-width
@@ -310,7 +311,9 @@
     (if border-width-left (.setBorderWidthLeft c (float border-width-left)))
     (if border-width-right (.setBorderWidthRight c (float border-width-right)))
     (if border-width-top (.setBorderWidthTop c (float border-width-top)))
+    (if valign (.setVerticalAlignment c ^int (get-alignment valign)))
     (.setHorizontalAlignment c ^int (get-alignment align))
+    
     (doseq [item (map
                    #(make-section meta (if (string? %) [:chunk %] %))
                    content)]
