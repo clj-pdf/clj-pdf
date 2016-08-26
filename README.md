@@ -1273,7 +1273,7 @@ creating a pdf:
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-   [:table {:header [{:background-color [100 100 100]} "FOO"] :spacing 20}
+   [:table {:header [{:background-color [100 100 100]} "FOO"] :spacing 2}
     ["foo"
      [:cell
       [:phrase
