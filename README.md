@@ -301,6 +301,19 @@ All fields in the metadata section are optional:
  :creator "Jane Doe"
  :font  {:size 11} ;specifies default font
  :doc-header ["inspired by" "William Shakespeare"]
+
+ ;;a watermark can be specified as an image or a function that
+ ;;takes the Graphics2D context and render an image on it
+ ;;the watermark will be automatically applied to each page in the document
+ ;;optionally the watermark can be rotated, scaled, and translated
+ :watermark
+ {:image "watermark.jpg"
+  ;; :image and :render keys are exclusive, :render is preferred
+  :render (fn [g2d] (.drawOval (int 0) (int 0) (int 350) (int 350)))
+  :translate [100 200]
+  :rotate 50
+  :scale [0.4 0.5]}
+
  :header "Page header text appears on each page"
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
 

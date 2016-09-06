@@ -313,7 +313,7 @@
     (if border-width-top (.setBorderWidthTop c (float border-width-top)))
     (if valign (.setVerticalAlignment c ^int (get-alignment valign)))
     (.setHorizontalAlignment c ^int (get-alignment align))
-    
+
     (doseq [item (map
                    #(make-section meta (if (string? %) [:chunk %] %))
                    content)]
@@ -519,6 +519,26 @@
 
     tbl))
 
+(defn load-image [img-data base64]
+  (cond
+    (instance? java.awt.Image img-data)
+    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
+
+    base64
+    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
+
+    (= Byte/TYPE (.getComponentType (class img-data)))
+    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) ^bytes img-data) nil)
+
+    (string? img-data)
+    (Image/getInstance ^String img-data)
+
+    (instance? java.net.URL img-data)
+    (Image/getInstance ^java.net.URL img-data)
+
+    :else
+    (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string")))))
+
 (defn- make-image [{:keys [scale
                            xscale
                            yscale
@@ -537,24 +557,7 @@
                            page-width
                            page-height]}
                    img-data]
-  (let [^Image img (cond
-                     (instance? java.awt.Image img-data)
-                     (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
-
-                     base64
-                     (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
-
-                     (= Byte/TYPE (.getComponentType (class img-data)))
-                     (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) ^bytes img-data) nil)
-
-                     (string? img-data)
-                     (Image/getInstance ^String img-data)
-
-                     (instance? java.net.URL img-data)
-                     (Image/getInstance ^java.net.URL img-data)
-
-                     :else
-                     (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string"))))
+  (let [^Image img (load-image img-data base64)
         img-width  (.getWidth img)
         img-height (.getHeight img)]
     (if rotation (.setRotation img (float rotation)))
@@ -800,6 +803,37 @@
                         (+ footer-table-height (or bottom-margin (.bottom doc)))
                         (or bottom-margin (.bottom doc))))))
 
+(defn page-events? [{:keys [pages page-events]}]
+  (or pages (not (empty? page-events))))
+
+(defn buffered-image [img-data]
+  (cond
+    (or (string? img-data)
+        (instance? java.net.URL img-data))
+    (javax.imageio.ImageIO/read (java.io.File. img-data))
+
+    (instance? java.awt.image.BufferedImage img-data)
+    img-data))
+
+(defn watermark-stamper [meta]
+  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
+    (onEndPage [writer doc]
+      (let [{:keys [image render scale rotate translate]} (:watermark meta)]
+        (g2d/with-graphics (assoc meta
+                             :pdf-writer writer
+                             :under true
+                             :scale scale
+                             :rotate rotate
+                             :translate translate)
+                           (or render
+                               (fn [g2d]
+                                 (.drawImage
+                                   g2d
+                                   (buffered-image image)
+                                   nil
+                                   (int 0)
+                                   (int 0)))))))))
+
 (defn- setup-doc [{:keys [left-margin
                           right-margin
                           top-margin
@@ -816,7 +850,8 @@
                           size
                           font-style
                           orientation
-                          page-events]}
+                          page-events
+                          watermark] :as meta}
                   out]
 
   (let [[nom head] doc-header
@@ -824,7 +859,7 @@
         width         (.. doc getPageSize getWidth)
         height        (.. doc getPageSize getHeight)
         output-stream (if (string? out) (new FileOutputStream ^String out) out)
-        temp-stream   (if (or pages (not (empty? page-events))) (new ByteArrayOutputStream))
+        temp-stream   (if (page-events? meta) (new ByteArrayOutputStream))
         page-numbers? (not= false (:page-numbers footer))
         table-header  (if (:table header) header)
         header        (when-not table-header header)
@@ -835,8 +870,8 @@
                           (merge {:align :right :start-page 1} footer)))]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
-    ;;if we have to print total pages, then the document has to be post processed
-    (let [output-stream-to-use (if (or pages (not (empty? page-events))) temp-stream output-stream)
+    ;;if we have to print total pages or add a watermark, then the document has to be post processed
+    (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
@@ -848,6 +883,12 @@
                                  (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true))]
 
       (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
+
+      (if watermark
+        (.setPageEvent pdf-writer (watermark-stamper (assoc meta
+                                                       :page-width width
+                                                       :page-height height))))
+
       (when-not pages
         (doseq [page-event page-events]
           (.setPageEvent pdf-writer page-event))
@@ -877,7 +918,6 @@
         (do
           (add-header header doc)
           (.open doc)))
-
 
       (if title (.addTitle doc title))
       (if subject (.addSubject doc subject))
@@ -1027,7 +1067,7 @@
   [out & pdfs]
   (let [doc (Document.)
         wrt (PdfWriter/getInstance doc out)
-        cb (do (.open doc) (.getDirectContent wrt))]
+        cb  (do (.open doc) (.getDirectContent wrt))]
     (doseq [pdf pdfs]
       (let [rdr (PdfReader. pdf)]
         (dotimes [i (.getNumberOfPages rdr)]
