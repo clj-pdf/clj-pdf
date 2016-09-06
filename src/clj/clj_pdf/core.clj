@@ -816,23 +816,24 @@
     img-data))
 
 (defn watermark-stamper [meta]
-  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
-    (onEndPage [writer doc]
-      (let [{:keys [image render scale rotate translate]} (:watermark meta)]
-        (g2d/with-graphics (assoc meta
-                             :pdf-writer writer
-                             :under true
-                             :scale scale
-                             :rotate rotate
-                             :translate translate)
-                           (or render
-                               (fn [g2d]
-                                 (.drawImage
-                                   g2d
-                                   (buffered-image image)
-                                   nil
-                                   (int 0)
-                                   (int 0)))))))))
+  (let [image (some-> (-> meta :watermark :image) buffered-image)]
+    (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
+      (onEndPage [writer doc]
+        (let [{:keys [render scale rotate translate]} (:watermark meta)]
+          (g2d/with-graphics (assoc meta
+                               :pdf-writer writer
+                               :under true
+                               :scale scale
+                               :rotate rotate
+                               :translate translate)
+                             (or render
+                                 (fn [g2d]
+                                   (.drawImage
+                                     g2d
+                                     image
+                                     nil
+                                     (int 0)
+                                     (int 0))))))))))
 
 (defn- setup-doc [{:keys [left-margin
                           right-margin
