@@ -689,7 +689,15 @@
   (apply merge (map stylesheet classes)))
 
 (defn- make-section
-  ([element] (if element (make-section {} element) ""))
+  ([element]
+   (cond
+     (every? coll? element)
+     (doseq [item element]
+       (make-section item))
+     element
+     (make-section {} element)
+     :else
+     ""))
   ([meta element]
    (cond
      (string? element) element
