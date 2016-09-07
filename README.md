@@ -309,7 +309,7 @@ All fields in the metadata section are optional:
  :watermark
  {:image "watermark.jpg"
   ;; :image and :render keys are exclusive, :render is preferred
-  :render (fn [g2d] (.drawOval (int 0) (int 0) (int 350) (int 350)))
+  :render (fn [g2d] (.drawOval g2d (int 0) (int 0) (int 350) (int 350)))
   :translate [100 200]
   :rotate 50
   :scale [0.4 0.5]}
