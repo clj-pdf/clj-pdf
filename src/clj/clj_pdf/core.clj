@@ -699,47 +699,50 @@
      :else
      ""))
   ([meta element]
-   (cond
-     (string? element) element
-     (nil? element) ""
-     (number? element) (str element)
-     :else
-     (let [[element-name & [h & t :as content]] element
-           tag         (if (string? element-name) (keyword element-name) element-name)
-           [tag & classes] (split-classes-from-tag tag)
-           class-attrs (get-class-attributes (:stylesheet meta) classes)
-           new-meta    (cond-> meta
-                               class-attrs (merge class-attrs)
-                               (map? h) (merge h))
-           elements    (if (map? h) t content)]
+   (try
+     (cond
+       (string? element) element
+       (nil? element) ""
+       (number? element) (str element)
+       :else
+       (let [[element-name & [h & t :as content]] element
+             tag         (if (string? element-name) (keyword element-name) element-name)
+             [tag & classes] (split-classes-from-tag tag)
+             class-attrs (get-class-attributes (:stylesheet meta) classes)
+             new-meta    (cond-> meta
+                                 class-attrs (merge class-attrs)
+                                 (map? h) (merge h))
+             elements    (if (map? h) t content)]
 
-       (apply
-         (condp = tag
-           :anchor anchor
-           :annotation annotation
-           :cell cell
-           :pdf-cell pdf-cell
-           :chapter chapter
-           :chart chart
-           :chunk text-chunk
-           :heading heading
-           :image image
-           :graphics g2d/with-graphics
-           :svg svg-element
-           :line line
-           :list li
-           :paragraph paragraph
-           :phrase phrase
-           :reference reference
-           :rectangle rectangle
-           :section section
-           :spacer spacer
-           :superscript superscript
-           :subscript subscript
-           :table table
-           :pdf-table pdf-table
-           (throw (new Exception (str "invalid tag: " tag " in element: " element))))
-         (cons new-meta elements))))))
+         (apply
+           (condp = tag
+             :anchor anchor
+             :annotation annotation
+             :cell cell
+             :pdf-cell pdf-cell
+             :chapter chapter
+             :chart chart
+             :chunk text-chunk
+             :heading heading
+             :image image
+             :graphics g2d/with-graphics
+             :svg svg-element
+             :line line
+             :list li
+             :paragraph paragraph
+             :phrase phrase
+             :reference reference
+             :rectangle rectangle
+             :section section
+             :spacer spacer
+             :superscript superscript
+             :subscript subscript
+             :table table
+             :pdf-table pdf-table
+             (throw (new Exception (str "invalid tag: " tag " in element: " element))))
+           (cons new-meta elements))))
+     (catch Exception e
+       (throw (Exception. (str "failed to parse element: " [meta element]) e))))))
 
 (declare append-to-doc)
 
