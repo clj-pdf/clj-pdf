@@ -742,7 +742,7 @@
              (throw (new Exception (str "invalid tag: " tag " in element: " element))))
            (cons new-meta elements))))
      (catch Exception e
-       (throw (Exception. (str "failed to parse element: " [meta element]) e))))))
+       (throw (Exception. (str "failed to parse, meta: " meta "element:" element) e))))))
 
 (declare append-to-doc)
 
