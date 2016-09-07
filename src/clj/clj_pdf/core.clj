@@ -691,7 +691,9 @@
 (defn- make-section
   ([element]
    (cond
-     (every? coll? element)
+     (empty? element)
+     ""
+     (every? sequential? element)
      (doseq [item element]
        (make-section item))
      element
