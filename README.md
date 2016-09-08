@@ -964,6 +964,13 @@ metadata:
   [[:cell {:colspan 2} "Foo"] "Bar"]
   [[:cell "foo1" " " "foo2"] "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
+  
+[:table
+  {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
+  ["1a" "1b" "1c" "1d"]
+  ["2a" "2b" "2c" "2d"]
+  ["3a" "3b" "3c" "3d"]
+  ["4a" "4b" "4c" "4d"]]
 
 ;;header elements can set alignment
 [:table {:header [{:backdrop-color [100 100 100]}
