@@ -309,10 +309,10 @@ All fields in the metadata section are optional:
  :watermark
  {:image "watermark.jpg"
   ;; :image and :render keys are exclusive, :render is preferred
-  :render (fn [g2d] (.drawOval g2d (int 0) (int 0) (int 350) (int 350)))
+  :render (fn [g2d] (.drawString g2d "DRAFT COPY" 0 0))
   :translate [100 200]
-  :rotate 50
-  :scale [0.4 0.5]}
+  :rotate 45
+  :scale 8}
 
  :header "Page header text appears on each page"
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
