@@ -309,10 +309,10 @@ All fields in the metadata section are optional:
  :watermark
  {:image "watermark.jpg"
   ;; :image and :render keys are exclusive, :render is preferred
-  :render (fn [g2d] (.drawOval g2d (int 0) (int 0) (int 350) (int 350)))
+  :render (fn [g2d] (.drawString g2d "DRAFT COPY" 0 0))
   :translate [100 200]
-  :rotate 50
-  :scale [0.4 0.5]}
+  :rotate 45
+  :scale 8}
 
  :header "Page header text appears on each page"
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
@@ -964,6 +964,13 @@ metadata:
   [[:cell {:colspan 2} "Foo"] "Bar"]
   [[:cell "foo1" " " "foo2"] "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
+  
+[:table
+  {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
+  ["1a" "1b" "1c" "1d"]
+  ["2a" "2b" "2c" "2d"]
+  ["3a" "3b" "3c" "3d"]
+  ["4a" "4b" "4c" "4d"]]
 
 ;;header elements can set alignment
 [:table {:header [{:backdrop-color [100 100 100]}

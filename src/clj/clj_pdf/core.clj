@@ -418,7 +418,10 @@
           (let [^Element header-text (if (string? h)
                                        (make-section [:chunk {:style "bold"} h])
                                        (make-section h))
-                header-cell          (doto (new Cell header-text) (.setHeader true))]
+                ^Cell header-cell    (if (= Cell (type header-text))
+                                       header-text
+                                       (new Cell header-text))
+                header-cell          (doto header-cell (.setHeader true))]
             (when-not (and (string? h)
                            (map? (second h)))
               (when-let [align (:align (second h))]
