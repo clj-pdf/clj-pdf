@@ -1,10 +1,11 @@
 (ns clj-pdf.core
-  (:use clojure.walk
-        [clojure.set :only (rename-keys)]
-        [clojure.string :only [split]])
-  (:require [clj-pdf.charting :as charting]
+  (:require [clojure.walk :refer :all]
+            [clojure.string :refer [split]]
+            [clojure.set :refer [rename-keys]]
+            [clj-pdf.charting :as charting]
             [clj-pdf.svg :as svg]
-            [clj-pdf.graphics-2d :as g2d])
+            [clj-pdf.graphics-2d :as g2d]
+            [clojure.java.io :as io])
   (:import
     java.awt.Color
     [cljpdf.text.pdf.draw DottedLineSeparator LineSeparator]
@@ -869,11 +870,11 @@
                   out]
 
   (let [[nom head] doc-header
-        doc           (new Document (page-orientation (page-size size) orientation))
+        doc           (Document. (page-orientation (page-size size) orientation))
         width         (.. doc getPageSize getWidth)
         height        (.. doc getPageSize getHeight)
-        output-stream (if (string? out) (new FileOutputStream ^String out) out)
-        temp-stream   (if (page-events? meta) (new ByteArrayOutputStream))
+        output-stream (if (string? out) (FileOutputStream. ^String out) out)
+        temp-stream   (if (page-events? meta) (ByteArrayOutputStream.))
         page-numbers? (not= false (:page-numbers footer))
         table-header  (if (:table header) header)
         header        (when-not table-header header)
@@ -1078,16 +1079,20 @@
 (defn collate
   "usage: takes an output that can be a file name or an output stream followed by one or more documents
    that can be input streams, urls, filenames, or byte arrays."
-  [out & pdfs]
-  (let [doc (Document.)
+  [& params]
+  (let [[{:keys [size orientation]} out & pdfs]
+        (if (map? (first params))
+          params
+          (into [{}] params))
+        out (io/output-stream out)
+        doc (Document. (page-orientation (page-size size) orientation))
         wrt (PdfWriter/getInstance doc out)
         cb  (do (.open doc) (.getDirectContent wrt))]
     (doseq [pdf pdfs]
-      (let [rdr (PdfReader. pdf)]
+      (with-open [rdr (PdfReader. (io/input-stream pdf))]
         (dotimes [i (.getNumberOfPages rdr)]
           (.newPage doc)
-          (.addTemplate cb (.getImportedPage wrt rdr (inc i)) 0 0))
-        (.close rdr)))
+          (.addTemplate cb (.getImportedPage wrt rdr (inc i)) 0 0))))
     (.flush out)
     (.close doc)
     (.close out)))
