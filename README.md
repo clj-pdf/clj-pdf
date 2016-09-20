@@ -669,7 +669,13 @@ optional metadata:
 [:image "test/mandelbrot.jpg"]
 [:image "http://clojure.org/space/showimage/clojure-icon.gif"]
 
+; images can also be inserted inline with other text by wrapping it inside
+; of a chunk element
+[:paragraph "hello, world!" [:chunk [:image "smiley.png"]]]
 
+; x and y values provided to the chunk are relative offsets for the image.
+; the image element itself still accepts it's normal properties shown above
+[:chunk {:x 10 :y 10} [:image {:width 16 :height 16} "smiley.png"]]
 ```
 
 #### Line

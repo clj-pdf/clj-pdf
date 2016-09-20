@@ -23,6 +23,7 @@
      GreekList
      HeaderFooter
      Image
+     ImgRaw
      List
      ListItem
      PageSize
@@ -251,14 +252,25 @@
     (.setFont (font meta))
     (.addAll (map (partial make-section meta) content))))
 
+(defn- image-chunk [meta ^Image image]
+  (new Chunk
+       image
+       (float (or (:x meta) 0))
+       (float (or (:y meta) 0))))
+
 (defn- text-chunk [style content]
-  (let [ch (new Chunk ^String (make-section content) (font style))]
+  (let [ch (new Chunk ^String (make-section content) ^Font (font style))]
     (set-background ch style)
     (cond
       (:super style) (.setTextRise ch (float 5))
       (:sub style) (.setTextRise ch (float -4))
       :else ch)))
 
+(defn- make-chunk [meta content]
+  (let [children (make-section content)]
+    (if (instance? ImgRaw children)
+      (image-chunk meta children)
+      (text-chunk meta children))))
 
 (defn- annotation
   ([_ title text] (annotation title text))
@@ -728,7 +740,7 @@
              :pdf-cell pdf-cell
              :chapter chapter
              :chart chart
-             :chunk text-chunk
+             :chunk make-chunk
              :heading heading
              :image image
              :graphics g2d/with-graphics
