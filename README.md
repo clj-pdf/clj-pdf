@@ -918,7 +918,7 @@ creates a text chunk in subscript
 
 tag :svg
 
-Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) is recommended here, or if a reader or file is presented, content is retrieved from
+Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) or [Analema](https://github.com/liebke/analemma) is recommended here, or if a reader or file is presented, content is retrieved from
 that resource.
 
 optional metadata (refer to Graphics section for details):
