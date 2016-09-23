@@ -300,6 +300,7 @@
                      border
                      align
                      valign
+                     leading
                      set-border
                      border-color
                      border-width
@@ -326,6 +327,7 @@
     (if border-width-top (.setBorderWidthTop c (float border-width-top)))
     (if valign (.setVerticalAlignment c ^int (get-alignment valign)))
     (.setHorizontalAlignment c ^int (get-alignment align))
+    (if leading (.setLeading c (float leading)))
 
     (doseq [item (map
                    #(make-section meta (if (string? %) [:chunk %] %))

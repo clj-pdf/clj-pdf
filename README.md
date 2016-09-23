@@ -1055,6 +1055,7 @@ tag :cell
 metadata:
 
 * :align :left, :center, :right, :justified
+* :leading number (line spacing is measured in 72 units per inch, default spacing is 1.5 times the font height)
 * :background-color `[r g b]` (int values)
 * :colspan number
 * :border boolean
