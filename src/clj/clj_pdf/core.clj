@@ -1044,34 +1044,35 @@
     (write-total-pages width doc-meta temp-stream output-stream)))
 
 (defn- to-pdf [input-reader r out]
-  (let [doc-meta (input-reader r)
-        [^Document doc
-         width height
-         ^ByteArrayOutputStream temp-stream
-         ^OutputStream output-stream
-         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+  (let [doc-meta (input-reader r)]
     (register-fonts doc-meta)
-    (loop []
-      (if-let [item (input-reader r)]
-        (do
-          (add-item item doc-meta width height doc pdf-writer)
-          (recur))
-        (do
-          (.close doc)
-          (write-total-pages width doc-meta temp-stream output-stream))))))
+    (let [[^Document doc
+           width height
+           ^ByteArrayOutputStream temp-stream
+           ^OutputStream output-stream
+           ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+      (loop []
+        (if-let [item (input-reader r)]
+          (do
+            (add-item item doc-meta width height doc pdf-writer)
+            (recur))
+          (do
+            (.close doc)
+            (write-total-pages width doc-meta temp-stream output-stream)))))))
 
 (defn- seq-to-doc [items out]
-  (let [doc-meta (first items)
-        [^Document doc
-         width height
-         ^ByteArrayOutputStream temp-stream
-         ^OutputStream output-stream
-         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+  (let [doc-meta (first items)]
     (register-fonts doc-meta)
-    (doseq [item (rest items)]
-      (add-item item doc-meta width height doc pdf-writer))
-    (.close doc)
-    (write-total-pages width doc-meta temp-stream output-stream)))
+    (let [[^Document doc
+           width height
+           ^ByteArrayOutputStream temp-stream
+           ^OutputStream output-stream
+           ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+      (doseq [item (rest items)]
+        (add-item item doc-meta width height doc pdf-writer))
+      (.close doc)
+      (write-total-pages width doc-meta temp-stream output-stream))))
+
 
 (defn- stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
