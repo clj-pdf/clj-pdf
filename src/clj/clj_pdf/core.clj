@@ -802,10 +802,18 @@
   (when header
     (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
 
-(defn table-footer-header-event [{:keys [table x y]}]
+(defn table-footer-header-event [{:keys [table x y]} first-page?]
   (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
     (onEndPage [writer doc]
-      (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))))
+      (when-not (and (= (.getPageNumber doc) 1) (not first-page?))
+        (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
+      ;;Reserve space for header table after page 1
+      (if (= (.getPageNumber doc) 1)
+        (.setMargins doc
+                     (float (.left doc))
+                     (float (.left doc))
+                     (float y)
+                     (float (.bottom doc)))))))
 
 (defn set-header-footer-table-width [table doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
@@ -813,14 +821,14 @@
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
-(defn table-header-footer [content doc page-numbers? top-margin pdf-writer footer?]
+(defn table-header-footer [content doc page-numbers? top-margin pdf-writer footer? first-page?]
   (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) make-section)
         table-height (.getTotalHeight table)
         content      (-> content
                          (assoc-in [:table] table)
                          (update-in [:x] #(or % (if footer? 36 (.left doc))))
                          (update-in [:y] #(or % (if footer? 64 (- (.top doc) (or top-margin 0))))))]
-    (.setPageEvent pdf-writer (table-footer-header-event content))
+    (.setPageEvent pdf-writer (table-footer-header-event content (and (not footer?) first-page?)))
     table-height))
 
 (defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
@@ -900,7 +908,8 @@
         footer        (when (and (not= footer false) (not table-footer))
                         (if (string? footer)
                           {:text footer :align :right :start-page 1}
-                          (merge {:align :right :start-page 1} footer)))]
+                          (merge {:align :right :start-page 1} footer)))
+        header-first-page (if letterhead false true)]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
@@ -909,13 +918,15 @@
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
                                    (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-header doc page-numbers? top-margin pdf-writer false))
+                                 (table-header-footer table-header doc page-numbers? top-margin pdf-writer false header-first-page))
           footer-table-height  (when table-footer
                                  (when-not (= :pdf-table (-> table-footer :table first))
                                    (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true))]
+                                 (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true false))]
 
-      (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
+      (if header-first-page
+        (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
+        (set-margins doc left-margin right-margin top-margin bottom-margin nil footer-table-height))
 
       (if watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
