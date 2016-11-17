@@ -798,9 +798,9 @@
                     :pdf-writer pdf-writer)
                   (or item [:paragraph item])))))
 
-(defn- add-header [header ^Document doc]
+(defn- add-header [header ^Document doc font-style]
   (when header
-    (.setHeader doc (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
+    (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
 
 (defn table-footer-header-event [{:keys [table x y]}]
   (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
@@ -890,6 +890,7 @@
         doc           (Document. (page-orientation (page-size size) orientation))
         width         (.. doc getPageSize getWidth)
         height        (.. doc getPageSize getHeight)
+        font-style    (or font-style (:font meta) {})
         output-stream (if (string? out) (FileOutputStream. ^String out) out)
         temp-stream   (if (page-events? meta) (ByteArrayOutputStream.))
         page-numbers? (not= false (:page-numbers footer))
@@ -926,7 +927,7 @@
           (.setPageEvent pdf-writer page-event))
         (if (or footer page-numbers?)
           (.setFooter doc
-                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font {:size 10})) page-numbers?)
+                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font font-style)) page-numbers?)
                         (.setBorder 0)
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
@@ -945,10 +946,10 @@
         (do
           (.open doc)
           (doseq [item letterhead]
-            (append-to-doc nil nil (or font-style {}) width height (if (string? item) [:paragraph item] item) doc pdf-writer))
-          (add-header header doc))
+            (append-to-doc nil nil font-style width height (if (string? item) [:paragraph item] item) doc pdf-writer))
+          (add-header header doc font-style))
         (do
-          (add-header header doc)
+          (add-header header doc font-style)
           (.open doc)))
 
       (if title (.addTitle doc title))
