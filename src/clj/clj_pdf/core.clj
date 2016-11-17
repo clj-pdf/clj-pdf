@@ -808,11 +808,11 @@
       (when-not (and (= (.getPageNumber doc) 1) (not first-page?))
         (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
       ;;Reserve space for header table after page 1
-      (if (= (.getPageNumber doc) 1)
+      (if (and (= (.getPageNumber doc) 1) (not first-page?))
         (.setMargins doc
                      (float (.left doc))
                      (float (.left doc))
-                     (float y)
+                     (float (+ y (.getTotalHeight table)))
                      (float (.bottom doc)))))))
 
 (defn set-header-footer-table-width [table doc page-numbers?]
