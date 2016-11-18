@@ -1026,20 +1026,24 @@
       (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc stylesheet references font width height (preprocess-item item) doc pdf-writer)))
 
-(defn register-fonts [doc-meta]
+(defn- register-fonts [doc-meta]
   (when (and (= true (:register-system-fonts? doc-meta))
              (nil? @fonts-registered?))
     ; register fonts in usual directories
     (FontFactory/registerDirectories)
     (reset! fonts-registered? true)))
 
+(defn- parse-meta [doc-meta]
+  (register-fonts doc-meta)
+  doc-meta)
+
 (defn- write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
-  (register-fonts doc-meta)
   (let [doc-meta (-> doc-meta
+                     parse-meta
                      (assoc :total-pages (:pages doc-meta))
                      (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table)))))
         [^Document doc
@@ -1056,34 +1060,32 @@
     (write-total-pages width doc-meta temp-stream output-stream)))
 
 (defn- to-pdf [input-reader r out]
-  (let [doc-meta (input-reader r)]
-    (register-fonts doc-meta)
-    (let [[^Document doc
-           width height
-           ^ByteArrayOutputStream temp-stream
-           ^OutputStream output-stream
-           ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
-      (loop []
-        (if-let [item (input-reader r)]
-          (do
-            (add-item item doc-meta width height doc pdf-writer)
-            (recur))
-          (do
-            (.close doc)
-            (write-total-pages width doc-meta temp-stream output-stream)))))))
+  (let [doc-meta (-> r input-reader parse-meta)
+        [^Document doc
+         width height
+         ^ByteArrayOutputStream temp-stream
+         ^OutputStream output-stream
+         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+    (loop []
+      (if-let [item (input-reader r)]
+        (do
+          (add-item item doc-meta width height doc pdf-writer)
+          (recur))
+        (do
+          (.close doc)
+          (write-total-pages width doc-meta temp-stream output-stream))))))
 
 (defn- seq-to-doc [items out]
-  (let [doc-meta (first items)]
-    (register-fonts doc-meta)
-    (let [[^Document doc
-           width height
-           ^ByteArrayOutputStream temp-stream
-           ^OutputStream output-stream
-           ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
-      (doseq [item (rest items)]
-        (add-item item doc-meta width height doc pdf-writer))
-      (.close doc)
-      (write-total-pages width doc-meta temp-stream output-stream))))
+  (let [doc-meta (-> items first parse-meta)
+        [^Document doc
+         width height
+         ^ByteArrayOutputStream temp-stream
+         ^OutputStream output-stream
+         ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
+    (doseq [item (rest items)]
+      (add-item item doc-meta width height doc pdf-writer))
+    (.close doc)
+    (write-total-pages width doc-meta temp-stream output-stream)))
 
 
 (defn- stream-doc
