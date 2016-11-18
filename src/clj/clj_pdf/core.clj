@@ -409,7 +409,7 @@
     c))
 
 
-(defn- table-header [^Table tbl header cols]
+(defn- table-header [meta ^Table tbl header cols]
   (when header
     (let [meta?       (map? (first header))
           header-rest (if meta? (rest header) header)
@@ -419,8 +419,8 @@
       (if (= 1 (count header-data))
         (let [header               (first header-data)
               ^Element header-text (if (string? header)
-                                     (make-section [:chunk {:style "bold"} header])
-                                     (make-section header))
+                                     (make-section meta [:chunk {:style "bold"} header])
+                                     (make-section meta header))
               header-cell          (doto (new Cell header-text)
                                      (.setHorizontalAlignment 1)
                                      (.setHeader true)
@@ -430,8 +430,8 @@
 
         (doseq [h header-data]
           (let [^Element header-text (if (string? h)
-                                       (make-section [:chunk {:style "bold"} h])
-                                       (make-section h))
+                                       (make-section meta [:chunk {:style "bold"} h])
+                                       (make-section meta h))
                 ^Cell header-cell    (if (= Cell (type header-text))
                                        header-text
                                        (new Cell header-text))
@@ -483,7 +483,7 @@
     (.setPadding tbl (if padding (float padding) (float 3)))
     (if spacing (.setSpacing tbl (float spacing)))
     (if offset (.setOffset tbl (float offset)))
-    (table-header tbl header cols)
+    (table-header meta tbl header cols)
 
     (.setAlignment tbl ^int (get-alignment align))
 
