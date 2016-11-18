@@ -102,7 +102,7 @@
     (case [(not (nil? ttf-name))
            (if (keyword? encoding) encoding :custom)]
       [true :unicode] BaseFont/IDENTITY_H
-      [true :custom] encoding
+      [true :custom] (or encoding BaseFont/IDENTITY_H)
       [true :default] BaseFont/WINANSI
       BaseFont/WINANSI)
 
