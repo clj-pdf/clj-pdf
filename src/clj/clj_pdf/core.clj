@@ -828,7 +828,7 @@
                          (assoc-in [:table] table)
                          (update-in [:x] #(or % (if footer? 36 (.left doc))))
                          (update-in [:y] #(or % (if footer? 64 (- (.top doc) (or top-margin 0))))))]
-    (.setPageEvent pdf-writer (table-footer-header-event content (and (not footer?) first-page?)))
+    (.setPageEvent pdf-writer (table-footer-header-event content (or footer? first-page?)))
     table-height))
 
 (defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
