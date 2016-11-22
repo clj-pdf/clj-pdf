@@ -821,8 +821,8 @@
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
-(defn table-header-footer [content doc page-numbers? top-margin pdf-writer footer? first-page?]
-  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) make-section)
+(defn table-header-footer [content meta doc page-numbers? top-margin pdf-writer footer? first-page?]
+  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) (->> (make-section meta)))
         table-height (.getTotalHeight table)
         content      (-> content
                          (assoc-in [:table] table)
@@ -915,14 +915,15 @@
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
+          header-meta          (merge font-style meta)
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
                                    (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-header doc page-numbers? top-margin pdf-writer false header-first-page))
+                                 (table-header-footer table-header header-meta doc page-numbers? top-margin pdf-writer false header-first-page))
           footer-table-height  (when table-footer
                                  (when-not (= :pdf-table (-> table-footer :table first))
                                    (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true false))]
+                                 (table-header-footer table-footer header-meta doc page-numbers? top-margin pdf-writer true false))]
 
       (if header-first-page
         (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
