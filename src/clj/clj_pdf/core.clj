@@ -898,7 +898,7 @@
         doc           (Document. (page-orientation (page-size size) orientation))
         width         (.. doc getPageSize getWidth)
         height        (.. doc getPageSize getHeight)
-        font-style    (or font-style (:font meta) {})
+        font-style    (or font-style {})
         output-stream (if (string? out) (FileOutputStream. ^String out) out)
         temp-stream   (if (page-events? meta) (ByteArrayOutputStream.))
         page-numbers? (not= false (:page-numbers footer))
@@ -984,12 +984,13 @@
         :left (+ 50 font-width)
         :center (- (/ page-width 2) (/ font-width 2))))))
 
-(defn- write-total-pages [width {:keys [total-pages footer]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
+(defn- write-total-pages [width {:keys [total-pages footer font-style]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (when (or total-pages (:table footer))
     (let [reader    (new PdfReader (.toByteArray temp-stream))
           stamper   (new PdfStamper reader output-stream)
           num-pages (.getNumberOfPages reader)
-          base-font (BaseFont/createFont)
+          base-font (or (some-> font-style font .getBaseFont)
+                        (BaseFont/createFont))
           footer    (when (not= footer false)
                       (if (string? footer)
                         {:text footer :align :right :start-page 1}
@@ -1035,7 +1036,8 @@
 
 (defn- parse-meta [doc-meta]
   (register-fonts doc-meta)
-  doc-meta)
+  ; font would conflict with a function definition
+  (assoc doc-meta :font-style (:font doc-meta)))
 
 (defn- write-doc
   "(write-doc document out)
