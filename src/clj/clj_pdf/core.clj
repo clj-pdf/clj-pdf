@@ -812,7 +812,7 @@
         (.setMargins doc
                      (float (.left doc))
                      (float (.left doc))
-                     (float (+ y (.getTotalHeight table)))
+                     (float (+ (.topMargin doc) (.getTotalHeight table)))
                      (float (.bottom doc)))))))
 
 (defn set-header-footer-table-width [table doc page-numbers?]
