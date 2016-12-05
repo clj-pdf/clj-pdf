@@ -918,7 +918,7 @@ creates a text chunk in subscript
 
 tag :svg
 
-Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) is recommended here, or if a reader or file is presented, content is retrieved from
+Renders a string of text as an SVG document - use of [Hiccup](http://weavejester.github.io/hiccup/) or [Analema](https://github.com/liebke/analemma) is recommended here, or if a reader or file is presented, content is retrieved from
 that resource.
 
 optional metadata (refer to Graphics section for details):
@@ -1055,6 +1055,7 @@ tag :cell
 metadata:
 
 * :align :left, :center, :right, :justified
+* :leading number (line spacing is measured in 72 units per inch, default spacing is 1.5 times the font height)
 * :background-color `[r g b]` (int values)
 * :colspan number
 * :border boolean
