@@ -926,7 +926,8 @@
           (.setPageEvent pdf-writer page-event))
         (if (or footer page-numbers?)
           (.setFooter doc
-                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font {:size 10})) page-numbers?)
+                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") 
+                                                   ^java.awt.Font (font {:size 10 :color (:color footer)})) page-numbers?)
                         (.setBorder 0)
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
