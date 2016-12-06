@@ -991,8 +991,8 @@
     (let [reader    (new PdfReader (.toByteArray temp-stream))
           stamper   (new PdfStamper reader output-stream)
           num-pages (.getNumberOfPages reader)
-          base-font (or (some-> font-style font .getBaseFont)
-                        (BaseFont/createFont))
+          font      (-> font-style (or {}) (merge {:size 10 :color (:color footer)}) font)
+          base-font (.getBaseFont font)
           footer    (when (not= footer false)
                       (if (string? footer)
                         {:text footer :align :right :start-page 1}
@@ -1003,6 +1003,7 @@
             (doto (.getOverContent stamper (inc i))
               (.beginText)
               (.setFontAndSize base-font 10)
+              (.setColorFill (.getColor font))
               (.setTextMatrix
                 (align-footer width base-font footer) (float 20))
               (.showText (if total-pages
