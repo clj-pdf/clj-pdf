@@ -939,7 +939,8 @@
           (.setPageEvent pdf-writer page-event))
         (if (or footer page-numbers?)
           (.setFooter doc
-                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") ^java.awt.Font (font font-style)) page-numbers?)
+                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ")
+                                                   ^java.awt.Font (font (merge font-style {:size 10 :color (:color footer)}))) page-numbers?)
                         (.setBorder 0)
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
@@ -1089,7 +1090,6 @@
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
     (write-total-pages width doc-meta temp-stream output-stream)))
-
 
 (defn- stream-doc
   "reads the document from an input stream one form at a time and writes it out to the output stream
