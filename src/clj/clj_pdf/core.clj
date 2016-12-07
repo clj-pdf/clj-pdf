@@ -102,7 +102,7 @@
     (case [(not (nil? ttf-name))
            (if (keyword? encoding) encoding :custom)]
       [true :unicode] BaseFont/IDENTITY_H
-      [true :custom] encoding
+      [true :custom] (or encoding BaseFont/IDENTITY_H)
       [true :default] BaseFont/WINANSI
       BaseFont/WINANSI)
 
@@ -409,7 +409,7 @@
     c))
 
 
-(defn- table-header [^Table tbl header cols]
+(defn- table-header [meta ^Table tbl header cols]
   (when header
     (let [meta?       (map? (first header))
           header-rest (if meta? (rest header) header)
@@ -419,8 +419,8 @@
       (if (= 1 (count header-data))
         (let [header               (first header-data)
               ^Element header-text (if (string? header)
-                                     (make-section [:chunk {:style "bold"} header])
-                                     (make-section header))
+                                     (make-section meta [:chunk {:style "bold"} header])
+                                     (make-section meta header))
               header-cell          (doto (new Cell header-text)
                                      (.setHorizontalAlignment 1)
                                      (.setHeader true)
@@ -430,8 +430,8 @@
 
         (doseq [h header-data]
           (let [^Element header-text (if (string? h)
-                                       (make-section [:chunk {:style "bold"} h])
-                                       (make-section h))
+                                       (make-section meta [:chunk {:style "bold"} h])
+                                       (make-section meta h))
                 ^Cell header-cell    (if (= Cell (type header-text))
                                        header-text
                                        (new Cell header-text))
@@ -483,7 +483,7 @@
     (.setPadding tbl (if padding (float padding) (float 3)))
     (if spacing (.setSpacing tbl (float spacing)))
     (if offset (.setOffset tbl (float offset)))
-    (table-header tbl header cols)
+    (table-header meta tbl header cols)
 
     (.setAlignment tbl ^int (get-alignment align))
 
@@ -798,14 +798,22 @@
                     :pdf-writer pdf-writer)
                   (or item [:paragraph item])))))
 
-(defn- add-header [header ^Document doc]
+(defn- add-header [header ^Document doc font-style]
   (when header
-    (.setHeader doc (doto (new HeaderFooter (new Phrase header) false) (.setBorderWidthTop 0)))))
+    (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
 
-(defn table-footer-header-event [{:keys [table x y]}]
+(defn table-footer-header-event [{:keys [table x y]} first-page?]
   (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
     (onEndPage [writer doc]
-      (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))))
+      (when-not (and (= (.getPageNumber doc) 1) (not first-page?))
+        (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
+      ;;Reserve space for header table after page 1
+      (if (and (= (.getPageNumber doc) 1) (not first-page?))
+        (.setMargins doc
+                     (float (.left doc))
+                     (float (.left doc))
+                     (float (+ (.topMargin doc) (.getTotalHeight table)))
+                     (float (.bottom doc)))))))
 
 (defn set-header-footer-table-width [table doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
@@ -813,14 +821,14 @@
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
-(defn table-header-footer [content doc page-numbers? top-margin pdf-writer footer?]
-  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) make-section)
+(defn table-header-footer [content meta doc page-numbers? top-margin pdf-writer footer? first-page?]
+  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) (->> (make-section meta)))
         table-height (.getTotalHeight table)
         content      (-> content
                          (assoc-in [:table] table)
                          (update-in [:x] #(or % (if footer? 36 (.left doc))))
                          (update-in [:y] #(or % (if footer? 64 (- (.top doc) (or top-margin 0))))))]
-    (.setPageEvent pdf-writer (table-footer-header-event content))
+    (.setPageEvent pdf-writer (table-footer-header-event content (or footer? first-page?)))
     table-height))
 
 (defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
@@ -890,6 +898,7 @@
         doc           (Document. (page-orientation (page-size size) orientation))
         width         (.. doc getPageSize getWidth)
         height        (.. doc getPageSize getHeight)
+        font-style    (or font-style {})
         output-stream (if (string? out) (FileOutputStream. ^String out) out)
         temp-stream   (if (page-events? meta) (ByteArrayOutputStream.))
         page-numbers? (not= false (:page-numbers footer))
@@ -899,22 +908,26 @@
         footer        (when (and (not= footer false) (not table-footer))
                         (if (string? footer)
                           {:text footer :align :right :start-page 1}
-                          (merge {:align :right :start-page 1} footer)))]
+                          (merge {:align :right :start-page 1} footer)))
+        header-first-page (if letterhead false true)]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
+          header-meta          (merge font-style meta)
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
                                    (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-header doc page-numbers? top-margin pdf-writer false))
+                                 (table-header-footer table-header header-meta doc page-numbers? top-margin pdf-writer false header-first-page))
           footer-table-height  (when table-footer
                                  (when-not (= :pdf-table (-> table-footer :table first))
                                    (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-footer doc page-numbers? top-margin pdf-writer true))]
+                                 (table-header-footer table-footer header-meta doc page-numbers? top-margin pdf-writer true false))]
 
-      (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
+      (if header-first-page
+        (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
+        (set-margins doc left-margin right-margin top-margin bottom-margin nil footer-table-height))
 
       (if watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
@@ -926,8 +939,8 @@
           (.setPageEvent pdf-writer page-event))
         (if (or footer page-numbers?)
           (.setFooter doc
-                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ") 
-                                                   ^java.awt.Font (font {:size 10 :color (:color footer)})) page-numbers?)
+                      (doto (new HeaderFooter (new Phrase (str (:text footer) " ")
+                                                   ^java.awt.Font (font (merge font-style {:size 10 :color (:color footer)}))) page-numbers?)
                         (.setBorder 0)
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
@@ -946,10 +959,10 @@
         (do
           (.open doc)
           (doseq [item letterhead]
-            (append-to-doc nil nil (or font-style {}) width height (if (string? item) [:paragraph item] item) doc pdf-writer))
-          (add-header header doc))
+            (append-to-doc nil nil font-style width height (if (string? item) [:paragraph item] item) doc pdf-writer))
+          (add-header header doc font-style))
         (do
-          (add-header header doc)
+          (add-header header doc font-style)
           (.open doc)))
 
       (if title (.addTitle doc title))
@@ -973,12 +986,13 @@
         :left (+ 50 font-width)
         :center (- (/ page-width 2) (/ font-width 2))))))
 
-(defn- write-total-pages [width {:keys [total-pages footer]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
+(defn- write-total-pages [width {:keys [total-pages footer font-style]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (when (or total-pages (:table footer))
     (let [reader    (new PdfReader (.toByteArray temp-stream))
           stamper   (new PdfStamper reader output-stream)
           num-pages (.getNumberOfPages reader)
-          base-font (BaseFont/createFont)
+          font      (-> font-style (or {}) (merge {:size 10 :color (:color footer)}) font)
+          base-font (.getBaseFont font)
           footer    (when (not= footer false)
                       (if (string? footer)
                         {:text footer :align :right :start-page 1}
@@ -989,6 +1003,7 @@
             (doto (.getOverContent stamper (inc i))
               (.beginText)
               (.setFontAndSize base-font 10)
+              (.setColorFill (.getColor font))
               (.setTextMatrix
                 (align-footer width base-font footer) (float 20))
               (.showText (if total-pages
@@ -1015,20 +1030,25 @@
       (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc stylesheet references font width height (preprocess-item item) doc pdf-writer)))
 
-(defn register-fonts [doc-meta]
+(defn- register-fonts [doc-meta]
   (when (and (= true (:register-system-fonts? doc-meta))
              (nil? @fonts-registered?))
     ; register fonts in usual directories
     (FontFactory/registerDirectories)
     (reset! fonts-registered? true)))
 
+(defn- parse-meta [doc-meta]
+  (register-fonts doc-meta)
+  ; font would conflict with a function definition
+  (assoc doc-meta :font-style (:font doc-meta)))
+
 (defn- write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
-  (register-fonts doc-meta)
   (let [doc-meta (-> doc-meta
+                     parse-meta
                      (assoc :total-pages (:pages doc-meta))
                      (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table)))))
         [^Document doc
@@ -1045,13 +1065,12 @@
     (write-total-pages width doc-meta temp-stream output-stream)))
 
 (defn- to-pdf [input-reader r out]
-  (let [doc-meta (input-reader r)
+  (let [doc-meta (-> r input-reader parse-meta)
         [^Document doc
          width height
          ^ByteArrayOutputStream temp-stream
          ^OutputStream output-stream
          ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
-    (register-fonts doc-meta)
     (loop []
       (if-let [item (input-reader r)]
         (do
@@ -1062,13 +1081,12 @@
           (write-total-pages width doc-meta temp-stream output-stream))))))
 
 (defn- seq-to-doc [items out]
-  (let [doc-meta (first items)
+  (let [doc-meta (-> items first parse-meta)
         [^Document doc
          width height
          ^ByteArrayOutputStream temp-stream
          ^OutputStream output-stream
          ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
-    (register-fonts doc-meta)
     (doseq [item (rest items)]
       (add-item item doc-meta width height doc pdf-writer))
     (.close doc)
