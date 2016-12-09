@@ -36,7 +36,7 @@
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
-    [cljpdf.text.pdf BaseFont PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
+    [cljpdf.text.pdf BaseFont MultiColumnText PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
     [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream]))
 
 (declare ^:dynamic *cache*)
@@ -689,6 +689,24 @@
         item)
       (throw (Exception. (str "reference tag not found: " reference-id))))))
 
+(defn- multi-column [{:keys [left-margin right-margin page-width gutter-width top height columns] :as meta} content]
+  (let [ml-text (cond
+                  (and top height)
+                  (MultiColumnText. (float top) (float height))
+                  height
+                  (MultiColumnText. (float height))
+                  :else
+                  (MultiColumnText. MultiColumnText/AUTOMATIC))]
+    (.addRegularColumns ml-text
+                        (float left-margin)
+                        (float  (- page-width right-margin))
+                        (float (or gutter-width 10))
+                        (int columns))
+    (.addElement ml-text (make-section meta (if (string? content)
+                                              [:phrase content]
+                                              content)))
+    ml-text))
+
 (defn- spacer
   ([_] (make-section [:paragraph {:leading 12} "\n"]))
   ([_ height]
@@ -749,6 +767,7 @@
              :svg svg-element
              :line line
              :list li
+             :multi-column multi-column
              :paragraph paragraph
              :phrase phrase
              :reference reference

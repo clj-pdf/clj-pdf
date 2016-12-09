@@ -26,6 +26,7 @@ A library for easily generating PDFs from Clojure. An example PDF is available [
       - [Image](#image)
       - [Line](#line)
       - [List](#list)
+      - [Multi-Column](#multi-column)
       - [Pagebreak](#pagebreak)
       - [Paragraph](#paragraph)
       - [Phrase](#phrase)
@@ -269,6 +270,7 @@ Use the CSS-like shortcut for applying classes to elements (e.g. `[:paragraph.fo
 [Image](#image),
 [Line](#line),
 [List](#list),
+[Multi-Column](#multi-column),
 [Pagebreak](#pagebreak),
 [Paragraph](#paragraph),
 [Phrase](#phrase),
@@ -731,6 +733,34 @@ content:
        "yet another item"]
 ```
 
+#### Multi-Column
+
+Creates a multi-column text element.
+
+tag :multi-column
+
+optional metadata:
+
+* :top - number
+* :height - number
+* :columns - number of columns (required)
+
+content: A string of text that will be split into columns.
+
+```clojure
+[:multi-column
+    {:columns 3}
+    "This text will be split into three columns"]
+
+[:multi-column
+    {:top 10 :columns 3}
+    "This text will be split into three columns"]
+
+[:multi-column
+    {:top 10 :height 100 :columns 3}
+    "This text will be split into three columns"]
+```
+
 #### Pagebreak
 
 tag :pagebreak
@@ -970,7 +1000,7 @@ metadata:
   [[:cell {:colspan 2} "Foo"] "Bar"]
   [[:cell "foo1" " " "foo2"] "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
-  
+
 [:table
   {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
   ["1a" "1b" "1c" "1d"]
