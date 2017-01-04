@@ -1001,6 +1001,14 @@ metadata:
   [[:cell "foo1" " " "foo2"] "bar1" "baz1"]
   ["foo2" "bar2" "baz2"]]
 
+;;insert a sequence of rows into the table
+(into
+  [:table {:header ["foo" "bar" "baz"]}]
+   (for [x (range 1 10)]
+     [[:cell {:color [(* 10 x) 0 0]} (dec x)]
+      [:cell {:color [0 (* 10 x) 0]} x]
+      [:cell {:color [0 0 (* 10 x)]} (inc x)]]))  
+
 [:table
   {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
   ["1a" "1b" "1c" "1d"]
