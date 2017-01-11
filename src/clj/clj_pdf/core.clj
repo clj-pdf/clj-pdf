@@ -1007,12 +1007,13 @@
 
 (defn- write-total-pages [width {:keys [total-pages footer font-style]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (when (or total-pages (:table footer))
-    (let [reader    (new PdfReader (.toByteArray temp-stream))
-          stamper   (new PdfStamper reader output-stream)
-          num-pages (.getNumberOfPages reader)
-          font      (-> font-style (or {}) (merge {:size 10 :color (:color footer)}) font)
-          base-font (.getBaseFont font)
-          footer    (when (not= footer false)
+    (let [reader      (new PdfReader (.toByteArray temp-stream))
+          stamper     (new PdfStamper reader output-stream)
+          num-pages   (.getNumberOfPages reader)
+          footer-font (-> font-style (or {:size 10}) (merge footer))
+          font        (font footer-font)
+          base-font   (.getBaseFont font)
+          footer      (when (not= footer false)
                       (if (string? footer)
                         {:text footer :align :right :start-page 1}
                         (merge {:align :right :start-page 1} footer)))]
@@ -1021,7 +1022,7 @@
           (if (>= i (dec (or (:start-page footer) 1)))
             (doto (.getOverContent stamper (inc i))
               (.beginText)
-              (.setFontAndSize base-font 10)
+              (.setFontAndSize base-font (:size footer-font))
               (.setColorFill (.getColor font))
               (.setTextMatrix
                 (align-footer width base-font footer) (float 20))
