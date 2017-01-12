@@ -997,8 +997,8 @@
   (.flush output-stream)
   (.close output-stream))
 
-(defn- align-footer [page-width ^BaseFont base-font {:keys [text align]}]
-  (let [font-width (.getWidthPointKerned base-font (or text "") (float 10))]
+(defn- align-footer [page-width ^BaseFont base-font {:keys [align size]} text]
+  (let [font-width (.getWidthPointKerned base-font text (float size))]
     (float
       (condp = align
         :right (- page-width (+ 50 font-width))
@@ -1010,26 +1010,26 @@
     (let [reader      (new PdfReader (.toByteArray temp-stream))
           stamper     (new PdfStamper reader output-stream)
           num-pages   (.getNumberOfPages reader)
-          footer-font (-> font-style (or {:size 10}) (merge footer))
-          font        (font footer-font)
-          base-font   (.getBaseFont font)
           footer      (when (not= footer false)
-                      (if (string? footer)
-                        {:text footer :align :right :start-page 1}
-                        (merge {:align :right :start-page 1} footer)))]
+                        (if (string? footer)
+                          (merge {:text footer :align :right :start-page 1 :size 10} font-style)
+                          (merge {:align :right :start-page 1 :size 10} font-style footer)))
+          font        (font footer)
+          base-font   (.getBaseFont font)]
       (when footer
         (dotimes [i num-pages]
           (if (>= i (dec (or (:start-page footer) 1)))
-            (doto (.getOverContent stamper (inc i))
-              (.beginText)
-              (.setFontAndSize base-font (:size footer-font))
-              (.setColorFill (.getColor font))
-              (.setTextMatrix
-                (align-footer width base-font footer) (float 20))
-              (.showText (if total-pages
-                           (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages)
-                           (str (:text footer) " " (inc i))))
-              (.endText)))))
+            (let [footer-string (if total-pages
+                                  (str (:text footer) " " (inc i) (or (:footer-separator footer) " / ") num-pages)
+                                  (str (:text footer) " " (inc i)))]
+              (doto (.getOverContent stamper (inc i))
+                (.beginText)
+                (.setFontAndSize base-font (:size footer))
+                (.setColorFill (.getColor font))
+                (.setTextMatrix
+                  (align-footer width base-font footer footer-string) (float 20))
+                (.showText footer-string)
+                (.endText))))))
       (.close stamper))))
 
 (defn- preprocess-item [item]
