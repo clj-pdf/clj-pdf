@@ -350,14 +350,14 @@ must point to a `:pdf-table` type element:
           :y 50
           :table
           [:pdf-table
-          {:border false}
-          [20 15 60]
-          ["This is a table header" "second column" "third column"]]}
- :footer {:table {:table
+           {:border false}
+           [20 15 60]
+           ["This is a table header" "second column" "third column"]]}
+ :footer {:table
           [:pdf-table
-          {:border false}
-          [20 15 60]
-          ["This is a table footer" "second column" "third column"]]}}
+           {:border false}
+           [20 15 60]
+           ["This is a table footer" "second column" "third column"]]}
 ```
 
 The `:x` and `:y` keys can be used on the header and footer when using the `:table` key to specify the x/y offset on the page explicitly.
