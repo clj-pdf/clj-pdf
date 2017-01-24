@@ -200,8 +200,8 @@
 
 (defn- paragraph [{:keys [first-line-indent indent keep-together leading align] :as meta}
                   & content]
-  (let [paragraph (if leading (Paragraph. (float leading)) (Paragraph.))]
-
+  (let [paragraph (Paragraph.)]
+    (if leading (.setLeading paragraph leading) (.setLeading paragraph 0 1.5))
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
     (if first-line-indent (.setFirstLineIndent paragraph (float first-line-indent)))
@@ -708,9 +708,9 @@
     ml-text))
 
 (defn- spacer
-  ([_] (make-section [:paragraph {:leading 12} "\n"]))
-  ([_ height]
-   (make-section [:paragraph {:leading 12} (apply str (take height (repeat "\n")))])))
+  ([meta] (spacer meta 1))
+  ([meta height]
+   (make-section [:paragraph (merge {:leading (:size meta 12)} meta) (apply str (take height (repeat "\n")))])))
 
 (defn- rectangle
   [_ width height]
