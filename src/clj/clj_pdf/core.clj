@@ -935,7 +935,7 @@
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
-          header-meta          (merge font-style meta)
+          header-meta          (merge font-style (dissoc meta :size))
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
                                    (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))

@@ -202,3 +202,28 @@
 #_(collate (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
          "footer-header1.pdf" "footer-header.pdf")
 
+#_(pdf
+  [{:size :a4
+    :font
+          {:style :bold
+           :size 15
+           :family :helvetica
+           :color [0 234 123]}
+    :header {:x 20
+             :y 50
+             :table
+                [:pdf-table
+                 {:border false
+                  :style :bold
+                  :size 10
+                  :family :helvetica
+                  :color [0 234 0]}
+                 [20 15 60]
+                 ["This is a table header" "second column" "third column"]]}
+    :footer {:table
+             [:pdf-table
+              {:border false}
+              [20 15 60]
+              ["This is a table footer" "second column" "third column"]]}}
+   [:paragraph "hi"]]
+  "test.pdf")
