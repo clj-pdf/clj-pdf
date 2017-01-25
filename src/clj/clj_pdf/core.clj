@@ -419,7 +419,7 @@
       (if (= 1 (count header-data))
         (let [header               (first header-data)
               ^Element header-text (if (string? header)
-                                     (make-section meta [:chunk {:style "bold"} header])
+                                     (make-section meta [:phrase {:style "bold"} header])
                                      (make-section meta header))
               header-cell          (doto (new Cell header-text)
                                      (.setHorizontalAlignment 1)
@@ -430,7 +430,7 @@
 
         (doseq [h header-data]
           (let [^Element header-text (if (string? h)
-                                       (make-section meta [:chunk {:style "bold"} h])
+                                       (make-section meta [:phrase {:style "bold"} h])
                                        (make-section meta h))
                 ^Cell header-cell    (if (= Cell (type header-text))
                                        header-text
