@@ -181,22 +181,27 @@
 
 #_(pdf
   [{:title         "Test doc"
+    :top-margin 20
+    :letterhead ["A letterhead"]
     :header        {:table
                     [:pdf-table
                      {:align :left
-                      :border false}
+                      :border false
+                      :background-color [200 200 200 ]}
                      [20 15 60]
                      ["This is a table header" "second column" "third column"]]}
     :subject       "Some subject"
     :creator       "Jane Doe"
     :doc-header    ["inspired by" "William Shakespeare"]
-
-    :right-margin  50
     :author        "John Doe"
     :size          "a4"
     :pages true
     :footer        "a nice footer"}
-   [:paragraph "this is a test"]]
+   [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tincidunt, neque id egestas vestibulum, turpis nisl egestas dolor, vel efficitur risus felis non urna. Aliquam a nunc scelerisque, imperdiet justo eget, congue nulla. Duis finibus metus in mauris cursus placerat. In hac habitasse platea dictumst. Duis semper enim enim, et vestibulum massa placerat dapibus. Suspendisse nec imperdiet elit. Aenean tincidunt erat at neque facilisis, id vestibulum tellus molestie."]
+   [:pagebreak]
+   [:paragraph "Nullam vitae leo pulvinar purus pulvinar egestas in a turpis. Mauris pharetra sodales odio, sed aliquet dui aliquet eu. Nulla a ipsum non lectus dapibus aliquam. Nulla imperdiet ante at felis lobortis, sed egestas lacus aliquet. Fusce tempor diam in libero molestie, quis mollis lectus venenatis. In ut fermentum tortor. Nam ornare eros sed risus viverra, eget fringilla urna facilisis."]
+   [:pagebreak]
+   [:paragraph "In bibendum neque a sollicitudin imperdiet. Aenean justo nisi, congue at augue ac, pharetra feugiat erat. Donec metus sapien, blandit ut facilisis non, egestas at orci. Proin pellentesque ipsum non libero dignissim, sed porta diam hendrerit. Fusce a est condimentum, cursus turpis eu, semper nulla. Vestibulum a finibus eros. Aenean eget dapibus nulla. Morbi viverra nisi gravida, venenatis tellus hendrerit, tincidunt mi. Integer molestie nisl in pellentesque maximus. Praesent porta blandit mauris id bibendum. Maecenas viverra arcu a feugiat pharetra. In condimentum massa arcu. Proin consectetur, nisi id congue semper, nisi odio gravida libero, a laoreet magna turpis at ante."]]
   "footer-header1.pdf")
 
 #_(collate (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
