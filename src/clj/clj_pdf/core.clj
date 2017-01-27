@@ -415,7 +415,7 @@
           header-rest (if meta? (rest header) header)
           header-data header-rest
           set-bg      #(if-let [[r g b] (if meta? (:backdrop-color (first header)))]
-                        (doto ^Cell % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
+                         (doto ^Cell % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
         (let [header               (first header-data)
               ^Element header-text (if (string? header)
@@ -699,7 +699,7 @@
                   (MultiColumnText. MultiColumnText/AUTOMATIC))]
     (.addRegularColumns ml-text
                         (float left-margin)
-                        (float  (- page-width right-margin))
+                        (float (- page-width right-margin))
                         (float (or gutter-width 10))
                         (int columns))
     (.addElement ml-text (make-section meta (if (string? content)
@@ -821,33 +821,15 @@
   (when header
     (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
 
-(defn table-footer-header-event [{:keys [table x y]} first-page?]
-  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
-    (onEndPage [writer doc]
-      (when-not (and (= (.getPageNumber doc) 1) (not first-page?))
-        (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
-      ;;Reserve space for header table after page 1
-      (if (and (= (.getPageNumber doc) 1) (not first-page?))
-        (.setMargins doc
-                     (float (.left doc))
-                     (float (.left doc))
-                     (float (+ (.topMargin doc) (.getTotalHeight table)))
-                     (float (.bottom doc)))))))
-
 (defn set-header-footer-table-width [table doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
     (if (map? (second table))
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
-(defn table-header-footer [content meta doc page-numbers? top-margin pdf-writer footer? first-page?]
-  (let [table        (-> content :table (set-header-footer-table-width doc (if footer? page-numbers? false)) (->> (make-section meta)))
-        table-height (.getTotalHeight table)
-        content      (-> content
-                         (assoc-in [:table] table)
-                         (update-in [:x] #(or % (if footer? 36 (.left doc))))
-                         (update-in [:y] #(or % (if footer? 64 (- (.top doc) (or top-margin 0))))))]
-    (.setPageEvent pdf-writer (table-footer-header-event content (or footer? first-page?)))
+(defn table-header-footer-height [content meta doc page-numbers? footer?]
+  (let [table        (-> content :table (set-header-footer-table-width doc (or footer? page-numbers?)) (->> (make-section meta)))
+        table-height (.getTotalHeight table)]
     table-height))
 
 (defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
@@ -860,6 +842,30 @@
                (float (if footer-table-height
                         (+ footer-table-height (or bottom-margin (.bottom doc)))
                         (or bottom-margin (.bottom doc))))))
+
+(defn table-footer-header-event [{:keys [table x y] :as content} footer? header-first-page?]
+  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
+    (onEndPage [writer doc]
+      (when (or footer? header-first-page? (not= (.getPageNumber doc) 1))
+        (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
+      ;; Reserve space for header table after page 1
+      (when (and (= (.getPageNumber doc) 1) (not header-first-page?))
+        (.setMargins doc
+                     (.leftMargin doc)
+                     (.rightMargin doc)
+                     (float (+ (.topMargin doc) (.getTotalHeight table)))
+                     (.bottomMargin doc))))))
+
+(defn set-table-header-footer-event [content meta doc page-numbers? pdf-writer footer? header-first-page?]
+  (let [table   (-> content :table (set-header-footer-table-width doc (or footer? page-numbers?)) (->> (make-section meta)))
+        y       (if header-first-page?
+                  (+ (.top doc) (.getTotalHeight table))
+                  (.top doc))
+        content (-> content
+                    (assoc-in [:table] table)
+                    (update-in [:x] #(or % (if footer? 36 (.left doc))))
+                    (update-in [:y] #(or % (if footer? 64 y))))]
+    (.setPageEvent pdf-writer (table-footer-header-event content footer? header-first-page?))))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
@@ -914,22 +920,22 @@
                   out]
 
   (let [[nom head] doc-header
-        doc           (Document. (page-orientation (page-size size) orientation))
-        width         (.. doc getPageSize getWidth)
-        height        (.. doc getPageSize getHeight)
-        font-style    (or font-style {})
-        output-stream (if (string? out) (FileOutputStream. ^String out) out)
-        temp-stream   (if (page-events? meta) (ByteArrayOutputStream.))
-        page-numbers? (and (not= false footer)
-                           (not= false (:page-numbers footer)))
-        table-header  (if (:table header) header)
-        header        (when-not table-header header)
-        table-footer  (if (:table footer) footer)
-        footer        (when (and (not= footer false) (not table-footer))
-                        (if (string? footer)
-                          {:text footer :align :right :start-page 1}
-                          (merge {:align :right :start-page 1} footer)))
-        header-first-page (if letterhead false true)]
+        doc                (Document. (page-orientation (page-size size) orientation))
+        width              (.. doc getPageSize getWidth)
+        height             (.. doc getPageSize getHeight)
+        font-style         (or font-style {})
+        output-stream      (if (string? out) (FileOutputStream. ^String out) out)
+        temp-stream        (if (page-events? meta) (ByteArrayOutputStream.))
+        page-numbers?      (and (not= false footer)
+                                (not= false (:page-numbers footer)))
+        table-header       (if (:table header) header)
+        header             (when-not table-header header)
+        table-footer       (if (:table footer) footer)
+        footer             (when (and (not= footer false) (not table-footer))
+                             (if (string? footer)
+                               {:text footer :align :right :start-page 1}
+                               (merge {:align :right :start-page 1} footer)))
+        header-first-page? (if letterhead false true)]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
@@ -939,15 +945,19 @@
           header-table-height  (when table-header
                                  (when-not (= :pdf-table (-> table-header :table first))
                                    (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-header header-meta doc page-numbers? top-margin pdf-writer false header-first-page))
+                                 (table-header-footer-height table-header header-meta doc page-numbers? false))
           footer-table-height  (when table-footer
                                  (when-not (= :pdf-table (-> table-footer :table first))
                                    (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-                                 (table-header-footer table-footer header-meta doc page-numbers? top-margin pdf-writer true false))]
-
-      (if header-first-page
+                                 (table-header-footer-height table-footer header-meta doc page-numbers? true))]
+      (if header-first-page?
         (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
         (set-margins doc left-margin right-margin top-margin bottom-margin nil footer-table-height))
+
+      (when table-header
+        (set-table-header-footer-event table-header header-meta doc page-numbers? pdf-writer false header-first-page?))
+      (when table-footer
+        (set-table-header-footer-event table-footer header-meta doc page-numbers? pdf-writer true false))
 
       (if watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
@@ -1008,15 +1018,15 @@
 
 (defn- write-total-pages [width {:keys [total-pages footer font-style]} ^ByteArrayOutputStream temp-stream ^OutputStream output-stream]
   (when (or total-pages (:table footer))
-    (let [reader      (new PdfReader (.toByteArray temp-stream))
-          stamper     (new PdfStamper reader output-stream)
-          num-pages   (.getNumberOfPages reader)
-          footer      (when (not= footer false)
-                        (if (string? footer)
-                          (merge {:text footer :align :right :start-page 1 :size 10} font-style)
-                          (merge {:align :right :start-page 1 :size 10} font-style footer)))
-          font        (font footer)
-          base-font   (.getBaseFont font)]
+    (let [reader    (new PdfReader (.toByteArray temp-stream))
+          stamper   (new PdfStamper reader output-stream)
+          num-pages (.getNumberOfPages reader)
+          footer    (when (not= footer false)
+                      (if (string? footer)
+                        (merge {:text footer :align :right :start-page 1 :size 10} font-style)
+                        (merge {:align :right :start-page 1 :size 10} font-style footer)))
+          font      (font footer)
+          base-font (.getBaseFont font)]
       (when footer
         (dotimes [i num-pages]
           (if (>= i (dec (or (:start-page footer) 1)))
