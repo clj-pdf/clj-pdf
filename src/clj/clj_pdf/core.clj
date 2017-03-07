@@ -678,7 +678,7 @@
                                          (doto (new DottedLineSeparator) (.setGap (float gap)))
                                          (new DottedLineSeparator))
                                        (new LineSeparator))]
-    (doto lineSeparator (.setLineColor (if (and r g b) (new Color r g b)))
+    (doto lineSeparator (if (and r g b) (.setLineColor (new Color r g b)))
                         (.setOffset -5))))
 
 (defn- reference [meta reference-id]
