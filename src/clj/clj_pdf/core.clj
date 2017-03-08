@@ -672,13 +672,14 @@
         (swap! *cache* assoc svg-hash compiled)
         compiled))))
 
-(defn- line [{dotted? :dotted, gap :gap} & _]
+(defn- line [{dotted? :dotted, gap :gap, [r g b] :color} & _]
   (let [^LineSeparator lineSeparator (if dotted?
                                        (if gap
                                          (doto (new DottedLineSeparator) (.setGap (float gap)))
                                          (new DottedLineSeparator))
                                        (new LineSeparator))]
-    (doto lineSeparator (.setOffset -5))))
+    (doto lineSeparator (if (and r g b) (.setLineColor (new Color r g b)))
+                        (.setOffset -5))))
 
 (defn- reference [meta reference-id]
   (if-let [item (get @*cache* reference-id)]
