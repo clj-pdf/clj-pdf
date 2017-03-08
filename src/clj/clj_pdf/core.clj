@@ -678,8 +678,9 @@
                                          (doto (new DottedLineSeparator) (.setGap (float gap)))
                                          (new DottedLineSeparator))
                                        (new LineSeparator))]
-    (doto lineSeparator (if (and r g b) (.setLineColor (new Color r g b)))
-                        (.setOffset -5))))
+    (if (and r g b) (.setLineColor lineSeparator (new Color r g b)))
+    (.setOffset lineSeparator -5)
+    lineSeparator))
 
 (defn- reference [meta reference-id]
   (if-let [item (get @*cache* reference-id)]
