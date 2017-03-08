@@ -686,6 +686,7 @@ tag :line
 
 optional metadata:
 
+* :color [r g b]
 * :dotted boolean
 * :gap number spaces between dots if line is dotted
 
@@ -695,6 +696,7 @@ creates a horizontal line
 [:line]
 [:line {:dotted true}]
 [:line {:dotted true :gap 10}]
+[:line {:dotted true :gap 10 :color [10 100 50]}]
 ```
 
 
