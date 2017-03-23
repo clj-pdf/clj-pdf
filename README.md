@@ -996,6 +996,7 @@ metadata:
    and can also be formatted via a vector of paragraphs or phrases
 * :offset number
 * :num-cols number
+* :no-split-cells? boolean if true, will prevent cells (and rows) from being split across two pages. if a cell won't fit entirely on the current page, the row will be moved to the next page. default is false
 
 ```clojure
 [:table {:header ["Row 1" "Row 2" "Row 3"] :width 50 :border false :cell-border false}
@@ -1066,14 +1067,17 @@ that can either be strings, images, chunks, paragraphs, phrases, pdf-cells, or o
 metadata:
 
 * :background-color `[r g b]`
-* :spacing-before number
-* :spacing-after number
+* :spacing-before number spacing before the table
+* :spacing-after number spacing after the table
 * :cell-border boolean
 * :bounding-box `[width height]`
-* :horizontal-align :left, :rigth, :center, :justified
+* :horizontal-align :left, :right, :center, :justified
 * :title string
 * :width number
 * :width-percent number (0-100)
+* :num-cols number manually specify the number of columns in the table. if not specified this will be automatically set to the maximum number of columns that appear in any row in the table.
+* :keep-together? boolean if true, attempts to keep the entire table on the same page. if there is not enough room on the current page, the table will be moved to the next page. will not work if the table is too large for any single page. default is false
+* :no-split-rows? boolean if true, if a row won't fit in the space remaining on the current page, it will be moved to the next page instead of the cells being split between two pages. default is false
 
 ```clojure
 [:pdf-table
@@ -1084,6 +1088,15 @@ metadata:
   ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
   [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
   [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]
+
+; if the widths vector that normally would be after the metadata map is nil, the
+; pdf-table's column widths will be automatically figured out (evenly spaced)
+[:pdf-table
+  {:width-percent 100}
+  nil
+  ["a" "b" "c"]
+  ["1" "2" "3"]
+  ["i" "ii" "iii"]]
 ```
 
 #### Table Cell
