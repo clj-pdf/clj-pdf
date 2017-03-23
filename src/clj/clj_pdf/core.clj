@@ -504,12 +504,26 @@
                   :else [:pdf-cell content])]
     (.addCell tbl ^PdfPCell (make-section meta element))))
 
-(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width width-percent]
+(defn- pdf-table [{:keys [bounding-box
+                          cell-border
+                          horizontal-align
+                          keep-together?
+                          no-split-rows?
+                          no-split-late?
+                          num-cols
+                          spacing-after
+                          spacing-before
+                          table-events
+                          width
+                          width-percent]
                    :as   meta}
                   widths
                   & rows]
-  (when (empty? rows) (throw (new Exception "Table must contain at least one row")))
-  (when (not= (count widths) (or num-cols (apply max (map count rows))))
+  (when (empty? rows)
+    (throw (new Exception "Table must contain at least one row")))
+  (when (and widths
+             (not= (count widths)
+                   (or num-cols (apply max (map count rows)))))
     (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
 
   (let [^int cols (or num-cols (apply max (map count rows)))
@@ -519,9 +533,12 @@
     (when width-percent (.setWidthPercentage tbl (float width-percent)))
 
     (if bounding-box
-      (let [[x y] bounding-box]
-        (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y])))
-      (.setWidths tbl (float-array widths)))
+      (if-not widths
+        (throw (new Exception "widths must be non-nil when bounding-box is used in a pdf-table"))
+        (let [[x y] bounding-box]
+          (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y]))))
+      (if widths
+        (.setWidths tbl (float-array widths))))
 
     (doseq [table-event table-events]
       (.setTableEvent tbl table-event))
@@ -530,6 +547,13 @@
     (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
     (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
+
+    (.setKeepTogether tbl (boolean keep-together?))
+
+    ; these are inverted so the default if not specified matches
+    ; PdfPTable default behaviour
+    (.setSplitRows tbl (boolean (not no-split-rows?)))
+    (.setSplitLate tbl (boolean (not no-split-late?)))
 
     (doseq [row rows]
       (doseq [column row]
