@@ -457,7 +457,19 @@
                   :else [:cell content])]
     (.addCell tbl ^Cell (make-section meta element))))
 
-(defn- table [{:keys [background-color spacing padding offset header border border-width cell-border width widths align num-cols]
+(defn- table [{:keys [align
+                      background-color
+                      border
+                      border-width
+                      cell-border
+                      header
+                      no-split-cells?
+                      num-cols
+                      offset
+                      padding
+                      spacing
+                      width
+                      widths]
                :as   meta}
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
@@ -486,6 +498,8 @@
     (table-header meta tbl header cols)
 
     (.setAlignment tbl ^int (get-alignment align))
+
+    (.setCellsFitPage tbl (boolean no-split-cells?))
 
     (doseq [row rows]
       (doseq [column row]
