@@ -1066,6 +1066,8 @@ that can either be strings, images, chunks, paragraphs, phrases, pdf-cells, or o
 
 metadata:
 
+* :header a vector containing one or more row vectors (of the same format as normal table rows) that will be used as the header for the table
+* :footer same as :header, but for footer rows
 * :background-color `[r g b]`
 * :spacing-before number spacing before the table
 * :spacing-after number spacing after the table
@@ -1097,6 +1099,17 @@ metadata:
   ["a" "b" "c"]
   ["1" "2" "3"]
   ["i" "ii" "iii"]]
+  
+; table with 2 header rows, 3 regular content rows
+[:pdf-table
+  {:header [[[:pdf-cell {:colspan 2} 
+              [:paragraph {:align :center :style :bold} "Customer Orders"]]]
+            [[:phrase {:style :bold} "Name"]
+             [:phrase {:style :bold} "Order Amount"]]]}
+  [50 50]
+  ["Joe" "$20.00"]
+  ["Bob" "$7.50"]
+  ["Mary" "$18.90"]]
 ```
 
 #### Table Cell
