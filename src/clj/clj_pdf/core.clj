@@ -457,7 +457,19 @@
                   :else [:cell content])]
     (.addCell tbl ^Cell (make-section meta element))))
 
-(defn- table [{:keys [background-color spacing padding offset header border border-width cell-border width widths align num-cols]
+(defn- table [{:keys [align
+                      background-color
+                      border
+                      border-width
+                      cell-border
+                      header
+                      no-split-cells?
+                      num-cols
+                      offset
+                      padding
+                      spacing
+                      width
+                      widths]
                :as   meta}
               & rows]
   (when (< (count rows) 1) (throw (new Exception "Table must contain rows!")))
@@ -487,6 +499,8 @@
 
     (.setAlignment tbl ^int (get-alignment align))
 
+    (.setCellsFitPage tbl (boolean no-split-cells?))
+
     (doseq [row rows]
       (doseq [column row]
         (add-table-cell tbl (dissoc meta :header :align :offset :num-cols :width :widths) column)))
@@ -504,38 +518,76 @@
                   :else [:pdf-cell content])]
     (.addCell tbl ^PdfPCell (make-section meta element))))
 
-(defn- pdf-table [{:keys [spacing-before spacing-after cell-border bounding-box num-cols horizontal-align table-events width width-percent]
+(defn- pdf-table [{:keys [bounding-box
+                          cell-border
+                          footer
+                          header
+                          horizontal-align
+                          keep-together?
+                          no-split-rows?
+                          no-split-late?
+                          num-cols
+                          spacing-after
+                          spacing-before
+                          table-events
+                          width
+                          width-percent]
                    :as   meta}
                   widths
                   & rows]
-  (when (empty? rows) (throw (new Exception "Table must contain at least one row")))
-  (when (not= (count widths) (or num-cols (apply max (map count rows))))
-    (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
+  (when (empty? rows)
+    (throw (new Exception "Table must contain at least one row")))
+  (let [header-size (if (seq header) (count header))
+        footer-size (if (seq footer) (count footer))
+        ; with PdfPTable, the header and footer rows need to go first in the list
+        ; of table rows provided to it
+        rows        (concat (if header-size header) (if footer-size footer) rows)]
+    (when (and widths
+               (not= (count widths)
+                     (or num-cols (apply max (map count rows)))))
+      (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
 
-  (let [^int cols (or num-cols (apply max (map count rows)))
-        tbl       (new PdfPTable cols)]
+    (let [^int cols (or num-cols (apply max (map count rows)))
+          tbl       (new PdfPTable cols)]
 
-    (when width (.setTotalWidth tbl (float width)))
-    (when width-percent (.setWidthPercentage tbl (float width-percent)))
+      ; PdfPTable is pretty weird. setHeaderRows needs to be given a number that is
+      ; the sum of the total number of header _and_ footer rows that this table
+      ; will have, while setFooterRows is just the number of footer rows.
+      (if (or header-size footer-size)
+        (.setHeaderRows tbl (int (+ (or header-size 0) (or footer-size 0)))))
+      (if footer-size (.setFooterRows tbl (int footer-size)))
 
-    (if bounding-box
-      (let [[x y] bounding-box]
-        (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y])))
-      (.setWidths tbl (float-array widths)))
+      (when width (.setTotalWidth tbl (float width)))
+      (when width-percent (.setWidthPercentage tbl (float width-percent)))
 
-    (doseq [table-event table-events]
-      (.setTableEvent tbl table-event))
+      (if bounding-box
+        (if-not widths
+          (throw (new Exception "widths must be non-nil when bounding-box is used in a pdf-table"))
+          (let [[x y] bounding-box]
+            (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y]))))
+        (if widths
+          (.setWidths tbl (float-array widths))))
 
-    (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
-    (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
+      (doseq [table-event table-events]
+        (.setTableEvent tbl table-event))
 
-    (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
+      (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
+      (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
-    (doseq [row rows]
-      (doseq [column row]
-        (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
+      (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
 
-    tbl))
+      (.setKeepTogether tbl (boolean keep-together?))
+
+      ; these are inverted so the default if not specified matches
+      ; PdfPTable default behaviour
+      (.setSplitRows tbl (boolean (not no-split-rows?)))
+      (.setSplitLate tbl (boolean (not no-split-late?)))
+
+      (doseq [row rows]
+        (doseq [column row]
+          (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
+
+      tbl)))
 
 (defn load-image [img-data base64]
   (cond
