@@ -520,6 +520,8 @@
 
 (defn- pdf-table [{:keys [bounding-box
                           cell-border
+                          footer
+                          header
                           horizontal-align
                           keep-together?
                           no-split-rows?
@@ -535,45 +537,57 @@
                   & rows]
   (when (empty? rows)
     (throw (new Exception "Table must contain at least one row")))
-  (when (and widths
-             (not= (count widths)
-                   (or num-cols (apply max (map count rows)))))
-    (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
+  (let [header-size (if (seq header) (count header))
+        footer-size (if (seq footer) (count footer))
+        ; with PdfPTable, the header and footer rows need to go first in the list
+        ; of table rows provided to it
+        rows        (concat (if header-size header) (if footer-size footer) rows)]
+    (when (and widths
+               (not= (count widths)
+                     (or num-cols (apply max (map count rows)))))
+      (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
 
-  (let [^int cols (or num-cols (apply max (map count rows)))
-        tbl       (new PdfPTable cols)]
+    (let [^int cols (or num-cols (apply max (map count rows)))
+          tbl       (new PdfPTable cols)]
 
-    (when width (.setTotalWidth tbl (float width)))
-    (when width-percent (.setWidthPercentage tbl (float width-percent)))
+      ; PdfPTable is pretty weird. setHeaderRows needs to be given a number that is
+      ; the sum of the total number of header _and_ footer rows that this table
+      ; will have, while setFooterRows is just the number of footer rows.
+      (if (or header-size footer-size)
+        (.setHeaderRows tbl (int (+ (or header-size 0) (or footer-size 0)))))
+      (if footer-size (.setFooterRows tbl (int footer-size)))
 
-    (if bounding-box
-      (if-not widths
-        (throw (new Exception "widths must be non-nil when bounding-box is used in a pdf-table"))
-        (let [[x y] bounding-box]
-          (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y]))))
-      (if widths
-        (.setWidths tbl (float-array widths))))
+      (when width (.setTotalWidth tbl (float width)))
+      (when width-percent (.setWidthPercentage tbl (float width-percent)))
 
-    (doseq [table-event table-events]
-      (.setTableEvent tbl table-event))
+      (if bounding-box
+        (if-not widths
+          (throw (new Exception "widths must be non-nil when bounding-box is used in a pdf-table"))
+          (let [[x y] bounding-box]
+            (.setWidthPercentage tbl (float-array widths) (make-section [:rectangle x y]))))
+        (if widths
+          (.setWidths tbl (float-array widths))))
 
-    (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
-    (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
+      (doseq [table-event table-events]
+        (.setTableEvent tbl table-event))
 
-    (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
+      (if spacing-before (.setSpacingBefore tbl (float spacing-before)))
+      (if spacing-after (.setSpacingAfter tbl (float spacing-after)))
 
-    (.setKeepTogether tbl (boolean keep-together?))
+      (.setHorizontalAlignment tbl ^int (get-alignment horizontal-align))
 
-    ; these are inverted so the default if not specified matches
-    ; PdfPTable default behaviour
-    (.setSplitRows tbl (boolean (not no-split-rows?)))
-    (.setSplitLate tbl (boolean (not no-split-late?)))
+      (.setKeepTogether tbl (boolean keep-together?))
 
-    (doseq [row rows]
-      (doseq [column row]
-        (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
+      ; these are inverted so the default if not specified matches
+      ; PdfPTable default behaviour
+      (.setSplitRows tbl (boolean (not no-split-rows?)))
+      (.setSplitLate tbl (boolean (not no-split-late?)))
 
-    tbl))
+      (doseq [row rows]
+        (doseq [column row]
+          (add-pdf-table-cell tbl (merge meta (when (= false cell-border) {:set-border []})) column)))
+
+      tbl)))
 
 (defn load-image [img-data base64]
   (cond
