@@ -70,7 +70,7 @@ Maven
 <dependency>
   <groupId>clj-pdf</groupId>
   <artifactId>clj-pdf</artifactId>
-  <version>2.2.1</version>
+  <version>2.2.18</version>
 </dependency>
 ```
 
