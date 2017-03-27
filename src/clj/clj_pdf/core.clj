@@ -832,10 +832,10 @@
              :subscript subscript
              :table table
              :pdf-table pdf-table
-             (throw (new Exception (str "invalid tag: " tag " in element: " element))))
+             (throw (ex-info (str "invalid tag: " tag) {:element element})))
            (cons new-meta elements))))
      (catch Exception e
-       (throw (Exception. (str "failed to parse, meta: " meta "element:" element) e))))))
+       (throw (ex-info "failed to parse element" {:meta meta :element element} e))))))
 
 (declare append-to-doc)
 
