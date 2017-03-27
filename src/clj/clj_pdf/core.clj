@@ -881,8 +881,16 @@
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
+(defn- get-header-footer-table-section [table-content meta doc page-numbers? footer?]
+  (as-> table-content x
+        (set-header-footer-table-width x doc (or footer? page-numbers?))
+        ; :header and :footer are different for the root document meta map vs. the meta map
+        ; that is expected for :pdf-table (which is what 'x' here should be at this point)
+        ; TODO: remove other possible map key conflicts? i think these are the only 2 ...
+        (make-section (dissoc meta :header :footer) x)))
+
 (defn table-header-footer-height [content meta doc page-numbers? footer?]
-  (let [table        (-> content :table (set-header-footer-table-width doc (or footer? page-numbers?)) (->> (make-section meta)))
+  (let [table        (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
         table-height (.getTotalHeight table)]
     table-height))
 
@@ -911,7 +919,7 @@
                      (.bottomMargin doc))))))
 
 (defn set-table-header-footer-event [content meta doc page-numbers? pdf-writer footer? header-first-page?]
-  (let [table   (-> content :table (set-header-footer-table-width doc (or footer? page-numbers?)) (->> (make-section meta)))
+  (let [table   (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
         y       (if header-first-page?
                   (+ (.top doc) (.getTotalHeight table))
                   (.top doc))
