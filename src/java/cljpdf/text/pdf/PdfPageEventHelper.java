@@ -74,6 +74,19 @@ public class PdfPageEventHelper implements PdfPageEvent {
     }
 
 /**
+ * Called before a new page is about to be initialized.
+ * <P>
+ * This event allows for doing things such as resetting page margins
+ * or size, etc between pages, as it is too late to do certain adjustments
+ * in <CODE>onStartPage</CODE> and <CODE>onEndPage</CODE>.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ */
+    public void onBeforeStartPage(PdfWriter writer, Document document) {
+    }
+
+/**
  * Called when a page is initialized.
  * <P>
  * Note that if even if a page is not written this method is still

@@ -71,6 +71,19 @@ public interface PdfPageEvent {
  */
     public void onOpenDocument(PdfWriter writer, Document document);
 
+
+/**
+ * Called before a new page is about to be initialized.
+ * <P>
+ * This event allows for doing things such as resetting page margins
+ * or size, etc between pages, as it is too late to do certain adjustments
+ * in <CODE>onStartPage</CODE> and <CODE>onEndPage</CODE>.
+ *
+ * @param writer the <CODE>PdfWriter</CODE> for this document
+ * @param document the document
+ */
+    public void onBeforeStartPage(PdfWriter writer, Document document);
+
 /**
  * Called when a page is initialized.
  * <P>

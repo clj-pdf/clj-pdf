@@ -1109,6 +1109,8 @@ public class PdfDocument extends Document {
      * @throws DocumentException on error
      */
     protected void initPage() throws DocumentException {
+        PdfPageEvent pageEvent = writer.getPageEvent();
+
         // the pagenumber is incremented
         pageN++;
 
@@ -1122,6 +1124,20 @@ public class PdfDocument extends Document {
         text.reset();
         text.beginText();
         textEmptySize = text.size();
+
+        // the whole point of the onBeforeStartPage event is to make it so that it's possible to react
+        // to each new page at a point where it's still possible to change the page size and margins
+        // (among other settings) and have it take effect for the very next page that is being started.
+        // onStartPage and onEndPage are too late for this (though onEndPage would be the next best spot
+        // for this kind of code).
+        // however, in order to not break compatibility with existing code, i've opted to not move when
+        // onOpenDocument is triggered. as a result it's a little bit weird in that onBeforeStartPage
+        // will be triggered before onOpenDocument.
+        // (i personally do feel that onOpenDocument is being triggered too late... but whatever)
+        // - Gered King, March 2017
+        if (pageEvent != null) {
+            pageEvent.onBeforeStartPage(writer, this);
+        }
 
     	markPoint = 0;
         setNewPageSizeAndMargins();
@@ -1162,7 +1178,6 @@ public class PdfDocument extends Document {
         alignment = oldAlignment;
         carriageReturn();
 
-        PdfPageEvent pageEvent = writer.getPageEvent();
         if (pageEvent != null) {
             if (firstPageEvent) {
                 pageEvent.onOpenDocument(writer, this);
