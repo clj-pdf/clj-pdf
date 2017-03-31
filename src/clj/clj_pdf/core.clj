@@ -894,40 +894,64 @@
         table-height (.getTotalHeight table)]
     table-height))
 
-(defn set-margins [doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height]
-  (.setMargins doc
-               (float (or left-margin (.left doc)))
-               (float (or right-margin (.left doc)))
-               (float (if header-table-height
-                        (+ header-table-height (or top-margin (.bottom doc)))
-                        (or top-margin (.bottom doc))))
-               (float (if footer-table-height
-                        (+ footer-table-height (or bottom-margin (.bottom doc)))
-                        (or bottom-margin (.bottom doc))))))
+(defn set-margins [doc left-margin right-margin top-margin bottom-margin page-numbers?]
+  (let [margins {:left   (or left-margin (.leftMargin doc))
+                 :right  (or right-margin (.rightMargin doc))
+                 :top    (or top-margin (.topMargin doc))
+                 :bottom (+ (if page-numbers? 20 0)
+                            (or bottom-margin (.bottomMargin doc)))}]
+    (.setMargins doc (float (:left margins)) (float (:right margins)) (float (:top margins)) (float (:bottom margins)))
+    margins))
 
-(defn table-footer-header-event [{:keys [table x y] :as content} footer? header-first-page?]
+(defn write-header-footer-content-row [{:keys [table x y] :as content} writer]
+  (.writeSelectedRows ^PdfPTable table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
+
+(defn table-footer-header-event [header-content footer-content margins header-first-page?]
   (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
-    (onEndPage [writer doc]
-      (when (or footer? header-first-page? (not= (.getPageNumber doc) 1))
-        (.writeSelectedRows table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
-      ;; Reserve space for header table after page 1
-      (when (and (= (.getPageNumber doc) 1) (not header-first-page?))
-        (.setMargins doc
-                     (.leftMargin doc)
-                     (.rightMargin doc)
-                     (float (+ (.topMargin doc) (.getTotalHeight table)))
-                     (.bottomMargin doc))))))
+    (onBeforeStartPage [writer doc]
+      ; sets the margins for the current page
+      ; typically, the only thing that would make it so that the margins change on a per-page basis
+      ; is if both a letterhead and header are used. in this case, the first page will have a different
+      ; top-margin then the rest of the document.
+      (let [page-num    (.getPageNumber doc)
+            first-page? (= page-num 1)
+            has-header? (and header-content (or (not first-page?) header-first-page?))
+            has-footer? (boolean footer-content)
+            left        (:left margins)
+            right       (:right margins)
+            top         (if has-header?
+                          (+ (:top margins) (.getTotalHeight ^PdfPTable (:table header-content)))
+                          (:top margins))
+            bottom      (if has-footer?
+                          (+ (:bottom margins) (.getTotalHeight ^PdfPTable (:table footer-content)))
+                          (:bottom margins))]
+        (.setMargins doc (float left) (float right) (float top) (float bottom))))
 
-(defn set-table-header-footer-event [content meta doc page-numbers? pdf-writer footer? header-first-page?]
-  (let [table   (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
-        y       (if header-first-page?
-                  (+ (.top doc) (.getTotalHeight table))
-                  (.top doc))
-        content (-> content
-                    (assoc-in [:table] table)
-                    (update-in [:x] #(or % (if footer? 36 (.left doc))))
-                    (update-in [:y] #(or % (if footer? 64 y))))]
-    (.setPageEvent pdf-writer (table-footer-header-event content footer? header-first-page?))))
+    (onEndPage [writer doc]
+      (let [page-num     (.getPageNumber doc)
+            first-page?  (= page-num 1)
+            show-header? (and header-content (or (not first-page?) header-first-page?))
+            show-footer? (boolean footer-content)]
+        ; write header and/or footer tables to appropriate places on the page if they are set and required by the
+        ; current state (e.g. use of a letterhead when on page #1 will mean no header even if one is set)
+        (if show-header? (write-header-footer-content-row header-content writer))
+        (if show-footer? (write-header-footer-content-row footer-content writer))))))
+
+(defn preprocess-header-footer-content [content meta doc footer? page-numbers? header-first-page?]
+  (let [table  (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
+        height (.getTotalHeight table)
+        y      (if footer?
+                 (+ (.bottom doc) height)
+                 (.top doc))]
+    (-> content
+        (assoc-in [:table] table)
+        (update-in [:x] #(or % (.left doc)))
+        (update-in [:y] #(or % y)))))
+
+(defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? pdf-writer header-first-page?]
+  (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
+        footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
+    (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
@@ -1004,22 +1028,9 @@
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
           header-meta          (merge font-style (dissoc meta :size))
-          header-table-height  (when table-header
-                                 (when-not (= :pdf-table (-> table-header :table first))
-                                   (throw (IllegalArgumentException. "table header :table key must point to a :pdf-table element")))
-                                 (table-header-footer-height table-header header-meta doc page-numbers? false))
-          footer-table-height  (when table-footer
-                                 (when-not (= :pdf-table (-> table-footer :table first))
-                                   (throw (IllegalArgumentException. "table footer :table key must point to a :pdf-table element")))
-                                 (table-header-footer-height table-footer header-meta doc page-numbers? true))]
-      (if header-first-page?
-        (set-margins doc left-margin right-margin top-margin bottom-margin header-table-height footer-table-height)
-        (set-margins doc left-margin right-margin top-margin bottom-margin nil footer-table-height))
+          margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)]
 
-      (when table-header
-        (set-table-header-footer-event table-header header-meta doc page-numbers? pdf-writer false header-first-page?))
-      (when table-footer
-        (set-table-header-footer-event table-footer header-meta doc page-numbers? pdf-writer true false))
+      (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
 
       (if watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
