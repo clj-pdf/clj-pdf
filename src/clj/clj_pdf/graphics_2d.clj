@@ -1,13 +1,15 @@
 (ns clj-pdf.graphics-2d
-  (:import cljpdf.text.pdf.DefaultFontMapper
-           cljpdf.text.Rectangle))
+  (:import
+    [java.awt Graphics2D]
+    [cljpdf.text.pdf DefaultFontMapper PdfWriter]
+    cljpdf.text.Rectangle))
 
-(defn with-graphics [{:keys [^cljpdf.text.pdf.PdfWriter pdf-writer page-width page-height font-mapper under translate rotate scale] :as meta} f]
+(defn with-graphics [{:keys [^PdfWriter pdf-writer page-width page-height font-mapper under translate rotate scale] :as meta} f]
   (let [font-mapper (or font-mapper (DefaultFontMapper.))
         template    (if under
                       (.getDirectContentUnder pdf-writer)
                       (.getDirectContent pdf-writer))
-        ^java.awt.Graphics2D g2d (.createGraphics template page-width page-height font-mapper)]
+        g2d         (.createGraphics template page-width page-height font-mapper)]
     (try
       (when (coll? translate)
         (.translate g2d (double (first translate)) (double (second translate))))

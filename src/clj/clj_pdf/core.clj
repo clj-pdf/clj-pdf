@@ -1,15 +1,19 @@
 (ns clj-pdf.core
-  (:require [clojure.walk :refer :all]
-            [clojure.string :refer [split]]
-            [clojure.set :refer [rename-keys]]
-            [clj-pdf.charting :as charting]
-            [clj-pdf.svg :as svg]
-            [clj-pdf.graphics-2d :as g2d]
-            [clojure.java.io :as io])
+  (:require
+    [clojure.java.io :as io]
+    [clojure.walk :refer :all]
+    [clojure.set :refer [rename-keys]]
+    [clojure.string :refer [split]]
+    [clj-pdf.charting :as charting]
+    [clj-pdf.svg :as svg]
+    [clj-pdf.graphics-2d :as g2d])
   (:import
-    java.awt.Color
-    [cljpdf.text.pdf.draw DottedLineSeparator LineSeparator]
-    sun.misc.BASE64Decoder
+    [java.awt Color Graphics2D Toolkit]
+    [java.awt.image BufferedImage]
+    [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream File]
+    [java.net URL URI]
+    [javax.imageio ImageIO]
+    [sun.misc BASE64Decoder]
     [cljpdf.text
      Anchor
      Annotation
@@ -36,8 +40,8 @@
      Table
      ZapfDingbatsList
      ZapfDingbatsNumberList]
-    [cljpdf.text.pdf BaseFont MultiColumnText PdfReader PdfStamper PdfWriter PdfPCell PdfPTable]
-    [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream]))
+    [cljpdf.text.pdf.draw DottedLineSeparator LineSeparator]
+    [cljpdf.text.pdf BaseFont MultiColumnText PdfContentByte PdfReader PdfStamper PdfWriter PdfPageEventHelper PdfPCell PdfPTable]))
 
 (declare ^:dynamic *cache*)
 (def fonts-registered? (atom nil))
@@ -81,6 +85,7 @@
     (get-style (first styles))))
 
 (defn- font
+  ^Font
   [{style    :style
     styles   :styles
     size     :size
@@ -116,7 +121,7 @@
 
     (if (and r g b)
       (new Color r g b)
-      (new Color 0 0 0))))
+      (new Color (int 0) (int 0) (int 0)))))
 
 (defn- custom-page-size [width height]
   (RectangleReadOnly. width height))
@@ -239,7 +244,7 @@
 
     (if lowercase (.setLowercase list lowercase))
     (if indent (.setIndentationLeft list (float indent)))
-    (if symbol (.setListSymbol list symbol))
+    (if symbol (.setListSymbol list (str symbol)))
 
     (doseq [item items]
       (.add list (new ListItem (styled-item meta item))))
@@ -592,19 +597,19 @@
 (defn load-image [img-data base64]
   (cond
     (instance? java.awt.Image img-data)
-    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
+    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
 
     base64
-    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) (.decodeBuffer (new BASE64Decoder) img-data)) nil)
+    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (bytes (.decodeBuffer (new BASE64Decoder) img-data))) nil)
 
     (= Byte/TYPE (.getComponentType (class img-data)))
-    (Image/getInstance (.createImage (java.awt.Toolkit/getDefaultToolkit) ^bytes img-data) nil)
+    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) ^bytes img-data) nil)
 
     (string? img-data)
     (Image/getInstance ^String img-data)
 
-    (instance? java.net.URL img-data)
-    (Image/getInstance ^java.net.URL img-data)
+    (instance? URL img-data)
+    (Image/getInstance ^URL img-data)
 
     :else
     (throw (new Exception (str "Unsupported image data: " img-data ", must be one of java.net.URL, java.awt.Image, or filename string")))))
@@ -875,13 +880,13 @@
   (when header
     (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
 
-(defn set-header-footer-table-width [table doc page-numbers?]
+(defn set-header-footer-table-width [table ^Document doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
     (if (map? (second table))
       (update-in table [1 :width] #(or % default-width))
       (concat [(first table)] [{:width default-width}] (rest table)))))
 
-(defn- get-header-footer-table-section [table-content meta doc page-numbers? footer?]
+(defn- get-header-footer-table-section [table-content meta ^Document doc page-numbers? footer?]
   (as-> table-content x
         (set-header-footer-table-width x doc (or footer? page-numbers?))
         ; :header and :footer are different for the root document meta map vs. the meta map
@@ -889,12 +894,12 @@
         ; TODO: remove other possible map key conflicts? i think these are the only 2 ...
         (make-section (dissoc meta :header :footer) x)))
 
-(defn table-header-footer-height [content meta doc page-numbers? footer?]
+(defn table-header-footer-height [content meta ^Document doc page-numbers? footer?]
   (let [table        (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
-        table-height (.getTotalHeight table)]
+        table-height (.getTotalHeight ^PdfPTable table)]
     table-height))
 
-(defn set-margins [doc left-margin right-margin top-margin bottom-margin page-numbers?]
+(defn set-margins [^Document doc left-margin right-margin top-margin bottom-margin page-numbers?]
   (let [margins {:left   (or left-margin (.leftMargin doc))
                  :right  (or right-margin (.rightMargin doc))
                  :top    (or top-margin (.topMargin doc))
@@ -903,12 +908,12 @@
     (.setMargins doc (float (:left margins)) (float (:right margins)) (float (:top margins)) (float (:bottom margins)))
     margins))
 
-(defn write-header-footer-content-row [{:keys [table x y] :as content} writer]
+(defn write-header-footer-content-row [{:keys [table x y] :as content} ^PdfWriter writer]
   (.writeSelectedRows ^PdfPTable table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
 
 (defn table-footer-header-event [header-content footer-content margins header-first-page?]
-  (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
-    (onBeforeStartPage [writer doc]
+  (proxy [PdfPageEventHelper] []
+    (onBeforeStartPage [^PdfWriter writer ^Document doc]
       ; sets the margins for the current page
       ; typically, the only thing that would make it so that the margins change on a per-page basis
       ; is if both a letterhead and header are used. in this case, the first page will have a different
@@ -927,7 +932,7 @@
                           (:bottom margins))]
         (.setMargins doc (float left) (float right) (float top) (float bottom))))
 
-    (onEndPage [writer doc]
+    (onEndPage [^PdfWriter writer ^Document doc]
       (let [page-num     (.getPageNumber doc)
             first-page?  (= page-num 1)
             show-header? (and header-content (or (not first-page?) header-first-page?))
@@ -937,9 +942,9 @@
         (if show-header? (write-header-footer-content-row header-content writer))
         (if show-footer? (write-header-footer-content-row footer-content writer))))))
 
-(defn preprocess-header-footer-content [content meta doc footer? page-numbers? header-first-page?]
+(defn preprocess-header-footer-content [content meta ^Document doc footer? page-numbers? header-first-page?]
   (let [table  (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
-        height (.getTotalHeight table)
+        height (.getTotalHeight ^PdfPTable table)
         y      (if footer?
                  (+ (.bottom doc) height)
                  (.top doc))]
@@ -948,7 +953,7 @@
         (update-in [:x] #(or % (.left doc)))
         (update-in [:y] #(or % y)))))
 
-(defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? pdf-writer header-first-page?]
+(defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? ^PdfWriter pdf-writer header-first-page?]
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
         footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
     (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))))
@@ -958,32 +963,32 @@
 
 (defn buffered-image [img-data]
   (cond
-    (or (string? img-data)
-        (instance? java.net.URL img-data))
-    (javax.imageio.ImageIO/read (java.io.File. img-data))
+    (string? img-data)
+    (ImageIO/read (File. ^String img-data))
 
-    (instance? java.awt.image.BufferedImage img-data)
+    (instance? BufferedImage img-data)
     img-data))
 
 (defn watermark-stamper [meta]
   (let [image (some-> (-> meta :watermark :image) buffered-image)]
-    (proxy [cljpdf.text.pdf.PdfPageEventHelper] []
+    (proxy [PdfPageEventHelper] []
       (onEndPage [writer doc]
         (let [{:keys [render scale rotate translate]} (:watermark meta)]
-          (g2d/with-graphics (assoc meta
-                               :pdf-writer writer
-                               :under true
-                               :scale scale
-                               :rotate rotate
-                               :translate translate)
-                             (or render
-                                 (fn [g2d]
-                                   (.drawImage
-                                     g2d
-                                     image
-                                     nil
-                                     (int 0)
-                                     (int 0))))))))))
+          (g2d/with-graphics
+            (assoc meta
+              :pdf-writer writer
+              :under true
+              :scale scale
+              :rotate rotate
+              :translate translate)
+            (or render
+                (fn [^Graphics2D g2d]
+                  (.drawImage
+                    g2d
+                    ^BufferedImage image
+                    nil
+                    (int 0)
+                    (int 0))))))))))
 
 (defn- setup-doc [{:keys [left-margin
                           right-margin
@@ -1043,7 +1048,7 @@
         (if (or footer page-numbers?)
           (.setFooter doc
                       (doto (new HeaderFooter (new Phrase (str (:text footer) " ")
-                                                   ^java.awt.Font (font (merge font-style {:size 10 :color (:color footer)}))) page-numbers?)
+                                                   (font (merge font-style {:size 10 :color (:color footer)}))) page-numbers?)
                         (.setBorder 0)
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
@@ -1227,7 +1232,7 @@
         out (io/output-stream out)
         doc (Document. (page-orientation (page-size size) orientation))
         wrt (PdfWriter/getInstance doc out)
-        cb  (do (.open doc) (.getDirectContent wrt))]
+        cb  ^PdfContentByte (do (.open doc) (.getDirectContent wrt))]
     (doseq [pdf pdfs]
       (with-open [rdr (PdfReader. (io/input-stream pdf))]
         (dotimes [i (.getNumberOfPages rdr)]
