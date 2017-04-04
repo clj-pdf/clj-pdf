@@ -888,7 +888,7 @@
 
 (defn- get-header-footer-table-section [table-content meta ^Document doc page-numbers? footer?]
   (as-> table-content x
-        (set-header-footer-table-width x doc (or footer? page-numbers?))
+        (set-header-footer-table-width x doc (and footer? page-numbers?))
         ; :header and :footer are different for the root document meta map vs. the meta map
         ; that is expected for :pdf-table (which is what 'x' here should be at this point)
         ; TODO: remove other possible map key conflicts? i think these are the only 2 ...
