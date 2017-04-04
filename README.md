@@ -733,6 +733,13 @@ content:
        [:chunk {:style :bold} "a bold item"]
        "another item"
        "yet another item"]
+
+;; nesting lists can be accomplished
+;; by wrapping the inner list with the
+;; :phrase tag
+[:list
+       "foo"
+       [:phrase [:list "foo" "bar"]]]       
 ```
 
 #### Multi-Column
