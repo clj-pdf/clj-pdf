@@ -13,7 +13,7 @@
     [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream File]
     [java.net URL URI]
     [javax.imageio ImageIO]
-    [sun.misc BASE64Decoder]
+    [org.apache.commons.codec.binary Base64]
     [cljpdf.text
      Anchor
      Annotation
@@ -600,7 +600,7 @@
     (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
 
     base64
-    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (bytes (.decodeBuffer (new BASE64Decoder) img-data))) nil)
+    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (Base64/decodeBase64 img-data)) nil)
 
     (= Byte/TYPE (.getComponentType (class img-data)))
     (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) ^bytes img-data) nil)

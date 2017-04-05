@@ -57,9 +57,9 @@
     (run-tests)))
 
 ; run this to regenerate all test pdfs
-#_ (regenerate-test-pdfs)
+#_(regenerate-test-pdfs)
 
-#_ (run-tests)
+#_(run-tests)
 
 (deftest page-numbers
   (eq?
@@ -83,21 +83,26 @@
     "pages1.pdf")
 
   (eq?
-    [{:title            "Test doc"
-      :left-margin      10
-      :right-margin     50
-      :top-margin       20
-      :bottom-margin    25
-      :pages            true
-      :font             {:size 11}
-      :size             :a4
-      :subject          "Some subject"
-      :author           "John Doe"
-      :creator          "Jane Doe"
-      :doc-header       ["inspired by" "William Shakespeare"]
-      :header           "page header"
-      :footer           {:text             "page"
-                         :footer-separator " of "}}
+    [{}
+     [:image {:width 50 :height 50 :base64 true} (slurp "test/b64logo")]]
+    "base64image.pdf")
+
+  (eq?
+    [{:title         "Test doc"
+      :left-margin   10
+      :right-margin  50
+      :top-margin    20
+      :bottom-margin 25
+      :pages         true
+      :font          {:size 11}
+      :size          :a4
+      :subject       "Some subject"
+      :author        "John Doe"
+      :creator       "Jane Doe"
+      :doc-header    ["inspired by" "William Shakespeare"]
+      :header        "page header"
+      :footer        {:text             "page"
+                      :footer-separator " of "}}
      [:paragraph "I should have font size 11"]
      [:chunk "meta test"]]
     "pages2.pdf"))
