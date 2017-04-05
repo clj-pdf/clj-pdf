@@ -7,13 +7,18 @@
 
 (defn fix-pdf [^bytes pdf-bytes]
   (-> (String. pdf-bytes)
+      ; obviously these will get changed on each run, so strip the creation/modification date/times
       (re/replace #"ModDate\((.*?)\)" "")
       (re/replace #"CreationDate\((.*?)\)" "")
+      ; not sure what this is for ... ?
+      (re/replace #"\[(.*?)\]" "")
+      ; these are kind of hacky, but it seems that the prefix characters before the font name "Carlito"
+      ; will get randomly generated on each run ... ?
       (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/PHZPHX+Carlito")
       (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/PHZPHX+Carlito")
       (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/PHZPHX+Carlito")
       (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/PHZPHX+Carlito")
-      (re/replace #"\[(.*?)\]" "")))
+      ))
 
 (defn read-file ^bytes [file-path]
   (with-open [reader (input-stream file-path)]
@@ -35,21 +40,26 @@
 
 (defn generate-pdf [doc output-filename]
   (let [doc1 (inject-test-font doc)]
+    (println "regenerating pdf" output-filename)
     (pdf doc1 (add-test-path-prefix output-filename))
     true))
 
 (defn eq? [doc1 filename]
-  ; to regenerate test pdfs:
-  ; 1. uncomment generate-pdf call below
-  ; 2. comment let out
-  ; 3. (run-tests)
-  #_(generate-pdf doc1 filename)
   (let [filename   (add-test-path-prefix filename)
         doc1       (inject-test-font doc1)
         doc1-bytes (pdf->bytes doc1)
         doc2-bytes (read-file filename)]
     (is (= (fix-pdf doc1-bytes)
            (fix-pdf doc2-bytes)))))
+
+(defn regenerate-test-pdfs []
+  (with-redefs [eq? generate-pdf]
+    (run-tests)))
+
+; run this to regenerate all test pdfs
+#_ (regenerate-test-pdfs)
+
+#_ (run-tests)
 
 (deftest page-numbers
   (eq?
