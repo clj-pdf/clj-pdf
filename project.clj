@@ -24,4 +24,5 @@
                        :plugins      [[lein-marginalia "0.7.1"]
                                       #_[lein-midje "3.0.0"]
                                       #_[midje-readme "1.0.2"]
-                                      [lein-cloverage "1.0.6"]]}})
+                                      ; causing some issues on travis builds ... ? disable for now
+                                      #_[lein-cloverage "1.0.6"]]}})
