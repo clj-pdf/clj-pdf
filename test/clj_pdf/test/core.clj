@@ -96,8 +96,8 @@
       :creator          "Jane Doe"
       :doc-header       ["inspired by" "William Shakespeare"]
       :header           "page header"
-      :footer           "page"
-      :footer-separator " of "}
+      :footer           {:text             "page"
+                         :footer-separator " of "}}
      [:paragraph "I should have font size 11"]
      [:chunk "meta test"]]
     "pages2.pdf"))
