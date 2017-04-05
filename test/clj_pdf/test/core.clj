@@ -2,6 +2,9 @@
   (:use clj-pdf.core clojure.test clojure.java.io)
   (:require [clojure.string :as re]))
 
+(defn add-test-path-prefix [filename]
+  (str "test" java.io.File/separator filename))
+
 (defn fix-pdf [^bytes pdf-bytes]
   (-> (String. pdf-bytes)
       (re/replace #"ModDate\((.*?)\)" "")
@@ -25,17 +28,14 @@
     (.toByteArray out)))
 
 (defn inject-test-font [doc]
-  (let [font-filename (str "test" java.io.File/separator "Carlito-Regular.ttf")]
-    (update-in
-      (vec doc)
-      [0 :font]
-      merge
-      {:encoding :unicode
-       :ttf-name font-filename})))
+  (let [font-filename (add-test-path-prefix "Carlito-Regular.ttf")
+        font-props    {:encoding :unicode
+                       :ttf-name font-filename}]
+    (update-in (vec doc) [0 :font] merge font-props)))
 
 (defn generate-pdf [doc output-filename]
   (let [doc1 (inject-test-font doc)]
-    (pdf doc1 (str "test" java.io.File/separator output-filename))
+    (pdf doc1 (add-test-path-prefix output-filename))
     true))
 
 (defn eq? [doc1 filename]
@@ -44,7 +44,7 @@
   ; 2. comment let out
   ; 3. (run-tests)
   #_(generate-pdf doc1 filename)
-  (let [filename   (str "test" java.io.File/separator filename)
+  (let [filename   (add-test-path-prefix filename)
         doc1       (inject-test-font doc1)
         doc1-bytes (pdf->bytes doc1)
         doc2-bytes (read-file filename)]
