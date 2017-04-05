@@ -232,3 +232,10 @@
               ["This is a table footer" "second column" "third column"]]}}
    [:paragraph "hi"]]
   "test.pdf")
+
+#_ (pdf
+     [{}
+      [:list
+       "foo"
+       [:phrase [:list "foo" "bar"]]]]
+     "test.pdf")

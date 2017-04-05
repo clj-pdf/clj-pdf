@@ -1,4 +1,4 @@
-# `clj-pdf` [![Build Status](https://travis-ci.org/yogthos/clj-pdf.svg?branch=master)](http://travis-ci.org/yogthos/clj-pdf) [![Coverage Status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![Downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
+# `clj-pdf` [![Coverage Status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![Downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
 
 
 A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
@@ -733,6 +733,13 @@ content:
        [:chunk {:style :bold} "a bold item"]
        "another item"
        "yet another item"]
+
+;; nesting lists can be accomplished
+;; by wrapping the inner list with the
+;; :phrase tag
+[:list
+       "foo"
+       [:phrase [:list "foo" "bar"]]]
 ```
 
 #### Multi-Column
@@ -1010,7 +1017,7 @@ metadata:
    (for [x (range 1 10)]
      [[:cell {:color [(* 10 x) 0 0]} (dec x)]
       [:cell {:color [0 (* 10 x) 0]} x]
-      [:cell {:color [0 0 (* 10 x)]} (inc x)]]))  
+      [:cell {:color [0 0 (* 10 x)]} (inc x)]]))
 
 [:table
   {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
@@ -1099,10 +1106,10 @@ metadata:
   ["a" "b" "c"]
   ["1" "2" "3"]
   ["i" "ii" "iii"]]
-  
+
 ; table with 2 header rows, 3 regular content rows
 [:pdf-table
-  {:header [[[:pdf-cell {:colspan 2} 
+  {:header [[[:pdf-cell {:colspan 2}
               [:paragraph {:align :center :style :bold} "Customer Orders"]]]
             [[:phrase {:style :bold} "Name"]
              [:phrase {:style :bold} "Order Amount"]]]}
