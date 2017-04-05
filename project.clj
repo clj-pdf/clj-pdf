@@ -19,11 +19,7 @@
   :javac-options ["-target" "1.6" "-source" "1.6"]
 
   :profiles {:dev     {:global-vars  {*warn-on-reflection* true}
-                       :dependencies [[midje "1.8.3"]
-                                      [environ "1.0.1"]
-                                      #_[midje-readme "1.0.8"]]
+                       :dependencies [[environ "1.0.1"]]
                        :plugins      [[lein-marginalia "0.7.1"]
-                                      #_[lein-midje "3.0.0"]
-                                      #_[midje-readme "1.0.2"]
                                       ; causing some issues on travis builds ... ? disable for now
                                       #_[lein-cloverage "1.0.6"]]}})
