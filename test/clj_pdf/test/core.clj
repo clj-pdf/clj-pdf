@@ -6,12 +6,11 @@
   (-> (String. pdf-bytes)
       (re/replace #"ModDate\((.*?)\)" "")
       (re/replace #"CreationDate\((.*?)\)" "")
+      (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/PHZPHX+Carlito")
+      (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/PHZPHX+Carlito")
+      (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/PHZPHX+Carlito")
+      (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/PHZPHX+Carlito")
       (re/replace #"\[(.*?)\]" "")))
-
-(defn pdf->bytes ^bytes [doc]
-  (let [out (new java.io.ByteArrayOutputStream)]
-    (pdf doc out)
-    (.toByteArray out)))
 
 (defn read-file ^bytes [file-path]
   (with-open [reader (input-stream file-path)]
@@ -19,6 +18,20 @@
           buffer (byte-array length)]
       (.read reader buffer 0 length)
       buffer)))
+
+(defn pdf->bytes ^bytes [doc]
+  (let [out (new java.io.ByteArrayOutputStream)]
+    (pdf doc out)
+    (.toByteArray out)))
+
+(defn inject-test-font [doc]
+  (let [font-filename (str "test" java.io.File/separator "Carlito-Regular.ttf")]
+    (update-in
+      (vec doc)
+      [0 :font]
+      merge
+      {:encoding :unicode
+       :ttf-name font-filename})))
 
 (defn generate-pdf [doc output-filename]
   (let [doc1 (inject-test-font doc)]
@@ -32,6 +45,7 @@
   ; 3. (run-tests)
   #_(generate-pdf doc1 filename)
   (let [filename   (str "test" java.io.File/separator filename)
+        doc1       (inject-test-font doc1)
         doc1-bytes (pdf->bytes doc1)
         doc2-bytes (read-file filename)]
     (is (= (fix-pdf doc1-bytes)
