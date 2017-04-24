@@ -203,14 +203,18 @@
     (into [:paragraph (merge meta (merge {:size 18 :style :bold} (:style meta)))] content)))
 
 
-(defn- paragraph [{:keys [first-line-indent indent keep-together leading align] :as meta}
+(defn- paragraph [{:keys [first-line-indent indent indent-left indent-right spacing-before spacing-after keep-together leading align ] :as meta}
                   & content]
-  (let [paragraph (Paragraph.)]
+  (let [paragraph (Paragraph.)
+        indent (or indent indent-left)]
     (if leading (.setLeading paragraph leading) (.setLeading paragraph 0 1.5))
     (.setFont paragraph (font meta))
     (if keep-together (.setKeepTogether paragraph true))
     (if first-line-indent (.setFirstLineIndent paragraph (float first-line-indent)))
     (if indent (.setIndentationLeft paragraph (float indent)))
+    (if indent-right (.setIndentationRight paragraph (float indent-right)))
+    (if spacing-before (.setSpacingBefore paragraph (float spacing-before)))
+    (if spacing-after (.setSpacingAfter paragraph (float spacing-after)))
     (if align (.setAlignment paragraph ^int (get-alignment align)))
 
     (doseq [item content]

@@ -787,10 +787,13 @@ tag :paragraph
 
 optional metadata:
 
-* :indent            number (indentation for the paragraph)
+* :indent-left       number (indentation for the paragraph on the left)
+* :indent-right      number (indentation for the paragraph on the right)
 * :first-line-indent number (indentation for the first line of the paragraph)
 * :keep-together     boolean
 * :leading           number (line spacing is measured in 72 units per inch, default spacing is 1.5 times the font height)
+* :spacing-before    number
+* :spacing-after     number
 * :align             :left, :center, :right, :justified
 
 font metadata (refer to Font section for details)
