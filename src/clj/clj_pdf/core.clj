@@ -8,7 +8,7 @@
     [clj-pdf.svg :as svg]
     [clj-pdf.graphics-2d :as g2d])
   (:import
-    [java.awt Color Graphics2D Toolkit]
+    [java.awt Color Graphics2D Toolkit Canvas]
     [java.awt.image BufferedImage]
     [java.io PushbackReader InputStream InputStreamReader OutputStream FileOutputStream ByteArrayOutputStream File]
     [java.net URL URI]
@@ -994,6 +994,21 @@
                     (int 0)
                     (int 0))))))))))
 
+(defn background-color-applier [background-color]
+  (proxy [PdfPageEventHelper] []
+    (onEndPage [writer doc]
+      (let [^PdfContentByte canvas (.getDirectContentUnder writer)
+            ^Rectangle rect (.getPageSize doc)
+            [r g b] background-color
+            ]
+        (.setColorFill canvas (new Color r g b))
+        (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
+        (.fill canvas)
+        )
+      )
+    )
+  )
+
 (defn- setup-doc [{:keys [left-margin
                           right-margin
                           top-margin
@@ -1011,7 +1026,8 @@
                           font-style
                           orientation
                           page-events
-                          watermark] :as meta}
+                          watermark
+                          background-color] :as meta}
                   out]
 
   (let [[nom head] doc-header
@@ -1040,6 +1056,9 @@
           margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)]
 
       (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
+
+      (if background-color
+        (.setPageEvent pdf-writer (background-color-applier background-color)))
 
       (if watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
