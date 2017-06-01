@@ -1248,7 +1248,7 @@
   "usage: takes an output that can be a file name or an output stream followed by one or more documents
    that can be input streams, urls, filenames, or byte arrays."
   [& params]
-  (let [[{:keys [size orientation]} out & pdfs]
+  (let [[{:keys [author creator orientation size subject title]} out & pdfs]
         (if (map? (first params))
           params
           (into [{}] params))
@@ -1256,6 +1256,10 @@
         doc (Document. (page-orientation (page-size size) orientation))
         wrt (PdfWriter/getInstance doc out)
         cb  ^PdfContentByte (do (.open doc) (.getDirectContent wrt))]
+    (when title (.addTitle doc title))
+    (when subject (.addSubject doc subject))
+    (when author (.addAuthor doc author))
+    (when creator (.addCreator doc creator))
     (doseq [pdf pdfs]
       (with-open [rdr (PdfReader. (io/input-stream pdf))]
         (dotimes [i (.getNumberOfPages rdr)]

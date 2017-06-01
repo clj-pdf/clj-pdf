@@ -128,6 +128,18 @@ of InputStream, file name, URL, or a byte array.
          (.toByteArray doc1)
          (.toByteArray doc1)
          (.toByteArray doc1))
+
+;;all keys in the options map are optional
+(collate {:title "Collated Documents"
+          :author "John Doe"
+          :creator "Jane Doe"
+          :orientation :landscape
+          :size :a4
+          :subject "Some subject"}
+         (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
+         (.toByteArray doc1)
+         (.toByteArray doc1)
+         (.toByteArray doc1))
 ```
 
 Sequences containing elements will be expanded into the document:
