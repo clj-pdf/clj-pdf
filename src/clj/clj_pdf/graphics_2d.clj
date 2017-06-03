@@ -10,6 +10,8 @@
                       (.getDirectContentUnder pdf-writer)
                       (.getDirectContent pdf-writer))
         g2d         (.createGraphics template page-width page-height font-mapper)]
+    (.insertDirectory font-mapper "/Library/Fonts")
+    (.insertDirectory font-mapper "/System/Library/Fonts")
     (try
       (when (coll? translate)
         (.translate g2d (double (first translate)) (double (second translate))))
