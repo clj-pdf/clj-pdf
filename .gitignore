@@ -16,3 +16,4 @@ pom.xml.asc
 *.ipr
 *.iws
 .idea
+profiles.clj

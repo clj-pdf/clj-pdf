@@ -30,7 +30,7 @@
       :doc-header    ["inspired by" "William Shakespeare"]
       :right-margin  50
       :author        "John Doe"
-      :bottom-margin 25
+      :bottom-margin 10
       :left-margin   10
       :top-margin    20
       :size          "a4"
@@ -47,14 +47,14 @@
      [:paragraph
       "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-     [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20}
+     [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
       ["foo"
        [:cell
         [:phrase
          {:style "italic" :size 18 :family "helvetica" :color [200 55 221]}
          "Hello Clojure!"]]
        "baz"]
-      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
+      ["foo1" [:cell {:background-color [100 10 200]} "bar1"] "baz1"]
       ["foo2" "bar2" [:cell ["table" ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]
 
      [:paragraph
