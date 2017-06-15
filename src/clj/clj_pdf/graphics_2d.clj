@@ -1,4 +1,6 @@
 (ns clj-pdf.graphics-2d
+  (:require [clojure.java.io :as io]
+            [clojure.string :as str])
   (:import
     [java.awt Graphics2D]
     [cljpdf.text.pdf DefaultFontMapper PdfWriter]
@@ -32,21 +34,51 @@
         (.dispose g2d)))))
 
 (def common-font-dirs
-  ["/Library/Fonts"
-   "/System/Library/Fonts"])
+  [["/Library/Fonts", true]
+   ["/System/Library/Fonts", false]
+   ["c:/windows/fonts", false]
+   ["c:/winnt/fonts", false]
+   ["d:/windows/fonts", false]
+   ["d:/winnt/fonts", false]
+   ["/usr/share/X11/fonts", true]
+   ["/usr/X/lib/X11/fonts", true]
+   ["/usr/openwin/lib/X11/fonts", true]
+   ["/usr/share/fonts", true]
+   ["/usr/X11R6/lib/X11/fonts", true]])
 
 ;;; Other common font dirs, the boolean indicates whether recursive descent needed
-   ;; "c:/windows/fonts", false
-   ;; "c:/winnt/fonts", false
-   ;; "d:/windows/fonts", false
-   ;; "d:/winnt/fonts", false
-   ;; "/usr/share/X11/fonts", true
-   ;; "/usr/X/lib/X11/fonts", true
-   ;; "/usr/openwin/lib/X11/fonts", true
-   ;; "/usr/share/fonts", true
-   ;; "/usr/X11R6/lib/X11/fonts", true
+   ;; 
+
+(defn- full-path [parent filename]
+  (str/join [parent "/" filename]))
 
 (defn g2d-register-fonts []
-  (doseq [d common-font-dirs]
-    (.insertDirectory default-font-mapper d))
-  (reset! g2d-fonts-registered? true))
+  (when (nil? @g2d-fonts-registered?)
+    (doseq [[dir recursive] common-font-dirs]
+      ;; We require to start with a dirctory, so register it.
+      (.insertDirectory default-font-mapper dir)
+      (if recursive
+        (let [init-paths (map #(full-path dir %) (.list (io/file dir)))]
+          (loop [maybe-subdir (first init-paths)
+                 rest-paths (rest init-paths)]
+            (if-let [fd (io/file maybe-subdir)]
+              (if (.isDirectory fd)
+                (let [loop-paths (map #(full-path maybe-subdir %) (.list fd))]
+                  (.insertDirectory default-font-mapper maybe-subdir)
+                  (recur (first loop-paths) (rest loop-paths)))
+                (recur (first rest-paths) (rest rest-paths))
+                ))))))
+    (reset! g2d-fonts-registered? true)))
+
+;;; Utility functions
+
+(defn get-font-maps
+  "Returns a map with :mapper and :aliases keys, each with a Java HashMap as a val. 
+  :mapper connects available AWT font names each to a PDF font object.
+  :aliases connects alternate names each to a AWT font name. 
+  Names (strings) in either HashMap can be used in a :graphics element's .setFont directive.
+  Will register common system font directories if not already registered."
+  []
+  (g2d-register-fonts)
+  {:mapper (.getMapper default-font-mapper)
+   :aliases (.getAliases default-font-mapper)})
