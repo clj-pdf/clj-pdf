@@ -423,7 +423,7 @@
     (let [meta?       (map? (first header))
           header-rest (if meta? (rest header) header)
           header-data header-rest
-          set-bg      #(if-let [[r g b] (if meta? (:backdrop-color (first header)))]
+          set-bg      #(if-let [[r g b] (if meta? (:background-color (first header)))]
                          (doto ^Cell % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
         (let [header               (first header-data)
