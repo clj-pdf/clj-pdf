@@ -46,9 +46,6 @@
    ["/usr/share/fonts", true]
    ["/usr/X11R6/lib/X11/fonts", true]])
 
-;;; Other common font dirs, the boolean indicates whether recursive descent needed
-   ;; 
-
 (defn- full-path [parent filename]
   (str/join [parent "/" filename]))
 

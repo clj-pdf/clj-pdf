@@ -612,10 +612,16 @@ Ends current page and inserts a blank page if necessary to ensure that subsequen
 
 tag :graphics
 
-The command takes a function with a single argument, the Graphics2D object, onto which you can draw things. Note that this is actually the *PdfGraphics2D* object which
-will render the drawing instructions as vectors rather than to a raster bitmap. There is no need to dispose of the graphics context as this is done on exiting the function.
-The co-ordinates are absolute from the top left hand side of the current page. There are no restrictions as to the number of times this command can be invoked per page; subsequent
-graphics drawings will be overlaid on prior renderings.
+The command takes a function with a single argument, the [Graphics2D](http://docs.oracle.com/javase/7/docs/api/java/awt/Graphics2D.html) object, onto which you can draw
+things. Note that this is actually a [*PdfGraphics2D*](https://coderanch.com/how-to/javadoc/itext-2.1.7/com/lowagie/text/pdf/PdfGraphics2D.html) object (a subclass of
+Graphics2D) which will render the drawing instructions as vectors rather than to a raster bitmap. There is no need to dispose of the graphics context as this is done on
+exiting the function.  The co-ordinates are absolute from the top left hand side of the current page. There are no restrictions as to the number of times this command can
+be invoked per page; subsequent graphics drawings will be overlaid on prior renderings.
+
+The font system for `.setFont` is different than that used in the rest of `clj-pdf`. Enabling `:register-system-fonts? true` in the document metadata will also register
+system fonts for use with `.setFont`. There is currently not a facility to load custom fonts for `.setFont`. A workaround would be to install the desired fonts in the
+system font directory. Evaluate `(clj-pdf.graphics-2d/get-font-maps)` to get a list of available system fonts and their names.
+
 
 optional metadata:
 
@@ -629,7 +635,9 @@ optional metadata:
  (fn [g2d]
    (doto g2d
      (.setColor java.awt.Color/RED)
-     (.drawOval (int 0) (int 0) (int 50) (int 50))))]
+     (.drawOval (int 0) (int 0) (int 50) (int 50))
+     (.setFont (java.awt.Font. "GillSans-SemiBold" java.awt.Font/PLAIN 12))  ; Requires :register-system-fonts? true & font availability
+     (.drawString "A red circle." (float -5) (float 64))))]
 ```
 
 #### Heading

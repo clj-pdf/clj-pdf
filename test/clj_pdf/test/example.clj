@@ -30,7 +30,7 @@
       :doc-header    ["inspired by" "William Shakespeare"]
       :right-margin  50
       :author        "John Doe"
-      :bottom-margin 25
+      :bottom-margin 10
       :left-margin   10
       :top-margin    20
       :size          "a4"
@@ -47,14 +47,14 @@
      [:paragraph
       "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-     [:table {:header [{:color [100 100 100]} "FOO"] :cellSpacing 20}
+     [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
       ["foo"
        [:cell
         [:phrase
          {:style "italic" :size 18 :family "helvetica" :color [200 55 221]}
          "Hello Clojure!"]]
        "baz"]
-      ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
+      ["foo1" [:cell {:background-color [100 10 200]} "bar1"] "baz1"]
       ["foo2" "bar2" [:cell ["table" ["Inner table Col1" "Inner table Col2" "Inner table Col3"]]]]]
 
      [:paragraph
@@ -117,11 +117,25 @@
         :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
        "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
 
+     [:graphics {:under false :translate [53 120]}
+      (fn [g2d]
+        (doto g2d
+          (.setColor Color/BLACK)
+          (.setFont  (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
+          (.drawString ":graphics Drawing" (float 0) (float 0))))]
+
      [:graphics {:translate [150 300] :rotate (radians -90)}
       (fn [g2d]
         (.setColor g2d Color/GREEN)
         (draw-tree g2d 50 10))]
 
+     [:graphics {:under false :translate [70 270] :rotate (radians -35)}
+      (fn [g2d]
+        (doto g2d
+          (.setColor (java.awt.Color. 96 96 96))
+          (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
+          (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
+     
      [:chart {:type      :pie-chart
               :title     "Vector Pie"
               :vector    true
@@ -149,7 +163,7 @@
         :target "https://en.wikipedia.org/wiki/File:Example.svg"}
        "https://en.wikipedia.org/wiki/File:Example.svg"]]
 
-     [:svg {:under true :translate [0 270] :scale 0.95}
+     [:svg {:under true :translate [0 200] :scale 0.95}
       (clojure.java.io/file "test/Example.svg")]
 
      [:pagebreak]
