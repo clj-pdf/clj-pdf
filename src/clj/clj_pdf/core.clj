@@ -733,13 +733,14 @@
         (swap! *cache* assoc svg-hash compiled)
         compiled))))
 
-(defn- line [{dotted? :dotted, gap :gap, [r g b] :color} & _]
+(defn- line [{dotted? :dotted, gap :gap, [r g b] :color width :line-width} & _]
   (let [^LineSeparator lineSeparator (if dotted?
                                        (if gap
                                          (doto (new DottedLineSeparator) (.setGap (float gap)))
                                          (new DottedLineSeparator))
                                        (new LineSeparator))]
     (if (and r g b) (.setLineColor lineSeparator (new Color r g b)))
+    (if width (.setLineWidth lineSeparator (float width)))
     (.setOffset lineSeparator -5)
     lineSeparator))
 
