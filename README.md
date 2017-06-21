@@ -701,6 +701,7 @@ optional metadata:
 * :color [r g b]
 * :dotted boolean
 * :gap number spaces between dots if line is dotted
+* :line-width number
 
 creates a horizontal line
 
