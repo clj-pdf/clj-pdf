@@ -1004,11 +1004,7 @@
             ]
         (.setColorFill canvas (new Color ^int r ^int g ^int b))
         (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
-        (.fill canvas)
-        )
-      )
-    )
-  )
+        (.fill canvas)))))
 
 (defn- setup-doc [{:keys [left-margin
                           right-margin
