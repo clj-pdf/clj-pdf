@@ -47,7 +47,7 @@
    ["/usr/X11R6/lib/X11/fonts", true]])
 
 (defn- full-path [parent filename]
-  (str/join [parent "/" filename]))
+  (str/join [parent java.io.File/separator filename]))
 
 (defn g2d-register-fonts []
   (when (nil? @g2d-fonts-registered?)
