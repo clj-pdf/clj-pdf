@@ -49,22 +49,26 @@
 (defn- full-path [parent filename]
   (str/join [parent java.io.File/separator filename]))
 
-(defn g2d-register-fonts []
+(defn g2d-register-fonts-helper [dir recursive]
+  (.insertDirectory default-font-mapper dir)
+  (if recursive
+    (let [fd (io/file dir)
+          files (.list fd)
+          paths (map #(full-path dir %) files)]
+      (doseq [path paths]
+        (if (.isDirectory (io/file path))
+          (g2d-register-fonts-helper
+           path recursive))))))
+
+(defn g2d-register-fonts
+  "Walks common font directories and registers them for use."
+  []
+  ;; This is guarded by a stateful atom in addition to core/fonts-registered?
+  ;; because get-font-maps can also trigger a g2d-register-fonts. For a big
+  ;; font library, registration can be slow.
   (when (nil? @g2d-fonts-registered?)
     (doseq [[dir recursive] common-font-dirs]
-      ;; We require to start with a dirctory, so register it.
-      (.insertDirectory default-font-mapper dir)
-      (if recursive
-        (let [init-paths (map #(full-path dir %) (.list (io/file dir)))]
-          (loop [maybe-subdir (first init-paths)
-                 rest-paths (rest init-paths)]
-            (if-let [fd (io/file maybe-subdir)]
-              (if (.isDirectory fd)
-                (let [loop-paths (map #(full-path maybe-subdir %) (.list fd))]
-                  (.insertDirectory default-font-mapper maybe-subdir)
-                  (recur (first loop-paths) (rest loop-paths)))
-                (recur (first rest-paths) (rest rest-paths))
-                ))))))
+      (g2d-register-fonts-helper dir recursive))
     (reset! g2d-fonts-registered? true)))
 
 ;;; Utility functions

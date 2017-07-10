@@ -636,7 +636,8 @@ optional metadata:
    (doto g2d
      (.setColor java.awt.Color/RED)
      (.drawOval (int 0) (int 0) (int 50) (int 50))
-     (.setFont (java.awt.Font. "GillSans-SemiBold" java.awt.Font/PLAIN 12))  ; Requires :register-system-fonts? true & font availability
+     ; Requires :register-system-fonts? true & font availability
+     (.setFont (java.awt.Font. "GillSans-SemiBold" java.awt.Font/PLAIN 12))
      (.drawString "A red circle." (float -5) (float 64))))]
 ```
 
