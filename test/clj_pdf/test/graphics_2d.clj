@@ -19,10 +19,10 @@
       (re/replace #"\[(.*?)\]" "")
       ; these are kind of hacky, but it seems that the prefix characters before the font name "Carlito"
       ; will get randomly generated on each run ... ?
-      (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/AQZVXW+Carlito")
-      (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/AQZVXW+Carlito")
-      (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/AQZVXW+Carlito")
-      (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/AQZVXW+Carlito")))
+      (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/SLDHIE+Carlito")
+      (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/SLDHIE+Carlito")
+      (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/SLDHIE+Carlito")
+      (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/SLDHIE+Carlito")))
 
 (defn read-file ^bytes [file-path]
   (with-open [reader (input-stream file-path)]
@@ -90,11 +90,9 @@
     [:heading "setFont"]
     [:paragraph "This test substitutes a single font, Carlito, for all system fonts.  Carlito is an open source font. Carlito-Regular.ttf is included in this repo.  Usage note: evaluate (clj-pdf.graphics2d/get-font-maps) to see available system fonts and their exact names.  In a pinch, the Java default font names are: Serif, SansSerif, Monospaced, Dialog, and DialogInput."]
     [:paragraph "The font system for Graphics2D, invoked with the :graphics tag, is different than that used in the rest of clj-pdf. Enabling ':register-system-fonts? true' in the document metadata will also register system fonts for use with Graphics2D's .setFont."]
-    [:graphics {:under false :translate [100 600] :rotate (/ Math/PI -4)}
+    [:paragraph "The \"a\" below is drawn using a :graphics tag and (.drawString...).  As such, it can be placed arbitrarily (and could also be rotated).  It should be set in Carlito, and have an 18 point font size.  Unfortunately, there are visually undetectable variations in output between systems that prevent more text from being rendered while allowing for automated testing.  Hence the short string."]
+    [:graphics {:under false :translate [70 350]}
      (fn [g2d]
        (.setFont g2d AWT-CARLITO)
-       (.drawString g2d "This paragraph is drawn with a :graphics tag and (.drawString...)." (float 0) (float 0))
-       (.drawString g2d "As such, it can be rotated and placed arbitrarily." (float 0) (float 24))
-       (.drawString g2d "It should be set in Carlito, and have an 18 point font size." (float 0) (float 48)))]]
-   
+       (.drawString g2d "a" (float 0) (float 0)))]]
    "graphics.pdf"))
