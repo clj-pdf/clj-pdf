@@ -19,47 +19,10 @@
       (re/replace #"\[(.*?)\]" "")
       ; these are kind of hacky, but it seems that the prefix characters before the font name "Carlito"
       ; will get randomly generated on each run ... ?
-      (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/PHZPHX+Carlito")
-      (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/PHZPHX+Carlito")
-      (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/PHZPHX+Carlito")
-      (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/PHZPHX+Carlito")
-
-      ;; Helvetica didn't have this this prefixing, maybe because it was the default font?
-      ;; If you regenerate the graphics-[ubuntu|macos|windows] files, you need to change relevant
-      ;; stanzas below to match the random prefix in the newly generated files.
-
-      ;; TimesNewRoman needs three because of the three OS-specific versions 
-
-      ;; For Ubuntu / Lato
-      (re/replace #"Font\/([A-Z]+\+TimesNewRomanPSMT)" "Font/ZNCYWJ+TimesNewRomanPSMT")
-      (re/replace #"FontBBox\/([A-Z]+\+TimesNewRomanPSMT)" "FontBBox/ZNCYWJ+TimesNewRomanPSMT")
-      (re/replace #"FontName\/([A-Z]+\+TimesNewRomanPSMT)" "FontName/ZNCYWJ+TimesNewRomanPSMT")
-      (re/replace #"BaseFont\/([A-Z]+\+TimesNewRomanPSMT)" "BaseFont/ZNCYWJ+TimesNewRomanPSMT")
-      (re/replace #"Font\/([A-Z]+\+Lato)" "Font/CRYKVF+Lato-Regular")
-      (re/replace #"FontBBox\/([A-Z]+\+Lato)" "FontBBox/CRYKVF+Lato-Regular")
-      (re/replace #"FontName\/([A-Z]+\+Lato)" "FontName/CRYKVF+Lato-Regular")
-      (re/replace #"BaseFont\/([A-Z]+\+Lato)" "BaseFont/CRYKVF+Lato-Regular")
-
-      ;; For MacOS / Zapfino
-      (re/replace #"Font\/([A-Z]+\+TimesNewRomanPSMT)" "Font/ZUDZDU+TimesNewRomanPSMT")
-      (re/replace #"FontBBox\/([A-Z]+\+TimesNewRomanPSMT)" "FontBBox/ZUDZDU+TimesNewRomanPSMT")
-      (re/replace #"FontName\/([A-Z]+\+TimesNewRomanPSMT)" "FontName/ZUDZDU+TimesNewRomanPSMT")
-      (re/replace #"BaseFont\/([A-Z]+\+TimesNewRomanPSMT)" "BaseFont/ZUDZDU+TimesNewRomanPSMT")
-      (re/replace #"Font\/([A-Z]+\+Zapfino)" "Font/ASRNYM+Zapfino")
-      (re/replace #"FontBBox\/([A-Z]+\+Zapfino)" "FontBBox/ASRNYM+Zapfino")
-      (re/replace #"FontName\/([A-Z]+\+Zapfino)" "FontName/ASRNYM+Zapfino")
-      (re/replace #"BaseFont\/([A-Z]+\+Zapfino)" "BaseFont/ASRNYM+Zapfino")
-
-      ;; For Windows / Palatino
-      (re/replace #"Font\/([A-Z]+\+TimesNewRomanPSMT)" "Font/VBWQEY+TimesNewRomanPSMT")
-      (re/replace #"FontBBox\/([A-Z]+\+TimesNewRomanPSMT)" "FontBBox/VBWQEY+TimesNewRomanPSMT")
-      (re/replace #"FontName\/([A-Z]+\+TimesNewRomanPSMT)" "FontName/VBWQEY+TimesNewRomanPSMT")
-      (re/replace #"BaseFont\/([A-Z]+\+TimesNewRomanPSMT)" "BaseFont/VBWQEY+TimesNewRomanPSMT")
-      (re/replace #"Font\/([A-Z]+\+Palatino-Roman)" "Font/LFPQWL+Palatino-Roman")
-      (re/replace #"FontBBox\/([A-Z]+\+Palatino-Roman)" "FontBBox/LFPQWL+Palatino-Roman")
-      (re/replace #"FontName\/([A-Z]+\+Palatino-Roman)" "FontName/LFPQWL+Palatino-Roman")
-      (re/replace #"BaseFont\/([A-Z]+\+Palatino-Roman)" "BaseFont/LFPQWL+Palatino-Roman")
-      ))
+      (re/replace #"Font\/([A-Z]+\+Carlito)" "Font/AQZVXW+Carlito")
+      (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/AQZVXW+Carlito")
+      (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/AQZVXW+Carlito")
+      (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/AQZVXW+Carlito")))
 
 (defn read-file ^bytes [file-path]
   (with-open [reader (input-stream file-path)]
@@ -73,29 +36,26 @@
     (pdf doc out)
     (.toByteArray out)))
 
+;; MODIFIED from clj_pdf/test/core.clj.  Pulled out font-filename from let binding to use later.
+(def font-filename (add-test-path-prefix "Carlito-Regular.ttf"))
 (defn inject-test-font [doc]
-  (let [font-filename (add-test-path-prefix "Carlito-Regular.ttf")
-        font-props    {:encoding :unicode
+  (let [font-props    {:encoding :unicode
                        :ttf-name font-filename}]
     (update-in (vec doc) [0 :font] merge font-props)))
 
-;; MODIFIED from clj-pdf.test.core.  Returns false now.
 (defn generate-pdf [doc output-filename]
   (let [doc1 (inject-test-font doc)]
     (println "regenerating pdf" output-filename)
     (pdf doc1 (add-test-path-prefix output-filename))
-                                        ; TODO check what else this will impact
-    false                               ; Was 'true'. Changed to 'false' so the 'or' in setFont doesn't short-circuit
-    ))
+    true))
 
-;; MODIFIED from clj-pdf.test.core.  Removed implicit 'is'.
 (defn eq? [doc1 filename]
   (let [filename   (add-test-path-prefix filename)
         doc1       (inject-test-font doc1)
         doc1-bytes (pdf->bytes doc1)
         doc2-bytes (read-file filename)]
-    (= (fix-pdf doc1-bytes)
-       (fix-pdf doc2-bytes))))
+    (is (= (fix-pdf doc1-bytes)
+           (fix-pdf doc2-bytes)))))
 
 (defn regenerate-test-pdfs []
   (with-redefs [eq? generate-pdf]
@@ -106,131 +66,35 @@
 
 #_(run-tests)
 
-;; TODO Other Linuxes: SuSE, CentOS, RedHat, Mint, Debian, Arch, etc.
-;; TODO BSD and Solaris.  A naive search in Jul 2017 of FreeBSD 10.3-STABLE-amd64-2017-04-13 on AWS and
-;; SmartOS base-64-lts 16.4.1 (a poor man's proxy for Solaris) was done.
-;;
-;; On FreeBSD 
-;; /usr/share/examples/BSD_daemon/FreeBSD.pfa
-;; /usr/share/groff_font/devps/symbolsl.pfa
-;; /usr/share/groff_font/devps/zapfdr.pfa
-;; /usr/share/groff_font/devps/freeeuro.pfa
-;;
-;; On SmartOS
-;; No *.tff|.pfa|.pfb|*.pfm|*.fot|*.fon|*.fnt found
-;; (not that the bitmapped .fon .fnt would have helped)
-;;
+(def test-directory (.getAbsolutePath (file "test")))
 
-(def para1 "Available fonts vary greatly among operating system and individual installations.  The graphics-2d font capability differs from the rest of clj-pdf, relying on an underlying Java AWT system.  Currently, that system imports fonts only from common system directories (TrueType, OpenType, and Type1 fonts). This makes choosing a single cross-platform test font that isn't in the default set (SansSerif(Helvetica), Serif(Times), Monospaced(Courier)) unlikely.")
+(with-redefs [common-font-dirs [[test-directory true]]]
+  (g2d-register-fonts))
 
-(def para2 "To be reasonably cross-platform, these tests work generally under at least one standard operating system font, to the extent that exists at all in a given OS family.  This has been verified on at least one system of the following: MacOS 10.12.5.")
+(def font-file (clojure.java.io/file font-filename))
+(def AWT-CARLITO-BASE (java.awt.Font/createFont java.awt.Font/TRUETYPE_FONT font-file))
+(def AWT-CARLITO (.deriveFont AWT-CARLITO-BASE (float 18)))
 
 (deftest setFont
-  (is (or
-       (eq?
-        [{:title         "Graphics setFont test doc Ubuntu"
-          :left-margin   10
-          :right-margin  50
-          :top-margin    20
-          :bottom-margin 25
-          :font          {:size 12}
-          :size          :a4
-          :orientation   "portrait"
-          :register-system-fonts? true}
-         [:chapter "Graphics2D tests"]
-         [:heading "setFont Ubuntu"]
-         [:paragraph para1]
-         [:paragraph para2]
-         [:graphics {:under false :translate [30 250]}
-          (fn [g2d]
-            (.drawString g2d "All systems: This text has its font unspecified, so should have font size 12, and be Helvetica" (float 0) (float 0))
-            (.drawString g2d "on most systems. Helvetica is a very widely used sans serif font by Max Miedinger with input" (float 0) (float 18))
-            (.drawString g2d "from Eduard Hoffmann.  The Regular weight, which this text should be set in, has a double" (float 0) (float 36))
-            (.drawString g2d "story 'a' with a small curved terminal at the bottom of the main vertical stroke.  The 'g'" (float 0) (float 54))
-            (.drawString g2d "is single story." (float 0) (float 72)))]
-         [:graphics {:under false :translate [30 350]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Times New Roman" java.awt.Font/PLAIN 12))
-            (.drawString g2d "All systems: This should have font size 12, and be Times New Roman." (float 0) (float 0))
-            (.drawString g2d "Times New Roman is a popular classic serif font by Stanley Morison with input from Victor Lardent," (float 0) (float 18))
-            (.drawString g2d "released in 1932.  The Regular weight, which this text should be set in, is a serif font that was" (float 0) (float 36))
-            (.drawString g2d "designed for newsprint, optimized for readibility and compactness. It has both double story 'g' and 'a'." (float 0) (float 54)))]
-         [:graphics {:under false :translate [30 440]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Lato" java.awt.Font/PLAIN 12))
-            (.drawString g2d "Ubuntu: This should have font size 12, and be Lato." (float 0) (float 0))
-            (.drawString g2d "Lato is a popular open source font by Lukasz Dziedzic and team.  The Regular (400) weight, which this " (float 0) (float 18)) ;TODO get .drawString to render the Cyrillic 'Ł' in Łukasz
-            (.drawString g2d "text should be set in, is a sans serif font with double story 'g' and 'a'.  The 'a' does not have the curved" (float 0) (float 36))
-            (.drawString g2d "bottom terminal of Helvetica Regular." (float 0) (float 54)))]]
-        "graphics-ubuntu.pdf")
-       (eq?
-        [{:title         "Graphics setFont test doc MacOS"
-          :left-margin   10
-          :right-margin  50
-          :top-margin    20
-          :bottom-margin 25
-          :font          {:size 12}
-          :size          :a4
-          :orientation   "portrait"
-          :register-system-fonts? true}
-         [:chapter "Graphics2D tests"]
-         [:heading "setFont MacOS"]
-         [:paragraph para1]
-         [:paragraph para2]
-         [:graphics {:under false :translate [30 250]}
-          (fn [g2d]
-            (.drawString g2d "All systems: This text has its font unspecified, so should have font size 12, and be Helvetica" (float 0) (float 0))
-            (.drawString g2d "on most systems. Helvetica is a very widely used sans serif font by Max Miedinger with input" (float 0) (float 18))
-            (.drawString g2d "from Eduard Hoffmann.  The Regular weight, which this text should be set in, has a double" (float 0) (float 36))
-            (.drawString g2d "story 'a' with a small curved terminal at the bottom of the main vertical stroke.  The 'g'" (float 0) (float 54))
-            (.drawString g2d "is single story." (float 0) (float 72)))]
-         [:graphics {:under false :translate [30 350]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Times New Roman" java.awt.Font/PLAIN 12))
-            (.drawString g2d "All systems: This should have font size 12, and be Times New Roman." (float 0) (float 0))
-            (.drawString g2d "Times New Roman is a popular classic serif font by Stanley Morison with input from Victor Lardent," (float 0) (float 18))
-            (.drawString g2d "released in 1932.  The Regular weight, which this text should be set in, is a serif font that was" (float 0) (float 36))
-            (.drawString g2d "designed for newsprint, optimized for readibility and compactness. It has both double story 'g' and 'a'." (float 0) (float 54)))]
-         [:graphics {:under false :translate [30 440]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Zapfino" java.awt.Font/PLAIN 12))
-            (.drawString g2d "MacOS: This should have font size 12, and be Zapfino." (float 0) (float 0))
-            (.drawString g2d "Zapfino is a highly decorative calligraphic font by Hermann Zapf, with" (float 0) (float 40))
-            (.drawString g2d "input from Gino Lee and David Siegel." (float 0) (float 80)))]]
-        "graphics-macos.pdf")
-       (eq?
-        [{:title         "Graphics setFont test doc Windows" 
-          :left-margin   10
-          :right-margin  50
-          :top-margin    20
-          :bottom-margin 25
-          :font          {:size 12}
-          :size          :a4
-          :orientation   "portrait"
-          :register-system-fonts? true}
-         [:chapter "Graphics2D tests"]
-         [:heading "setFont Windows"]
-         [:paragraph para1]
-         [:paragraph para2]
-         [:graphics {:under false :translate [30 250]}
-          (fn [g2d]
-            (.drawString g2d "All systems: This text has its font unspecified, so should have font size 12, and be Helvetica" (float 0) (float 0))
-            (.drawString g2d "on most systems. Helvetica is a very widely used sans serif font by Max Miedinger with input" (float 0) (float 18))
-            (.drawString g2d "from Eduard Hoffmann.  The Regular weight, which this text should be set in, has a double" (float 0) (float 36))
-            (.drawString g2d "story 'a' with a small curved terminal at the bottom of the main vertical stroke.  The 'g'" (float 0) (float 54))
-            (.drawString g2d "is single story." (float 0) (float 72)))]
-         [:graphics {:under false :translate [30 350]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Times New Roman" java.awt.Font/PLAIN 12))
-            (.drawString g2d "All systems: This should have font size 12, and be Times New Roman." (float 0) (float 0))
-            (.drawString g2d "Times New Roman is a popular classic serif font by Stanley Morison with input from Victor Lardent," (float 0) (float 18))
-            (.drawString g2d "released in 1932.  The Regular weight, which this text should be set in, is a serif font that was" (float 0) (float 36))
-            (.drawString g2d "designed for newsprint, optimized for readibility and compactness. It has both double story 'g' and 'a'." (float 0) (float 54)))]
-         [:graphics {:under false :translate [30 440]}
-          (fn [g2d]
-            (.setFont g2d (java.awt.Font. "Palatino" java.awt.Font/PLAIN 12))
-            (.drawString g2d "Windows: This should have font size 12, and be Palatino." (float 0) (float 0))
-            (.drawString g2d "Palatino is a popular classic serif font by Hermann Zapf released in 1949.  The Regular weight, which" (float 0) (float 18))
-            (.drawString g2d "this text should be set in, is a serif font that is more rounded than the default serif font, usually" (float 0) (float 36))
-            (.drawString g2d "Times New Roman.  For completeness, it has both double story 'g' and 'a'." (float 0) (float 54)))]]
-        "graphics-windows.pdf"))))
+  (eq?
+   [{:title         "Graphics setFont test doc"
+     :left-margin   10
+     :right-margin  50
+     :top-margin    20
+     :bottom-margin 25
+     :font          {:size 12}
+     :size          :a4
+     :orientation   "portrait"
+     :register-system-fonts? true}
+    [:chapter "Graphics2D tests"]
+    [:heading "setFont"]
+    [:paragraph "This test substitutes a single font, Carlito, for all system fonts.  Carlito is an open source font. Carlito-Regular.ttf is included in this repo.  Usage note: evaluate (clj-pdf.graphics2d/get-font-maps) to see available system fonts and their exact names.  In a pinch, the Java default font names are: Serif, SansSerif, Monospaced, Dialog, and DialogInput."]
+    [:paragraph "The font system for Graphics2D, invoked with the :graphics tag, is different than that used in the rest of clj-pdf. Enabling ':register-system-fonts? true' in the document metadata will also register system fonts for use with Graphics2D's .setFont."]
+    [:graphics {:under false :translate [100 600] :rotate (/ Math/PI -4)}
+     (fn [g2d]
+       (.setFont g2d AWT-CARLITO)
+       (.drawString g2d "This paragraph is drawn with a :graphics tag and (.drawString...)." (float 0) (float 0))
+       (.drawString g2d "As such, it can be rotated and placed arbitrarily." (float 0) (float 24))
+       (.drawString g2d "It should be set in Carlito, and have an 18 point font size." (float 0) (float 48)))]]
+   
+   "graphics.pdf"))
