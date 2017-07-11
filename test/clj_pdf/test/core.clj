@@ -190,9 +190,9 @@
 
      [:table {:border-width 10 :header ["Row 1" "Row 2" "Row 3"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
 
-     [:table {:border false :header [{:color [100 100 100]} "Singe Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
+     [:table {:border false :header [{:color [100 100 100]} "Single Header"]} ["foo" "bar" "baz"] ["foo1" "bar1" "baz1"] ["foo2" "bar2" "baz2"]]
 
-     [:table {:cell-border false :header [{:color [100 100 100]} "Row 1" "Row 2" "Row 3"] :spacing 20 :header-color [100 100 100]}
+     [:table {:cell-border false :header [{:background-color [100 100 255]} "Row 1" "Row 2" "Row 3"] :spacing 20 :header-color [100 100 100]}
       ["foo"
        [:cell [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]} "Hello Clojure!"]]
        "baz"]

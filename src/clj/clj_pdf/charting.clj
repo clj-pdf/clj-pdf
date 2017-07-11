@@ -1,8 +1,9 @@
 (ns clj-pdf.charting
   (:use [clj-pdf.graphics-2d :only [with-graphics]])
   (:import [org.jfree.chart ChartFactory ChartUtilities JFreeChart]
-           [org.jfree.chart.plot XYPlot PlotOrientation]
+           [org.jfree.chart.plot XYPlot PlotOrientation CategoryPlot]
            [org.jfree.data.xy XYSeries XYSeriesCollection]
+           [org.jfree.chart.renderer.category BarRenderer LineAndShapeRenderer]
            org.jfree.data.category.DefaultCategoryDataset
            org.jfree.data.general.DefaultPieDataset
            org.jfree.chart.renderer.category.StandardBarPainter
@@ -22,11 +23,16 @@
   (let [dataset (new DefaultCategoryDataset)]
     (doseq [[val ^String name] data]
       (.setValue dataset (double val) y-label name))
-    (let [chart (ChartFactory/createBarChart title x-label y-label dataset
+    (let [^JFreeChart chart (ChartFactory/createBarChart title x-label y-label dataset
                                              (if horizontal PlotOrientation/HORIZONTAL PlotOrientation/VERTICAL)
                                              true true false)]
       (set-background chart background)
-      (.. chart getCategoryPlot getRenderer (setBarPainter (new StandardBarPainter)))
+
+      (-> chart
+          ^CategoryPlot (. getCategoryPlot)
+          ^BarRenderer (. getRenderer)
+          ^void (. setBarPainter (StandardBarPainter.)))
+
       chart)))
 
 (defn- pie-chart [{:keys [^String title background]} & data]
@@ -45,7 +51,7 @@
                            horizontal
                            time-series
                            time-format
-                           label-format
+                           ^String label-format
                            x-label
                            y-label
                            tick-interval
@@ -56,7 +62,7 @@
   (let [[xrange-start xrange-end] x-range
         [yrange-start yrange-end] y-range
         dataset   (new XYSeriesCollection)
-        formatter (if time-series (new SimpleDateFormat
+        ^java.text.DateFormat formatter (if time-series (new SimpleDateFormat
                                  (or time-format "yyyy-MM-dd-HH:mm:ss")))]
     (doseq [[series-title & points] data]
       (let [series (new XYSeries series-title)]
@@ -74,12 +80,12 @@
                                                        PlotOrientation/HORIZONTAL
                                                        PlotOrientation/VERTICAL) true true false))
           ^XYPlot plot (.getPlot chart)
-          renderer (.getRenderer plot)]
+          ^LineAndShapeRenderer renderer (.getRenderer plot)]
 
       (set-background chart background)
 
       (let [^NumberAxis domain-axis (.getDomainAxis plot)
-            range-axis (.getRangeAxis plot)]
+            ^NumberAxis range-axis (.getRangeAxis plot)]
         (if (or tick-interval tick-interval-x)
           (.setTickUnit domain-axis (new NumberTickUnit (or tick-interval tick-interval-x))))
 
@@ -89,13 +95,15 @@
           (if xrange-end (.setRange domain-axis xrange-start xrange-end))
           (if yrange-end (.setRange range-axis yrange-start yrange-end)))
 
-      (if time-series (.. plot ^DateAxis getDomainAxis (setDateFormatOverride formatter)))
+      (if time-series (-> plot
+                          ^DateAxis (. getDomainAxis)
+                          ^void (. setDateFormatOverride formatter)))
       (if show-points (.setBaseShapesVisible renderer true))
       (if point-labels
-        (let [format (NumberFormat/getNumberInstance)]
+        (let [^NumberFormat format (NumberFormat/getNumberInstance)]
           (if label-percision (.setMaximumFractionDigits format (int label-percision)))
           (.setBaseItemLabelGenerator renderer
-            (new StandardXYItemLabelGenerator (or label-format "{1},{2}") format format))
+            (StandardXYItemLabelGenerator. (or label-format "{1},{2}") format format))
           (.setBaseItemLabelsVisible renderer true)))
       chart)))
 

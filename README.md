@@ -332,6 +332,7 @@ All fields in the metadata section are optional:
  :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
 
  ;;setting :footer to false will pevent page numbers from being displayed
+ ;; the :footer also accepts a map containing a table for complex footer layouts as seen in the next section
  :footer {:text "Page footer text appears on each page (includes page number)"
           :align :left ;optional footer alignment of :left|:right|:center defaults to :right
           :footer-separator "text which will be displayed between current page number and total pages, defaults to /"
@@ -710,6 +711,7 @@ optional metadata:
 * :color [r g b]
 * :dotted boolean
 * :gap number spaces between dots if line is dotted
+* :line-width number
 
 creates a horizontal line
 

@@ -67,7 +67,7 @@
 
 (defn- set-background [^Chunk element {:keys [background]}]
   (when background
-    (let [[r g b] background] (.setBackground element (Color. r g b)))))
+   (let [[r g b] background] (.setBackground element (Color. (int r) (int g) (int b))))))
 
 (defn get-style [style]
   (condp = (when style (name style))
@@ -120,7 +120,7 @@
       :else Font/NORMAL)
 
     (if (and r g b)
-      (new Color r g b)
+      (new Color (int r) (int g) (int b))
       (new Color (int 0) (int 0) (int 0)))))
 
 (defn- custom-page-size [width height]
@@ -238,13 +238,13 @@
                    indent
                    symbol] :as meta}
            & items]
-  (let [^List list
+  (let [list
         (cond
-          roman (new RomanList)
-          greek (new GreekList)
-          dingbats (new ZapfDingbatsList dingbats-char-num)
-          dingbatsnumber (new ZapfDingbatsNumberList dingbatsnumber-type)
-          :else (new List (boolean (or numbered false)) (boolean (or lettered false))))]
+          ^RomanList roman (new RomanList)
+          ^GreekList greek (new GreekList)
+          ^ZapfDingbatsList dingbats (new ZapfDingbatsList dingbats-char-num)
+          ^ZapDingbatsNumberList dingbatsnumber (new ZapfDingbatsNumberList dingbatsnumber-type)
+          :else (^List new List (boolean (or numbered false)) (boolean (or lettered false))))]
 
     (if lowercase (.setLowercase list lowercase))
     (if indent (.setIndentationLeft list (float indent)))
@@ -289,7 +289,7 @@
 (defn- anchor [{:keys [style leading id target] :as meta} content]
   (let [a (cond (and style leading) (new Anchor (float leading) content (font style))
                 leading (new Anchor (float leading) (styled-item meta content))
-                style (new Anchor content (font style))
+                style (new Anchor ^String content (font style))
                 :else (new Anchor (styled-item meta content)))]
     (if id (.setName a id))
     (if target (.setReference a target))
@@ -423,7 +423,7 @@
     (let [meta?       (map? (first header))
           header-rest (if meta? (rest header) header)
           header-data header-rest
-          set-bg      #(if-let [[r g b] (if meta? (:backdrop-color (first header)))]
+          set-bg      #(if-let [[r g b] (if meta? (:background-color (first header)))]
                          (doto ^Cell % (.setBackgroundColor (new Color (int r) (int g) (int b)))) %)]
       (if (= 1 (count header-data))
         (let [header               (first header-data)
@@ -604,7 +604,7 @@
     (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (.getSource ^java.awt.Image img-data)) nil)
 
     base64
-    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (Base64/decodeBase64 img-data)) nil)
+    (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) (^bytes Base64/decodeBase64 ^String img-data)) nil)
 
     (= Byte/TYPE (.getComponentType (class img-data)))
     (Image/getInstance (.createImage (Toolkit/getDefaultToolkit) ^bytes img-data) nil)
@@ -733,13 +733,14 @@
         (swap! *cache* assoc svg-hash compiled)
         compiled))))
 
-(defn- line [{dotted? :dotted, gap :gap, [r g b] :color} & _]
+(defn- line [{dotted? :dotted, gap :gap, [r g b] :color width :line-width} & _]
   (let [^LineSeparator lineSeparator (if dotted?
                                        (if gap
                                          (doto (new DottedLineSeparator) (.setGap (float gap)))
                                          (new DottedLineSeparator))
                                        (new LineSeparator))]
-    (if (and r g b) (.setLineColor lineSeparator (new Color r g b)))
+    (if (and r g b) (.setLineColor lineSeparator (new Color ^int r ^int g ^int b)))
+    (if width (.setLineWidth lineSeparator (float width)))
     (.setOffset lineSeparator -5)
     lineSeparator))
 
@@ -882,7 +883,7 @@
 
 (defn- add-header [header ^Document doc font-style]
   (when header
-    (.setHeader doc (doto (new HeaderFooter (new Phrase header (font font-style)) false) (.setBorderWidthTop 0)))))
+    (.setHeader doc (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false) (.setBorderWidthTop 0)))))
 
 (defn set-header-footer-table-width [table ^Document doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
@@ -996,18 +997,14 @@
 
 (defn background-color-applier [background-color]
   (proxy [PdfPageEventHelper] []
-    (onEndPage [writer doc]
+    (onEndPage [^PdfWriter writer ^Document doc]
       (let [^PdfContentByte canvas (.getDirectContentUnder writer)
             ^Rectangle rect (.getPageSize doc)
             [r g b] background-color
             ]
-        (.setColorFill canvas (new Color r g b))
+        (.setColorFill canvas (new Color ^int r ^int g ^int b))
         (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
-        (.fill canvas)
-        )
-      )
-    )
-  )
+        (.fill canvas)))))
 
 (defn- setup-doc [{:keys [left-margin
                           right-margin
