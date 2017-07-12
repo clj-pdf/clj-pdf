@@ -621,7 +621,9 @@ be invoked per page; subsequent graphics drawings will be overlaid on prior rend
 
 The font system for `.setFont` is different than that used in the rest of `clj-pdf`. Enabling `:register-system-fonts? true` in the document metadata will also register
 system fonts for use with `.setFont`. There is currently not a facility to load custom fonts for `.setFont`. A workaround would be to install the desired fonts in the
-system font directory. Evaluate `(clj-pdf.graphics-2d/get-font-maps)` to get a list of available system fonts and their names.
+system font directory, or see clj-pdf.test.graphics-2d.
+
+Evaluate `(clj-pdf.graphics-2d/get-font-maps)` to get a list of available system fonts and their names.
 
 
 optional metadata:
@@ -1382,7 +1384,7 @@ creating a pdf:
     :doc-header    ["inspired by" "William Shakespeare"]
     :right-margin  50
     :author        "John Doe"
-    :bottom-margin 25
+    :bottom-margin 10
     :left-margin   10
     :top-margin    20
     :size          "a4"
@@ -1399,7 +1401,7 @@ creating a pdf:
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-   [:table {:header [{:background-color [100 100 100]} "FOO"] :spacing 2}
+   [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
     ["foo"
      [:cell
       [:phrase
@@ -1469,11 +1471,25 @@ creating a pdf:
       :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
      "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
 
+   [:graphics {:under false :translate [53 120]}
+    (fn [g2d]
+      (doto g2d
+        (.setColor Color/BLACK)
+        (.setFont  (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
+        (.drawString ":graphics Drawing" (float 0) (float 0))))]
+
    [:graphics {:translate [150 300] :rotate (radians -90)}
      (fn [g2d]
-       (.setColor g2d java.awt.Color/GREEN)
+       (.setColor g2d Color/GREEN)
        (draw-tree g2d 50 10))]
 
+   [:graphics {:under false :translate [70 270] :rotate (radians -35)}
+    (fn [g2d]
+      (doto g2d
+        (.setColor (Color. 96 96 96))
+        (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
+        (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
+   
    [:chart {:type :pie-chart
             :title "Vector Pie"
             :vector true
