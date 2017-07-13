@@ -1164,6 +1164,7 @@
              (nil? @fonts-registered?))
     ; register fonts in usual directories
     (FontFactory/registerDirectories)
+    (g2d/g2d-register-fonts)
     (reset! fonts-registered? true)))
 
 (defn- parse-meta [doc-meta]
