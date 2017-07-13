@@ -61,13 +61,18 @@
            path recursive))))))
 
 (defn g2d-register-fonts
-  "Walks common font directories and registers them for use."
-  []
+  "Walks common font directories and registers them for use. Optionally 
+  accepts a coll of absolute directories to register each with a 
+  subdirectory walk directive, in the form of 'common-font-dirs'. Eval
+  with custom fonts solely to override system fonts.  Eval empty first
+  then again with custom fonts to augment system fonts."
+  [& [font-dirs]]
   ;; This is guarded by a stateful atom in addition to core/fonts-registered?
   ;; because get-font-maps can also trigger a g2d-register-fonts. For a big
   ;; font library, registration can be slow.
-  (when (nil? @g2d-fonts-registered?)
-    (doseq [[dir recursive] common-font-dirs]
+  (when (or (nil? @g2d-fonts-registered?)
+            font-dirs)
+    (doseq [[dir recursive] (or font-dirs common-font-dirs)]
       (g2d-register-fonts-helper dir recursive))
     (reset! g2d-fonts-registered? true)))
 

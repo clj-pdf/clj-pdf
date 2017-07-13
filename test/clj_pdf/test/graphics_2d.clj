@@ -68,8 +68,7 @@
 
 (def test-directory (.getAbsolutePath (file "test")))
 
-(with-redefs [common-font-dirs [[test-directory true]]]
-  (g2d-register-fonts))
+(g2d-register-fonts [[test-directory true]])
 
 (def font-file (clojure.java.io/file font-filename))
 (def AWT-CARLITO-BASE (java.awt.Font/createFont java.awt.Font/TRUETYPE_FONT font-file))
