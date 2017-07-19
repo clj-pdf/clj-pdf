@@ -694,7 +694,7 @@ optional metadata:
     :pad-right  50}
    (javax.imageio.ImageIO/read (-> "mandelbrot.jpg" clojure.java.io/resource clojure.java.io/file) )]
 [:image "test/mandelbrot.jpg"]
-[:image "http://clojure.org/space/showimage/clojure-icon.gif"]
+[:image "https://clojure.org/images/clojure-logo-120b.png"]
 
 ; images can also be inserted inline with other text by wrapping it inside
 ; of a chunk element
