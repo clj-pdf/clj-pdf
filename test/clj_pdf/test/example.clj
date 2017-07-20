@@ -117,11 +117,25 @@
         :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
        "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
 
+     [:graphics {:under false :translate [53 120]}
+      (fn [g2d]
+        (doto g2d
+          (.setColor Color/BLACK)
+          (.setFont  (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
+          (.drawString ":graphics Drawing" (float 0) (float 0))))]
+
      [:graphics {:translate [150 300] :rotate (radians -90)}
       (fn [g2d]
         (.setColor g2d Color/GREEN)
         (draw-tree g2d 50 10))]
 
+     [:graphics {:under false :translate [70 270] :rotate (radians -35)}
+      (fn [g2d]
+        (doto g2d
+          (.setColor (java.awt.Color. 96 96 96))
+          (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
+          (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
+     
      [:chart {:type      :pie-chart
               :title     "Vector Pie"
               :vector    true
@@ -149,7 +163,7 @@
         :target "https://en.wikipedia.org/wiki/File:Example.svg"}
        "https://en.wikipedia.org/wiki/File:Example.svg"]]
 
-     [:svg {:under true :translate [0 270] :scale 0.95}
+     [:svg {:under true :translate [0 200] :scale 0.95}
       (clojure.java.io/file "test/Example.svg")]
 
      [:pagebreak]

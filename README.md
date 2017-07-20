@@ -1,65 +1,65 @@
-# `clj-pdf` [![Coverage Status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![Downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
+# `clj-pdf` [![coverage status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
 
 
-A library for easily generating PDFs from Clojure. An example PDF is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
+a library for easily generating pdfs from clojure. an example pdf is available [here](https://github.com/yogthos/clj-pdf/raw/master/example.pdf) with its source [below](#a-complete-example).
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+<!-- start doctoc generated toc please keep comment here to allow auto update -->
+<!-- don't edit this section, instead re-run doctoc to update -->
+**table of contents**  *generated with [doctoc](https://github.com/thlorenz/doctoc)*
 
-  - [Installation](#installation)
-  - [Usage](#usage)
-    - [Templating](#templating)
-    - [Stylesheets](#stylesheets)
-  - [Document Elements](#document-elements)
-  - [Document Format](#document-format)
-    - [Metadata](#metadata)
-      - [Font](#font)
-      - [Using Custom TTF Fonts](#using-custom-ttf-fonts)
-    - [Document sections](#document-sections)
-      - [Anchor](#anchor)
-      - [Chapter](#chapter)
-      - [Chunk](#chunk)
-      - [Clear double page](#clear-double-page)
-      - [Graphics](#graphics)
-      - [Heading](#heading)
-      - [Image](#image)
-      - [Line](#line)
-      - [List](#list)
-      - [Multi-Column](#multi-column)
-      - [Pagebreak](#pagebreak)
-      - [Paragraph](#paragraph)
-      - [Phrase](#phrase)
-      - [Reference](#reference)
-      - [Section](#section)
-      - [Spacer](#spacer)
-      - [String](#string)
-      - [Subscript](#subscript)
-      - [Superscript](#superscript)
-      - [SVG](#svg)
-      - [Table](#table)
-      - [PDF Table](#pdf-table)
-      - [Table Cell](#table-cell)
-      - [PDF Table Cell](#pdf-table-cell)
-    - [Charting](#charting)
+  - [installation](#installation)
+  - [usage](#usage)
+    - [templating](#templating)
+    - [stylesheets](#stylesheets)
+  - [document elements](#document-elements)
+  - [document format](#document-format)
+    - [metadata](#metadata)
+      - [font](#font)
+      - [using custom ttf fonts](#using-custom-ttf-fonts)
+    - [document sections](#document-sections)
+      - [anchor](#anchor)
+      - [chapter](#chapter)
+      - [chunk](#chunk)
+      - [clear double page](#clear-double-page)
+      - [graphics](#graphics)
+      - [heading](#heading)
+      - [image](#image)
+      - [line](#line)
+      - [list](#list)
+      - [multi-column](#multi-column)
+      - [pagebreak](#pagebreak)
+      - [paragraph](#paragraph)
+      - [phrase](#phrase)
+      - [reference](#reference)
+      - [section](#section)
+      - [spacer](#spacer)
+      - [string](#string)
+      - [subscript](#subscript)
+      - [superscript](#superscript)
+      - [svg](#svg)
+      - [table](#table)
+      - [pdf table](#pdf-table)
+      - [table cell](#table-cell)
+      - [pdf table cell](#pdf-table-cell)
+    - [charting](#charting)
       - [bar chart](#bar-chart)
       - [line chart](#line-chart)
       - [pie chart](#pie-chart)
-    - [A complete example](#a-complete-example)
-- [Users](#users)
-- [License](#license)
+    - [a complete example](#a-complete-example)
+- [users](#users)
+- [license](#license)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- end doctoc generated toc please keep comment here to allow auto update -->
 
-## Installation
+## installation
 
-`clj-pdf` is available as a Maven artifact from [Clojars](https://clojars.org/search?q=clj-pdf):
+`clj-pdf` is available as a maven artifact from [clojars](https://clojars.org/search?q=clj-pdf):
 
-Leiningen
+leiningen
 
-[![Clojars Project](http://clojars.org/clj-pdf/latest-version.svg)](http://clojars.org/clj-pdf)
+[![clojars project](http://clojars.org/clj-pdf/latest-version.svg)](http://clojars.org/clj-pdf)
 
-Maven
+maven
 
 ```xml
 <repository>
@@ -68,30 +68,30 @@ Maven
 </repository>
 
 <dependency>
-  <groupId>clj-pdf</groupId>
-  <artifactId>clj-pdf</artifactId>
+  <groupid>clj-pdf</groupid>
+  <artifactid>clj-pdf</artifactid>
   <version>2.2.19</version>
 </dependency>
 ```
 
-## Usage
+## usage
 
-PDF documents are generated calling the `pdf` function, defined in the `clj-pdf.core` namespace, with
+pdf documents are generated calling the `pdf` function, defined in the `clj-pdf.core` namespace, with
 input and output parameters.
 
 `(pdf in out)`
 
-`in` can be either a vector containing the document or an input stream. If `in` is an input stream then the forms will be read sequentially from it.
+`in` can be either a vector containing the document or an input stream. if `in` is an input stream then the forms will be read sequentially from it.
 
 `out` can be either a string, in which case it's treated as a file name, or an output stream.
 
-NOTE: using the `:pages` option will cause the complete document to reside in memory for post processing.
+note: using the `:pages` option will cause the complete document to reside in memory for post processing.
 
 
-The documents contain a map with metadata followed by one or more elements. Each element must be a sequence starting with
+the documents contain a map with metadata followed by one or more elements. each element must be a sequence starting with
 a keyword specifying the element name or a string which will be treated as a paragraph.
 
-Here's a basic example of a document:
+here's a basic example of a document:
 ```clojure
 (ns example
   (:use clj-pdf.core))
@@ -107,42 +107,42 @@ Here's a basic example of a document:
    [:paragraph "yet more text"]]
   "doc.pdf")
 ```
-and the resulting PDF output
+and the resulting pdf output
 <br/>
 <img src="https://raw.github.com/yogthos/clj-pdf/master/example.png" hspace="20" alt="example"/>
 
-Multiple documents can be combined into a single PDF using the `clj-pdf.core/collate` function.
-The function accepts an output stream followed by two or more documents. The documents can be one
-of InputStream, file name, URL, or a byte array.
+multiple documents can be combined into a single pdf using the `clj-pdf.core/collate` function.
+the function accepts an output stream followed by two or more documents. the documents can be one
+of inputstream, file name, url, or a byte array.
 
 ```clojure
-(def doc1 (java.io.ByteArrayOutputStream.))
-(def doc2 (java.io.ByteArrayOutputStream.))
-(def doc3 (java.io.ByteArrayOutputStream.))
+(def doc1 (java.io.bytearrayoutputstream.))
+(def doc2 (java.io.bytearrayoutputstream.))
+(def doc3 (java.io.bytearrayoutputstream.))
 
 (pdf [{} "first document"] doc1)
 (pdf [{} "second document"] doc2)
 (pdf [{} "third document"] doc2)
 
-(collate (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
-         (.toByteArray doc1)
-         (.toByteArray doc1)
-         (.toByteArray doc1))
+(collate (java.io.fileoutputstream. (clojure.java.io/file "merged.pdf"))
+         (.tobytearray doc1)
+         (.tobytearray doc1)
+         (.tobytearray doc1))
 
 ;;all keys in the options map are optional
-(collate {:title "Collated Documents"
-          :author "John Doe"
-          :creator "Jane Doe"
+(collate {:title "collated documents"
+          :author "john doe"
+          :creator "jane doe"
           :orientation :landscape
           :size :a4
-          :subject "Some subject"}
-         (java.io.FileOutputStream. (clojure.java.io/file "merged.pdf"))
-         (.toByteArray doc1)
-         (.toByteArray doc1)
-         (.toByteArray doc1))
+          :subject "some subject"}
+         (java.io.fileoutputstream. (clojure.java.io/file "merged.pdf"))
+         (.tobytearray doc1)
+         (.tobytearray doc1)
+         (.tobytearray doc1))
 ```
 
-Sequences containing elements will be expanded into the document:
+sequences containing elements will be expanded into the document:
 
 ```clojure
 (pdf
@@ -161,8 +161,8 @@ is equivalent to
  "doc.pdf")
 ```
 
-Since `clj-pdf` uses regular Clojure vectors you can easily add your own helper functions as well.
-For example, a `pdf-table` is expected to have the following format:
+since `clj-pdf` uses regular clojure vectors you can easily add your own helper functions as well.
+for example, a `pdf-table` is expected to have the following format:
 
 ```clojure
 [:pdf-table
@@ -171,7 +171,7 @@ For example, a `pdf-table` is expected to have the following format:
   [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
   [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]
 ```
-We can add a helper generate the expected format from the given data:
+we can add a helper generate the expected format from the given data:
 
 ```clojure
 (defn pdf-table [column-widths & rows]
@@ -186,25 +186,25 @@ We can add a helper generate the expected format from the given data:
   ["foo" "foo" "foo"])
 ```
 
-### Templating
+### templating
 
-The library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
-and applies the template to each item. This is primarily meant to complement working with [clojure.java.jdbc](https://github.com/clojure/java.jdbc/),
+the library provides some rudimentary templating options, the `template` macro can be used to generate a function which accepts a sequence of maps,
+and applies the template to each item. this is primarily meant to complement working with [clojure.java.jdbc](https://github.com/clojure/java.jdbc/),
 which returns sequences of maps representing the table rows.
 
-The $ is used to indicate the anchors in the template. These will be swapped with the values from the map with
-the corresponding keys. For example, given a vector of maps, such as:
+the $ is used to indicate the anchors in the template. these will be swapped with the values from the map with
+the corresponding keys. for example, given a vector of maps, such as:
 
 ```clojure
 (def employees
-  [{:country "Germany",
-    :place "Nuremberg",
-    :occupation "Engineer",
-    :name "Neil Chetty"}
-   {:country "Germany",
-    :place "Ulm",
-    :occupation "Engineer",
-    :name "Vera Ellison"}])
+  [{:country "germany",
+    :place "nuremberg",
+    :occupation "engineer",
+    :name "neil chetty"}
+   {:country "germany",
+    :place "ulm",
+    :occupation "engineer",
+    :name "vera ellison"}])
 ```
 and a template
 ```clojure
@@ -223,36 +223,36 @@ the following output will be produced when the template is applied to the data:
 
 =>
 
-'([:paragraph [:heading "Neil Chetty"]
-   [:chunk {:style :bold} "occupation: "] "Engineer" "\n"
-   [:chunk {:style :bold} "place: "] "Nuremberg" "\n"
-   [:chunk {:style :bold} "country: "] "Germany" [:spacer]]
-  [:paragraph [:heading "Vera Ellison"]
-   [:chunk {:style :bold} "occupation: "] "Engineer" "\n"
-   [:chunk {:style :bold} "place: "] "Ulm" "\n"
-   [:chunk {:style :bold} "country: "] "Germany" [:spacer]])
+'([:paragraph [:heading "neil chetty"]
+   [:chunk {:style :bold} "occupation: "] "engineer" "\n"
+   [:chunk {:style :bold} "place: "] "nuremberg" "\n"
+   [:chunk {:style :bold} "country: "] "germany" [:spacer]]
+  [:paragraph [:heading "vera ellison"]
+   [:chunk {:style :bold} "occupation: "] "engineer" "\n"
+   [:chunk {:style :bold} "place: "] "ulm" "\n"
+   [:chunk {:style :bold} "country: "] "germany" [:spacer]])
 ```
 
-It is also possible to apply post processing to the anchors in the template:
+it is also possible to apply post processing to the anchors in the template:
 ```clojure
 (def employee-template-paragraph
   (template
     [:paragraph
-     [:heading (if (and $name (.startsWith $name "Alfred"))
-                 (.toUpperCase $name) $name)]
+     [:heading (if (and $name (.startswith $name "alfred"))
+                 (.touppercase $name) $name)]
      [:chunk {:style :bold} "occupation: "] $occupation "\n"
      [:chunk {:style :bold} "place: "] $place "\n"
      [:chunk {:style :bold} "country: "] $country
      [:spacer]]))
 ```
 
-### Stylesheets
+### stylesheets
 
-To use a CSS-like stylesheet, you can create a stylesheet map of class names.
-Each class name will have an associated attribute map.  A specific stylesheet
+to use a css-like stylesheet, you can create a stylesheet map of class names.
+each class name will have an associated attribute map.  a specific stylesheet
 must be included in the document metadata map in order to use it.
 
-Use the CSS-like shortcut for applying classes to elements (e.g. `[:paragraph.foo.bar]`):
+use the css-like shortcut for applying classes to elements (e.g. `[:paragraph.foo.bar]`):
 
 ```clojure
 (def stylesheet
@@ -270,70 +270,70 @@ Use the CSS-like shortcut for applying classes to elements (e.g. `[:paragraph.fo
  "doc.pdf")
 ```
 
-## Document Elements
+## document elements
 
-[Anchor](#anchor),
-[Chapter](#chapter),
-[Chart](#charting),
-[Chunk](#chunk),
-[Clear double page](#clear-double-page),
-[Graphics](#graphics),
-[Heading](#heading),
-[Image](#image),
-[Line](#line),
-[List](#list),
-[Multi-Column](#multi-column),
-[Pagebreak](#pagebreak),
-[Paragraph](#paragraph),
-[Phrase](#phrase),
-[Reference](#reference),
-[Section](#section),
-[Spacer](#spacer),
-[String](#string),
-[Subscript](#subscript),
-[Superscript](#superscript),
-[SVG](#svg),
-[Table](#table),
-[Table Cell](#table-cell)
+[anchor](#anchor),
+[chapter](#chapter),
+[chart](#charting),
+[chunk](#chunk),
+[clear double page](#clear-double-page),
+[graphics](#graphics),
+[heading](#heading),
+[image](#image),
+[line](#line),
+[list](#list),
+[multi-column](#multi-column),
+[pagebreak](#pagebreak),
+[paragraph](#paragraph),
+[phrase](#phrase),
+[reference](#reference),
+[section](#section),
+[spacer](#spacer),
+[string](#string),
+[subscript](#subscript),
+[superscript](#superscript),
+[svg](#svg),
+[table](#table),
+[table cell](#table-cell)
 
-## Document Format
+## document format
 
-### Metadata
+### metadata
 
-All fields in the metadata section are optional:
+all fields in the metadata section are optional:
 
 ```clojure
-{:title  "Test doc"
+{:title  "test doc"
  :left-margin   10
  :right-margin  10
  :top-margin    20
  :bottom-margin 25
- :subject "Some subject"
+ :subject "some subject"
  :size          :a4
  :orientation   :landscape
- :author "John Doe"
- :creator "Jane Doe"
+ :author "john doe"
+ :creator "jane doe"
  :font  {:size 11} ;specifies default font
- :doc-header ["inspired by" "William Shakespeare"]
+ :doc-header ["inspired by" "william shakespeare"]
 
  ;;a watermark can be specified as an image or a function that
- ;;takes the Graphics2D context and render an image on it
+ ;;takes the graphics2d context and render an image on it
  ;;the watermark will be automatically applied to each page in the document
  ;;optionally the watermark can be rotated, scaled, and translated
  :watermark
  {:image "watermark.jpg"
   ;; :image and :render keys are exclusive, :render is preferred
-  :render (fn [g2d] (.drawString g2d "DRAFT COPY" 0 0))
+  :render (fn [g2d] (.drawstring g2d "draft copy" 0 0))
   :translate [100 200]
   :rotate 45
   :scale 8}
 
- :header "Page header text appears on each page"
- :letterhead ["A simple Letter head"] ;Sequence of any elements. If set, the first page shows letterhead instead of header
+ :header "page header text appears on each page"
+ :letterhead ["a simple letter head"] ;sequence of any elements. if set, the first page shows letterhead instead of header
 
  ;;setting :footer to false will pevent page numbers from being displayed
  ;; the :footer also accepts a map containing a table for complex footer layouts as seen in the next section
- :footer {:text "Page footer text appears on each page (includes page number)"
+ :footer {:text "page footer text appears on each page (includes page number)"
           :align :left ;optional footer alignment of :left|:right|:center defaults to :right
           :footer-separator "text which will be displayed between current page number and total pages, defaults to /"
           :start-page 2 ;optional parameter to indicate on what page the footer starts, has no effect when :pages is set to false
@@ -349,13 +349,13 @@ All fields in the metadata section are optional:
  :references {:batman [:image "batman.jpg"]
               :superman [:image "superman.png"]}
 
- ;; Register TTF fonts in some probable directories, set this to true if
+ ;; register ttf fonts in some probable directories, set this to true if
  ;; you're going to use :ttf-name to set custom system fonts
  :register-system-fonts? true
 }
 ```
 
-The `:header` and `:footer` keys can also point to a `:table` element. The `:table` key
+the `:header` and `:footer` keys can also point to a `:table` element. the `:table` key
 must point to a `:pdf-table` type element:
 
 ```clojure
@@ -365,15 +365,15 @@ must point to a `:pdf-table` type element:
           [:pdf-table
            {:border false}
            [20 15 60]
-           ["This is a table header" "second column" "third column"]]}
+           ["this is a table header" "second column" "third column"]]}
  :footer {:table
           [:pdf-table
            {:border false}
            [20 15 60]
-           ["This is a table footer" "second column" "third column"]]}
+           ["this is a table footer" "second column" "third column"]]}
 ```
 
-The `:x` and `:y` keys can be used on the header and footer when using the `:table` key to specify the x/y offset on the page explicitly.
+the `:x` and `:y` keys can be used on the header and footer when using the `:table` key to specify the x/y offset on the page explicitly.
 
 available page sizes:
 
@@ -431,21 +431,21 @@ available page sizes:
 :tabloid
 ```
 
-Alternatively, explicit page size can also be specified using a vector, eg:
+alternatively, explicit page size can also be specified using a vector, eg:
 
 ```clojure
 :size [1296 1296]
 ```
-The size defaults to A4 page size if none is provided.
+the size defaults to a4 page size if none is provided.
 
-Orientation defaults to portrait, unless `:landscape` is specified.
+orientation defaults to portrait, unless `:landscape` is specified.
 
-#### Font
+#### font
 
-A font is defined by a map consisting of the following parameters, all parameters are optional
+a font is defined by a map consisting of the following parameters, all parameters are optional
 
 * :family has following options: :courier, :helvetica, :times-roman, :symbol, :zapfdingbats defaults to :helvetica
-* :ttf-name is the name of a TTF font installed on the system. Overrides :family parameter. It could be an absolute or relative path to a font file; it will also seek for a font in classpath resources.
+* :ttf-name is the name of a ttf font installed on the system. overrides :family parameter. it could be an absolute or relative path to a font file; it will also seek for a font in classpath resources.
 * :encoding should be set to :unicode to enable unicode support if custom :ttf-name font is used
 * :size is a number default is 10
 * :style has following options: :bold, :italic, :bold-italic, :normal, :strikethru, :underline defaults to :normal
@@ -463,38 +463,38 @@ example font:
  {:styles [:bold :underline]
   :family :helvetica}
 ```
-note: Font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. Inner elements can override style set by their parents.
+note: font styles are additive, for example setting style :italic on the phrase, and then size 20 on a chunk inside the phrase, will result with the chunk having italic font of size 20. inner elements can override style set by their parents.
 
-#### Using Custom TTF Fonts
+#### using custom ttf fonts
 
-For non-ASCII text output you will probably have to use external font and define `:encoding` as `:unicode`.
+for non-ascii text output you will probably have to use external font and define `:encoding` as `:unicode`.
 
-The following example illustrates how to specify a custom font file such as Cyrillic font.
+the following example illustrates how to specify a custom font file such as cyrillic font.
 
 ```clojure
 (pdf
   [{:font {:encoding :unicode
-           :ttf-name "fonts/Arialuni.ttf"}}
+           :ttf-name "fonts/arialuni.ttf"}}
   [:phrase "тест 123"]]
   "doc.pdf")
 ```
 
-Custom fonts can also be specified for any elements that support font metadata, such as phrases and paragraphs:
+custom fonts can also be specified for any elements that support font metadata, such as phrases and paragraphs:
 
 ```clojure
 [:paragraph
-   {:encoding "UniJIS-UCS2-H"
-    :ttf-name "HeiseiKakuGo-W5"}
+   {:encoding "unijis-ucs2-h"
+    :ttf-name "heiseikakugo-w5"}
    "こんにちは世界"]
 ```
 
-You could set `:ttf-name` as absolute or relative path to the font file. It will also load fonts from classpath resources by default.
+you could set `:ttf-name` as absolute or relative path to the font file. it will also load fonts from classpath resources by default.
 
-### Document sections
+### document sections
 
-Each document section is represented by a vector starting with a keyword identifying the section followed by an optional map of metadata and the contents of the section.
+each document section is represented by a vector starting with a keyword identifying the section followed by an optional map of metadata and the contents of the section.
 
-#### Anchor
+#### anchor
 
 tag :anchor
 
@@ -518,16 +518,16 @@ idiosynchorsies:
 ```clojure
 [:anchor {:target "http://google.com"} "google"]
 
-[:anchor {:style {:size 15} :leading 20 :id "targetAnchor"} "some anchor"]
+[:anchor {:style {:size 15} :leading 20 :id "targetanchor"} "some anchor"]
 
-[:anchor {:target "#targetAnchor"} "this anchor points to some anchor"]
+[:anchor {:target "#targetanchor"} "this anchor points to some anchor"]
 
 [:anchor [:phrase {:style :bold} "some anchor phrase"]]
 
 [:anchor "plain anchor"]
 ```
 
-#### Chapter
+#### chapter
 
 tag :chapter
 
@@ -541,12 +541,12 @@ content:
 * paragraph
 
 ```clojure
-[:chapter "First Chapter"]
+[:chapter "first chapter"]
 
-[:chapter [:paragraph "Second Chapter"]]
+[:chapter [:paragraph "second chapter"]]
 ```
 
-#### Chunk
+#### chunk
 
 tag :chunk
 
@@ -555,7 +555,7 @@ optional metadata:
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
 
-font metadata (refer to Font section for details)
+font metadata (refer to font section for details)
 
 * :family
 * :ttf-name
@@ -565,7 +565,7 @@ font metadata (refer to Font section for details)
 * :color
 * :background [r b g]
 
-Note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts, or manually provide paths to the font files.
+note that when using `:ttf-name`, you should set `:register-system-fonts? true` in the document metadata in order to load the available system fonts, or manually provide paths to the font files.
 
 ```clojure
 [:chunk {:style :bold} "small chunk of text"]
@@ -581,14 +581,14 @@ Note that when using `:ttf-name`, you should set `:register-system-fonts? true` 
 [:chunk {:sub true} "2"]
 ```
 
-#### Clear double page
+#### clear double page
 
 tag :clear-double-page
 
-Ends current page and inserts a blank page if necessary to ensure that subsequent content starts on the next odd-numbered page. In other words, if you print the resulting PDF on double-sided paper, the content that comes after a `:clear-double-page` will always be on a different sheet of paper from the content that came before it.
+ends current page and inserts a blank page if necessary to ensure that subsequent content starts on the next odd-numbered page. in other words, if you print the resulting pdf on double-sided paper, the content that comes after a `:clear-double-page` will always be on a different sheet of paper from the content that came before it.
 
 ```clojure
-;; Example documents
+;; example documents
 
 [[:paragraph "this is on page 1"] [:clear-double-page] [:paragraph "this is on page 3"]]
 
@@ -606,17 +606,26 @@ Ends current page and inserts a blank page if necessary to ensure that subsequen
  [:paragraph "this is on page 5"]]
 
 ;; :clear-double-page on an empty page 1 does nothing
-[[:clear-double-page] [:paragraph "This is on page 1"]]
+[[:clear-double-page] [:paragraph "this is on page 1"]]
 ```
 
-#### Graphics
+#### graphics
 
 tag :graphics
 
-The command takes a function with a single argument, the Graphics2D object, onto which you can draw things. Note that this is actually the *PdfGraphics2D* object which
-will render the drawing instructions as vectors rather than to a raster bitmap. There is no need to dispose of the graphics context as this is done on exiting the function.
-The co-ordinates are absolute from the top left hand side of the current page. There are no restrictions as to the number of times this command can be invoked per page; subsequent
-graphics drawings will be overlaid on prior renderings.
+the command takes a function with a single argument, the [graphics2d](http://docs.oracle.com/javase/7/docs/api/java/awt/graphics2d.html) object, onto which you can draw
+things. note that this is actually a [*pdfgraphics2d*](https://coderanch.com/how-to/javadoc/itext-2.1.7/com/lowagie/text/pdf/pdfgraphics2d.html) object (a subclass of
+graphics2d) which will render the drawing instructions as vectors rather than to a raster bitmap. there is no need to dispose of the graphics context as this is done on
+exiting the function.  the co-ordinates are absolute from the top left hand side of the current page. there are no restrictions as to the number of times this command can
+be invoked per page; subsequent graphics drawings will be overlaid on prior renderings.
+
+The font system for `.setFont` is different than that used in the rest of `clj-pdf`. Enabling `:register-system-fonts? true` in the document metadata will also register
+system fonts for use with `.setFont`.  To load custom fonts for`.setFont`, evaluate `(clj-pdf.graphics-2d/g2d-register-fonts [["/directory/of/fonts", true]])` where the
+`true` indicates subdirectories should also be registered.  Evaluate that before evaluating `register-system-fonts? true` to override system fonts. Note registrations are
+cached for performance.
+
+Evaluate `(clj-pdf.graphics-2d/get-font-maps)` to get a list of available system fonts and their names.
+
 
 optional metadata:
 
@@ -630,7 +639,10 @@ optional metadata:
  (fn [g2d]
    (doto g2d
      (.setColor java.awt.Color/RED)
-     (.drawOval (int 0) (int 0) (int 50) (int 50))))]
+     (.drawOval (int 0) (int 0) (int 50) (int 50))
+     ; Requires :register-system-fonts? true & font availability
+     (.setFont (java.awt.Font. "GillSans-SemiBold" java.awt.Font/PLAIN 12))
+     (.drawString "A red circle." (float -5) (float 64))))]
 ```
 
 #### Heading
@@ -682,7 +694,7 @@ optional metadata:
     :pad-right  50}
    (javax.imageio.ImageIO/read (-> "mandelbrot.jpg" clojure.java.io/resource clojure.java.io/file) )]
 [:image "test/mandelbrot.jpg"]
-[:image "http://clojure.org/space/showimage/clojure-icon.gif"]
+[:image "https://clojure.org/images/clojure-logo-120b.png"]
 
 ; images can also be inserted inline with other text by wrapping it inside
 ; of a chunk element
@@ -1373,7 +1385,7 @@ creating a pdf:
     :doc-header    ["inspired by" "William Shakespeare"]
     :right-margin  50
     :author        "John Doe"
-    :bottom-margin 25
+    :bottom-margin 10
     :left-margin   10
     :top-margin    20
     :size          "a4"
@@ -1390,7 +1402,7 @@ creating a pdf:
    [:paragraph
     "Nulla id neque ac felis tempor pretium adipiscing ac tortor. Aenean ac metus sapien, at laoreet quam. Vivamus id dui eget neque mattis accumsan. Aliquam aliquam lacinia lorem ut dapibus. Fusce aliquam augue non libero viverra ut porta nisl mollis. Mauris in justo in nibh fermentum dapibus at ut erat. Maecenas vitae fermentum lectus. Nunc dolor nisl, commodo a pellentesque non, tincidunt id dolor. Nulla tellus neque, consectetur in scelerisque vitae, cursus vel urna. Phasellus ullamcorper ultrices nisi ac feugiat."]
 
-   [:table {:header [{:background-color [100 100 100]} "FOO"] :spacing 2}
+   [:table {:header [{:background-color [100 100 100]} "FOO"] :cellSpacing 20}
     ["foo"
      [:cell
       [:phrase
@@ -1460,11 +1472,25 @@ creating a pdf:
       :target "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"}
      "http://www.curiousattemptbunny.com/2009/01/simple-clojure-graphics-api.html"]]
 
+   [:graphics {:under false :translate [53 120]}
+    (fn [g2d]
+      (doto g2d
+        (.setColor Color/BLACK)
+        (.setFont  (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
+        (.drawString ":graphics Drawing" (float 0) (float 0))))]
+
    [:graphics {:translate [150 300] :rotate (radians -90)}
      (fn [g2d]
-       (.setColor g2d java.awt.Color/GREEN)
+       (.setColor g2d Color/GREEN)
        (draw-tree g2d 50 10))]
 
+   [:graphics {:under false :translate [70 270] :rotate (radians -35)}
+    (fn [g2d]
+      (doto g2d
+        (.setColor (Color. 96 96 96))
+        (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
+        (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
+   
    [:chart {:type :pie-chart
             :title "Vector Pie"
             :vector true
