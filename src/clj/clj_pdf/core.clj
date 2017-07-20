@@ -1125,7 +1125,7 @@
                         (merge {:align :right :start-page 1 :size 10} font-style footer)))
           font      (font footer)
           base-font (.getBaseFont font)]
-      (when footer
+      (when (and footer (not= false (-> footer :page-numbers)))
         (dotimes [i num-pages]
           (if (>= i (dec (or (:start-page footer) 1)))
             (let [footer-string (if total-pages
