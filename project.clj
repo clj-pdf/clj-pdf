@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.2.29"
+(defproject clj-pdf "2.2.30"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
 
@@ -11,8 +11,7 @@
                  [org.jfree/jfreechart "1.0.19"]
                  [org.apache.xmlgraphics/batik-bridge "1.8"]
                  [org.apache.xmlgraphics/batik-anim "1.8"]
-                 [org.apache.xmlgraphics/xmlgraphics-commons "2.1"]
-                 [org.swinglabs/pdf-renderer "1.0.5"]]
+                 [org.apache.xmlgraphics/xmlgraphics-commons "2.1"]]
   :resource-paths ["src/java"]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
