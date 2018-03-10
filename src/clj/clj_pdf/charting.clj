@@ -1,5 +1,6 @@
 (ns clj-pdf.charting
-  (:use [clj-pdf.graphics-2d :only [with-graphics]])
+  (:require [clj-pdf.utils :refer [get-color]]
+            [clj-pdf.graphics-2d :as g2d])
   (:import [org.jfree.chart ChartFactory ChartUtilities JFreeChart]
            [org.jfree.chart.plot XYPlot PlotOrientation CategoryPlot]
            [org.jfree.data.xy XYSeries XYSeriesCollection]
@@ -15,9 +16,9 @@
            java.awt.Rectangle
            java.awt.Color))
 
-(defn- set-background [^JFreeChart chart [r g b]]
-  (when (and r g b)
-    (-> chart .getPlot (.setBackgroundPaint (Color. (int r) (int g) (int b))))))
+(defn- set-background [^JFreeChart chart color]
+  (when-let [color (get-color color)]
+    (-> chart .getPlot (.setBackgroundPaint color))))
 
 (defn- bar-chart [{:keys [title horizontal ^String x-label ^String y-label background]} & data]
   (let [dataset (new DefaultCategoryDataset)]
@@ -107,16 +108,16 @@
           (.setBaseItemLabelsVisible renderer true)))
       chart)))
 
+
 (defn chart [{:keys [type page-width page-height vector] :as params} & items]
-  (let [^JFreeChart chart (condp = (when type (name type))
-                "bar-chart"  (apply bar-chart params items)
-                "pie-chart"  (apply pie-chart params items)
-                "line-chart" (apply line-chart params items)
-                (throw (new Exception (str "Unsupported chart type " type))))]
+  (let [^JFreeChart chart (case (when type (name type))
+                            "bar-chart"  (apply bar-chart params items)
+                            "pie-chart"  (apply pie-chart params items)
+                            "line-chart" (apply line-chart params items)
+                            (throw (new Exception (str "Unsupported chart type " type))))]
 
     (if vector
-      (with-graphics
-        params
+      (g2d/with-graphics params
         (fn [g2d]
           (.draw chart g2d (Rectangle. 0 0 (:width params) (:height params)))))
 
