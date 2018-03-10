@@ -6,8 +6,8 @@
             :url          "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo}
 
-  :dependencies [[commons-codec "1.10"]
-                 [org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.6.0" :scope "provided"]
+                 [commons-codec "1.10"]
                  [org.jfree/jfreechart "1.0.19"]
                  [org.apache.xmlgraphics/batik-bridge "1.8"]
                  [org.apache.xmlgraphics/batik-anim "1.8"]
@@ -17,8 +17,8 @@
   :java-source-paths ["src/java"]
   :javac-options ["-target" "1.6" "-source" "1.6"]
 
-  :profiles {:dev     {:global-vars  {*warn-on-reflection* true}
-                       :dependencies [[environ "1.0.1"]]
-                       :plugins      [[lein-marginalia "0.7.1"]
-                                      ; causing some issues on travis builds ... ? disable for now
-                                      #_[lein-cloverage "1.0.6"]]}})
+  :profiles {:dev {:global-vars  {*warn-on-reflection* true}
+                   :dependencies [[environ "1.0.1"]]
+                   :plugins      [[lein-marginalia "0.7.1"]
+                                  ;; causing some issues on travis builds ... ? disable for now
+                                  #_[lein-cloverage "1.0.6"]]}})

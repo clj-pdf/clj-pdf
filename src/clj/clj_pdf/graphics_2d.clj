@@ -1,16 +1,16 @@
 (ns clj-pdf.graphics-2d
   (:require [clojure.java.io :as io]
             [clojure.string :as str])
-  (:import
-    [java.awt Graphics2D]
-    [cljpdf.text.pdf DefaultFontMapper PdfWriter]
-    cljpdf.text.Rectangle))
+  (:import [java.awt Graphics2D]
+           [cljpdf.text.pdf DefaultFontMapper PdfWriter]
+           cljpdf.text.Rectangle))
 
 (declare g2d-register-fonts)
 (def g2d-fonts-registered? (atom nil))
 (def default-font-mapper (DefaultFontMapper.))
 
-(defn with-graphics [{:keys [^PdfWriter pdf-writer page-width page-height font-mapper under translate rotate scale] :as meta} f]
+(defn with-graphics [{:keys [^PdfWriter pdf-writer page-width page-height font-mapper under
+                             translate rotate scale]} f]
   (let [font-mapper (or font-mapper default-font-mapper)
         template    (if under
                       (.getDirectContentUnder pdf-writer)
@@ -61,8 +61,8 @@
            path recursive))))))
 
 (defn g2d-register-fonts
-  "Walks common font directories and registers them for use. Optionally 
-  accepts a coll of absolute directories to register each with a 
+  "Walks common font directories and registers them for use. Optionally
+  accepts a coll of absolute directories to register each with a
   subdirectory walk directive, in the form of 'common-font-dirs'. Eval
   with custom fonts solely to override system fonts.  Eval empty first
   then again with custom fonts to augment system fonts."
@@ -79,9 +79,9 @@
 ;;; Utility functions
 
 (defn get-font-maps
-  "Returns a map with :mapper and :aliases keys, each with a Java HashMap as a val. 
+  "Returns a map with :mapper and :aliases keys, each with a Java HashMap as a val.
   :mapper connects available AWT font names each to a PDF font object.
-  :aliases connects alternate names each to a AWT font name. 
+  :aliases connects alternate names each to a AWT font name.
   Names (strings) in either HashMap can be used in a :graphics element's .setFont directive.
   Will register common system font directories if not already registered."
   []
