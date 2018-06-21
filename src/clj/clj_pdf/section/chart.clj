@@ -104,18 +104,16 @@
         compiled))))
 
 
-(defn- make-chart [& [meta & more :as params]]
+(defn- make-chart [& [meta :as params]]
   (let [{:keys [vector align width height page-width page-height]} meta]
     (if vector
       (apply charting/chart params)
-
       (render :image
         (cond-> meta
           (not align)              (assoc :align :center)
           (not (and width height)) (assoc :width (* 0.85 page-width)
                                      :height (* 0.85 page-height)))
-        ;; FIXME: changed `params` to `more` here, but not sure
-        (apply charting/chart more)))))
+        (apply charting/chart params)))))
 
 
 (defmethod render :chart [tag & params]
