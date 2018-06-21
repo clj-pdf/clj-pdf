@@ -81,7 +81,7 @@
                                                        PlotOrientation/HORIZONTAL
                                                        PlotOrientation/VERTICAL) true true false))
           ^XYPlot plot (.getPlot chart)
-          ^LineAndShapeRenderer renderer (.getRenderer plot)]
+          renderer (.getRenderer plot)]
 
       (set-background chart background)
 
