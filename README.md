@@ -105,7 +105,7 @@ of inputstream, file name, url, or a byte array.
 
 (pdf [{} "first document"] doc1)
 (pdf [{} "second document"] doc2)
-(pdf [{} "third document"] doc2)
+(pdf [{} "third document"] doc3)
 
 (collate (java.io.fileoutputstream. (clojure.java.io/file "merged.pdf"))
          (.tobytearray doc1)
