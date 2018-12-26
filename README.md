@@ -299,6 +299,18 @@ all fields in the metadata section are optional:
  :font  {:size 11} ;specifies default font
  :doc-header ["inspired by" "william shakespeare"]
 
+ ;;add custom hooks for document events
+ :on-document-open (fn [^PdfWriter writer ^Document doc] ...)
+ :on-document-close (fn [^PdfWriter writer ^Document doc] ...)
+ :on-page-start (fn [writer document] ...)
+ :on-page-end (fn [writer document] ...)
+ :on-chapter-start (fn [^PdfWriter writer ^Document doc ^float position ^Paragraph title] ...)
+ :on-chapter-end (fn [^PdfWriter writer ^Document doc ^float position] ...)
+ :on-paragraph-start (fn [^PdfWriter writer ^Document doc ^float position] ...)
+ :on-paragraph-end (fn [^PdfWriter writer ^Document doc ^float position] ...)
+ :on-section-start (fn [^PdfWriter writer ^Document doc ^float position ^int depth ^Paragraph title] ...)
+ :on-section-end (fn [^PdfWriter writer ^Document doc ^float position] ...)
+
  ;;a watermark can be specified as an image or a function that
  ;;takes the graphics2d context and render an image on it
  ;;the watermark will be automatically applied to each page in the document
@@ -1473,7 +1485,7 @@ creating a pdf:
         (.setColor (Color. 96 96 96))
         (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
         (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
-   
+
    [:chart {:type :pie-chart
             :title "Vector Pie"
             :vector true

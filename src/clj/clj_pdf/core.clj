@@ -1,20 +1,20 @@
 (ns clj-pdf.core
   (:require
-   [clojure.java.io :as io]
-   [clojure.walk]
-   [clj-pdf.graphics-2d :as g2d]
-   [clj-pdf.section :refer [make-section *cache*]]
-   [clj-pdf.utils :refer [get-alignment get-color font]])
+    [clojure.java.io :as io]
+    [clojure.walk]
+    [clj-pdf.graphics-2d :as g2d]
+    [clj-pdf.section :refer [make-section *cache*]]
+    [clj-pdf.utils :refer [get-alignment get-color font]])
   (:import
-   [java.awt Color Graphics2D Toolkit Canvas]
-   [java.awt.image BufferedImage]
-   [java.io PushbackReader InputStream InputStreamReader OutputStream
-    FileOutputStream ByteArrayOutputStream File]
-   [javax.imageio ImageIO]
-   [cljpdf.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
-    PageSize Font FontFactory]
-   [cljpdf.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
-    PdfPageEventHelper PdfPCell PdfPTable]))
+    [java.awt Color Graphics2D Toolkit Canvas]
+    [java.awt.image BufferedImage]
+    [java.io PushbackReader InputStream InputStreamReader OutputStream
+             FileOutputStream ByteArrayOutputStream File]
+    [javax.imageio ImageIO]
+    [cljpdf.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
+                 PageSize Font FontFactory Paragraph]
+    [cljpdf.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
+                     PdfPageEventHelper PdfPCell PdfPTable]))
 
 (declare ^:dynamic *pdf-writer*)
 (def fonts-registered? (atom nil))
@@ -27,57 +27,57 @@
   (if (vector? size)
     (apply custom-page-size size)
     (case (when size (name size))
-      "a0"                      PageSize/A0
-      "a1"                      PageSize/A1
-      "a2"                      PageSize/A2
-      "a3"                      PageSize/A3
-      "a4"                      PageSize/A4
-      "a5"                      PageSize/A5
-      "a6"                      PageSize/A6
-      "a7"                      PageSize/A7
-      "a8"                      PageSize/A8
-      "a9"                      PageSize/A9
-      "a10"                     PageSize/A10
-      "arch-a"                  PageSize/ARCH_A
-      "arch-b"                  PageSize/ARCH_B
-      "arch-c"                  PageSize/ARCH_C
-      "arch-d"                  PageSize/ARCH_D
-      "arch-e"                  PageSize/ARCH_E
-      "b0"                      PageSize/B0
-      "b1"                      PageSize/B1
-      "b2"                      PageSize/B2
-      "b3"                      PageSize/B3
-      "b4"                      PageSize/B4
-      "b5"                      PageSize/B5
-      "b6"                      PageSize/B6
-      "b7"                      PageSize/B7
-      "b8"                      PageSize/B8
-      "b9"                      PageSize/B9
-      "b10"                     PageSize/B10
-      "crown-octavo"            PageSize/CROWN_OCTAVO
-      "crown-quarto"            PageSize/CROWN_QUARTO
-      "demy-octavo"             PageSize/DEMY_OCTAVO
-      "demy-quarto"             PageSize/DEMY_QUARTO
-      "executive"               PageSize/EXECUTIVE
-      "flsa"                    PageSize/FLSA
-      "flse"                    PageSize/FLSE
-      "halfletter"              PageSize/HALFLETTER
-      "id-1"                    PageSize/ID_1
-      "id-2"                    PageSize/ID_2
-      "id-3"                    PageSize/ID_3
-      "large-crown-octavo"      PageSize/LARGE_CROWN_OCTAVO
-      "large-crown-quarto"      PageSize/LARGE_CROWN_QUARTO
-      "ledger"                  PageSize/LEDGER
-      "legal"                   PageSize/LEGAL
-      "letter"                  PageSize/LETTER
-      "note"                    PageSize/NOTE
+      "a0" PageSize/A0
+      "a1" PageSize/A1
+      "a2" PageSize/A2
+      "a3" PageSize/A3
+      "a4" PageSize/A4
+      "a5" PageSize/A5
+      "a6" PageSize/A6
+      "a7" PageSize/A7
+      "a8" PageSize/A8
+      "a9" PageSize/A9
+      "a10" PageSize/A10
+      "arch-a" PageSize/ARCH_A
+      "arch-b" PageSize/ARCH_B
+      "arch-c" PageSize/ARCH_C
+      "arch-d" PageSize/ARCH_D
+      "arch-e" PageSize/ARCH_E
+      "b0" PageSize/B0
+      "b1" PageSize/B1
+      "b2" PageSize/B2
+      "b3" PageSize/B3
+      "b4" PageSize/B4
+      "b5" PageSize/B5
+      "b6" PageSize/B6
+      "b7" PageSize/B7
+      "b8" PageSize/B8
+      "b9" PageSize/B9
+      "b10" PageSize/B10
+      "crown-octavo" PageSize/CROWN_OCTAVO
+      "crown-quarto" PageSize/CROWN_QUARTO
+      "demy-octavo" PageSize/DEMY_OCTAVO
+      "demy-quarto" PageSize/DEMY_QUARTO
+      "executive" PageSize/EXECUTIVE
+      "flsa" PageSize/FLSA
+      "flse" PageSize/FLSE
+      "halfletter" PageSize/HALFLETTER
+      "id-1" PageSize/ID_1
+      "id-2" PageSize/ID_2
+      "id-3" PageSize/ID_3
+      "large-crown-octavo" PageSize/LARGE_CROWN_OCTAVO
+      "large-crown-quarto" PageSize/LARGE_CROWN_QUARTO
+      "ledger" PageSize/LEDGER
+      "legal" PageSize/LEGAL
+      "letter" PageSize/LETTER
+      "note" PageSize/NOTE
       "penguin-large-paperback" PageSize/PENGUIN_LARGE_PAPERBACK
       "penguin-small-paperback" PageSize/PENGUIN_SMALL_PAPERBACK
-      "postcard"                PageSize/POSTCARD
-      "royal-octavo"            PageSize/ROYAL_OCTAVO
-      "royal-quarto"            PageSize/ROYAL_QUARTO
-      "small-paperback"         PageSize/SMALL_PAPERBACK
-      "tabloid"                 PageSize/TABLOID
+      "postcard" PageSize/POSTCARD
+      "royal-octavo" PageSize/ROYAL_OCTAVO
+      "royal-quarto" PageSize/ROYAL_QUARTO
+      "small-paperback" PageSize/SMALL_PAPERBACK
+      "tabloid" PageSize/TABLOID
       PageSize/A4)))
 
 
@@ -125,8 +125,8 @@
 (defn- add-header [header ^Document doc font-style]
   (when header
     (.setHeader doc
-      (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false)
-        (.setBorderWidthTop 0)))))
+                (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false)
+                  (.setBorderWidthTop 0)))))
 
 (defn set-header-footer-table-width [table ^Document doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
@@ -239,6 +239,76 @@
                     (int 0)
                     (int 0))))))))))
 
+(defn doc-events [^PdfWriter pdf-writer
+                  {:keys [on-document-open
+                          on-document-close
+                          on-page-start
+                          on-page-end
+                          on-chapter-start
+                          on-chapter-end
+                          on-paragraph-start
+                          on-paragraph-end
+                          on-section-start
+                          on-section-end
+                          event-handler]}]
+  (if event-handler
+    (.setPageEvent pdf-writer ^PdfPageEventHelper event-handler)
+
+    (when (not-empty (remove nil? [on-document-open
+                                   on-document-close
+                                   on-page-start
+                                   on-page-end
+                                   on-chapter-start
+                                   on-chapter-end
+                                   on-paragraph-start
+                                   on-paragraph-end
+                                   on-section-start
+                                   on-section-end
+                                   event-handler]))
+      (.setPageEvent
+        pdf-writer
+        ^PdfPageEventHelper
+        (proxy [PdfPageEventHelper] []
+          (onOpenDocument [^PdfWriter writer ^Document doc]
+            (when on-document-open
+              (on-document-open writer ^Document doc)))
+
+          (onCloseDocument [^PdfWriter writer ^Document doc]
+            (when on-document-close
+              (on-document-close writer doc)))
+
+          (onStartPage [^PdfWriter writer ^Document doc]
+            (when on-page-start
+              (on-page-start writer doc)))
+
+          (onEndPage [^PdfWriter writer ^Document doc]
+            (when on-page-end
+              (on-page-end writer doc)))
+
+          (onChapter [^PdfWriter writer ^Document doc position ^Paragraph title]
+            (when on-chapter-start
+              (on-chapter-start writer doc position title)))
+
+          (onChapterEnd [^PdfWriter writer ^Document doc position]
+            (when on-chapter-end
+              (on-chapter-end writer doc position)))
+
+          (onParagraph [^PdfWriter writer ^Document doc position]
+            (when on-paragraph-start
+              (on-paragraph-start writer ^Document doc position)))
+
+          (onParagraphEnd [^PdfWriter writer ^Document doc position]
+            (when on-paragraph-end
+              (on-paragraph-end writer doc position)))
+
+          (onSection [^PdfWriter writer ^Document doc position depth ^Paragraph title]
+            (when on-section-start
+              (on-section-start writer doc position depth title)))
+
+          (onSectionEnd [^PdfWriter writer ^Document doc position]
+            (when on-section-end
+              (on-section-end writer doc position))))))))
+
 (defn background-color-applier [background-color]
   (proxy [PdfPageEventHelper] []
     (onEndPage [^PdfWriter writer ^Document doc]
@@ -296,13 +366,15 @@
 
       (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
 
-      (if background-color
+      (when background-color
         (.setPageEvent pdf-writer (background-color-applier background-color)))
 
-      (if watermark
+      (when watermark
         (.setPageEvent pdf-writer (watermark-stamper (assoc meta
                                                        :page-width width
                                                        :page-height height))))
+
+      (doc-events pdf-writer meta)
 
       (when-not pages
         (doseq [page-event page-events]
@@ -315,7 +387,7 @@
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
       ;;must set margins before opening the doc
-      (if (and left-margin right-margin top-margin bottom-margin)
+      (when (and left-margin right-margin top-margin bottom-margin)
         (.setMargins doc
                      (float left-margin)
                      (float right-margin)
@@ -335,11 +407,11 @@
           (add-header header doc font-style)
           (.open doc)))
 
-      (if title (.addTitle doc title))
-      (if subject (.addSubject doc subject))
-      (if (and nom head) (.addHeader doc nom head))
-      (if author (.addAuthor doc author))
-      (if creator (.addCreator doc creator))
+      (when title (.addTitle doc title))
+      (when subject (.addSubject doc subject))
+      (when (and nom head) (.addHeader doc nom head))
+      (when author (.addAuthor doc author))
+      (when creator (.addCreator doc creator))
 
       [doc width height temp-stream output-stream pdf-writer])))
 
@@ -484,8 +556,8 @@
   [in out]
   (binding [*cache* (atom {})]
     (cond (instance? InputStream in) (stream-doc in out)
-          (seq? in)                  (seq-to-doc in out)
-          :else                      (write-doc in out))))
+          (seq? in) (seq-to-doc in out)
+          :else (write-doc in out))))
 
 (defn collate
   "usage: takes an output that can be a file name or an output stream followed by one or more documents

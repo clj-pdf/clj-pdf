@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.2.33"
+(defproject clj-pdf "2.2.34"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
 
@@ -6,7 +6,7 @@
             :url          "http://www.gnu.org/licenses/lgpl.html"
             :distribution :repo}
 
-  :dependencies [[org.clojure/clojure "1.6.0" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.10.0" :scope "provided"]
                  [commons-codec "1.10"]
                  [org.jfree/jfreechart "1.0.19"]
                  [org.apache.xmlgraphics/batik-bridge "1.8"]
