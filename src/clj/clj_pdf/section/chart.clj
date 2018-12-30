@@ -2,7 +2,7 @@
   (:require [clj-pdf.section :refer [*cache* render]]
             [clj-pdf.utils :refer [get-alignment]]
             [clj-pdf.charting :as charting])
-  (:import [cljpdf.text Image]
+  (:import [com.lowagie.text Image]
            [java.awt Toolkit]
            [java.net URL]
            [org.apache.commons.codec.binary Base64]))

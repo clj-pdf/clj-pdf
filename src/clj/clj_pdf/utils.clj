@@ -1,8 +1,8 @@
 (ns clj-pdf.utils
   (:require [clojure.string :refer [split]])
   (:import [java.awt Color]
-           [cljpdf.text Element Font FontFactory]
-           [cljpdf.text.pdf BaseFont]))
+           [com.lowagie.text Element Font FontFactory]
+           [com.lowagie.text.pdf BaseFont]))
 
 
 (defn split-classes-from-tag

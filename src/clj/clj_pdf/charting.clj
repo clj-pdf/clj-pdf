@@ -4,7 +4,7 @@
   (:import [org.jfree.chart ChartFactory ChartUtilities JFreeChart]
            [org.jfree.chart.plot XYPlot PlotOrientation CategoryPlot]
            [org.jfree.data.xy XYSeries XYSeriesCollection]
-           [org.jfree.chart.renderer.category BarRenderer LineAndShapeRenderer]
+           [org.jfree.chart.renderer.category BarRenderer]
            org.jfree.data.category.DefaultCategoryDataset
            org.jfree.data.general.DefaultPieDataset
            org.jfree.chart.renderer.category.StandardBarPainter
@@ -13,8 +13,7 @@
            java.text.SimpleDateFormat
            java.text.NumberFormat
            java.io.ByteArrayOutputStream
-           java.awt.Rectangle
-           java.awt.Color))
+           java.awt.Rectangle))
 
 (defn- set-background [^JFreeChart chart color]
   (when-let [color (get-color color)]

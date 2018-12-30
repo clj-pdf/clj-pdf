@@ -2,8 +2,8 @@
   (:use clj-pdf.core clj-pdf.graphics-2d clojure.test clojure.java.io)
   (:require [clojure.string :as re])
   (:import [java.awt Font Graphics2D]
-           [cljpdf.text.pdf DefaultFontMapper]
-           [cljpdf.text FontFactory]))
+           [com.lowagie.text.pdf DefaultFontMapper]
+           [com.lowagie.text FontFactory]))
 
 ;; Utilities for the test.  Is there a better place to put these shared defns?
 

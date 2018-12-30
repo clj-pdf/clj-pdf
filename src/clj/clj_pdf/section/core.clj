@@ -5,12 +5,12 @@
   (:require [clj-pdf.utils :refer [get-color get-alignment font]]
             [clj-pdf.graphics-2d :as g2d]
             [clj-pdf.section :refer [render *cache* make-section make-section-or]])
-  (:import [cljpdf.text
+  (:import [com.lowagie.text
             Anchor Annotation ChapterAutoNumber Chunk Font ImgRaw Image
             List GreekList RomanList ListItem Paragraph Phrase Rectangle Section
             ZapfDingbatsList ZapfDingbatsNumberList]
-           [cljpdf.text.pdf MultiColumnText]
-           [cljpdf.text.pdf.draw DottedLineSeparator LineSeparator]))
+           [com.lowagie.text.pdf MultiColumnText]
+           [com.lowagie.text.pdf.draw DottedLineSeparator LineSeparator]))
 
 
 (defmethod render :anchor

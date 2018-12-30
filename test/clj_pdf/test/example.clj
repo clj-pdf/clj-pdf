@@ -23,6 +23,40 @@
              (rot g2d 30 (draw-tree g2d (* length 0.75) (- depth 1)))))))
 
 #_(pdf
+    [{:event-handler (proxy [com.lowagie.text.pdf.PdfPageEventHelper] []
+                       (onStartPage [writer doc]
+                         (println "starting page")
+                         (.addImage (.getDirectContent writer)
+                                    (doto
+                                      (com.lowagie.text.Image/getInstance
+                                        (.getPath (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg"))))
+                                      (.scaleToFit 100 100)
+                                      (.setAbsolutePosition 25 100)))
+                         (println "page start:" doc)))
+      :watermark
+                     {:render    (fn [g2d] (.drawString g2d "draft copy" 0 0))
+                      :translate [100 200]
+                      :rotate    45
+                      :scale     8}}
+
+     #_{:on-page-end   (fn [wrtier doc] (println "page end"))
+      :on-page-start (fn [writer doc]
+                       (.addImage (.getDirectContent writer)
+                                  (doto
+                                    (com.lowagie.text.Image/getInstance
+                                      (.getPath (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg"))))
+                                    (.scaleToFit 100 100)
+                                    (.setAbsolutePosition 25 100)))
+                       (println "page start:" doc))
+      :watermark
+                     {:render    (fn [g2d] (.drawString g2d "draft copy" 0 0))
+                      :translate [100 200]
+                      :rotate    45
+                      :scale     8}}
+     [:paragraph "Hello"]]
+    "test.pdf")
+
+#_(pdf
     [{:title         "Test doc"
       :header        "page header"
       :subject       "Some subject"
@@ -121,7 +155,7 @@
       (fn [g2d]
         (doto g2d
           (.setColor Color/BLACK)
-          (.setFont  (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
+          (.setFont (java.awt.Font. "SansSerif" java.awt.Font/BOLD 20))
           (.drawString ":graphics Drawing" (float 0) (float 0))))]
 
      [:graphics {:translate [150 300] :rotate (radians -90)}
@@ -133,9 +167,9 @@
       (fn [g2d]
         (doto g2d
           (.setColor (java.awt.Color. 96 96 96))
-          (.setFont  (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
+          (.setFont (java.awt.Font. "Serif" java.awt.Font/PLAIN 14))
           (.drawString "drawString with setFont and rotate" (float 0) (float 0))))]
-     
+
      [:chart {:type      :pie-chart
               :title     "Vector Pie"
               :vector    true
@@ -250,19 +284,19 @@
 
 
 #_(defn watermark [text input-image output-image]
-  (let [img  (javax.imageio.ImageIO/read (java.io.File. input-image))
-        g2d  (doto (.getGraphics img)
-               (.setComposite (java.awt.AlphaComposite/getInstance java.awt.AlphaComposite/SRC_OVER (float 0.1)))
-               (.setColor java.awt.Color/BLUE)
-               (.setFont (java.awt.Font. "Arial" java.awt.Font/BOLD 64)))
-        rect (.. g2d (getFontMetrics) (getStringBounds text g2d))]
-    (.drawString g2d
-                 text
-                 (int
-                   (- (.getWidth img)
-                      (/ (.getWidth rect) 2)))
-                 (int (/ (.getHeight img) 2)))
-    (javax.imageio.ImageIO/write img "jpg" (java.io.File. output-image))
-    (.dispose g2d)))
+    (let [img  (javax.imageio.ImageIO/read (java.io.File. input-image))
+          g2d  (doto (.getGraphics img)
+                 (.setComposite (java.awt.AlphaComposite/getInstance java.awt.AlphaComposite/SRC_OVER (float 0.1)))
+                 (.setColor java.awt.Color/BLUE)
+                 (.setFont (java.awt.Font. "Arial" java.awt.Font/BOLD 64)))
+          rect (.. g2d (getFontMetrics) (getStringBounds text g2d))]
+      (.drawString g2d
+                   text
+                   (int
+                     (- (.getWidth img)
+                        (/ (.getWidth rect) 2)))
+                   (int (/ (.getHeight img) 2)))
+      (javax.imageio.ImageIO/write img "jpg" (java.io.File. output-image))
+      (.dispose g2d)))
 
 #_(watermark "WATERMARK" "example.png" "watermarked.jpg")
