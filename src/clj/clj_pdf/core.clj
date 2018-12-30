@@ -11,9 +11,9 @@
     [java.io PushbackReader InputStream InputStreamReader OutputStream
              FileOutputStream ByteArrayOutputStream File]
     [javax.imageio ImageIO]
-    [cljpdf.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
+    [com.lowagie.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
                  PageSize Font FontFactory Paragraph]
-    [cljpdf.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
+    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
                      PdfPageEventHelper PdfPCell PdfPTable]))
 
 (declare ^:dynamic *pdf-writer*)

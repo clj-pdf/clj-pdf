@@ -1,8 +1,8 @@
 (ns clj-pdf.section.table
   (:require [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
             [clj-pdf.section :refer [render make-section]])
-  (:import [cljpdf.text Cell Element Rectangle Table]
-           [cljpdf.text.pdf PdfPCell PdfPTable]))
+  (:import [com.lowagie.text Cell Element Rectangle Table]
+           [com.lowagie.text.pdf PdfPCell PdfPTable]))
 
 
 (defn- table-header [meta ^Table tbl header cols]

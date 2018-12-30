@@ -2,8 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.string :as str])
   (:import [java.awt Graphics2D]
-           [cljpdf.text.pdf DefaultFontMapper PdfWriter]
-           cljpdf.text.Rectangle))
+           [com.lowagie.text.pdf DefaultFontMapper PdfWriter]
+           com.lowagie.text.Rectangle))
 
 (declare g2d-register-fonts)
 (def g2d-fonts-registered? (atom nil))

@@ -1,8 +1,8 @@
 (ns clj-pdf.section.cell
   (:require [clj-pdf.utils :refer [get-color get-alignment]]
             [clj-pdf.section :refer [render make-section-or]])
-  (:import [cljpdf.text Cell Rectangle]
-           [cljpdf.text.pdf PdfPCell]))
+  (:import [com.lowagie.text Cell Rectangle]
+           [com.lowagie.text.pdf PdfPCell]))
 
 
 (defn- get-border [borders]
