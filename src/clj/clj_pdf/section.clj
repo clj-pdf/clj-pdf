@@ -32,12 +32,12 @@
        (let [[tag & content]  element
              tag              (keywordize tag)
              [tag & classes]  (split-classes-from-tag tag)
-             class-attrs      (get-class-attributes (:stylesheet meta) classes)
              [attrs elements] (if (map? (first content))
                                 [(first content) (rest content)]
                                 [nil content])
+             stylesheet       (:stylesheet meta)
              new-meta         (cond-> meta
-                                class-attrs (merge class-attrs)
+                                stylesheet  (merge (get-class-attributes stylesheet classes))
                                 attrs       (merge attrs))]
 
          (apply render tag new-meta elements)))
