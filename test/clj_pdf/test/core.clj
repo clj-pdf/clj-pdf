@@ -308,3 +308,7 @@
   (eq? [{}
         nil]
        "nil.pdf"))
+
+(deftest nil-stylesheet-no-npe
+  (is (pdf->bytes [{:stylesheet nil}
+                   [:paragraph.custom "Styled"]])))
