@@ -40,19 +40,19 @@
                       :scale     8}}
 
      #_{:on-page-end   (fn [wrtier doc] (println "page end"))
-      :on-page-start (fn [writer doc]
-                       (.addImage (.getDirectContent writer)
-                                  (doto
-                                    (com.lowagie.text.Image/getInstance
-                                      (.getPath (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg"))))
-                                    (.scaleToFit 100 100)
-                                    (.setAbsolutePosition 25 100)))
-                       (println "page start:" doc))
-      :watermark
-                     {:render    (fn [g2d] (.drawString g2d "draft copy" 0 0))
-                      :translate [100 200]
-                      :rotate    45
-                      :scale     8}}
+        :on-page-start (fn [writer doc]
+                         (.addImage (.getDirectContent writer)
+                                    (doto
+                                      (com.lowagie.text.Image/getInstance
+                                        (.getPath (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg"))))
+                                      (.scaleToFit 100 100)
+                                      (.setAbsolutePosition 25 100)))
+                         (println "page start:" doc))
+        :watermark
+                       {:render    (fn [g2d] (.drawString g2d "draft copy" 0 0))
+                        :translate [100 200]
+                        :rotate    45
+                        :scale     8}}
      [:paragraph "Hello"]]
     "test.pdf")
 
@@ -300,3 +300,70 @@
       (.dispose g2d)))
 
 #_(watermark "WATERMARK" "example.png" "watermarked.jpg")
+
+
+
+(defn normalize [element]
+  (if (map? (second element))
+    element
+    (into [(first element) {}] (rest element))))
+
+(defn format-idx [prefix idx]
+  (if (not-empty (str prefix))
+    (let [spaces (apply str (keep #(if (= % \.) " ") prefix))] (str spaces prefix "." idx))
+    (str idx)))
+
+(defn gen-toc
+  ([doc] (gen-toc [:list {:symbol ""}] "" doc))
+  ([toc prefix doc]
+   (->
+     (reduce
+       (fn [[toc idx :as acc] node]
+         (if (and (vector? node)
+                  (some #{(first node)} #{:chapter :section}))
+           (let [normalized (normalize node)]
+             [(conj toc
+                    (let [toc-item [:phrase (format-idx prefix idx) " " (get normalized 2)]
+                          children (->> (gen-toc []
+                                                    (format-idx prefix idx)
+                                                    (vec (drop 2 normalized)))
+                                           (not-empty))]
+                      (if children
+                        (conj toc-item (into [:list {:symbol ""}] children))
+                        toc-item)))
+              (inc idx)])
+           acc))
+       [toc 1]
+       doc)
+     (first))))
+
+(gen-toc
+  [{}
+   [:chapter {}
+    "blah"
+    [:section
+     "section 1"
+     [:paragraph "p1"]]
+    [:section {}
+     "section 2"
+     [:paragraph "p2"]
+     [:section "subsection 1"
+      "foo"]
+     [:section "subsection 2"
+      "foo"]]]])
+
+(pdf
+  [{}
+   (gen-toc
+     [{}
+      [:chapter {}
+       "blah"
+       [:section
+        "section 1"
+        [:paragraph "p1"]]
+       [:section
+        "section 2"
+        [:paragraph "p2"]
+        [:section "subsection 1"
+         "foo"]]]])]
+  "toc.pdf")
