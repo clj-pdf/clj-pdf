@@ -2,7 +2,7 @@
   (:require [clj-pdf.utils :refer [get-color get-alignment]]
             [clj-pdf.section :refer [render make-section-or]])
   (:import [com.lowagie.text Cell Rectangle]
-           [com.lowagie.text.pdf PdfPCell]))
+           [com.lowagie.text.pdf PdfPCell PdfPCellEvent PdfPTable PdfContentByte]))
 
 
 (defn- get-border [borders]
@@ -76,6 +76,27 @@
     (apply pdf-cell-padding* cell pad)
     (pdf-cell-padding* cell pad)))
 
+(defmacro ^:private with-saved-canvas [bindings & body]
+  `(let ~bindings
+     (.saveState ~(bindings 0))
+     ~@body
+     (.restoreState ~(bindings 0))))
+
+(defn- make-event-handler [base-layer-fn background-layer-fn text-layer-fn line-layer-fn]
+  (proxy [PdfPCellEvent] []
+   (cellLayout [^PdfPCell _cell ^Rectangle position canvases]
+     (when base-layer-fn
+       (with-saved-canvas [^PdfContentByte canvas (aget canvases PdfPTable/BASECANVAS)]
+                          (base-layer-fn position canvas)))
+     (when background-layer-fn
+       (with-saved-canvas [^PdfContentByte canvas (aget canvases PdfPTable/BACKGROUNDCANVAS)]
+                          (background-layer-fn position canvas)))
+     (when text-layer-fn
+       (with-saved-canvas [^PdfContentByte canvas (aget canvases PdfPTable/TEXTCANVAS)]
+                          (text-layer-fn position canvas)))
+     (when line-layer-fn
+       (with-saved-canvas [^PdfContentByte canvas (aget canvases PdfPTable/LINECANVAS)]
+                          (line-layer-fn position canvas))))))
 
 (defmethod render :pdf-cell
   [_ {:keys [background-color
@@ -98,7 +119,12 @@
              padding-top
              rotation
              height
-             min-height] :as meta}
+             min-height
+             base-layer-fn
+             background-layer-fn
+             text-layer-fn
+             line-layer-fn
+             event-handler] :as meta}
    & content]
 
   (let [c (PdfPCell.)]
@@ -130,6 +156,11 @@
     (when min-height (.setMinimumHeight c (float min-height)))
     (.setHorizontalAlignment c ^int (get-alignment align))
     (.setVerticalAlignment c ^int (get-alignment valign))
+
+    (if event-handler
+      (.setCellEvent c ^PdfPCellEvent event-handler)
+      (when (some some? [base-layer-fn background-layer-fn text-layer-fn line-layer-fn])
+        (.setCellEvent c ^PdfPCellEvent (make-event-handler base-layer-fn background-layer-fn text-layer-fn line-layer-fn))))
 
     (doseq [item content]
       (.addElement c (make-section-or :paragraph meta item)))
