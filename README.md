@@ -1210,6 +1210,11 @@ optional metadata:
 * :rotation number - rotates the cell
 * :height - number
 * :min-height - number
+* :base-layer-fn - takes a `(fn [^Rectangle position ^PdfContentByte canvas] ...)` for drawing on the canvas
+* :background-layer-fn - similar for the background layer
+* :text-layer-fn - similar for the text layer
+* :line-layer-fn - similar for the line layer
+* :event-handler - takes an instance of `PdfPCellEvent` for callbacks
 
 ```clojure
 [:pdf-cell {:colspan 2 :align :left} "Foo"]
@@ -1220,6 +1225,15 @@ optional metadata:
   [[:pdf-cell {:min-height 40 :align :center :valign :middle} "foo"]
    [:pdf-cell {:valign :top} "foo"]
    [:pdf-cell {:valign :bottom} "foo"]]]
+```
+
+```clojure
+(defn- background-layer-fn [^Rectangle pos ^PdfContentByte canvas]
+  (.setColorFill canvas (Color. 0 0 0))
+  (.rectangle canvas (.getLeft pos) (.getBottom pos) (.getWidth pos) (.getHeight pos))
+  (.fill canvas))
+    
+[:pdf-cell {:background-layer-fn background-layer-fn} "Foo"]
 ```
 
 ### Charting
