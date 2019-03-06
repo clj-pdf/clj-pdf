@@ -46,6 +46,7 @@ a library for easily generating pdfs from clojure. an example pdf is available [
       - [line chart](#line-chart)
       - [pie chart](#pie-chart)
     - [a complete example](#a-complete-example)
+    - [using cell event callbacks](#using-cell-event-callbacks)
 - [users](#users)
 - [license](#license)
 
@@ -1556,6 +1557,66 @@ creating a pdf:
       </svg>"]]
 
   "example.pdf")
+```
+
+###  Using Cell Event Callbacks
+  
+The layer-fn callbacks of PDF Table cells provides access to the PdfContentByte API for modifying the text and graphic contents of a cell.
+As an example, given these helper functions for fitting and aligning an image:
+
+```clojure
+(defn- h-align [alignment left width img-left]
+  (case alignment
+    :left left
+    :right (+ left (- width img-left))
+    (+ left (/ (- width img-left) 2))))
+
+(defn- v-align [alignment bottom height img-height]
+  (case alignment
+    :bottom bottom
+    :top (+ bottom (- height img-height))
+    (+ bottom (/ (- height img-height) 2))))
+
+(defn- fit-image-fn [halignment valignment ^URL img-url]
+  (fn [^Rectangle pos ^PdfContentByte canvas]
+    (let [left (.getLeft pos)
+          bottom (.getBottom pos)
+          width (.getWidth pos)
+          height (.getHeight pos)
+          img (Image/getInstance img-url)]
+      (.scaleToFit img width height)
+      (let [img-width (.getScaledWidth img)
+            img-height (.getScaledHeight img)
+            img-left (h-align halignment left width img-width)
+            img-bottom (v-align valignment bottom height img-height)]
+        (.setAbsolutePosition img img-left img-bottom)
+        (.addImage canvas img)))))
+
+(defn- ^URL load-image [name]
+  (let [path (str "imgs/" name ".png")]
+    (io/resource path)))
+```
+a table with a single cell containing the image as an overlay can be created thusly:
+```clojure
+(let [activity-image (load-image "some-image")
+      background-layer-fn (fit-image-fn :center :bottom activity-image)]
+       [:pdf-table [1] [[:pdf-cell {:height 25 :background-layer-fn background-layer-fn}]]])
+```
+
+As an alternative, a PdfPCellEvent instance can be used for drawing:
+
+```clojure
+(defn- make-event-handler []
+  (proxy [PdfPCellEvent] []
+    (cellLayout [^PdfPCell cell ^Rectangle position canvases]
+      ;; ...do some drawing
+      )))
+
+```
+when hooked up to the cell by setting the event-handler entry:
+
+```clojure
+[:pdf-table [1] [[:pdf-cell {:height 25 :event-handler (make-event-handler)}]]
 ```
 
 # Users
