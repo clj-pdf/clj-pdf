@@ -1233,7 +1233,7 @@ optional metadata:
   (.setColorFill canvas (Color. 0 0 0))
   (.rectangle canvas (.getLeft pos) (.getBottom pos) (.getWidth pos) (.getHeight pos))
   (.fill canvas))
-    
+
 [:pdf-cell {:background-layer-fn background-layer-fn} "Foo"]
 ```
 
@@ -1560,7 +1560,7 @@ creating a pdf:
 ```
 
 ###  Using Cell Event Callbacks
-  
+
 The layer-fn callbacks of PDF Table cells provides access to the PdfContentByte API for modifying the text and graphic contents of a cell.
 As an example, given these helper functions for fitting and aligning an image:
 
@@ -1583,7 +1583,7 @@ As an example, given these helper functions for fitting and aligning an image:
           bottom (.getBottom pos)
           width (.getWidth pos)
           height (.getHeight pos)
-          img (Image/getInstance img-url)]
+          img (com.lowagie.text.Image/getInstance img-url)]
       (.scaleToFit img width height)
       (let [img-width (.getScaledWidth img)
             img-height (.getScaledHeight img)
@@ -1607,7 +1607,7 @@ As an alternative, a PdfPCellEvent instance can be used for drawing:
 
 ```clojure
 (defn- make-event-handler []
-  (proxy [PdfPCellEvent] []
+  (proxy [com.lowagie.text.pdf.PdfPCellEvent] []
     (cellLayout [^PdfPCell cell ^Rectangle position canvases]
       ;; ...do some drawing
       )))
@@ -1616,7 +1616,7 @@ As an alternative, a PdfPCellEvent instance can be used for drawing:
 when hooked up to the cell by setting the event-handler entry:
 
 ```clojure
-[:pdf-table [1] [[:pdf-cell {:height 25 :event-handler (make-event-handler)}]]
+[:pdf-table [1] [[:pdf-cell {:height 25 :event-handler (make-event-handler)}]]]
 ```
 
 # Users
