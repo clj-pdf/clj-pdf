@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.3.3-SNAPSHOT"
+(defproject clj-pdf "2.3.3"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
 
@@ -11,7 +11,8 @@
                  [commons-codec "1.10"]
                  [org.jfree/jfreechart "1.0.19"]
                  [org.apache.xmlgraphics/batik-bridge "1.8"]
-                 [org.apache.xmlgraphics/batik-anim "1.8"]
+                 [org.apache.xmlgraphics/batik-anim "1.11"]
+                 [org.apache.xmlgraphics/batik-codec "1.11"]
                  [org.apache.xmlgraphics/xmlgraphics-commons "2.1"]]
   :source-paths ["src/clj"]
   :profiles {:dev {:global-vars  {*warn-on-reflection* true}
