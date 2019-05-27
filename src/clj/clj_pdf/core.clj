@@ -484,17 +484,17 @@
 (defn- parse-meta [doc-meta]
   (register-fonts doc-meta)
   ; font would conflict with a function definition
-  (assoc doc-meta :font-style (:font doc-meta)))
+  (-> doc-meta
+      (assoc :font-style (:font doc-meta))
+      (assoc :total-pages (:pages doc-meta))
+      (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table))))))
 
 (defn- write-doc
   "(write-doc document out)
   document consists of a vector containing a map which defines the document metadata and the contents of the document
   out can either be a string which will be treated as a filename or an output stream"
   [[doc-meta & content] out]
-  (let [doc-meta (-> doc-meta
-                     parse-meta
-                     (assoc :total-pages (:pages doc-meta))
-                     (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table)))))
+  (let [doc-meta (parse-meta doc-meta)
         [^Document doc
          width height
          ^ByteArrayOutputStream temp-stream
