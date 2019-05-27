@@ -7,14 +7,14 @@
             :distribution :repo}
 
   :dependencies [[org.clojure/clojure "1.10.0" :scope "provided"]
-                 [com.github.librepdf/openpdf "1.2.16"]
-                 [commons-codec "1.10"]
+                 [com.github.librepdf/openpdf "1.2.17"]
+                 [commons-codec "1.12"]
                  [org.jfree/jfreechart "1.0.19"]
-                 [org.apache.xmlgraphics/batik-bridge "1.8"]
+                 [org.apache.xmlgraphics/batik-bridge "1.11"]
                  [org.apache.xmlgraphics/batik-anim "1.11"]
                  [org.apache.xmlgraphics/batik-codec "1.11"]
-                 [org.apache.xmlgraphics/xmlgraphics-commons "2.1"]]
+                 [org.apache.xmlgraphics/xmlgraphics-commons "2.3"]]
   :source-paths ["src/clj"]
   :profiles {:dev {:global-vars  {*warn-on-reflection* true}
-                   :dependencies [[environ "1.0.1"]]
+                   :dependencies [[environ "1.0.2"]]
                    :plugins      [[lein-marginalia "0.7.1"]]}})
