@@ -531,8 +531,9 @@
          ^ByteArrayOutputStream temp-stream
          ^OutputStream output-stream
          ^PdfWriter pdf-writer] (setup-doc doc-meta out)]
-    (doseq [item (rest items)]
-      (add-item item doc-meta width height doc pdf-writer))
+    (binding [*pdf-writer* pdf-writer]
+      (doseq [item (rest items)]
+        (add-item item doc-meta width height doc pdf-writer)))
     (.close doc)
     (write-total-pages width doc-meta temp-stream output-stream)))
 
