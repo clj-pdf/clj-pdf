@@ -38,19 +38,36 @@
                        :ttf-name font-filename}]
     (update-in (vec doc) [0 :font] merge font-props)))
 
-(defn generate-pdf [doc output-filename]
+(defn generate-pdf [doc output-filename & _]
   (let [doc1 (inject-test-font doc)]
     (println "regenerating pdf" output-filename)
     (pdf doc1 (add-test-path-prefix output-filename))
     true))
 
-(defn eq? [doc1 filename]
+(defn doc->stream [doc]
+  (let [s (new java.io.ByteArrayOutputStream)]
+    (binding [*out* (writer s)]
+      (doseq [x doc]
+        (pr x))
+      (flush))
+    (input-stream (.toByteArray s))))
+
+(defn eq? [doc1 filename & {:keys [stream] :or {stream true}}]
   (let [filename   (add-test-path-prefix filename)
         doc1       (inject-test-font doc1)
         doc1-bytes (pdf->bytes doc1)
+        seq-doc1-bytes (pdf->bytes (seq doc1))
+        stream-doc1-bytes (when stream (pdf->bytes (doc->stream doc1)))
         doc2-bytes (read-file filename)]
     (is (= (fix-pdf doc1-bytes)
-           (fix-pdf doc2-bytes)))))
+           (fix-pdf doc2-bytes)))
+    (is (= (fix-pdf seq-doc1-bytes)
+           (fix-pdf doc2-bytes))
+        "seq")
+    (when stream
+      (is (= (fix-pdf stream-doc1-bytes)
+             (fix-pdf doc2-bytes))
+          "stream"))))
 
 (defn regenerate-test-pdfs []
   (with-redefs [eq? generate-pdf]
@@ -139,7 +156,8 @@
        :pad-left   100
        :pad-right  50}
       (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
-    "image.pdf")
+    "image.pdf"
+    :stream false)
   (eq?
     [{}
      [:image
@@ -149,7 +167,8 @@
        :pad-left   100
        :pad-right  50}
       (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
-    "image1.pdf")
+    "image1.pdf"
+    :stream false)
   (eq?
     [{}
      [:image
@@ -158,7 +177,8 @@
        :align      :center
        :annotation ["FOO" "BAR"]}
       (javax.imageio.ImageIO/read (new java.io.File (str "test" java.io.File/separator "mandelbrot.jpg")))]]
-    "image2.pdf"))
+    "image2.pdf"
+    :stream false))
 
 (deftest doc-meta
   (eq?
@@ -307,7 +327,8 @@
 (deftest nil-element
   (eq? [{}
         nil]
-       "nil.pdf"))
+       "nil.pdf"
+       :stream false))
 
 (deftest nil-stylesheet-no-npe
   (is (pdf->bytes [{:stylesheet nil}
