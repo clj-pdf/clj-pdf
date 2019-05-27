@@ -1,4 +1,4 @@
-(defproject clj-pdf "2.3.4"
+(defproject clj-pdf "2.3.5"
   :description "PDF generation library"
   :url "https://github.com/yogthos/clj-pdf"
 
