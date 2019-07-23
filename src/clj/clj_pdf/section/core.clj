@@ -6,7 +6,7 @@
             [clj-pdf.graphics-2d :as g2d]
             [clj-pdf.section :refer [render *cache* make-section make-section-or]])
   (:import [com.lowagie.text
-            Anchor Annotation ChapterAutoNumber Chunk Font ImgRaw Image
+            Anchor Annotation ChapterAutoNumber Chunk Font Image
             List GreekList RomanList ListItem Paragraph Phrase Rectangle Section
             ZapfDingbatsList ZapfDingbatsNumberList]
            [com.lowagie.text.pdf MultiColumnText]
@@ -71,7 +71,7 @@
 (defmethod render :chunk
   [_ meta content]
   (let [children (make-section content)]
-    (if (instance? ImgRaw children)
+    (if (instance? Image children)
       (image-chunk meta children)
       (text-chunk meta children))))
 
