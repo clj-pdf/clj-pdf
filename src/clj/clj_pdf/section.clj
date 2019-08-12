@@ -1,5 +1,6 @@
 (ns clj-pdf.section
-  (:require [clj-pdf.utils :refer [split-classes-from-tag get-class-attributes]]))
+  (:require [clj-pdf.utils :refer [split-classes-from-tag get-class-attributes]])
+  (:import com.lowagie.text.Chunk))
 
 
 (declare ^:dynamic *cache*)
@@ -17,31 +18,34 @@
 (defn make-section
   ([element]
    (cond
-     (empty? element)             ""
+     (instance? Chunk element) element
+     (empty? element) (Chunk. "")
      (every? sequential? element) (doseq [item element]
                                     (make-section item))
-     element                      (make-section {} element)
-     :else                        ""))
+     element (make-section {} element)
+     :else (Chunk. "")))
   ([meta element]
    (try
      (cond
-       (string? element) element
-       (nil? element)    ""
-       (number? element) (str element)
+       (instance? Chunk element) element
+       (string? element) (Chunk. element)
+       (nil? element) (Chunk. "")
+       (number? element) (Chunk. (str element))
        :else
-       (let [[tag & content]  element
-             tag              (keywordize tag)
-             [tag & classes]  (split-classes-from-tag tag)
+       (let [[tag & content] element
+             tag        (keywordize tag)
+             [tag & classes] (split-classes-from-tag tag)
              [attrs elements] (if (map? (first content))
                                 [(first content) (rest content)]
                                 [nil content])
-             stylesheet       (:stylesheet meta)
-             new-meta         (cond-> meta
-                                stylesheet  (merge (get-class-attributes stylesheet classes))
-                                attrs       (merge attrs))]
+             stylesheet (:stylesheet meta)
+             new-meta   (cond-> meta
+                                stylesheet (merge (get-class-attributes stylesheet classes))
+                                attrs (merge attrs))]
 
          (apply render tag new-meta elements)))
      (catch Exception e
+       (.printStackTrace e)
        (prn meta element)
        (throw (ex-info "failed to parse element" {:meta meta :element element} e))))))
 
