@@ -1,4 +1,4 @@
-(ns clj-pdf.section.image
+(ns clj-pdf.section.chart
   (:require [clj-pdf.section :refer [*cache* render]]
             [clj-pdf.utils :refer [get-alignment]]
             [clj-pdf.charting :as charting])

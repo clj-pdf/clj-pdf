@@ -64,16 +64,17 @@
     (set-background ch style)
     (cond
       (:super style) (.setTextRise ch (float 5))
-      (:sub style)   (.setTextRise ch (float -4))
-      :else          ch)))
+      (:sub style) (.setTextRise ch (float -4))
+      :else ch)))
 
 
 (defmethod render :chunk
   [_ meta content]
   (let [children (make-section content)]
-    (if (instance? Image children)
-      (image-chunk meta children)
-      (text-chunk meta children))))
+    (cond
+      (instance? Image children) (image-chunk meta children)
+      (instance? Chunk children) children
+      :else (text-chunk meta children))))
 
 
 (defmethod render :graphics
@@ -84,8 +85,8 @@
 (defmethod render :heading
   [_ meta & content]
   (apply render :paragraph
-    (merge meta (merge {:size 18 :style :bold} (:style meta)))
-    content))
+         (merge meta (merge {:size 18 :style :bold} (:style meta)))
+         content))
 
 
 (defmethod render :line
@@ -120,21 +121,21 @@
   (let [numbered (boolean (or numbered false))
         lettered (boolean (or lettered false))
         list
-        (cond
-          ^RomanList roman
-          (new RomanList)
+                 (cond
+                   ^RomanList roman
+                   (new RomanList)
 
-          ^GreekList greek
-          (new GreekList)
+                   ^GreekList greek
+                   (new GreekList)
 
-          ^ZapfDingbatsList dingbats
-          (new ZapfDingbatsList dingbats-char-num)
+                   ^ZapfDingbatsList dingbats
+                   (new ZapfDingbatsList dingbats-char-num)
 
-          ^ZapDingbatsNumberList dingbatsnumber
-          (new ZapfDingbatsNumberList dingbatsnumber-type)
+                   ^ZapDingbatsNumberList dingbatsnumber
+                   (new ZapfDingbatsNumberList dingbatsnumber-type)
 
-          :else
-          (^List new List numbered lettered))]
+                   :else
+                   (^List new List numbered lettered))]
 
     (when lowercase (.setLowercase list lowercase))
     (when indent (.setIndentationLeft list (float indent)))
@@ -165,11 +166,11 @@
 
 
 (defmethod render :paragraph
-  [_ {:keys [first-line-indent indent indent-left indent-right spacing-before spacing-after keep-together leading align ] :as meta}
+  [_ {:keys [first-line-indent indent indent-left indent-right spacing-before spacing-after keep-together leading align] :as meta}
    & content]
 
   (let [paragraph (Paragraph.)
-        indent (or indent indent-left)]
+        indent    (or indent indent-left)]
     (.setFont paragraph (font meta))
     (if leading (.setLeading paragraph leading) (.setLeading paragraph 0 1.5))
     (if keep-together (.setKeepTogether paragraph true))
