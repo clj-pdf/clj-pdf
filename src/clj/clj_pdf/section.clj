@@ -45,7 +45,6 @@
 
          (apply render tag new-meta elements)))
      (catch Exception e
-       (.printStackTrace e)
        (prn meta element)
        (throw (ex-info "failed to parse element" {:meta meta :element element} e))))))
 
