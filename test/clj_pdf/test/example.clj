@@ -560,3 +560,21 @@
      </svg>"]]
 
   "example.pdf")
+
+
+#_(pdf
+  [{:font {:encoding :unicode
+           #_#_:ttf-name "test/Pacifico.ttf"}}
+   [:phrase "THIS IS A TEST!"]
+   [:phrase {:ttf-name "test/Carlito-Regular.ttf"}
+    "THIS IS ANOTHER FONT"
+    [:chunk {:ttf-name "test/Pacifico.ttf"}
+     "CHUNK in a Phrase"]]
+   [:chunk {:ttf-name "test/Pacifico.ttf"}
+    "THIS IS ANOTHER FONT"]
+   [:chunk {:ttf-name "test/Carlito-Regular.ttf"}
+    "item 1"]
+   [:chunk {:ttf-name "test/Pacifico.ttf"}
+    "STYLED"]
+   [:chunk "UNSTYLEs"]]
+  "font-test.pdf")
