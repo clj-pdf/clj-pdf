@@ -58,8 +58,8 @@
     (.setBackground element color)))
 
 
-(defn- text-chunk [style content]
-  (let [ch (Chunk. ^String (make-section content) ^Font (font style))]
+(defn- text-chunk [style ^String content]
+  (let [ch (Chunk. ^String content ^Font (font style))]
     (set-background ch style)
     (cond
       (:super style) (.setTextRise ch (float 5))
@@ -69,8 +69,8 @@
 
 (defn- format-content [meta content]
   (cond
-    (string? content) (Chunk. ^String content ^Font (font meta))
-    (number? content) (Chunk. ^String (str content) ^Font (font meta))
+    (string? content) (text-chunk meta content)
+    (number? content) (text-chunk meta (str content))
     :else content))
 
 
@@ -80,7 +80,7 @@
     (cond
       (instance? Image children) (image-chunk meta children)
       (instance? Chunk children) children
-      :else (text-chunk meta children))))
+      :else (format-content meta children))))
 
 
 (defmethod render :graphics

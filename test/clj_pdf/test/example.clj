@@ -578,3 +578,9 @@
     "STYLED"]
    [:chunk "UNSTYLEs"]]
   "font-test.pdf")
+
+#_(pdf
+  [{}
+   [:chunk 123]
+   [:chunk {:color [255 0 0] :background [0 255 0]} "Text with green background"]]
+  "doc.pdf")
