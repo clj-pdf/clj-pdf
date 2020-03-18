@@ -330,6 +330,13 @@
        "nil.pdf"
        :stream false))
 
+(deftest empty-list
+  (eq? [{}
+        nil
+        (list)]
+       "nil.pdf"
+       :stream false))
+
 (deftest nil-stylesheet-no-npe
   (is (pdf->bytes [{:stylesheet nil}
                    [:paragraph.custom "Styled"]])))
