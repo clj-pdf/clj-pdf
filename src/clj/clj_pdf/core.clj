@@ -468,7 +468,7 @@
     :else item))
 
 (defn- add-item [item {:keys [stylesheet font references]} width height ^Document doc ^PdfWriter pdf-writer]
-  (if (and (coll? item) (coll? (first item)))
+  (if (seq? item)
     (doseq [element item]
       (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc stylesheet references font width height (preprocess-item item) doc pdf-writer)))
