@@ -584,3 +584,8 @@
    [:chunk 123]
    [:chunk {:color [255 0 0] :background [0 255 0]} "Text with green background"]]
   "doc.pdf")
+
+#_(pdf
+  [{}
+   [:image {:width 50 :height 50 :base64 true} (slurp "test/b64logo")]]
+  "b64.pdf")
