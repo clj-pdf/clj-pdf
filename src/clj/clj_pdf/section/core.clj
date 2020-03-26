@@ -37,11 +37,17 @@
   ([_ _ title text] (render :annotation title text))
   ([_ title text] (new Annotation title text)))
 
+(defn- flatten-seqs [elements]
+  (mapcat (fn [el]
+            (if (seq? el)
+              (flatten-seqs el)
+              (list el)))
+          elements))
 
 (defmethod render :chapter
   [tag meta & [title & sections]]
   (let [ch (new ChapterAutoNumber (make-section-or :paragraph meta title))]
-    (doseq [section sections]
+    (doseq [section (flatten-seqs sections)]
       (make-section (assoc meta :parent ch) section))
     ch))
 
@@ -237,7 +243,7 @@
   (let [paragraph (make-section-or :paragraph meta title)
         sec       (.addSection ^Section (:parent meta) ^Paragraph paragraph)]
     (if indent (.setIndentation sec (float indent)))
-    (doseq [item content]
+    (doseq [item (flatten-seqs content)]
       (if (and (coll? item) (= :section (first item)))
         (make-section (assoc meta :parent sec) item)
         (.add sec (make-section-or :chunk meta item))))))

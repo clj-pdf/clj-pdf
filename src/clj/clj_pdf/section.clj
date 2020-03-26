@@ -14,7 +14,6 @@
 (defn- keywordize [value]
   (if (string? value) (keyword value) value))
 
-
 (defn make-section
   ([element]
    (cond

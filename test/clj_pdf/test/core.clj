@@ -322,7 +322,24 @@
           [:paragraph "Some more content 2"]
           [:section [:paragraph "Nested Section Title 2"]
            [:paragraph "nested section content 2"]]]]]
-       "section.pdf"))
+       "section.pdf")
+  (testing "sequences inside chapters and sections"
+    (eq? [{}
+          [:chapter "Chapter 1"
+           (list [:section "Section Title 1"
+                  (list [:paragraph "Some content 1"]
+                        [:paragraph "Some more content 1"])
+                  (list)
+                  (list [:section [:paragraph "Nested Section Title 1"]
+                         [:paragraph "nested section content 1"]])])]
+          [:chapter "Chapter 2"
+           (list)
+           (list [:section "Section Title 2"
+                  [:paragraph "Some content 2"]
+                  [:paragraph "Some more content 2"]
+                  [:section [:paragraph "Nested Section Title 2"]
+                   (list [:paragraph "nested section content 2"])]])]]
+         "section.pdf")))
 
 (deftest nil-element
   (eq? [{}
