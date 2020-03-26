@@ -20,8 +20,6 @@
    (cond
      (instance? Chunk element) element
      (empty? element) (Chunk. "")
-     (every? sequential? element) (doseq [item element]
-                                    (make-section item))
      element (make-section {} element)
      :else (Chunk. "")))
   ([meta element]
