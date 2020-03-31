@@ -252,7 +252,10 @@
 
 (deftest paragraph
   (eq? [{}
-        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
+        [:paragraph
+         (list "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+               "Suspendisse convallis blandit justo non rutrum. ")
+         (list "In hac habitasse platea dictumst.")]
         [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :helvetica :color [0 255 221]} "Hello Clojure!"]]
         [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
         [:paragraph {:align :center} "centered paragraph"]

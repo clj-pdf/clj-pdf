@@ -193,7 +193,7 @@
     (if spacing-after (.setSpacingAfter paragraph (float spacing-after)))
     (if align (.setAlignment paragraph ^int (get-alignment align)))
 
-    (doseq [item content]
+    (doseq [item (flatten-seqs content)]
       (.add paragraph (make-section-or :chunk meta item)))
 
     paragraph))
