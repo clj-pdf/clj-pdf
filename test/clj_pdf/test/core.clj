@@ -252,16 +252,25 @@
 
 (deftest paragraph
   (eq? [{}
-        [:paragraph
-         (list "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-               "Suspendisse convallis blandit justo non rutrum. ")
-         (list "In hac habitasse platea dictumst.")]
+        [:paragraph "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse convallis blandit justo non rutrum. In hac habitasse platea dictumst."]
         [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :helvetica :color [0 255 221]} "Hello Clojure!"]]
         [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
         [:paragraph {:align :center} "centered paragraph"]
         [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]]
 
-       "paragraph.pdf"))
+       "paragraph.pdf")
+  (testing "lists at top-level and inside paragraphs"
+    (eq? [{}
+          [:paragraph
+           (list "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                 "Suspendisse convallis blandit justo non rutrum. ")
+           (list "In hac habitasse platea dictumst.")]
+          (list [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :helvetica :color [0 255 221]} "Hello Clojure!"]]
+                [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+                (list [:paragraph {:align :center} "centered paragraph"]
+                      [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]))]
+
+       "paragraph.pdf")))
 
 (deftest list-test
   (eq? [{} [:list {:roman true}
