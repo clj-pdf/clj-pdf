@@ -153,7 +153,7 @@
     (when indent (.setIndentationLeft list (float indent)))
     (when symbol (.setListSymbol list (str symbol)))
 
-    (doseq [item items]
+    (doseq [item (flatten-seqs items)]
       (.add list (new ListItem (make-section-or :chunk meta item))))
     list))
 

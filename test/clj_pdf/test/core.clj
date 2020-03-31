@@ -261,8 +261,18 @@
        "paragraph.pdf"))
 
 (deftest list-test
-  (eq? [{} [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
-       "list.pdf"))
+  (eq? [{} [:list {:roman true}
+            [:chunk {:style :bold} "a bold item"]
+            "another item"
+            "yet another item"]]
+       "list.pdf")
+  (testing "lists inside :list"
+    (eq? [{} [:list {:roman true}
+              (list [:chunk {:style :bold} "a bold item"]
+                    "another item")
+              (list)
+              (list "yet another item")]]
+         "list.pdf")))
 
 #_(deftest chart
     (eq? [{}
