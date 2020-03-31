@@ -2,7 +2,7 @@
   "File with smaller sections so they are not spread out one function at a
   separate file. Bigger sections (in character count, that is) are located in
   their own namespaces."
-  (:require [clj-pdf.utils :refer [get-color get-alignment font]]
+  (:require [clj-pdf.utils :refer [get-color get-alignment flatten-seqs font]]
             [clj-pdf.graphics-2d :as g2d]
             [clj-pdf.section :refer [render *cache* make-section make-section-or]])
   (:import [com.lowagie.text
@@ -36,13 +36,6 @@
 (defmethod render :annotation
   ([_ _ title text] (render :annotation title text))
   ([_ title text] (new Annotation title text)))
-
-(defn- flatten-seqs [elements]
-  (mapcat (fn [el]
-            (if (seq? el)
-              (flatten-seqs el)
-              (list el)))
-          elements))
 
 (defmethod render :chapter
   [tag meta & [title & sections]]
