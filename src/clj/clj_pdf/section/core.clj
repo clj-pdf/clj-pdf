@@ -2,7 +2,7 @@
   "File with smaller sections so they are not spread out one function at a
   separate file. Bigger sections (in character count, that is) are located in
   their own namespaces."
-  (:require [clj-pdf.utils :refer [get-color get-alignment font]]
+  (:require [clj-pdf.utils :refer [get-color get-alignment flatten-seqs font]]
             [clj-pdf.graphics-2d :as g2d]
             [clj-pdf.section :refer [render *cache* make-section make-section-or]])
   (:import [com.lowagie.text
@@ -37,11 +37,10 @@
   ([_ _ title text] (render :annotation title text))
   ([_ title text] (new Annotation title text)))
 
-
 (defmethod render :chapter
   [tag meta & [title & sections]]
   (let [ch (new ChapterAutoNumber (make-section-or :paragraph meta title))]
-    (doseq [section sections]
+    (doseq [section (flatten-seqs sections)]
       (make-section (assoc meta :parent ch) section))
     ch))
 
@@ -147,7 +146,7 @@
     (when indent (.setIndentationLeft list (float indent)))
     (when symbol (.setListSymbol list (str symbol)))
 
-    (doseq [item items]
+    (doseq [item (flatten-seqs items)]
       (.add list (new ListItem (make-section-or :chunk meta item))))
     list))
 
@@ -187,7 +186,7 @@
     (if spacing-after (.setSpacingAfter paragraph (float spacing-after)))
     (if align (.setAlignment paragraph ^int (get-alignment align)))
 
-    (doseq [item content]
+    (doseq [item (flatten-seqs content)]
       (.add paragraph (make-section-or :chunk meta item)))
 
     paragraph))
@@ -237,7 +236,7 @@
   (let [paragraph (make-section-or :paragraph meta title)
         sec       (.addSection ^Section (:parent meta) ^Paragraph paragraph)]
     (if indent (.setIndentation sec (float indent)))
-    (doseq [item content]
+    (doseq [item (flatten-seqs content)]
       (if (and (coll? item) (= :section (first item)))
         (make-section (assoc meta :parent sec) item)
         (.add sec (make-section-or :chunk meta item))))))

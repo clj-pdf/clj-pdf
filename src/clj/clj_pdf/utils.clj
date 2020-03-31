@@ -87,3 +87,10 @@
 
     (FontFactory/getFont ttf encoding true size style color)))
 
+
+(defn flatten-seqs [elements]
+  (mapcat (fn [el]
+            (if (seq? el)
+              (flatten-seqs el)
+              (list el)))
+          elements))

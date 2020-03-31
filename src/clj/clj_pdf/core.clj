@@ -4,7 +4,7 @@
     [clojure.walk]
     [clj-pdf.graphics-2d :as g2d]
     [clj-pdf.section :refer [make-section *cache*]]
-    [clj-pdf.utils :refer [get-alignment get-color font]])
+    [clj-pdf.utils :refer [get-alignment get-color flatten-seqs font]])
   (:import
     [java.awt Color Graphics2D Toolkit Canvas]
     [java.awt.image BufferedImage]
@@ -469,7 +469,7 @@
 
 (defn- add-item [item {:keys [stylesheet font references]} width height ^Document doc ^PdfWriter pdf-writer]
   (if (seq? item)
-    (doseq [element item]
+    (doseq [element (flatten-seqs item)]
       (append-to-doc stylesheet references font width height (preprocess-item element) doc pdf-writer))
     (append-to-doc stylesheet references font width height (preprocess-item item) doc pdf-writer)))
 

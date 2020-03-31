@@ -258,11 +258,33 @@
         [:paragraph {:align :center} "centered paragraph"]
         [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]]
 
-       "paragraph.pdf"))
+       "paragraph.pdf")
+  (testing "lists at top-level and inside paragraphs"
+    (eq? [{}
+          [:paragraph
+           (list "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+                 "Suspendisse convallis blandit justo non rutrum. ")
+           (list "In hac habitasse platea dictumst.")]
+          (list [:paragraph {:indent 50 :size 18} [:phrase {:style :bold :family :helvetica :color [0 255 221]} "Hello Clojure!"]]
+                [:paragraph {:keep-together true :indent 20} "a fine paragraph"]
+                (list [:paragraph {:align :center} "centered paragraph"]
+                      [:paragraph "256" [:chunk {:super true} "5"] " and 128" [:chunk {:sub true} "2"]]))]
+
+       "paragraph.pdf")))
 
 (deftest list-test
-  (eq? [{} [:list {:roman true} [:chunk {:style :bold} "a bold item"] "another item" "yet another item"]]
-       "list.pdf"))
+  (eq? [{} [:list {:roman true}
+            [:chunk {:style :bold} "a bold item"]
+            "another item"
+            "yet another item"]]
+       "list.pdf")
+  (testing "lists inside :list"
+    (eq? [{} [:list {:roman true}
+              (list [:chunk {:style :bold} "a bold item"]
+                    "another item")
+              (list)
+              (list "yet another item")]]
+         "list.pdf")))
 
 #_(deftest chart
     (eq? [{}
@@ -322,7 +344,24 @@
           [:paragraph "Some more content 2"]
           [:section [:paragraph "Nested Section Title 2"]
            [:paragraph "nested section content 2"]]]]]
-       "section.pdf"))
+       "section.pdf")
+  (testing "sequences inside chapters and sections"
+    (eq? [{}
+          [:chapter "Chapter 1"
+           (list [:section "Section Title 1"
+                  (list [:paragraph "Some content 1"]
+                        [:paragraph "Some more content 1"])
+                  (list)
+                  (list [:section [:paragraph "Nested Section Title 1"]
+                         [:paragraph "nested section content 1"]])])]
+          [:chapter "Chapter 2"
+           (list)
+           (list [:section "Section Title 2"
+                  [:paragraph "Some content 2"]
+                  [:paragraph "Some more content 2"]
+                  [:section [:paragraph "Nested Section Title 2"]
+                   (list [:paragraph "nested section content 2"])]])]]
+         "section.pdf")))
 
 (deftest nil-element
   (eq? [{}
