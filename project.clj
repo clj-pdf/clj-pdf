@@ -9,7 +9,7 @@
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
                  [com.github.librepdf/openpdf "1.3.13"]
                  [commons-codec "1.14"]
-                 [org.jfree/jfreechart "1.0.19"]
+                 [org.jfree/jfreechart "1.5.0"]
                  [org.apache.xmlgraphics/batik-bridge "1.12"]
                  [org.apache.xmlgraphics/batik-anim "1.12"]
                  [org.apache.xmlgraphics/batik-codec "1.12"]
