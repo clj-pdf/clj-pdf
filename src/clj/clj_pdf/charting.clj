@@ -1,7 +1,7 @@
 (ns clj-pdf.charting
   (:require [clj-pdf.utils :refer [get-color]]
             [clj-pdf.graphics-2d :as g2d])
-  (:import [org.jfree.chart ChartFactory ChartUtilities JFreeChart]
+  (:import [org.jfree.chart ChartFactory ChartUtils JFreeChart]
            [org.jfree.chart.plot XYPlot PlotOrientation CategoryPlot]
            [org.jfree.data.xy XYSeries XYSeriesCollection]
            [org.jfree.chart.renderer.category BarRenderer]
@@ -98,13 +98,13 @@
       (if time-series (-> plot
                           ^DateAxis (. getDomainAxis)
                           ^void (. setDateFormatOverride formatter)))
-      (if show-points (.setBaseShapesVisible renderer true))
+      (if show-points (.setDefaultShapesVisible renderer true))
       (if point-labels
         (let [^NumberFormat format (NumberFormat/getNumberInstance)]
           (if label-percision (.setMaximumFractionDigits format (int label-percision)))
-          (.setBaseItemLabelGenerator renderer
+          (.setDefaultItemLabelGenerator renderer
             (StandardXYItemLabelGenerator. (or label-format "{1},{2}") format format))
-          (.setBaseItemLabelsVisible renderer true)))
+          (.setDefaultItemLabelsVisible renderer true)))
       chart)))
 
 
@@ -121,5 +121,5 @@
           (.draw chart g2d (Rectangle. 0 0 (:width params) (:height params)))))
 
       (with-open [out (ByteArrayOutputStream.)]
-        (ChartUtilities/writeScaledChartAsPNG out chart (int page-width) (int page-height) 2 2)
+        (ChartUtils/writeScaledChartAsPNG out chart (int page-width) (int page-height) 2 2)
         (.toByteArray out)))))
