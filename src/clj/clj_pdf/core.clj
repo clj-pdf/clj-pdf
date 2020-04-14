@@ -12,7 +12,7 @@
              FileOutputStream ByteArrayOutputStream File]
     [javax.imageio ImageIO]
     [com.lowagie.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
-                 PageSize Font FontFactory Paragraph]
+                      PageSize Font FontFactory Paragraph Image]
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
                      PdfPageEventHelper PdfPCell PdfPTable]))
 
@@ -124,9 +124,13 @@
 
 (defn- add-header [header ^Document doc font-style]
   (when header
-    (.setHeader doc
-                (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false)
-                  (.setBorderWidthTop 0)))))
+    (if (= (first header) :image)
+      (.setHeader doc
+                    (doto (new HeaderFooter (new Phrase (new Chunk (Image/getInstance ^String (second header)) 0.0 0.0)) false)
+                    (.setBorderWidthTop 0)))
+      (.setHeader doc
+                  (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false)
+                    (.setBorderWidthTop 0))))))
 
 (defn set-header-footer-table-width [table ^Document doc page-numbers?]
   (let [default-width (- (.right doc) (.left doc) (if page-numbers? 20 0))]
