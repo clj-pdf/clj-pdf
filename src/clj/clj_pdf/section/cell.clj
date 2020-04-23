@@ -163,6 +163,6 @@
         (.setCellEvent c ^PdfPCellEvent (make-event-handler base-layer-fn background-layer-fn text-layer-fn line-layer-fn))))
 
     (doseq [item content]
-      (.addElement c (make-section-or :paragraph meta item)))
+      (.addElement c (make-section-or :paragraph meta (if (= (first item) :phrase) [:paragraph item] item))))
 
     c))
