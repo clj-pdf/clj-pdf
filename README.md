@@ -550,6 +550,8 @@ optional metadata:
 
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
+* :underlines sequence of underlines to add, e.g.
+    `[{:thickness 5 :y-position 7} {:thickness 2 :y-position -7}]`
 
 font metadata (refer to font section for details)
 
