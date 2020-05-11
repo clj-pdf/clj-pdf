@@ -59,7 +59,10 @@
 
 (defn- text-chunk [style ^String content]
   (let [ch (Chunk. ^String content ^Font (font style))]
-    (set-background ch style)
+    (doseq [{:keys [thickness y-position]} (:underlines style)]
+      (assert (number? thickness))
+      (assert (number? y-position))
+      (.setUnderline ch (float thickness) (float y-position)))
     (cond
       (:super style) (.setTextRise ch (float 5))
       (:sub style) (.setTextRise ch (float -4))

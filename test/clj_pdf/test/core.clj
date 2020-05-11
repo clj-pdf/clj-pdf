@@ -224,6 +224,15 @@
   (eq? [{} [:line]]
        "line.pdf"))
 
+(deftest underlines
+  (eq? [{}
+        [:paragraph
+         [:chunk
+          {:underlines [{:thickness 5 :y-position 7}
+                        {:thickness 2 :y-position -7}]}
+          "Two lines"]]]
+       "underlines.pdf"))
+
 (deftest chapter
   (eq? [{} [:chapter "Chapter title"]]
        "chapter.pdf"))
