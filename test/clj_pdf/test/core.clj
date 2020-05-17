@@ -1,6 +1,7 @@
 (ns clj-pdf.test.core
   (:use clj-pdf.core clojure.test clojure.java.io)
-  (:require [clojure.string :as re]))
+  (:require [clj-pdf.utils :as utils]
+            [clojure.string :as re]))
 
 (defn add-test-path-prefix [filename]
   (str "test" java.io.File/separator filename))
@@ -18,7 +19,15 @@
       (re/replace #"FontBBox\/([A-Z]+\+Carlito)" "FontBBox/PHZPHX+Carlito")
       (re/replace #"FontName\/([A-Z]+\+Carlito)" "FontName/PHZPHX+Carlito")
       (re/replace #"BaseFont\/([A-Z]+\+Carlito)" "BaseFont/PHZPHX+Carlito")
-      ))
+
+      (re/replace #"Font\/([A-Z]+\+CourierPrime)"
+                  "Font/BUKDVX+CourierPrime")
+      (re/replace #"FontBBox\/([A-Z]+\+CourierPrime)"
+                  "FontBBox/BUKDVX+CourierPrime")
+      (re/replace #"FontName\/([A-Z]+\+CourierPrime)"
+                  "FontName/BUKDVX+CourierPrime")
+      (re/replace #"BaseFont\/([A-Z]+\+CourierPrime)"
+                  "BaseFont/BUKDVX+CourierPrime")))
 
 (defn read-file ^bytes [file-path]
   (with-open [reader (input-stream file-path)]
@@ -232,6 +241,14 @@
                         {:thickness 2 :y-position -7}]}
           "Two lines"]]]
        "underlines.pdf"))
+
+(deftest font-stack
+  (eq? [{}
+        [:paragraph
+         [:phrase
+          {:size 12 :font-stack ["courier_prime.ttf" "Carlito-Regular.ttf"]}
+          "Hello Л Д Ѯ!"]]]
+       "fontstack.pdf"))
 
 (deftest chapter
   (eq? [{} [:chapter "Chapter title"]]

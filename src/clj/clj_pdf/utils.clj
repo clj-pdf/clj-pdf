@@ -2,7 +2,7 @@
   (:require [clojure.string :refer [split]])
   (:import [java.awt Color]
            [com.lowagie.text Element Font FontFactory]
-           [com.lowagie.text.pdf BaseFont]))
+           [com.lowagie.text.pdf BaseFont FontSelector]))
 
 
 (defn split-classes-from-tag
@@ -86,6 +86,13 @@
                      (get-color [0 0 0]))]
 
     (FontFactory/getFont ttf encoding true size style color)))
+
+
+(defn create-font-stack ^FontSelector [params ttf-names]
+  (let [font-selector (FontSelector.)]
+    (doseq [ttf-name ttf-names]
+      (.addFont font-selector (font (assoc params :ttf-name ttf-name))))
+    font-selector))
 
 
 (defn flatten-seqs [elements]

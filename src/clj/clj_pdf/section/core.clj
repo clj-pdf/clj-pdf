@@ -2,7 +2,8 @@
   "File with smaller sections so they are not spread out one function at a
   separate file. Bigger sections (in character count, that is) are located in
   their own namespaces."
-  (:require [clj-pdf.utils :refer [get-color get-alignment flatten-seqs font]]
+  (:require [clj-pdf.utils :refer [create-font-stack get-color get-alignment
+                                   flatten-seqs font]]
             [clj-pdf.graphics-2d :as g2d]
             [clj-pdf.section :refer [render *cache* make-section make-section-or]])
   (:import [com.lowagie.text
@@ -196,10 +197,15 @@
 
 
 (defmethod render :phrase
-  [_ {:keys [leading] :as meta} & content]
-  (doto (if leading (new Phrase (float leading)) (new Phrase))
-    (.setFont (font meta))
-    (.addAll (map (partial make-section meta) content))))
+  [_ {:keys [leading font-stack] :as meta} & content]
+  (if font-stack
+    (let [[text] content]
+      (assert (= 1 (count content)))
+      (assert (string? text))
+      (.process (utils/create-font-stack meta font-stack) text))
+    (doto (if leading (new Phrase (float leading)) (new Phrase))
+      (.setFont (font meta))
+      (.addAll (map (partial make-section meta) content)))))
 
 
 (defmethod render :reference
