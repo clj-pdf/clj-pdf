@@ -202,7 +202,7 @@
     (let [[text] content]
       (assert (= 1 (count content)))
       (assert (string? text))
-      (.process (utils/create-font-stack meta font-stack) text))
+      (.process (create-font-stack meta font-stack) text))
     (doto (if leading (new Phrase (float leading)) (new Phrase))
       (.setFont (font meta))
       (.addAll (map (partial make-section meta) content)))))
