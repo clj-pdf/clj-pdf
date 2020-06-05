@@ -486,6 +486,17 @@ custom fonts can also be specified for any elements that support font metadata, 
 
 you could set `:ttf-name` as absolute or relative path to the font file. it will also load fonts from classpath resources by default.
 
+Phrases also support font-stacks: For each character, the first ttf-name in the
+supplied font-stack sequence is chosen, that supports it.  
+Note: When a font-stack is supplied, only a single string may be supplied as
+a child element.
+
+```clojure
+[:phrase
+ {:size 14 :font-stack ["fonts/fancy_font.ttf" "fonts/arialuni.ttf"]}
+ "mixed scripts тест 123"]
+```
+
 ### document sections
 
 each document section is represented by a vector starting with a keyword identifying the section followed by an optional map of metadata and the contents of the section.
@@ -550,6 +561,8 @@ optional metadata:
 
 * :sub boolean sets chunk to subscript
 * :super boolean sets chunk to superscript
+* :underlines sequence of underlines to add, e.g.
+    `[{:thickness 5 :y-position 7} {:thickness 2 :y-position -7}]`
 
 font metadata (refer to font section for details)
 
