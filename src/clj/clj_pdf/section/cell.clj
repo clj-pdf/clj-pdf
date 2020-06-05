@@ -155,6 +155,7 @@
     (when height (.setFixedHeight c (float height)))
     (when min-height (.setMinimumHeight c (float min-height)))
     (.setHorizontalAlignment c ^int (get-alignment align))
+    (when valign (.setUseAscender c true))
     (.setVerticalAlignment c ^int (get-alignment valign))
 
     (if event-handler
