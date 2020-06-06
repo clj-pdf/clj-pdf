@@ -155,7 +155,9 @@
 (defn set-margins [^Document doc left-margin right-margin top-margin bottom-margin page-numbers?]
   (let [margins {:left   (or left-margin (.leftMargin doc))
                  :right  (or right-margin (.rightMargin doc))
-                 :top    (or (if top-margin (+ top-margin (.topMargin doc))) (.topMargin doc))
+                 :top    (if top-margin
+                           (+ top-margin (.topMargin doc))
+                           (.topMargin doc))
                  :bottom (+ (if page-numbers? 20 0)
                             (or bottom-margin (.bottomMargin doc)))}]
     (.setMargins doc (float (:left margins)) (float (:right margins)) (float (:top margins)) (float (:bottom margins)))
