@@ -370,15 +370,9 @@
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
           header-meta          (merge font-style (dissoc meta :size))
-          margins              {:left   (or left-margin (.leftMargin doc))
-                                :right  (or right-margin (.rightMargin doc))
-                                :top    (or top-margin (.topMargin doc))
-                                :bottom (+ (if page-numbers? 20 0)
-                                           (or bottom-margin (.bottomMargin doc)))}
-          table-height  (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
-          top-margin (if table-height
-                       (+ table-height (if top-margin top-margin 0))
-                       top-margin)]
+          margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
+          table-height         (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
+          top-margin           (if table-height table-height)]
 
       (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
 
