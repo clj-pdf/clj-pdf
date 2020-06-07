@@ -155,7 +155,9 @@
 (defn set-margins [^Document doc left-margin right-margin top-margin bottom-margin page-numbers?]
   (let [margins {:left   (or left-margin (.leftMargin doc))
                  :right  (or right-margin (.rightMargin doc))
-                 :top    (or top-margin (.topMargin doc))
+                 :top    (if top-margin
+                           (+ top-margin (.topMargin doc))
+                           (.topMargin doc))
                  :bottom (+ (if page-numbers? 20 0)
                             (or bottom-margin (.bottomMargin doc)))}]
     (.setMargins doc (float (:left margins)) (float (:right margins)) (float (:top margins)) (float (:bottom margins)))
@@ -204,12 +206,14 @@
     (-> content
         (assoc-in [:table] table)
         (update-in [:x] #(or % (.left doc)))
-        (update-in [:y] #(or % y)))))
+        (update-in [:y] #(or % y))
+        (update-in [:height] #(or % height)))))
 
 (defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? ^PdfWriter pdf-writer header-first-page?]
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
         footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
-    (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))))
+    (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
+    (when header-content (:height header-content))))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
@@ -366,9 +370,11 @@
     (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
           pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
           header-meta          (merge font-style (dissoc meta :size))
-          margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)]
+          margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
+          table-height         (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
+          top-margin           (if table-height table-height)]
 
-      (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
+      (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
 
       (when background-color
         (.setPageEvent pdf-writer (background-color-applier background-color)))
