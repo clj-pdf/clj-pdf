@@ -213,7 +213,8 @@
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
         footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
     (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
-    (when header-content (:height header-content))))
+    (when header-content {:height (:height header-content)
+                          :y (:y header-content)})))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
@@ -372,7 +373,12 @@
           header-meta          (merge font-style (dissoc meta :size))
           margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
           table-height         (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
-          top-margin           (if table-height table-height)]
+          top-margin           (if (:height table-height) (:height table-height))
+          top-margin           (if (:y table-height)
+                                 (if top-margin
+                                   (+ top-margin (+ (- (.top doc) (:y table-height))))
+                                   (:y table-height))
+                                 top-margin)]
 
       (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
 
