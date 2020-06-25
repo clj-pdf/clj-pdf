@@ -376,7 +376,7 @@
           top-margin           (if (:height table-height) (:height table-height))
           top-margin           (if (:y table-height)
                                  (if top-margin
-                                   (+ top-margin (+ (- (.top doc) (:y table-height))))
+                                   (+ top-margin (- (.top doc) (:y table-height)))
                                    (:y table-height))
                                  top-margin)]
 
