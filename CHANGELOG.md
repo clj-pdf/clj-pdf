@@ -1,3 +1,4 @@
+* 2.5.3 - [further header fixes](https://github.com/clj-pdf/clj-pdf/pull/202)
 * 2.5.2 - [fix for non-header text ignoring top-margin](https://github.com/clj-pdf/clj-pdf/pull/201)
 * 2.5.1 - [fix for table header spacing](https://github.com/clj-pdf/clj-pdf/pull/198)
 * 2.5.0 - [fix for vertical alignment in pdf-cell](https://github.com/clj-pdf/clj-pdf/pull/197)
