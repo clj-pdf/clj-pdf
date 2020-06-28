@@ -213,8 +213,8 @@
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
         footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
     (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
-    (when header-content {:height (:height header-content)
-                          :y (:y header-content)})))
+    (when header-content {:header-content header-content
+                          :footer-content footer-content})))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
@@ -327,6 +327,25 @@
         (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
         (.fill canvas)))))
 
+(defn set-height-margins [^Document doc header-content footer-content margins header-first-page?]
+  (let [page-num    (.getPageNumber doc)
+        first-page? (= page-num 1)
+        has-header? (and header-content (or (not first-page?) header-first-page?))
+        has-footer? (boolean footer-content)
+        left        (:left margins)
+        right       (:right margins)
+        top         (if has-header?
+                      (if (and (:height header-content) (:y header-content))
+                        (+ (:height header-content) (- (.top doc) (:y header-content)) (:top margins))
+                        (if (:height header-content)
+                          (+ (:height header-content) (:top margins))
+                          (:top margins)))
+                      (:top margins))
+        bottom      (if has-footer?
+                      (+ (:bottom margins) (:height footer-content))
+                      (:bottom margins))]
+    (.setMargins doc (float left) (float right) (float top) (float bottom))))
+
 (defn- setup-doc [{:keys [left-margin
                           right-margin
                           top-margin
@@ -368,19 +387,11 @@
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
-    (let [output-stream-to-use (if (page-events? meta) temp-stream output-stream)
-          pdf-writer           (PdfWriter/getInstance doc output-stream-to-use)
-          header-meta          (merge font-style (dissoc meta :size))
-          margins              (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
-          table-height         (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)
-          top-margin           (if (:height table-height) (:height table-height))
-          top-margin           (if (:y table-height)
-                                 (if top-margin
-                                   (+ top-margin (- (.top doc) (:y table-height)))
-                                   (:y table-height))
-                                 top-margin)]
-
-      (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
+    (let [output-stream-to-use  (if (page-events? meta) temp-stream output-stream)
+          pdf-writer            (PdfWriter/getInstance doc output-stream-to-use)
+          header-meta           (merge font-style (dissoc meta :size))
+          margins               (set-margins doc left-margin right-margin top-margin bottom-margin page-numbers?)
+          header-footer-content (set-table-header-footer-event table-header table-footer header-meta doc margins page-numbers? pdf-writer header-first-page?)]
 
       (when background-color
         (.setPageEvent pdf-writer (background-color-applier background-color)))
@@ -403,12 +414,7 @@
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
       ;;must set margins before opening the doc
-      (when (and left-margin right-margin top-margin bottom-margin)
-        (.setMargins doc
-                     (float left-margin)
-                     (float right-margin)
-                     (float top-margin)
-                     (float (if pages (+ 20 bottom-margin) bottom-margin))))
+      (set-height-margins doc (:header-content header-footer-content) (:footer-content header-footer-content) margins header-first-page?)
 
 
       ;;if we have a letterhead then we want to put it on the first page instead of the header,
