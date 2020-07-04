@@ -1,9 +1,11 @@
 (ns clj-pdf.section.table
-  (:require [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
-            [clj-pdf.section :refer [render make-section]])
-  (:import [com.lowagie.text Cell Element Rectangle Table]
-           [com.lowagie.text.pdf PdfPCell PdfPTable]))
-
+  (:require
+    [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
+    [clj-pdf.section :refer [render make-section]])
+  (:import
+    com.lowagie.text.alignment.HorizontalAlignment
+    [com.lowagie.text Cell Element Rectangle Table]
+    [com.lowagie.text.pdf PdfPCell PdfPTable]))
 
 (defn- table-header [meta ^Table tbl header cols]
   (when header
@@ -11,8 +13,9 @@
           background-color (get-color (when meta? (:background-color (first header))))
           header-rest      (if meta? (rest header) header)
           header-data      header-rest
-          set-bg           #(if background-color
-                              (doto ^Cell % (.setBackgroundColor background-color)) %)]
+          set-bg           (fn [cell]
+                             (when background-color (.setBackgroundColor cell background-color))
+                             cell)]
       (if (= 1 (count header-data))
         (let [header               (first header-data)
               ^Element header-text (if (string? header)
@@ -46,11 +49,11 @@
   [^Table tbl meta content]
   (let [[tag & cx] (when (vector? content)
                      (split-classes-from-tag (first content)))
-        element    (cond
-                     (= tag :cell)     content
-                     (nil? content)    [:cell [:chunk meta ""]]
-                     (string? content) [:cell [:chunk meta content]]
-                     :else             [:cell content])]
+        element (cond
+                  (= tag :cell) content
+                  (nil? content) [:cell [:chunk meta ""]]
+                  (string? content) [:cell [:chunk meta content]]
+                  :else [:cell content])]
     (.addCell tbl ^Cell (make-section meta element))))
 
 
@@ -58,11 +61,11 @@
   [^PdfPTable tbl meta content]
   (let [[tag & cx] (when (vector? content)
                      (split-classes-from-tag (first content)))
-        element    (cond
-                     (= tag :pdf-cell) content
-                     (nil? content)    [:pdf-cell [:chunk meta ""]]
-                     (string? content) [:pdf-cell [:chunk meta content]]
-                     :else             [:pdf-cell content])]
+        element (cond
+                  (= tag :pdf-cell) content
+                  (nil? content) [:pdf-cell [:chunk meta ""]]
+                  (string? content) [:pdf-cell [:chunk meta content]]
+                  :else [:pdf-cell content])]
     (.addCell tbl ^PdfPCell (make-section meta element))))
 
 
@@ -87,7 +90,7 @@
     (throw (new Exception "Table must contain rows!")))
 
   (let [header-cols (cond-> (count header)
-                      (map? (first header)) dec)
+                            (map? (first header)) dec)
         cols        (or num-cols (apply max (cons header-cols (map count rows))))
         ^Table tbl  (doto (new Table cols (count rows))
                       (.setWidth (float (or width 100))))]
@@ -151,7 +154,7 @@
         rows        (concat (if header-size header) (if footer-size footer) rows)]
     (when (and widths
                (not= (count widths)
-                 (or num-cols (apply max (map count rows)))))
+                     (or num-cols (apply max (map count rows)))))
       (throw (new Exception (str "wrong number of columns specified in widths: " widths ", number of columns: " (or num-cols (apply max (map count rows)))))))
 
     (let [^int cols (or num-cols (apply max (map count rows)))
@@ -185,15 +188,15 @@
 
       (.setKeepTogether tbl (boolean keep-together?))
 
-                                        ; these are inverted so the default if not specified matches
-                                        ; PdfPTable default behaviour
+      ; these are inverted so the default if not specified matches
+      ; PdfPTable default behaviour
       (.setSplitRows tbl (boolean (not no-split-rows?)))
       (.setSplitLate tbl (boolean (not no-split-late?)))
 
       (doseq [row rows]
         (doseq [column row]
           (add-pdf-table-cell tbl
-            (merge meta (when (false? cell-border) {:set-border []}))
-            column)))
+                              (merge meta (when (false? cell-border) {:set-border []}))
+                              column)))
 
       tbl)))
