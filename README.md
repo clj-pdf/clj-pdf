@@ -714,6 +714,8 @@ optional metadata:
 [:chunk {:x 10 :y 10} [:image {:width 16 :height 16} "smiley.png"]]
 ```
 
+Note that when loading images via `ImageIO`, automatic image reuse is not possible, so if your PDF contains a lot of repetitive copies of the same image, it will blow out in size.  It is therefore recommended to load image data using a URL.
+
 #### Line
 
 tag :line
