@@ -19,4 +19,4 @@
                    :global-vars  {*warn-on-reflection* true}
                    :dependencies [[environ "1.2.0"]
                                   [org.clojure/tools.namespace "1.0.0"]]
-                   :plugins      [[lein-marginalia "0.7.1"]]}})
+                   :plugins      [[lein-marginalia "0.9.1"]]}})
