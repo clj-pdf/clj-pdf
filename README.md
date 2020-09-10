@@ -622,8 +622,8 @@ ends current page and inserts a blank page if necessary to ensure that subsequen
 
 tag :graphics
 
-the command takes a function with a single argument, the [graphics2d](http://docs.oracle.com/javase/7/docs/api/java/awt/graphics2d.html) object, onto which you can draw
-things. note that this is actually a [*pdfgraphics2d*](https://coderanch.com/how-to/javadoc/itext-2.1.7/com/lowagie/text/pdf/pdfgraphics2d.html) object (a subclass of
+the command takes a function with a single argument, the [graphics2d](https://docs.oracle.com/javase/8/docs/api/java/awt/Graphics2D.html) object, onto which you can draw
+things. note that this is actually a [*pdfgraphics2d*](https://librepdf.github.io/OpenPDF/docs-1-3-17/com/lowagie/text/pdf/PdfGraphics2D.html) object (a subclass of
 graphics2d) which will render the drawing instructions as vectors rather than to a raster bitmap. there is no need to dispose of the graphics context as this is done on
 exiting the function.  the co-ordinates are absolute from the top left hand side of the current page. there are no restrictions as to the number of times this command can
 be invoked per page; subsequent graphics drawings will be overlaid on prior renderings.
