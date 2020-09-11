@@ -589,3 +589,24 @@
   [{}
    [:image {:width 50 :height 50 :base64 true} (slurp "test/b64logo")]]
   "b64.pdf")
+
+
+(comment
+  (do
+    (user/refresh)
+    (pdf
+      [{}
+       [:table
+        {:cell-border    true,
+         :keep-together? false,
+         :no-split-rows? true,
+         :leading        10,
+         :num-cols       3,
+         :header
+                         [{:background-color [200 200 200]}
+                          "Competition"
+                          "Home Team"
+                          "Away Team"]}
+        (for [i (range 100)]
+          [:cell {:colspan 3} (str "cell: " i)])]]
+      "long-table.pdf")))
