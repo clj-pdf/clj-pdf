@@ -231,11 +231,11 @@
   (let [image (some-> (-> meta :watermark :image) buffered-image)]
     (proxy [PdfPageEventHelper] []
       (onEndPage [writer doc]
-        (let [{:keys [scale rotate translate] :as wm} (:watermark meta)]
+        (let [{:keys [scale rotate translate under] :or {under true} :as wm} (:watermark meta)]
           (g2d/with-graphics
             (assoc meta
               :pdf-writer writer
-              :under true
+              :under under
               :scale scale
               :rotate rotate
               :translate translate)
