@@ -110,8 +110,8 @@ of inputstream, file name, url, or a byte array.
 
 (collate (java.io.fileoutputstream. (clojure.java.io/file "merged.pdf"))
          (.tobytearray doc1)
-         (.tobytearray doc1)
-         (.tobytearray doc1))
+         (.tobytearray doc2)
+         (.tobytearray doc3))
 
 ;;all keys in the options map are optional
 (collate {:title "collated documents"
@@ -122,8 +122,8 @@ of inputstream, file name, url, or a byte array.
           :subject "some subject"}
          (java.io.fileoutputstream. (clojure.java.io/file "merged.pdf"))
          (.tobytearray doc1)
-         (.tobytearray doc1)
-         (.tobytearray doc1))
+         (.tobytearray doc2)
+         (.tobytearray doc3))
 ```
 
 sequences containing elements will be expanded into the document:
