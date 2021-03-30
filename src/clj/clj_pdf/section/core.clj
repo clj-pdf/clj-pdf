@@ -60,6 +60,7 @@
 
 (defn- text-chunk [style ^String content]
   (let [ch (Chunk. ^String content ^Font (font style))]
+    (set-background ch style)
     (doseq [{:keys [thickness y-position]} (:underlines style)]
       (assert (number? thickness))
       (assert (number? y-position))
