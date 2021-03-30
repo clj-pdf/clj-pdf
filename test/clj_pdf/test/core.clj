@@ -233,6 +233,10 @@
   (eq? [{} [:line]]
        "line.pdf"))
 
+(deftest background
+  (eq? [{} [:chunk {:background [200 0 0]} "red bg"]]
+       "background.pdf"))
+
 (deftest underlines
   (eq? [{}
         [:paragraph
