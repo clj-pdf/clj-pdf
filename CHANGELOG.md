@@ -1,3 +1,5 @@
+* 2.5.7 - [extract test utils into src to make them user accessible](https://github.com/clj-pdf/clj-pdf/pull/211)
+* 2.5.6 - [fix for text-chunk backgrounds](https://github.com/clj-pdf/clj-pdf/commit/8c42aaf958ca3d640365ff1baa4f2ab297f46a88)
 * 2.5.5 - [allow passing flag under in watermark meta](https://github.com/clj-pdf/clj-pdf/pull/207)
 * 2.5.4 - updated to openpdf 1.3.20 to fix [split table truncation issue](https://github.com/clj-pdf/clj-pdf/issues/203), batik 1.13
 * 2.5.3 - [further header fixes](https://github.com/clj-pdf/clj-pdf/pull/202)
