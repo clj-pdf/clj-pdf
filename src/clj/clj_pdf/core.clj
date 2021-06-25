@@ -13,7 +13,7 @@
     [javax.imageio ImageIO]
     [com.lowagie.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
                       PageSize Font FontFactory Paragraph Image]
-    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter
+    [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfCopy
                      PdfPageEventHelper PdfPCell PdfPTable]))
 
 (declare ^:dynamic *pdf-writer*)
@@ -586,14 +586,15 @@
   "usage: takes an output that can be a file name or an output stream followed by one or more documents
    that can be input streams, urls, filenames, or byte arrays."
   [& params]
-  (let [[{:keys [author creator orientation size subject title]} out & pdfs]
+  (let [[{:keys [author creator subject title]} out & pdfs]
         (if (map? (first params))
           params
           (into [{}] params))
         out (io/output-stream out)
-        doc (Document. (page-orientation (page-size size) orientation))
-        wrt (PdfWriter/getInstance doc out)
-        cb  ^PdfContentByte (do (.open doc) (.getDirectContent wrt))]
+        doc (Document.)
+        wrt (PdfCopy. doc out)]
+    (.open doc)
+    (.getDirectContent wrt)
     (when title (.addTitle doc title))
     (when subject (.addSubject doc subject))
     (when author (.addAuthor doc author))
@@ -601,12 +602,11 @@
     (doseq [pdf pdfs]
       (with-open [rdr (PdfReader. (io/input-stream pdf))]
         (dotimes [i (.getNumberOfPages rdr)]
-          (.newPage doc)
-          (.addTemplate cb (.getImportedPage wrt rdr (inc i)) 0 0))))
+          (let [page (.getImportedPage wrt rdr (inc i))]
+            (.addPage wrt page)))))
     (.flush out)
     (.close doc)
     (.close out)))
-
 
 ;;;templating
 (defmacro template [t]
