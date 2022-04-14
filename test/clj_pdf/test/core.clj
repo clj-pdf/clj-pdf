@@ -330,3 +330,13 @@
 (deftest nil-stylesheet-no-npe
   (is (pdf->bytes [{:stylesheet nil}
                    [:paragraph.custom "Styled"]])))
+
+(deftest letterhead-with-header
+  (eq? [{:letterhead [[:pdf-table {:border true :horizontal-align :center :width-percent 100 :padding 0 :border-width 0.1}
+                       [100]
+                       [[:pdf-cell [:paragraph "my letterhead"]]]]]
+         :header     {:table [:pdf-table {:border true :horizontal-align :center :width-percent 100 :padding 0 :border-width 0.1}
+                              [100]
+                              [[:pdf-cell [:paragraph {:size 36} "my header"]]]]}}
+        [:paragraph "and some content"]]
+       "letterhead.pdf"))
