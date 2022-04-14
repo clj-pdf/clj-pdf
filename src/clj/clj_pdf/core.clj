@@ -168,36 +168,24 @@
 
 (defn table-footer-header-event [header-content footer-content margins header-first-page?]
   (proxy [PdfPageEventHelper] []
-    (onBeforeStartPage [^PdfWriter writer ^Document doc]
-      ; sets the margins for the current page
-      ; typically, the only thing that would make it so that the margins change on a per-page basis
-      ; is if both a letterhead and header are used. in this case, the first page will have a different
-      ; top-margin then the rest of the document.
-      (let [page-num    (.getPageNumber doc)
-            first-page? (= page-num 1)
-            has-header? (and header-content (or (not first-page?) header-first-page?))
-            has-footer? (boolean footer-content)
-            left        (:left margins)
-            right       (:right margins)
-            top         (if has-header?
-                          (+ (:top margins) (.getTotalHeight ^PdfPTable (:table header-content)))
-                          (:top margins))
-            bottom      (if has-footer?
-                          (+ (:bottom margins) (.getTotalHeight ^PdfPTable (:table footer-content)))
-                          (:bottom margins))]
-        (.setMargins doc (float left) (float right) (float top) (float bottom))))
-
     (onEndPage [^PdfWriter writer ^Document doc]
       (let [page-num     (.getPageNumber doc)
             first-page?  (= page-num 1)
-            show-header? (and header-content (or (not first-page?) header-first-page?))
+            show-header? (or (not first-page?) header-first-page?)
             show-footer? (boolean footer-content)]
+
+        ;; set top margin ready for header on next page
+        (when header-content
+          (let [top-margin (+ (:top margins)
+                              (.getTotalHeight ^PdfPTable (:table header-content)))]
+            (.setMargins doc (:left margins) (:right margins) top-margin (:bottom margins))))
+
         ; write header and/or footer tables to appropriate places on the page if they are set and required by the
         ; current state (e.g. use of a letterhead when on page #1 will mean no header even if one is set)
         (if show-header? (write-header-footer-content-row header-content writer))
         (if show-footer? (write-header-footer-content-row footer-content writer))))))
 
-(defn preprocess-header-footer-content [content meta ^Document doc footer? page-numbers? header-first-page?]
+(defn preprocess-header-footer-content [content meta ^Document doc footer? page-numbers?]
   (let [table  (get-header-footer-table-section (:table content) meta doc page-numbers? footer?)
         height (.getTotalHeight ^PdfPTable table)
         y      (if footer?
@@ -210,8 +198,8 @@
         (update-in [:height] #(or % height)))))
 
 (defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? ^PdfWriter pdf-writer header-first-page?]
-  (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers? header-first-page?))
-        footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers? header-first-page?))]
+  (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers?))
+        footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers?))]
     (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
     (when header-content {:header-content header-content
                           :footer-content footer-content})))
@@ -327,14 +315,11 @@
         (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
         (.fill canvas)))))
 
-(defn set-height-margins [^Document doc header-content footer-content margins header-first-page?]
-  (let [page-num    (.getPageNumber doc)
-        first-page? (= page-num 1)
-        has-header? (and header-content (or (not first-page?) header-first-page?))
-        has-footer? (boolean footer-content)
+(defn set-initial-margins [^Document doc header-content footer-content margins header-first-page?]
+  (let [has-footer? (boolean footer-content)
         left        (:left margins)
         right       (:right margins)
-        top         (if has-header?
+        top         (if header-first-page?
                       (if (and (:height header-content) (:y header-content))
                         (+ (:height header-content) (- (.top doc) (:y header-content)) (:top margins))
                         (if (:height header-content)
@@ -344,6 +329,9 @@
         bottom      (if has-footer?
                       (+ (:bottom margins) (:height footer-content))
                       (:bottom margins))]
+    ;; only set the top margin to make space for the header if it is to be present on ALL pages
+    ;; otherwise this will be sorted out in the `on-page-end` event handler
+    ;; this is to ensure letterheads get rendered at the correct position
     (.setMargins doc (float left) (float right) (float top) (float bottom))))
 
 (defn- setup-doc [{:keys [left-margin
@@ -383,7 +371,8 @@
                              (if (string? footer)
                                {:text footer :align :right :start-page 1}
                                (merge {:align :right :start-page 1} footer)))
-        header-first-page? (if letterhead false true)]
+        header-first-page? (and table-header
+                                (if letterhead false true))]
 
     ;;header and footer must be set before the doc is opened, or itext will not put them on the first page!
     ;;if we have to print total pages or add a watermark, then the document has to be post processed
@@ -414,7 +403,7 @@
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
       ;;must set margins before opening the doc
-      (set-height-margins doc (:header-content header-footer-content) (:footer-content header-footer-content) margins header-first-page?)
+      (set-initial-margins doc (:header-content header-footer-content) (:footer-content header-footer-content) margins header-first-page?)
 
 
       ;;if we have a letterhead then we want to put it on the first page instead of the header,
