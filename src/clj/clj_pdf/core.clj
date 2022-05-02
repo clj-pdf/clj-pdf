@@ -171,7 +171,8 @@
     (onEndPage [^PdfWriter writer ^Document doc]
       (let [page-num     (.getPageNumber doc)
             first-page?  (= page-num 1)
-            show-header? (or (not first-page?) header-first-page?)
+            show-header? (and (boolean header-content)
+                              (or (not first-page?) header-first-page?))
             show-footer? (boolean footer-content)]
 
         ;; set top margin ready for header on next page
