@@ -51,13 +51,14 @@
 
 
 (defn font ^Font
-  [{style    :style
-    styles   :styles
-    size     :size
-    color    :color
-    family   :family
-    ttf-name :ttf-name
-    encoding :encoding}]
+  [{:keys [style
+           styles
+           size
+           color
+           family
+           ttf-name
+           encoding
+           subset?]}]
 
   (let [ttf      (or ttf-name
                      (case (when family (name family))
@@ -83,9 +84,11 @@
                    :else  Font/NORMAL)
 
         color    (or (get-color color)
-                     (get-color [0 0 0]))]
-
-    (FontFactory/getFont ttf encoding true size style color)))
+                     (get-color [0 0 0]))
+        fnt (FontFactory/getFont ttf encoding true size style color)]
+    (when (some? subset?)
+      (.setSubset (.getBaseFont fnt) subset?))
+    fnt))
 
 
 (defn create-font-stack ^FontSelector [params ttf-names]
