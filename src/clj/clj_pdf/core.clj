@@ -14,8 +14,8 @@
     [com.lowagie.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
                       PageSize Font FontFactory Paragraph Image]
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfCopy
-                          PdfPageEventHelper PdfPCell PdfPTable PdfDictionary
-                          PdfName PdfArray]
+                          PdfPageEventHelper PdfPCell PdfPTable PdfDictionary PdfStream PdfDate
+                          PdfName PdfString PdfArray PdfFileSpecification]
     [com.lowagie.text.xml.xmp XmpWriter PdfSchema PdfA1Schema]))
 
 (declare ^:dynamic *pdf-writer*)
@@ -341,6 +341,86 @@
   ;; NOTE: currently supporting only PDF/A 3a
   #{:3a})
 
+(defn- write-file-attachments [^PdfWriter pdf-writer
+                               attachments
+                               {:keys [pdfa-compliance]}]
+  (let [files
+        (for [attachment attachments]
+          (let [{:keys [path
+                        display-name
+                        store
+                        mime-type
+                        compression
+                        creation-date
+                        modification-date]} attachment
+                compression-level (if compression
+                                    (case compression
+                                      :best-compression PdfStream/BEST_COMPRESSION
+                                      :best-speed PdfStream/BEST_SPEED
+                                      :default PdfStream/DEFAULT_COMPRESSION
+                                      :none PdfStream/NO_COMPRESSION)
+                                    PdfStream/NO_COMPRESSION)]
+            (assert (or path store) "Option path or option store is required")
+            (assert display-name "Option display-name is required")
+            (let [file-params (doto (PdfDictionary.)
+                                ;; Choosing the time when this PDF is
+                                ;; generated as a default creation and
+                                ;; modification date
+                                ;;
+                                ;; NOTE: Most PDF readers (like
+                                ;; `pdfdetach`) just ignore the file
+                                ;; parameters and set the time when
+                                ;; the attachment got extracted from
+                                ;; the PDF as a creation date.
+                                ;;
+                                ;; TODO: This has to be tested by
+                                ;; using the target PDF viewer, which
+                                ;; is probably the Adobe PDF
+                                ;; Viewer. It should show the times of
+                                ;; the creation of the PDF
+                                (.put PdfName/CREATIONDATE (if creation-date
+                                                             (PdfDate. creation-date)
+                                                             (PdfDate.)))
+                                (.put PdfName/MODDATE (if modification-date
+                                                        (PdfDate. modification-date)
+                                                        (PdfDate.))))
+                  ;; NOTE: PDFA/3a requires a mime-type for every file
+                  ;; attachment. Defaults to `application/octet-stream` if
+                  ;; mime-type is not specified
+                  mime-type (if (= :3a pdfa-compliance)
+                              (or mime-type "application/octet-stream")
+                              mime-type)
+                  file (PdfFileSpecification/fileEmbedded pdf-writer
+                                                          path
+                                                          display-name
+                                                          store
+                                                          mime-type
+                                                          file-params
+                                                          compression-level)]
+
+              (when (= :3a pdfa-compliance)
+                ;; An AFRelationship value represents the relationship
+                ;; of this object to the source that points to
+                ;; it. Predefined values are Source, Data,
+                ;; Alternative, Supplement or Unspecified. Other
+                ;; values may be used to represent other types of
+                ;; relationships, but should follow the rules for
+                ;; second-class names (ISO 32000‑1, Annex E).
+                ;;
+                ;; Predefined values for relationships for associated
+                ;; files are Source, Data, Alternative, Supplement,
+                ;; and Unspecified.
+                ;;
+                ;; Indicate that this is the data of the object.
+                (.put file (PdfName. "AFRelationship") PdfName/DATA))
+              (.addFileAttachment pdf-writer file)
+              file)))]
+    (when (= :3a pdfa-compliance)
+      (let [refs (PdfArray.)]
+        (doseq [file files]
+          (.add refs (.getReference file)))
+        (.put (.getExtraCatalog pdf-writer) (PdfName. "AF") refs)))))
+
 (defn- setup-doc [{:keys [left-margin
                           right-margin
                           top-margin
@@ -361,7 +441,8 @@
                           page-events
                           watermark
                           background-color
-                          pdfa-compliance] :as meta}
+                          pdfa-compliance
+                          attachments] :as meta}
                   out]
 
   (when pdfa-compliance
@@ -495,6 +576,8 @@
             (.setDefaultColorspace pdf-writer PdfName/DEFAULTGRAY ref)))
 
         (assert (-> meta :font :ttf-name) "PDF/A 3a requires to embed font file"))
+
+      (write-file-attachments pdf-writer attachments meta)
 
       [doc width height temp-stream output-stream pdf-writer])))
 
