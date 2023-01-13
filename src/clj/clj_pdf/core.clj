@@ -178,10 +178,16 @@
             show-footer? (boolean footer-content)]
 
         ;; set top margin ready for header on next page
-        (when header-content
+        (when (or header-content footer-content)
           (let [top-margin (+ (:top margins)
-                              (.getTotalHeight ^PdfPTable (:table header-content)))]
-            (.setMargins doc (:left margins) (:right margins) top-margin (:bottom margins))))
+                              (or (when-let [table (:table header-content)]
+                                    (.getTotalHeight ^PdfPTable table))
+                                  0))
+                bottom-margin (+ (:bottom margins)
+                                 (or (when-let [table (:table footer-content)]
+                                       (.getTotalHeight ^PdfPTable table))
+                                     0))]
+            (.setMargins doc (:left margins) (:right margins) top-margin bottom-margin)))
 
         ; write header and/or footer tables to appropriate places on the page if they are set and required by the
         ; current state (e.g. use of a letterhead when on page #1 will mean no header even if one is set)
