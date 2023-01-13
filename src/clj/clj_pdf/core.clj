@@ -204,8 +204,8 @@
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers?))
         footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers?))]
     (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
-    (when header-content {:header-content header-content
-                          :footer-content footer-content})))
+    {:header-content header-content
+     :footer-content footer-content}))
 
 (defn page-events? [{:keys [pages page-events]}]
   (or pages (not (empty? page-events))))
