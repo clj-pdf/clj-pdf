@@ -168,14 +168,15 @@
 (defn write-header-footer-content-row [{:keys [table x y]} ^PdfWriter writer]
   (.writeSelectedRows ^PdfPTable table (int 0) (int -1) (float x) (float y) (.getDirectContent writer)))
 
-(defn table-footer-header-event [header-content footer-content margins header-first-page?]
+(defn table-footer-header-event [header-content footer-content footer-start-page margins header-first-page?]
   (proxy [PdfPageEventHelper] []
     (onEndPage [^PdfWriter writer ^Document doc]
       (let [page-num     (.getPageNumber doc)
             first-page?  (= page-num 1)
             show-header? (and (boolean header-content)
                               (or (not first-page?) header-first-page?))
-            show-footer? (boolean footer-content)]
+            show-footer? (and (boolean footer-content)
+                              (>= page-num footer-start-page))]
 
         ;; set top margin ready for header on next page
         (when (or header-content footer-content)
@@ -208,8 +209,9 @@
 
 (defn set-table-header-footer-event [header-content footer-content meta doc margins page-numbers? ^PdfWriter pdf-writer header-first-page?]
   (let [header-content (if header-content (preprocess-header-footer-content header-content meta doc false page-numbers?))
-        footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers?))]
-    (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content margins header-first-page?))
+        footer-content (if footer-content (preprocess-header-footer-content footer-content meta doc true page-numbers?))
+        footer-start-page (or (get-in meta [:footer :start-page]) 1)]
+    (.setPageEvent pdf-writer (table-footer-header-event header-content footer-content footer-start-page margins header-first-page?))
     {:header-content header-content
      :footer-content footer-content}))
 
@@ -324,8 +326,9 @@
         (.rectangle canvas (.getLeft rect) (.getBottom rect) (.getWidth rect) (.getHeight rect))
         (.fill canvas)))))
 
-(defn set-initial-margins [^Document doc header-content footer-content margins header-first-page?]
-  (let [has-footer? (boolean footer-content)
+(defn set-initial-margins [^Document doc header-content footer-content margins footer-start-page header-first-page?]
+  (let [show-footer? (and (boolean footer-content)
+                          (not (> (or footer-start-page 1) 1)))
         left        (:left margins)
         right       (:right margins)
         top         (if header-first-page?
@@ -335,7 +338,7 @@
                           (+ (:height header-content) (:top margins))
                           (:top margins)))
                       (:top margins))
-        bottom      (if has-footer?
+        bottom      (if show-footer?
                       (+ (:bottom margins) (:height footer-content))
                       (:bottom margins))]
     ;; only set the top margin to make space for the header if it is to be present on ALL pages
@@ -520,7 +523,12 @@
                         (.setAlignment ^int (get-alignment (:align footer)))))))
 
       ;;must set margins before opening the doc
-      (set-initial-margins doc (:header-content header-footer-content) (:footer-content header-footer-content) margins header-first-page?)
+      (set-initial-margins doc
+                           (:header-content header-footer-content)
+                           (:footer-content header-footer-content)
+                           margins
+                           (-> meta :footer :start-page)
+                           header-first-page?)
 
 
       ;;if we have a letterhead then we want to put it on the first page instead of the header,
