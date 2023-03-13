@@ -1104,6 +1104,29 @@ metadata:
   ["foo2" "bar2" "baz2"]]
 ```
 
+adding a border around table cells
+
+```clojure
+(ns mypdf.core
+  (:import [com.lowagie.text.pdf PdfPCellEvent PdfPTable]))
+
+(def brdr
+  (reify
+    PdfPCellEvent
+    (cellLayout [this cell rect canvas]
+      (let [radius 4
+            lineWidth 1.5
+            cb (get canvas PdfPTable/BACKGROUNDCANVAS)
+            [l b w h] [(.getLeft rect)(.getBottom rect)(.getWidth rect)(.getHeight rect)]]
+         (.roundRectangle cb l b w h radius)
+         (.setLineWidth cb lineWidth)
+         (.stroke cb)))))
+
+[:table
+ {}
+ [[:pdf-cell {:event-handler brdr}]]]
+```
+
 #### PDF Table
 
 tag :pdf-table
