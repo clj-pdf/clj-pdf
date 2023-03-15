@@ -1104,29 +1104,6 @@ metadata:
   ["foo2" "bar2" "baz2"]]
 ```
 
-adding a border around table cells
-
-```clojure
-(ns mypdf.core
-  (:import [com.lowagie.text.pdf PdfPCellEvent PdfPTable]))
-
-(def brdr
-  (reify
-    PdfPCellEvent
-    (cellLayout [this cell rect canvas]
-      (let [radius 4
-            lineWidth 1.5
-            cb (get canvas PdfPTable/BACKGROUNDCANVAS)
-            [l b w h] [(.getLeft rect)(.getBottom rect)(.getWidth rect)(.getHeight rect)]]
-         (.roundRectangle cb l b w h radius)
-         (.setLineWidth cb lineWidth)
-         (.stroke cb)))))
-
-[:table
- {}
- [[:pdf-cell {:event-handler brdr}]]]
-```
-
 #### PDF Table
 
 tag :pdf-table
@@ -1180,6 +1157,35 @@ metadata:
   ["Joe" "$20.00"]
   ["Bob" "$7.50"]
   ["Mary" "$18.90"]]
+```
+
+adding a border around table cells
+
+```clojure
+(ns mypdf.core
+  (:import [com.lowagie.text.pdf PdfPCellEvent PdfPTable]))
+
+(def border
+  (reify
+    PdfPCellEvent
+    (cellLayout [this cell rect canvas]
+      (let [radius 4
+            lineWidth 1.5
+            cb (get canvas PdfPTable/BACKGROUNDCANVAS)
+            [l b w h] [(.getLeft rect)(.getBottom rect)(.getWidth rect)(.getHeight rect)]]
+         (.roundRectangle cb l b w h radius)
+         (.setLineWidth cb lineWidth)
+         (.stroke cb)))))
+
+[:pdf-table {:padding 0}
+ [100]
+ [[:pdf-cell {:set-border [] :event-handler border}
+   [:pdf-table {:event-handler nil :width-percent 100}
+    [50 50]
+    [[:pdf-cell {:set-border [:bottom :right]} "a"]
+     [:pdf-cell {:set-border [:bottom]} "b"]]
+    [[:pdf-cell {:set-border [:right]} "d"]
+     [:pdf-cell {} "c"]]]]]]
 ```
 
 #### Table Cell
