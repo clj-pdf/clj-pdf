@@ -1159,7 +1159,7 @@ metadata:
   ["Mary" "$18.90"]]
 ```
 
-adding a border around table cells
+adding a rounded border around table cells
 
 ```clojure
 (ns mypdf.core
