@@ -1667,6 +1667,8 @@ when hooked up to the cell by setting the event-handler entry:
 # Extensibility
 If supported document sections can't fill your needs, you can provide your own document sections by extending the multimethod `clj-pdf.section/render`. Implementations get the tag name and a context object `meta` which holds needed keys to access current font settings, stylesheet, references, margins, page options and the `PdfWriter`object. See `clj.pdf.core/append-to-doc` for details.
 
+Although you can manipulate the writer and even the Document in the implementation, a `Element` object must be returned that clj-pdf then adds to the document. If there's nothing to add, an empty `Chunk` works fine.
+
 For example:
 ```clojure
 (defmethod clj-pdf.section/render :print-page-number [tag meta & els]
