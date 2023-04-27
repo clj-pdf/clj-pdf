@@ -47,6 +47,7 @@ a library for easily generating pdfs from clojure. an example pdf is available [
       - [pie chart](#pie-chart)
     - [a complete example](#a-complete-example)
     - [using cell event callbacks](#using-cell-event-callbacks)
+  - [extensibility](#extensibility)
 - [users](#users)
 - [license](#license)
 
@@ -1661,6 +1662,25 @@ when hooked up to the cell by setting the event-handler entry:
 
 ```clojure
 [:pdf-table [1] [[:pdf-cell {:height 25 :event-handler (make-event-handler)}]]]
+```
+
+# Extensibility
+If supported document sections can't fill your needs, you can provide your own document sections by extending the multimethod `clj-pdf.section/render`. Implementations get the tag name and a context object `meta` which holds needed keys to access current font settings, stylesheet, references, margins, page options and the `PdfWriter`object. See `clj.pdf.core/append-to-doc` for details.
+
+Although you can manipulate the writer and even the Document in the implementation, a `Element` object must be returned that clj-pdf then adds to the document. If there's nothing to add, an empty `Chunk` works fine.
+
+For example:
+```clojure
+(defmethod clj-pdf.section/render :print-page-number [tag meta & els]
+  (let [pdf-writer (:pdf-writer meta)]
+    (Chunk. (str "Page number is: " (.getPageNumber pdf-writer)
+                 ", custom els:"
+                 (str/join ", " els)))))
+```
+
+It is then used in a document like this
+```clojure
+[:print-page-number "My" "custom" "elements"]
 ```
 
 # Users
