@@ -1675,7 +1675,7 @@ For example:
   (let [pdf-writer (:pdf-writer meta)]
     (Chunk. (str "Page number is: " (.getPageNumber pdf-writer)
                  ", custom els:"
-                 (str/join ", " els)))
+                 (str/join ", " els)))))
 ```
 
 It is then used in a document like this
