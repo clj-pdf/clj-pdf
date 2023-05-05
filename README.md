@@ -1345,7 +1345,7 @@ The same chart rendered with vector drawing:
 
 * :point-labels - boolean (show a label with the x,y position for each point)
 * :show-points - boolean (display a box for each point in the data set)
-* :label-percision - int (max number of digits after the decimal point)
+* :label-precision - int (max number of digits after the decimal point)
 * :label-format - string in format of "{0}:{1}:{2}" where {0} is the name of the series, {1} is the x value, and {2} is the y value
 * :tick-interval - the range between ticks on each axis
 * :tick-interval-x - the range between ticks on the x axis
