@@ -47,7 +47,7 @@
                            background
                            show-points
                            point-labels
-                           label-percision
+                           label-precision
                            horizontal
                            time-series
                            time-format
@@ -101,7 +101,7 @@
       (if show-points (.setDefaultShapesVisible renderer true))
       (if point-labels
         (let [^NumberFormat format (NumberFormat/getNumberInstance)]
-          (if label-percision (.setMaximumFractionDigits format (int label-percision)))
+          (if label-precision (.setMaximumFractionDigits format (int label-precision)))
           (.setDefaultItemLabelGenerator renderer
             (StandardXYItemLabelGenerator. (or label-format "{1},{2}") format format))
           (.setDefaultItemLabelsVisible renderer true)))
