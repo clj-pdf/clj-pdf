@@ -1,3 +1,4 @@
+* 2.6.3 - fix typos, breaking `label-percision` in clj-pdf.charting renamed to `label-precision`
 * 2.6.2 - update batik to 1.16
 * 2.5.7 - [extract test utils into src to make them user accessible](https://github.com/clj-pdf/clj-pdf/pull/211)
 * 2.5.6 - [fix for text-chunk backgrounds](https://github.com/clj-pdf/clj-pdf/commit/8c42aaf958ca3d640365ff1baa4f2ab297f46a88)
