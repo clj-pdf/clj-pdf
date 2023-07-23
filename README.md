@@ -118,6 +118,7 @@ of inputstream, file name, url, or a byte array.
 (collate {:title "collated documents"
           :author "john doe"
           :creator "jane doe"
+          :keywords "jane,school,notes"
           :orientation :landscape
           :size :a4
           :subject "some subject"}
@@ -296,6 +297,7 @@ all fields in the metadata section are optional:
  :subject "some subject"
  :size          :a4
  :orientation   :landscape
+ :keywords "those,metadata,keywords,comma,separated,help,with,searching"
  :author "john doe"
  :creator "jane doe"
  :font  {:size 11} ;specifies default font
@@ -1440,6 +1442,7 @@ creating a pdf:
     :doc-header    ["inspired by" "William Shakespeare"]
     :right-margin  50
     :author        "John Doe"
+    :keywords      "jane,subject,school,drama,art"
     :bottom-margin 10
     :left-margin   10
     :top-margin    20
