@@ -347,6 +347,7 @@
                           footer
                           pages
                           author
+                          keywords
                           creator
                           size
                           font-style
@@ -423,6 +424,7 @@
       (when subject (.addSubject doc subject))
       (when (and nom head) (.addHeader doc nom head))
       (when author (.addAuthor doc author))
+      (when keywords (.addKeywords doc keywords))
       (when creator (.addCreator doc creator))
 
       [doc width height temp-stream output-stream pdf-writer])))
