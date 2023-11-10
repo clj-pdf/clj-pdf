@@ -14,7 +14,9 @@
     [com.lowagie.text Chunk Document HeaderFooter Phrase Rectangle RectangleReadOnly
                       PageSize Font FontFactory Paragraph Image]
     [com.lowagie.text.pdf BaseFont PdfContentByte PdfReader PdfStamper PdfWriter PdfCopy
-                     PdfPageEventHelper PdfPCell PdfPTable]))
+                          PdfPageEventHelper PdfPCell PdfPTable PdfDictionary
+                          PdfName PdfArray]
+    [com.lowagie.text.xml.xmp XmpWriter PdfSchema PdfA1Schema]))
 
 (declare ^:dynamic *pdf-writer*)
 (def fonts-registered? (atom nil))
@@ -335,6 +337,10 @@
     ;; this is to ensure letterheads get rendered at the correct position
     (.setMargins doc (float left) (float right) (float top) (float bottom))))
 
+(def pdfa-levels
+  ;; NOTE: currently supporting only PDF/A 3a
+  #{:3a})
+
 (defn- setup-doc [{:keys [left-margin
                           right-margin
                           top-margin
@@ -354,8 +360,12 @@
                           orientation
                           page-events
                           watermark
-                          background-color] :as meta}
+                          background-color
+                          pdfa-compliance] :as meta}
                   out]
+
+  (when pdfa-compliance
+    (assert (contains? pdfa-levels pdfa-compliance) "Unsupported PDF/A compliance level"))
 
   (let [[nom head] doc-header
         doc                (Document. (page-orientation (page-size size) orientation))
@@ -392,6 +402,24 @@
                                                        :page-width width
                                                        :page-height height))))
 
+      (when (= :3a pdfa-compliance)
+        ;; PDF/A 3a requires the PDF to be tagged
+        (.setTagged pdf-writer)
+
+        ;; PDF/A 3a requires a transparency colorspace to be
+        ;; set. Using RGB as the default blending colorspace for
+        ;; transparency.
+        ;;
+        ;; The default blending colorspace is CMYK and will result in
+        ;; faded colors in the screen and in printing. Calling this
+        ;; method will return the RGB colors to what is expected. The
+        ;; RGB blending will be applied to all subsequent pages until
+        ;; other value is set.
+        ;;
+        ;; NOTE: This is a generic solution that may not work in all
+        ;; cases.
+        (.setRgbTransparencyBlending pdf-writer true))
+
       (doc-events pdf-writer meta)
 
       (when-not pages
@@ -426,6 +454,47 @@
       (when author (.addAuthor doc author))
       (when keywords (.addKeywords doc keywords))
       (when creator (.addCreator doc creator))
+
+      (when (= :3a pdfa-compliance)
+        ;; PDF/A requires an XMP Metadata Stream to be present.
+        (let [os (ByteArrayOutputStream.)
+              xmp (XmpWriter. os)
+              pdfA1 (PdfA1Schema.)]
+          ;; has to include at least the PDF/A conformace level
+          (.addPart pdfA1 "3")
+          (.addConformance pdfA1 "A")
+          (.addRdfDescription xmp pdfA1)
+
+          ;; TODO: Consider adding the given metadata into the XMP.
+
+          (.close xmp)
+          (.setXmpMetadata pdf-writer (.toByteArray os)))
+
+        ;; Add the colorspace data required by PDF/A 3a
+        ;;
+        ;; The constants here are taken from an example which uses
+        ;; iText to implement a PDF stamper:
+        ;; https://csharp.hotexamples.com/examples/iTextSharp.text.pdf/PdfAStamper/-/php-pdfastamper-class-examples.html
+        (let [sec (PdfDictionary.)
+              arr (PdfArray. PdfName/CALRGB)]
+          ;; TODO: Not sure what these values mean actually. Maybe its
+          ;; worth researching closer to choose the right values or at
+          ;; least to be aware of what is effected by these values.
+          ;;
+          ;; Source of values: https://en.wikipedia.org/wiki/SRGB
+          (.put sec PdfName/GAMMA (PdfArray. (float-array [2.2 2.2 2.2])))
+          (.put sec PdfName/MATRIX (PdfArray. (float-array [0.4124 0.2126 0.0193 0.3576 0.7152 0.1192 0.1805 0.0722 0.9505])))
+          (.put sec PdfName/WHITEPOINT (PdfArray. (float-array [0.9505 1.0 1.089])))
+          (.add arr sec)
+          (let [ref (.getIndirectReference (.addToBody pdf-writer arr))]
+            ;; TODO: Using the same reference for both defaults to
+            ;; satisfy the PDF/A validaton. It looks to work, but not
+            ;; sure what is the difference between the PDF and Gray
+            ;; color space.
+            (.setDefaultColorspace pdf-writer PdfName/DEFAULTRGB ref)
+            (.setDefaultColorspace pdf-writer PdfName/DEFAULTGRAY ref)))
+
+        (assert (-> meta :font :ttf-name) "PDF/A 3a requires to embed font file"))
 
       [doc width height temp-stream output-stream pdf-writer])))
 
@@ -499,7 +568,13 @@
   (register-fonts doc-meta)
   ; font would conflict with a function definition
   (-> doc-meta
-      (assoc :font-style (:font doc-meta))
+      (assoc :font-style (cond-> (:font doc-meta)
+                           ;; The subset flag indicates if a subset of the
+                           ;; glyphs and widths for that particular encoding
+                           ;; should be included in the document.  The PDFA/3a
+                           ;; spec requires the full font to be included.
+                           (= :3a (:pdfa-compliance doc-meta))
+                           (assoc :subset? false)))
       (assoc :total-pages (:pages doc-meta))
       (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table))))))
 
