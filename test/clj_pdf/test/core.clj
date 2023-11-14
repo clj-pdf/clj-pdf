@@ -420,3 +420,33 @@
                               [[:pdf-cell [:paragraph {:size 36} "my header"]]]]}}
         [:paragraph "and some content"]]
        "letterhead.pdf"))
+
+(deftest test-flatten-seqs
+  (is (= [1 2 3 4 5 6 7 8 9]
+         (flatten-seqs (list 1
+                             (list (list 2 3)
+                                   4
+                                   (list 5 6))
+                             (list)
+                             (list (list (list 7))
+                                   (list (list 8)
+                                         (list 9))))))))
+
+;; TODO: unfortunately the PDF data generated due to the file
+;; attachments with identical input data differ when run on other
+;; machines. So this test might be successful locally, but will fail
+;; on the CI pipeline
+(deftest file-attachments
+  (eq? [{:attachments [{:path "test/bookstore.xml"
+                        :display-name "bookstore.xml"
+                        :mime-type "text/xml"}
+                       {:path "test/mandelbrot.jpg"
+                        :display-name "mandelbrot.jpg"
+                        :mime-type "image/jpeg"
+                        :compression :best-speed}
+                       {:store (.getBytes "Hello ASCII world!")
+                        :display-name "test.txt"
+                        :mime-type "text/plain"}]}
+        [:paragraph "and some content"]]
+       "attachments.pdf"
+       :stream false))

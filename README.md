@@ -351,6 +351,27 @@ all fields in the metadata section are optional:
  ;; register ttf fonts in some probable directories, set this to true if
  ;; you're going to use :ttf-name to set custom system fonts
  :register-system-fonts? true
+
+ ;; attaches files to the PDF document.
+ ;; Files are always embedded into the PDF document.
+ ;; Either `:path` or `:store` has to be provided.
+ ;; External file attachments are currently not supported.
+ ;; Either `:store` or `:path` must be defined.
+ ;; In case of PDFA/3a the mime-type is mandatory and will default to `application/octet-stream` if omitted.
+ ::attachments [{:path "test/bookstore.xml" ; optional path to the file in the classpath
+                 :store (.getBytes "Hello ASCII world!") ; optional data of the file
+                 :display-name "bookstore.xml" ; the name of the file attachment in the PDF document
+                 :mime-type "text/xml" ; optional mime-type string.
+                 ;; optional compression level of the file. Available levels are:
+                 ;; - :best-compression
+                 ;; - :best-speed
+                 ;; - :default
+                 ;; - :none (default)
+                 :compression :best-speed
+                 ;; extra file properties. These dates have to be instances of `java.util.Calendar`.
+                 ;; Most readers may not support these.
+                 :creation-date (GregorianCalendar. 2022 12 1)
+                 :modification-date (GregorianCalendar. 2022 12 1)}
 }
 ```
 
