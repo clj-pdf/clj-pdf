@@ -53,4 +53,7 @@
 
 
 ;; that require is here to overcome circular import
-(require '[clj-pdf.section core cell chart svg table])
+;;
+;; NOTE: Avoid loading svg and chart here. They are optional and can be required
+;; on demand for the provided features.
+(require '[clj-pdf.section core cell table])

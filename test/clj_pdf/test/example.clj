@@ -1,6 +1,7 @@
 (ns clj-pdf.test.example
-  (:use [clj-pdf.core])
-  (:import [java.awt Color]))
+  (:require [clj-pdf.core :refer [pdf]]
+            [clj-pdf.section.chart]
+            [clj-pdf.section.svg]))
 
 (defn radians [degrees] (Math/toRadians degrees))
 
