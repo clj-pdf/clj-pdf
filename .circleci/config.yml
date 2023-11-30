@@ -1,0 +1,17 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/clj-pdf
+    docker:
+      - image: clojure:temurin-21-lein
+    steps:
+      - checkout
+      - restore_cache:
+          key: << checksum "project.clj" >>
+      - run: apt update && apt install -y libfreetype6 fontconfig
+      - run: lein test
+      - save_cache:
+          paths:
+            - $HOME/.m2
+          key: << checksum "project.clj" >>
+
