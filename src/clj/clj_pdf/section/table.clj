@@ -68,6 +68,14 @@
                   :else [:pdf-cell content])]
     (.addCell tbl ^PdfPCell (make-section meta element))))
 
+(defn- spanned-columns-for-cell [cell]
+  (if (and (sequential? cell)
+           (associative? (second cell)))
+    (-> cell second (:colspan 1))
+    1))
+
+(defn- spanned-columns [row]
+  (apply + (map spanned-columns-for-cell row)))
 
 (defmethod render :table
   [_ {:keys [align
@@ -91,7 +99,7 @@
 
   (let [header-cols (cond-> (count header)
                             (map? (first header)) dec)
-        cols        (or num-cols (apply max (cons header-cols (map count rows))))
+        cols        (or num-cols (apply max (cons header-cols (map spanned-columns rows))))
         ^Table tbl  (doto (new Table cols (count rows))
                       (.setWidth (float (or width 100))))]
 
