@@ -143,7 +143,20 @@
        "baz"]
       ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
       ["foo2" "bar2" "baz2"]]]
-    "table.pdf"))
+    "table.pdf")
+
+  (is (thrown? Exception (pdf->bytes [{}
+                                      [:table {:widths [1 2]}
+                                       [[:cell "foo"]]]])))
+  (is (thrown? Exception (pdf->bytes [{}
+                                      [:table {:widths [1 2]}
+                                       [[:cell {:colspan 2} "foo"] "bar"]]])))
+  (is (some? (pdf->bytes [{}
+                          [:table {:widths [1 2]}
+                           [[:cell {:colspan 2} "foo"]]]])))
+  (is (some? (pdf->bytes [{}
+                          [:table {:widths [1 2]}
+                           ["foo" "bar"]]]))))
 
 (deftest line
   (eq? [{} [:line]]
