@@ -17,3 +17,4 @@ pom.xml.asc
 *.iws
 .idea
 profiles.clj
+/.clj-kondo
