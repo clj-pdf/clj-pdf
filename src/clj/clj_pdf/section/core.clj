@@ -39,10 +39,16 @@
   ([_ title text] (new Annotation title text)))
 
 (defmethod render :chapter
-  [tag meta & [title & sections]]
+  [tag meta & [title & {:keys [sections
+                               chap-content]
+                        :as args}]]
   (let [ch (new ChapterAutoNumber (make-section-or :paragraph meta title))]
-    (doseq [section (flatten-seqs sections)]
-      (make-section (assoc meta :parent ch) section))
+    (when chap-content
+      (doseq [content chap-content]
+        (.add ch (make-section-or :chunk meta content))))
+    (when sections
+      (doseq [section (flatten-seqs sections)]
+        (make-section (assoc meta :parent ch) section)))
     ch))
 
 
