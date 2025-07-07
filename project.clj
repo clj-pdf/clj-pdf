@@ -7,7 +7,7 @@
             :distribution :repo}
 
   :dependencies [[org.clojure/clojure "1.10.1" :scope "provided"]
-                 [com.github.librepdf/openpdf "1.3.32"]
+                 [com.github.librepdf/openpdf "2.2.4"]
                  [commons-codec "1.15"]
                  [org.jfree/jfreechart "1.5.0"]
                  [org.apache.xmlgraphics/batik-bridge "1.17"]
