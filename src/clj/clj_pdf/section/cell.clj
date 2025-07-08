@@ -1,7 +1,8 @@
 (ns clj-pdf.section.cell
-  (:require [clj-pdf.utils :refer [get-color get-alignment]]
+  (:require [clj-pdf.utils :refer [get-color get-alignment get-horizontal-alignment get-vertical-alignment]]
             [clj-pdf.section :refer [render make-section-or]])
-  (:import [com.lowagie.text Cell Rectangle]
+  (:import [com.lowagie.text.alignment HorizontalAlignment]
+           [com.lowagie.text Cell Rectangle]
            [com.lowagie.text.pdf PdfPCell PdfPCellEvent PdfPTable PdfContentByte]))
 
 
@@ -11,7 +12,6 @@
       (select-keys
         {:top Cell/TOP :bottom Cell/BOTTOM :left Cell/LEFT :right Cell/RIGHT}
         borders))))
-
 
 (defmethod render :cell
   [_ {:keys [background-color
@@ -49,9 +49,9 @@
     (when border-width-left (.setBorderWidthLeft c (float border-width-left)))
     (when border-width-right (.setBorderWidthRight c (float border-width-right)))
     (when border-width-top (.setBorderWidthTop c (float border-width-top)))
-    (when valign (.setVerticalAlignment c ^int (get-alignment valign)))
+    (when valign (.setVerticalAlignment c ^int (get-vertical-alignment valign)))
     (when leading (.setLeading c (float leading)))
-    (.setHorizontalAlignment c ^int (get-alignment align))
+    (.setHorizontalAlignment c ^int (get-horizontal-alignment align))
 
     (doseq [item content]
       (.addElement c (make-section-or :chunk meta item)))

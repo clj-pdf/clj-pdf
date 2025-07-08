@@ -39,16 +39,13 @@
   ([_ title text] (new Annotation title text)))
 
 (defmethod render :chapter
-  [tag meta & [title & {:keys [sections
-                               chap-content]
-                        :as args}]]
-  (let [ch (new ChapterAutoNumber (make-section-or :paragraph meta title))]
-    (when chap-content
-      (doseq [content chap-content]
-        (.add ch (make-section-or :chunk meta content))))
-    (when sections
-      (doseq [section (flatten-seqs sections)]
-        (make-section (assoc meta :parent ch) section)))
+  [tag meta & content]
+  (let [[title & rest-content] content
+        ch (new ChapterAutoNumber (make-section-or :paragraph meta title))]
+    (doseq [item (flatten-seqs rest-content)]
+      (if (and (coll? item) (= :section (first item)))
+        (make-section (assoc meta :parent ch) item)
+        (.add ch (make-section-or :chunk meta item))))
     ch))
 
 
@@ -248,10 +245,17 @@
 
 
 (defmethod render :section
-  [_ {:keys [indent] :as meta} & [title & content]]
-  (let [paragraph (make-section-or :paragraph meta title)
-        sec       (.addSection ^Section (:parent meta) ^Paragraph paragraph)]
-    (if indent (.setIndentation sec (float indent)))
+  [_ {:keys [indent] :as meta} & content]
+  (let [[first-item & rest-content] content
+        [title content] (if (and (string? first-item) 
+                                 (not (and (coll? first-item) (= :section (first first-item)))))
+                          [first-item rest-content]
+                          [nil content])
+        paragraph (when title (make-section-or :paragraph meta title))
+        sec       (if title
+                    (.addSection ^Section (:parent meta) ^Paragraph paragraph)
+                    (:parent meta))]
+    (if (and title indent) (.setIndentation sec (float indent)))
     (doseq [item (flatten-seqs content)]
       (if (and (coll? item) (= :section (first item)))
         (make-section (assoc meta :parent sec) item)

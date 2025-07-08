@@ -1,6 +1,7 @@
 (ns clj-pdf.utils
   (:require [clojure.string :refer [split]])
   (:import [java.awt Color]
+           [com.lowagie.text.alignment HorizontalAlignment VerticalAlignment]
            [com.lowagie.text Element Font FontFactory]
            [com.lowagie.text.pdf BaseFont FontSelector]))
 
@@ -20,6 +21,24 @@
     (when (and r g b)
       (Color. (int r) (int g) (int b)))))
 
+(defn get-horizontal-alignment [align]
+  (case (when align (name align))
+    "left"          HorizontalAlignment/LEFT
+    "center"        HorizontalAlignment/CENTER
+    "right"         HorizontalAlignment/RIGHT
+    "justified"     HorizontalAlignment/JUSTIFIED
+    "justified-all" HorizontalAlignment/JUSTIFIED_ALL
+    "undefined"     HorizontalAlignment/UNDEFINED
+    HorizontalAlignment/LEFT))
+
+(defn get-vertical-alignment [align]
+  (case (when align (name align))
+    "baseline"  VerticalAlignment/BASELINE
+    "bottom"    VerticalAlignment/BOTTOM
+    "center"    VerticalAlignment/CENTER
+    "top"       VerticalAlignment/TOP
+    "undefined" VerticalAlignment/UNDEFINED
+    VerticalAlignment))
 
 (defn get-alignment [align]
   (case (when align (name align))

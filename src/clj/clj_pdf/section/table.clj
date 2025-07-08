@@ -1,11 +1,11 @@
 (ns clj-pdf.section.table
   (:require
-    [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
-    [clj-pdf.section :refer [render make-section]])
+   [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
+   [clj-pdf.section :refer [render make-section]])
   (:import
-    com.lowagie.text.alignment.HorizontalAlignment
-    [com.lowagie.text Cell Element Rectangle Table]
-    [com.lowagie.text.pdf PdfPCell PdfPTable]))
+   [com.lowagie.text.alignment HorizontalAlignment]
+   [com.lowagie.text Cell Element Rectangle Table]
+   [com.lowagie.text.pdf PdfPCell PdfPTable]))
 
 (defn- table-header [meta ^Table tbl header cols]
   (when header
@@ -22,7 +22,7 @@
                                      (make-section meta [:phrase {:style "bold"} header])
                                      (make-section meta header))
               header-cell          (doto (new Cell header-text)
-                                     (.setHorizontalAlignment 1)
+                                     (.setHorizontalAlignment HorizontalAlignment/JUSTIFIED)
                                      (.setHeader true)
                                      (.setColspan cols))]
           (set-bg header-cell)
@@ -122,7 +122,7 @@
     (if offset (.setOffset tbl (float offset)))
     (table-header meta tbl header cols)
 
-    (.setAlignment tbl ^int (get-alignment align))
+    (.setLastHeaderRow tbl ^int (get-alignment align))
 
     (.setCellsFitPage tbl (boolean no-split-cells?))
 
