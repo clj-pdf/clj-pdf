@@ -1,5 +1,5 @@
 (ns clj-pdf.section.cell
-  (:require [clj-pdf.utils :refer [get-color get-alignment get-horizontal-alignment get-vertical-alignment]]
+  (:require [clj-pdf.utils :refer [get-color get-horizontal-alignment get-vertical-alignment]]
             [clj-pdf.section :refer [render make-section-or]])
   (:import [com.lowagie.text.alignment HorizontalAlignment]
            [com.lowagie.text Cell Rectangle]
@@ -154,9 +154,9 @@
     (when rotation (.setRotation c (int rotation)))
     (when height (.setFixedHeight c (float height)))
     (when min-height (.setMinimumHeight c (float min-height)))
-    (.setHorizontalAlignment c ^int (get-alignment align))
+    (.setHorizontalAlignment c ^int (get-horizontal-alignment align))
     (when valign (.setUseAscender c true))
-    (.setVerticalAlignment c ^int (get-alignment valign))
+    (.setVerticalAlignment c ^int (get-vertical-alignment valign))
 
     (if event-handler
       (.setCellEvent c ^PdfPCellEvent event-handler)

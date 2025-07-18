@@ -1,6 +1,6 @@
 (ns clj-pdf.section.table
   (:require
-   [clj-pdf.utils :refer [get-color get-alignment split-classes-from-tag]]
+   [clj-pdf.utils :refer [get-color get-alignment get-horizontal-alignment split-classes-from-tag]]
    [clj-pdf.section :refer [render make-section]])
   (:import
    [com.lowagie.text.alignment HorizontalAlignment]
@@ -39,7 +39,7 @@
             (when-not (and (string? h)
                            (map? (second h)))
               (when-let [align (:align (second h))]
-                (.setHorizontalAlignment header-cell ^int (get-alignment align))))
+                (.setHorizontalAlignment header-cell ^int (get-horizontal-alignment align))))
             (set-bg header-cell)
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))
