@@ -593,21 +593,58 @@
 
 
 (comment
+  (user/refresh)
   (do
     (user/refresh)
     (pdf
-      [{}
-       [:table
-        {:cell-border    true,
-         :keep-together? false,
-         :no-split-rows? true,
-         :leading        10,
-         :num-cols       3,
-         :header
-                         [{:background-color [200 200 200]}
-                          "Competition"
-                          "Home Team"
-                          "Away Team"]}
-        (for [i (range 100)]
-          [:cell {:colspan 3} (str "cell: " i)])]]
-      "long-table.pdf")))
+     [{}
+
+      [:pdf-table
+       [10 20 15]
+       [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
+       [[:pdf-cell {:min-height 40 :align :center :valign :middle} "foo"]
+        [:pdf-cell {:valign :top} "foo"]
+        [:pdf-cell {:valign :bottom} "foo"]]]
+
+      [:pdf-table
+       {:bounding-box [50 100]
+        :horizontal-align :right
+        :spacing-before 100}
+       [10 20 15]
+       ["foo" [:chunk {:style :bold} "bar"] [:phrase "baz"]]
+       [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]
+       [[:pdf-cell "foo"] [:pdf-cell "foo"] [:pdf-cell "foo"]]]
+
+      [:pdf-table
+       {:header [[[:pdf-cell {:colspan 2}
+                   [:paragraph {:align :center :style :bold} "Customer Orders"]]]
+                 [[:phrase {:style :bold} "Name"]
+                  [:phrase {:style :bold} "Order Amount"]]]}
+       [50 50]
+       ["Joe" "$20.00"]
+       ["Bob" "$7.50"]
+       ["Mary" "$18.90"]]
+      [:table {:header [{:backdrop-color [100 100 100]}
+                        [:paragraph {:style :bold :size 15} "Foo"]
+                        [:paragraph {:align :center :style :bold :size 15} "Bar"]]}
+       ["foo" "bar"]]
+      [:table
+       {:header ["A" "B" [:cell {:colspan 2 :align :center} "Cell"]]}
+       ["1a" "1b" "1c" "1d"]
+       ["2a" "2b" "2c" "2d"]
+       ["3a" "3b" "3c" "3d"]
+       ["4a" "4b" "4c" "4d"]]
+      #_[:table
+         {:cell-border    true,
+          :keep-together? false,
+          :no-split-rows? true,
+          :leading        10,
+          :num-cols       3,
+          :header
+          [{:background-color [200 200 200]}
+           "Competition"
+           "Home Team"
+           "Away Team"]}
+         (for [i (range 100)]
+           [:cell {:colspan 3} (str "cell: " i)])]]
+     "long-table.pdf")))

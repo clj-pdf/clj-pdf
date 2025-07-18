@@ -39,7 +39,7 @@
             (when-not (and (string? h)
                            (map? (second h)))
               (when-let [align (:align (second h))]
-                (.setHorizontalAlignment header-cell ^int (get-horizontal-alignment align))))
+                (.setHorizontalAlignment header-cell ^HorizontalAlignment (get-horizontal-alignment align))))
             (set-bg header-cell)
             (.addCell tbl header-cell)))))
     (.endHeaders tbl)))

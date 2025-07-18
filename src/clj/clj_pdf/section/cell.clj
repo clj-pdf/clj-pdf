@@ -1,7 +1,7 @@
 (ns clj-pdf.section.cell
-  (:require [clj-pdf.utils :refer [get-color get-horizontal-alignment get-vertical-alignment]]
+  (:require [clj-pdf.utils :refer [get-color get-alignment get-horizontal-alignment get-vertical-alignment]]
             [clj-pdf.section :refer [render make-section-or]])
-  (:import [com.lowagie.text.alignment HorizontalAlignment]
+  (:import [com.lowagie.text.alignment HorizontalAlignment VerticalAlignment]
            [com.lowagie.text Cell Rectangle]
            [com.lowagie.text.pdf PdfPCell PdfPCellEvent PdfPTable PdfContentByte]))
 
@@ -49,9 +49,9 @@
     (when border-width-left (.setBorderWidthLeft c (float border-width-left)))
     (when border-width-right (.setBorderWidthRight c (float border-width-right)))
     (when border-width-top (.setBorderWidthTop c (float border-width-top)))
-    (when valign (.setVerticalAlignment c ^int (get-vertical-alignment valign)))
+    (when valign (.setVerticalAlignment c ^VerticalAlignment (get-vertical-alignment valign)))
     (when leading (.setLeading c (float leading)))
-    (.setHorizontalAlignment c ^int (get-horizontal-alignment align))
+    (.setHorizontalAlignment c ^HorizontalAlignment (get-horizontal-alignment align))
 
     (doseq [item content]
       (.addElement c (make-section-or :chunk meta item)))
@@ -154,9 +154,9 @@
     (when rotation (.setRotation c (int rotation)))
     (when height (.setFixedHeight c (float height)))
     (when min-height (.setMinimumHeight c (float min-height)))
-    (.setHorizontalAlignment c ^int (get-horizontal-alignment align))
+    (.setHorizontalAlignment c ^int (get-alignment align))
     (when valign (.setUseAscender c true))
-    (.setVerticalAlignment c ^int (get-vertical-alignment valign))
+    (.setVerticalAlignment c ^int (get-alignment valign))
 
     (if event-handler
       (.setCellEvent c ^PdfPCellEvent event-handler)
