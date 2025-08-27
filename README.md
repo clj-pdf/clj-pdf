@@ -256,6 +256,13 @@ use the css-like shortcut for applying classes to elements (e.g. `[:paragraph.fo
  "doc.pdf")
 ```
 
+### optional requirements
+
+Some features are require optional and can be activated by adding them in the `:require` section of the `ns` form.
+
+* `[clj-pdf.section.chart]` Enables charting, see [Charting](#charting). Must be required when using `:image` tags with `svg` files. See [image](#image).
+* `[clj-pdf.section.svg]` Enables SVG, see [SVG](#svg).
+
 ## document elements
 
 [anchor](#anchor),
@@ -511,7 +518,7 @@ custom fonts can also be specified for any elements that support font metadata, 
 you could set `:ttf-name` as absolute or relative path to the font file. it will also load fonts from classpath resources by default.
 
 Phrases also support font-stacks: For each character, the first ttf-name in the
-supplied font-stack sequence is chosen, that supports it.  
+supplied font-stack sequence is chosen, that supports it.
 Note: When a font-stack is supplied, only a single string may be supplied as
 a child element.
 
@@ -702,6 +709,7 @@ tag :image
 
 image data can be one of java.net.URL, java.awt.Image, byte array, base64 string, or a string representing URL or a file,
 images larger than the page margins will automatically be scaled to fit.
+Note: To enable usage of SVG images, `clj-pdf.section.svg` has to be required. See [optional requirements](#optional-requirements).
 
 optional metadata:
 
@@ -1308,6 +1316,8 @@ optional metadata:
 ### Charting
 
 tag :chart
+
+Note: Requires `[clj-pdf.section.chart]` namespace. See [optional requirements](#optional-requirements).
 
 metadata:
 
