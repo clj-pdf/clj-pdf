@@ -1,3 +1,4 @@
+* 2.7.5 - fix unresolved type hint `ZapfDingbatsNumberList` in list rendering
 * 2.6.9 - [Fixed colspan not affecting column counting for widths](https://github.com/clj-pdf/clj-pdf/pull/243)
 * 2.6.4 - [suppor for PDF keyword](https://github.com/clj-pdf/clj-pdf/pull/233)
 * 2.6.3 - fix typos, breaking `label-percision` in clj-pdf.charting renamed to `label-precision`

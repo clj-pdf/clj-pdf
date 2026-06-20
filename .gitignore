@@ -1,3 +1,6 @@
+.calva/
+.clj-kondo/
+.lsp/
 .DS_Store
 /target
 /classes
@@ -17,3 +20,5 @@ pom.xml.asc
 *.iws
 .idea
 profiles.clj
+.crush/
+

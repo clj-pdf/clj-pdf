@@ -144,7 +144,7 @@
                    ^ZapfDingbatsList dingbats
                    (new ZapfDingbatsList dingbats-char-num)
 
-                   ^ZapDingbatsNumberList dingbatsnumber
+                    ^ZapfDingbatsNumberList dingbatsnumber
                    (new ZapfDingbatsNumberList dingbatsnumber-type)
 
                    :else
