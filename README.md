@@ -1,3 +1,63 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [`clj-pdf` * *](#clj-pdf--)
+  - [installation](#installation)
+  - [usage](#usage)
+    - [templating](#templating)
+    - [stylesheets](#stylesheets)
+      - [how styling works](#how-styling-works)
+      - [colors](#colors)
+      - [font attributes](#font-attributes)
+      - [alignment](#alignment)
+      - [text layout](#text-layout)
+      - [chunk attributes](#chunk-attributes)
+      - [table and cell attributes](#table-and-cell-attributes)
+      - [a worked example](#a-worked-example)
+  - [document elements](#document-elements)
+  - [document format](#document-format)
+    - [metadata](#metadata)
+      - [font](#font)
+      - [using custom ttf fonts](#using-custom-ttf-fonts)
+    - [document sections](#document-sections)
+      - [anchor](#anchor)
+      - [chapter](#chapter)
+      - [chunk](#chunk)
+      - [clear double page](#clear-double-page)
+      - [graphics](#graphics)
+      - [Heading](#heading)
+      - [Image](#image)
+      - [Line](#line)
+      - [List](#list)
+      - [Multi-Column](#multi-column)
+      - [Pagebreak](#pagebreak)
+      - [Paragraph](#paragraph)
+      - [Phrase](#phrase)
+      - [Reference](#reference)
+      - [Section](#section)
+      - [Spacer](#spacer)
+      - [String](#string)
+      - [Subscript](#subscript)
+      - [Superscript](#superscript)
+      - [SVG](#svg)
+      - [Table](#table)
+      - [PDF Table](#pdf-table)
+      - [Table Cell](#table-cell)
+      - [PDF Table Cell](#pdf-table-cell)
+    - [Charting](#charting)
+      - [bar chart](#bar-chart)
+      - [line chart](#line-chart)
+      - [pie chart](#pie-chart)
+    - [A complete example](#a-complete-example)
+    - [Using Cell Event Callbacks](#using-cell-event-callbacks)
+- [Extensibility](#extensibility)
+- [Users](#users)
+  - [Related Libraries](#related-libraries)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # `clj-pdf` [![coverage status](https://coveralls.io/repos/yogthos/clj-pdf/badge.svg?branch=master)](https://coveralls.io/r/yogthos/clj-pdf?branch=master) [![downloads](https://jarkeeper.com/yogthos/clj-pdf/downloads.svg)](https://jarkeeper.com/yogthos/clj-pdf)
 
 
@@ -255,6 +315,124 @@ use the css-like shortcut for applying classes to elements (e.g. `[:paragraph.fo
   [:paragraph.bar.baz "item: 2"]]
  "doc.pdf")
 ```
+
+#### how styling works
+
+every element accepts an optional attribute map, and the same map can be used in three places:
+
+- as a **stylesheet class** shared by many elements
+- as the **inline metadata** map on a single element
+- as the document-level **`:font`** map, which sets defaults inherited by every element
+
+when an element is rendered its attributes are assembled in this order, each layer overriding the one before it:
+
+1. the document-level `:font` map
+2. the stylesheet classes applied to the tag, merged left to right (so `[:paragraph.foo.bar]` merges `:foo` then `:bar`)
+3. the inline attribute map on the element itself
+
+font attributes also **cascade** to child elements: a `:size` or `:style` set on a paragraph is inherited by its chunks unless a chunk overrides it, and styles are additive — see the [font](#font) section for details.
+
+#### colors
+
+colors are `[r g b]` vectors of integers in the 0–255 range. this same format is used everywhere a color is accepted: `:color` for text, `:background`/`:background-color` for fills, and `:border-color` for borders.
+
+#### font attributes
+
+these keys control the font and apply to any element that renders text (chunk, phrase, paragraph, anchor, heading, list items, and cells). they can be set in a stylesheet class, inline, or via the document `:font` map.
+
+- `:family` one of `:courier`, `:helvetica`, `:times-roman`, `:symbol`, `:zapfdingbats`; defaults to `:helvetica`
+- `:ttf-name` name (or path) of a ttf font on the system or classpath; overrides `:family` and requires `:register-system-fonts? true` in document metadata
+- `:encoding` set to `:unicode` to enable unicode output with a custom ttf font
+- `:size` number; defaults to `10`
+- `:style` one of `:bold`, `:italic`, `:bold-italic`, `:normal`, `:strikethru`, `:underline`; defaults to `:normal`
+- `:styles` vector of style keys to combine, e.g. `[:bold :underline]`
+- `:color` `[r g b]`; defaults to black
+- `:subset?` boolean, controls whether the embedded font is subsetted
+
+#### alignment
+
+horizontal alignment, set with `:align` on text elements and cells:
+
+- `:left`, `:center`, `:right`, `:justified` (cells also accept `:justified-all`)
+
+vertical alignment, set with `:valign` on cells only:
+
+- `:top`, `:middle`, `:bottom` (`:cell` also accepts `:baseline`)
+
+#### text layout
+
+these keys apply to paragraphs and similar block elements:
+
+- `:align` horizontal alignment, see above
+- `:leading` line spacing (measured in 72 units per inch; defaults to 1.5 times the font height)
+- `:indent` / `:indent-left` left indentation
+- `:indent-right` right indentation
+- `:first-line-indent` indentation of the first line
+- `:spacing-before` space above the element
+- `:spacing-after` space below the element
+- `:keep-together` boolean, prevents the element from being split across pages
+
+#### chunk attributes
+
+in addition to the font attributes, a chunk accepts:
+
+- `:background` `[r g b]` highlight drawn behind the text
+- `:super` boolean, raises the text (superscript)
+- `:sub` boolean, lowers the text (subscript)
+- `:underlines` vector of underline specs, e.g. `[{:thickness 2 :y-position -3}]`
+
+a `:heading` is a paragraph that defaults to size 18 bold. unlike other elements its `:style` key takes a nested map of font keys, e.g. `[:heading {:style {:size 24 :color [100 0 0]}} "Title"]`, so any font attribute can be overridden.
+
+#### table and cell attributes
+
+cells (`:cell` and `:pdf-cell`) accept all of the following:
+
+- `:background-color` `[r g b]`
+- `:align` / `:valign` see [alignment](#alignment)
+- `:colspan` / `:rowspan` numbers
+- `:border` boolean
+- `:set-border` vector of enabled edges from `:top :bottom :left :right`; pass `[]` for no borders
+- `:border-color` `[r g b]`
+- `:border-width` number, or per edge with `:border-width-top` / `-bottom` / `-left` / `-right`
+- `:leading` line spacing
+
+`:pdf-cell` additionally accepts padding and sizing:
+
+- `:padding` number or a [css-like](https://developer.mozilla.org/en-US/docs/Web/CSS/padding#Examples) vector: `[top right bottom left]`, `[top horizontal bottom]`, `[vertical horizontal]`, or `[all]`
+- `:padding-top` / `:padding-bottom` / `:padding-left` / `:padding-right`
+- `:height` / `:min-height` numbers
+- `:rotation` number, rotates the cell
+
+tables themselves accept `:background-color`, `:border`, `:border-width`, `:cell-border`, `:width`, `:widths`, and spacing. see the [table](#table) and [pdf table](#pdf-table) sections for the complete table-level list.
+
+#### a worked example
+
+a single stylesheet can mix font, layout, color, and cell styling, and each class can be composed on the same element:
+
+```clojure
+(def stylesheet
+  {:title    {:family :times-roman :style :bold :size 22 :color [40 40 120]}
+   :muted    {:color [120 120 120] :style :italic}
+   :centered {:align :center}
+   :lead-in  {:family :helvetica :style :bold :size 14}
+   :amount   {:align :right :style :bold}
+   :zebra    {:background-color [240 240 245]}})
+
+(pdf
+ [{:font {:family :helvetica :size 11}      ; document-wide defaults
+   :stylesheet stylesheet}
+  [:paragraph.title "Quarterly Report"]      ; font + color from class
+  [:paragraph.muted.centered "fiscal year 2024"]   ; two classes composed
+  [:paragraph.lead-in "Summary"]
+  [:paragraph "Revenue held steady across all regions."]
+  ;; cell classes applied inside a table
+  [:table {:header ["Region" "Revenue"] :cell-border false}
+   [[:cell.amount "North"] [:cell.zebra.amount "$1,200"]]
+   [[:cell.amount "South"] [:cell.amount      "$1,500"]]]]
+ "report.pdf")
+```
+
+note that `[:paragraph.muted.centered ...]` merges the `:muted` and `:centered` classes, and the inline document `:font` map provides the fallback family and size that the classes then override.
 
 ## document elements
 
