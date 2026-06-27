@@ -1,3 +1,4 @@
+* 2.8.0 - security: block SSRF and local-file disclosure via image/SVG sources. **Breaking:** string `:image` sources that parse as a URL are now limited to `http`/`https` (`file:` and other schemes rejected); SVG documents no longer load external resources (only inline `data:` URIs) or run scripts. Plain file paths and non-string image sources are unaffected. Opt back in via `clj-pdf.utils/*allowed-image-url-protocols*` / `*allowed-image-url-host?*` and `clj-pdf.section.svg/*allow-svg-external-resources*`.
 * 2.7.5 - fix unresolved type hint `ZapfDingbatsNumberList` in list rendering
 * 2.6.9 - [Fixed colspan not affecting column counting for widths](https://github.com/clj-pdf/clj-pdf/pull/243)
 * 2.6.4 - [suppor for PDF keyword](https://github.com/clj-pdf/clj-pdf/pull/233)

@@ -4,7 +4,7 @@
     [clojure.walk]
     [clj-pdf.graphics-2d :as g2d]
     [clj-pdf.section :refer [make-section *cache*]]
-    [clj-pdf.utils :refer [get-alignment get-color flatten-seqs font]])
+    [clj-pdf.utils :refer [get-alignment get-color flatten-seqs font validate-image-url-string]])
   (:import
     [java.awt Color Graphics2D Toolkit Canvas]
     [java.awt.image BufferedImage]
@@ -128,7 +128,7 @@
   (when header
     (if (= (first header) :image)
       (.setHeader doc
-                    (doto (new HeaderFooter (new Phrase (new Chunk (Image/getInstance ^String (second header)) 0.0 0.0)) false)
+                    (doto (new HeaderFooter (new Phrase (new Chunk (Image/getInstance ^String (validate-image-url-string (second header))) 0.0 0.0)) false)
                     (.setBorderWidthTop 0)))
       (.setHeader doc
                   (doto (new HeaderFooter (new Phrase ^String header ^Font (font font-style)) false)

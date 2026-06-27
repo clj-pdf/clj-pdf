@@ -1,9 +1,57 @@
 (ns clj-pdf.utils
   (:require [clojure.string :refer [split]])
   (:import [java.awt Color]
+           [java.net URL MalformedURLException]
            [com.lowagie.text.alignment HorizontalAlignment VerticalAlignment]
            [com.lowagie.text Element Font FontFactory]
            [com.lowagie.text.pdf BaseFont FontSelector]))
+
+
+(def ^:dynamic *allowed-image-url-protocols*
+  "URL protocols (lower-case) permitted when an :image source string parses as
+   a URL. Defaults to http/https only; file:, jar:, ftp:, gopher: etc. are
+   rejected to prevent SSRF and local-file disclosure (a user-influenced image
+   source resolving to a file:// read or an internal/metadata host). Rebind to
+   widen, e.g. (binding [*allowed-image-url-protocols* #{\"http\" \"https\" \"file\"}] ...)."
+  #{"http" "https"})
+
+
+(def ^:dynamic *allowed-image-url-host?*
+  "Optional predicate (fn [host] -> truthy) applied to the host of a remote
+   :image URL. nil (the default) imposes no host restriction. Set to an
+   allowlist predicate to limit which hosts remote image fetches may reach,
+   e.g. (binding [*allowed-image-url-host?* #{\"images.example.com\"}] ...)."
+  nil)
+
+
+(defn validate-image-url-string
+  "Guard for string :image sources. OpenPDF's Image/getInstance resolves a
+   string by trying (new URL s) first and only falling back to a local file on
+   MalformedURLException. So a string that parses as a URL is policy-checked
+   here; one that does not (a plain/relative/Windows file path) passes through
+   unchanged, preserving the documented \"filename string\" feature.
+
+   Throws ex-info with :type :clj-pdf.security/disallowed-image-url for a
+   disallowed protocol, or :clj-pdf.security/disallowed-image-host for a host
+   rejected by *allowed-image-url-host?*. Returns the string when allowed."
+  ^String [^String s]
+  (when-let [^URL url (try (URL. s) (catch MalformedURLException _ nil))]
+    (let [protocol (some-> (.getProtocol url) (.toLowerCase))
+          host     (.getHost url)]
+      (when-not (contains? *allowed-image-url-protocols* protocol)
+        (throw (ex-info (str "Image URL protocol \"" protocol "\" is not allowed. "
+                             "Allowed protocols: " *allowed-image-url-protocols* ". "
+                             "Source: " s)
+                        {:type     :clj-pdf.security/disallowed-image-url
+                         :url      s
+                         :protocol protocol})))
+      (when (and *allowed-image-url-host?*
+                 (not (*allowed-image-url-host?* host)))
+        (throw (ex-info (str "Image URL host \"" host "\" is not allowed. Source: " s)
+                        {:type :clj-pdf.security/disallowed-image-host
+                         :url  s
+                         :host host})))))
+  s)
 
 
 (defn split-classes-from-tag

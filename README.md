@@ -866,6 +866,34 @@ optional metadata:
 
 Note that when loading images via `ImageIO`, automatic image reuse is not possible, so if your PDF contains a lot of repetitive copies of the same image, it will blow out in size.  It is therefore recommended to load image data using a URL.
 
+##### Image source URL policy
+
+When an `:image` source is a string, OpenPDF resolves it by trying to parse it
+as a URL first and only falls back to a local file when that fails. To avoid
+server-side request forgery and local-file disclosure when the source is
+user-influenced (a logo/avatar URL, an image inside user content, an
+HTML/markdown-to-PDF pipeline), string sources that parse as a URL are limited
+to `http`/`https` by default. `file:`, `jar:`, `ftp:`, and other schemes are
+rejected. Plain file paths (e.g. `"test/mandelbrot.jpg"`) are not URLs and are
+unaffected; non-string sources (`java.net.URL`, `java.awt.Image`, byte array,
+base64) are unaffected.
+
+The policy is controlled by two dynamic vars in `clj-pdf.utils`:
+
+```clojure
+;; allow file: URLs again (e.g. for trusted, server-controlled sources)
+(binding [clj-pdf.utils/*allowed-image-url-protocols* #{"http" "https" "file"}]
+  (clj-pdf.core/pdf doc out))
+
+;; restrict remote fetches to an allowlist of hosts
+(binding [clj-pdf.utils/*allowed-image-url-host?* #{"images.example.com"}]
+  (clj-pdf.core/pdf doc out))
+```
+
+A disallowed source throws an `ex-info` with `:type`
+`:clj-pdf.security/disallowed-image-url` (bad protocol) or
+`:clj-pdf.security/disallowed-image-host` (host not in the allowlist).
+
 #### Line
 
 tag :line
@@ -1169,6 +1197,23 @@ optional metadata (refer to Graphics section for details):
 
 ```clojure
 [:svg {} (clojure.java.io/file "pentagram.svg")]
+```
+
+##### SVG resource policy
+
+SVG documents can reference external resources (e.g. `xlink:href` on `<image>`
+or `<use>`, CSS imports). By default those references are *not* loaded — only
+inline `data:` URIs are permitted — and scripts are disabled. This prevents a
+user-influenced SVG from causing server-side fetches (SSRF, including internal
+and cloud-metadata hosts) or local-file disclosure when the document is rendered.
+External entities are also not resolved (handled by Batik).
+
+To allow Batik's default external-resource loading for trusted SVG content, set
+the dynamic var in `clj-pdf.section.svg`:
+
+```clojure
+(binding [clj-pdf.section.svg/*allow-svg-external-resources* true]
+  (clj-pdf.core/pdf doc out))
 ```
 
 

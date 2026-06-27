@@ -1,6 +1,6 @@
 (ns clj-pdf.section.chart
   (:require [clj-pdf.section :refer [*cache* render]]
-            [clj-pdf.utils :refer [get-alignment]]
+            [clj-pdf.utils :refer [get-alignment validate-image-url-string]]
             [clj-pdf.charting :as charting])
   (:import [com.lowagie.text Image]
            [java.awt Toolkit]
@@ -26,7 +26,7 @@
       nil)
 
     (string? img-data)
-    (Image/getInstance ^String img-data)
+    (Image/getInstance ^String (validate-image-url-string img-data))
 
     (instance? URL img-data)
     (Image/getInstance ^URL img-data)
