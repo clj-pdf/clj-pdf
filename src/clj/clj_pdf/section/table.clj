@@ -122,7 +122,7 @@
     (if offset (.setOffset tbl (float offset)))
     (table-header meta tbl header cols)
 
-    (.setLastHeaderRow tbl ^int (get-alignment align))
+    (.setHorizontalAlignment tbl ^HorizontalAlignment (get-horizontal-alignment align))
 
     (.setCellsFitPage tbl (boolean no-split-cells?))
 
