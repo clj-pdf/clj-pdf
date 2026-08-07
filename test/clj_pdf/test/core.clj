@@ -142,7 +142,17 @@
        [:cell [:phrase {:style :italic :size 18 :family :helvetica :color [200 55 221]} "Hello Clojure!"]]
        "baz"]
       ["foo1" [:cell {:color [100 10 200]} "bar1"] "baz1"]
-      ["foo2" "bar2" "baz2"]]]
+      ["foo2" "bar2" "baz2"]]
+
+     [:table {:align :left
+              :width 50
+              :header ["left aligned!"]}
+      ["foo" "bar"]]
+
+     [:table {:align :right
+              :width 50
+              :header ["right aligned!"]}
+      ["foo" "bar"]]]
     "table.pdf")
 
   (is (thrown? Exception (pdf->bytes [{}
