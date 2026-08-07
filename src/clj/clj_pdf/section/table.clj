@@ -122,7 +122,10 @@
     (if offset (.setOffset tbl (float offset)))
     (table-header meta tbl header cols)
 
-    (.setHorizontalAlignment tbl ^HorizontalAlignment (get-horizontal-alignment align))
+    ;; only touch the alignment when one was asked for, otherwise the table keeps
+    ;; openpdf's default of ALIGN_CENTER
+    (when align
+      (.setHorizontalAlignment tbl ^HorizontalAlignment (get-horizontal-alignment align)))
 
     (.setCellsFitPage tbl (boolean no-split-cells?))
 

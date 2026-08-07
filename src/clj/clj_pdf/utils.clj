@@ -86,7 +86,7 @@
     "center"    VerticalAlignment/CENTER
     "top"       VerticalAlignment/TOP
     "undefined" VerticalAlignment/UNDEFINED
-    VerticalAlignment))
+    VerticalAlignment/UNDEFINED))
 
 (defn get-alignment [align]
   (case (when align (name align))

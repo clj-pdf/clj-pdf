@@ -1223,7 +1223,7 @@ tag :table
 
 metadata:
 
-* :align table alignment on the page can be: :left, :center, :right, :justified
+* :align table alignment on the page can be: :left, :center, :right, :justified. Defaults to :center when omitted.
 * :background-color  `[r g b]` (int values)
 * :header `[{:backdrop-color [r g b]} "column name" ...]` if only a single column name is provided it will span all rows.
 * :header can also be formatted via a collection of phrases or paragraphs `[{:backdrop-color [r g b]} [:paragraph ...]`
