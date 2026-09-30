@@ -4,7 +4,9 @@
            [java.net URL MalformedURLException]
            [com.lowagie.text.alignment HorizontalAlignment VerticalAlignment]
            [com.lowagie.text Element Font FontFactory]
-           [com.lowagie.text.pdf BaseFont FontSelector]))
+           [com.lowagie.text.pdf BaseFont FontSelector]
+           [java.util.concurrent ConcurrentHashMap]
+           [java.util.function Function]))
 
 
 (def ^:dynamic *allowed-image-url-protocols*
@@ -117,6 +119,22 @@
     (get-style (first styles))))
 
 
+(defonce ^:private ^ConcurrentHashMap flagged-fonts (ConcurrentHashMap.))
+
+(defn- flagged-base-font
+  "OpenPDF keeps one cached BaseFont per font file/encoding for the whole JVM,
+   so setting subset/CID set flags on it would leak into every other document.
+   Fonts with non-default flags get their own copy of the shared BaseFont
+   instead, loaded once per flag combination and never modified afterwards."
+  ^BaseFont [^BaseFont shared ttf encoding style subset? include-cid-set?]
+  (.computeIfAbsent flagged-fonts [shared subset? include-cid-set?]
+    (reify Function
+      (apply [_ _]
+        (doto (.getBaseFont (FontFactory/getFont ttf encoding true (float 10) style nil false))
+          (.setSubset subset?)
+          (.setIncludeCidSet include-cid-set?))))))
+
+
 (defn font ^Font
   [{:keys [style
            styles
@@ -153,12 +171,14 @@
 
         color    (or (get-color color)
                      (get-color [0 0 0]))
-        fnt (FontFactory/getFont ttf encoding true size style color)]
-    (when (some? subset?)
-      (.setSubset (.getBaseFont fnt) subset?))
-    (when (some? include-cid-set?)
-      (.setIncludeCidSet (.getBaseFont fnt) include-cid-set?))
-    fnt))
+        subset?          (if (nil? subset?) true (boolean subset?))
+        include-cid-set? (if (nil? include-cid-set?) true (boolean include-cid-set?))
+        fnt      (FontFactory/getFont ttf encoding true size style color)
+        shared   (.getBaseFont fnt)]
+    (if (or (nil? shared) (and subset? include-cid-set?))
+      fnt
+      (Font. (flagged-base-font shared ttf encoding style subset? include-cid-set?)
+             size (.getStyle fnt) ^Color color))))
 
 
 (defn create-font-stack ^FontSelector [params ttf-names]
