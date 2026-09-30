@@ -297,6 +297,7 @@ These keys control the font and apply to any element that renders text (chunk, p
 - `:styles` vector of style keys to combine, e.g. `[:bold :underline]`
 - `:color` `[r g b]`; defaults to black
 - `:subset?` boolean, controls whether the embedded font is subsetted
+- `:include-cid-set?` boolean, controls whether to include the CID set for the embedded font
 
 #### Alignment
 
