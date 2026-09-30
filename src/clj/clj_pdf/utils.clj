@@ -125,7 +125,8 @@
            family
            ttf-name
            encoding
-           subset?]}]
+           subset?
+           include-cid-set?]}]
 
   (let [ttf      (or ttf-name
                      (case (when family (name family))
@@ -155,6 +156,8 @@
         fnt (FontFactory/getFont ttf encoding true size style color)]
     (when (some? subset?)
       (.setSubset (.getBaseFont fnt) subset?))
+    (when (some? include-cid-set?)
+      (.setIncludeCidSet (.getBaseFont fnt) include-cid-set?))
     fnt))
 
 

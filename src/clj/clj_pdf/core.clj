@@ -664,16 +664,27 @@
 (defn- parse-meta [doc-meta]
   (register-fonts doc-meta)
   ; font would conflict with a function definition
-  (-> doc-meta
-      (assoc :font-style (cond-> (:font doc-meta)
-                           ;; The subset flag indicates if a subset of the
-                           ;; glyphs and widths for that particular encoding
-                           ;; should be included in the document.  The PDFA/3a
-                           ;; spec requires the full font to be included.
-                           (= :3a (:pdfa-compliance doc-meta))
-                           (assoc :subset? false)))
-      (assoc :total-pages (:pages doc-meta))
-      (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table))))))
+  (let [font (:font doc-meta)
+        font (if (= :3a (:pdfa-compliance doc-meta))
+               ;; The subset flag indicates if a subset of the
+               ;; glyphs and widths for that particular encoding
+               ;; should be included in the document.
+               ;;
+               ;; When explicitly requested, ensure we're still
+               ;; producing a valid document.
+               (if (:subset? font)
+                 ;; When CIDs are present, PDFA/3a requires the full
+                 ;; font to be present.  So if we ask for a subset,
+                 ;; omit CIDs.
+                 (assoc font :include-cid-set? false)
+                 ;; Since subsetting is the default, explicitly disable
+                 ;; if value is nil (if already false, this is a no-op).
+                 (assoc font :subset? false))
+               font)]
+    (-> doc-meta
+        (assoc :font-style font)
+        (assoc :total-pages (:pages doc-meta))
+        (assoc :pages (boolean (or (:pages doc-meta) (-> doc-meta :footer :table)))))))
 
 (defn- write-doc
   "(write-doc document out)
