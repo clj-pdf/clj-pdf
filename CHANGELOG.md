@@ -1,3 +1,7 @@
+* 2.8.2 
+- [Stop font subset/CID set flags leaking between documents](https://github.com/clj-pdf/clj-pdf/pull/250)
+- [Add new include-cid-set? parameter to allow smaller PDF/A-3a compliant PDFs](https://github.com/clj-pdf/clj-pdf/pull/249)
+
 * 2.8.1 - [fix `:align` on `:table`](https://github.com/clj-pdf/clj-pdf/pull/248), it was setting the header row count instead of the alignment. Headerless tables no longer repeat their first row on every page. Tables without an explicit `:align` stay centered as before. Also fixes a crash on an unrecognized `:valign` in `:cell`.
 * 2.8.0 - security: block SSRF and local-file disclosure via image/SVG sources. **Breaking:** string `:image` sources that parse as a URL are now limited to `http`/`https` (`file:` and other schemes rejected); SVG documents no longer load external resources (only inline `data:` URIs) or run scripts. Plain file paths and non-string image sources are unaffected. Opt back in via `clj-pdf.utils/*allowed-image-url-protocols*` / `*allowed-image-url-host?*` and `clj-pdf.section.svg/*allow-svg-external-resources*`.
 * 2.7.5 - fix unresolved type hint `ZapfDingbatsNumberList` in list rendering
